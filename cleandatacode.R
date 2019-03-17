@@ -2,6 +2,30 @@
 #select
 library(dplyr)
 
+require("RPostgreSQL")
+library(RPostgreSQL)
+
+pw <- {
+  "Read1234"
+}
+
+# loads the PostgreSQL driver
+pg <- dbDriver("PostgreSQL")
+# creates a connection to the postgres database
+# note that "con" will be used later in each connection to the database
+conn = dbConnect(drv=pg
+                 ,user="postgres"
+                 ,password="Read123"
+                 ,host="localhost"
+                 ,port=5432
+                 ,dbname="analyticplatform"
+)
+rm(pw) # removes the password
+
+# check for the cartable
+dbExistsTable(con, "cartable")
+# TRUE
+
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
 data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
