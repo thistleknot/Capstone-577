@@ -9,23 +9,6 @@ pw <- {
   "Read1234"
 }
 
-# loads the PostgreSQL driver
-pg <- dbDriver("PostgreSQL")
-# creates a connection to the postgres database
-# note that "con" will be used later in each connection to the database
-conn = dbConnect(drv=pg
-                 ,user="postgres"
-                 ,password="Read123"
-                 ,host="localhost"
-                 ,port=5432
-                 ,dbname="analyticplatform"
-)
-rm(pw) # removes the password
-
-# check for the cartable
-dbExistsTable(con, "cartable")
-# TRUE
-
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
 data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
@@ -40,7 +23,7 @@ list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 #  print( colnames(data)[ii] )
 #  print( table(is.na(data[,ii])) )
 #}
-## select the columns with no missings
+## select the columns with no 
 
 cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
 # if A or B is not specified, all rows or columns will be retained
@@ -56,5 +39,21 @@ colnames(data)
 
 col.num <- which(colnames(data) %in% as.character(list[,1]))
 
+# loads the PostgreSQL driver
+pg <- dbDriver("PostgreSQL")
+# creates a connection to the postgres database
+# note that "con" will be used later in each connection to the database
+conn = dbConnect(drv=pg
+                 ,user="postgres"
+                 ,password="Read1234"
+                 ,host="localhost"
+                 ,port=5432
+                 ,dbname="analyticplatform"
+)
+
+dbExistsTable(conn, "analyticplatform")
+
 NewDF <- data[,(c(col.num))]
+
+dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
 
