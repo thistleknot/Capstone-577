@@ -22,4 +22,13 @@ table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing val
 
 colnames(data)
 
+data
+#subSetted <- data[data %in% list, ]
 
+#https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
+idx <- match(list, names(data))
+
+#parsedList2 <- parsedList[!parsedList %in% c(filtered)]
+filtered <- c(filter,parsedList[i])
+
+colnames
