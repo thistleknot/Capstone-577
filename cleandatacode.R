@@ -55,5 +55,6 @@ dbExistsTable(conn, "analyticplatform")
 
 NewDF <- data[,(c(col.num))]
 
+#https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
 dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
 
