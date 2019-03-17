@@ -1,6 +1,7 @@
 ## read in data ##
 #select
 library(dplyr)
+library(plyr)
 
 require("RPostgreSQL")
 library(RPostgreSQL)
@@ -10,6 +11,25 @@ pw <- {
 }
 
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+
+# Read CSV into R
+
+d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
+d_2013 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
+d_2014 <- read.csv(paste0(sourceDir,"36149-0001-Data.csv"), header=TRUE, sep=",")
+d_2015 <- read.csv(paste0(sourceDir,"36407-0001-Data.csv"), header=TRUE, sep=",")
+d_2016 <- read.csv(paste0(sourceDir,"36799-0001-Data.csv"), header=TRUE, sep=",")
+d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=",")
+
+d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
+
+na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
+
+View(na_count(d_combined))
+
+#summary(d_combined)
+
+write.csv(d_combined, file = "MyData.csv")
 
 data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
 list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
