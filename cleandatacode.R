@@ -3,6 +3,8 @@
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
 data<-read.csv(paste0(sourceDir,"MyData.csv"))
+list<-data.frame(read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE))
+
 dim(data)
 # check missing with for loop
 # The below code gives the number of missing values for each variables
@@ -17,3 +19,7 @@ cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B c
 table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
 #Since there are no missing values we export the data
 #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
+
+colnames(data)
+
+
