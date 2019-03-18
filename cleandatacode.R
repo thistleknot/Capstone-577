@@ -5,6 +5,7 @@ library(plyr)
 
 require("RPostgreSQL")
 library(RPostgreSQL)
+require(ggplot2)
 
 pw <- {
   "Read1234"
@@ -85,4 +86,13 @@ NewDF <- data[,(c(col.num))]
 
 #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
 dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
+
+#https://www.r-bloggers.com/getting-started-with-postgresql-in-r/
+df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
+#identical(NewDF, df_postgres)
+
+boxplot(data)
+summary(data)
+
+#ggplot(df_postgres, aes(x = as.factor(cyl), y = mpg, fill = as.factor(cyl))) + geom_boxplot() + theme_bw()
 
