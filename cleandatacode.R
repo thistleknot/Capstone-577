@@ -25,7 +25,7 @@ d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
 na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
-View(na_count(d_combined))
+#View(na_count(d_combined))
 
 #summary(d_combined)
 
@@ -78,8 +78,8 @@ NewDF <- data[,(c(col.num))]
 
 #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
 #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
-shell.exec("\\\\network\\path\\file.bat")
-db_drop_table(conn, "temp_table_data", force = TRUE)
+#shell.exec("\\\\network\\path\\file.bat")
+#db_drop_table(conn, "temp_table_data", force = TRUE)
 
 
 
