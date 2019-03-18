@@ -91,8 +91,8 @@ dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
 df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
 #identical(NewDF, df_postgres)
 
-boxplot(data)
-summary(data)
+boxplot(NewDF)
+summary(NewDF)
 
 #ggplot(df_postgres, aes(x = as.factor(cyl), y = mpg, fill = as.factor(cyl))) + geom_boxplot() + theme_bw()
 
