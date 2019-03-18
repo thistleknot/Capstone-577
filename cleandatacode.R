@@ -29,9 +29,10 @@ View(na_count(d_combined))
 
 #summary(d_combined)
 
-write.csv(d_combined, file = "MyData.csv")
+#write.csv(d_combined, file = "MyData.csv")
+#data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
 
-data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
+data <- d_combined
 list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 
 #dim(data)
@@ -71,9 +72,16 @@ conn = dbConnect(drv=pg
                  ,dbname="analyticplatform"
 )
 
-dbExistsTable(conn, "analyticplatform")
+dbExistsTable(conn, "temp_table_data")
 
 NewDF <- data[,(c(col.num))]
+
+#https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
+#https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
+shell.exec("\\\\network\\path\\file.bat")
+db_drop_table(conn, "temp_table_data", force = TRUE)
+
+
 
 #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
 dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
