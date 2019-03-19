@@ -107,15 +107,21 @@ NewDF <- data[,(c(col.num))]
 colnames(NewDF)
 test<-list(c(col.num))
 
-#list[,2]
-#merge(life_expectancy, income_disparity, all.x = TRUE)
-
 colnames(res)
 
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
+#merge(colList, list, by = "V1")[,2]
 colList <- data.frame(colnames(NewDF))
 colnames(colList) <- "V1"
 
-merge(colList, list, by = "V1")
+corrplot(res, method = "square")
 
+colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,2])
+  
+
+#https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+join(colList,list)
+colListNames <- paste(join(colList,list)[,1],join(colList,list)[,2])
+
+colnames(res)<-colListNames
 corrplot(res, method = "square")
