@@ -7,9 +7,7 @@ require("RPostgreSQL")
 library(RPostgreSQL)
 require(ggplot2)
 
-pw <- {
-  "Read1234"
-}
+pw <- {"Read1234"}
 
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
@@ -47,6 +45,7 @@ list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 #}
 ## select the columns with no 
 
+#drops columns with na values
 cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
 # if A or B is not specified, all rows or columns will be retained
 
@@ -82,17 +81,26 @@ NewDF <- data[,(c(col.num))]
 #shell.exec("\\\\network\\path\\file.bat")
 #db_drop_table(conn, "temp_table_data", force = TRUE)
 
-
-
 #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
 dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
 
 #https://www.r-bloggers.com/getting-started-with-postgresql-in-r/
 df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
+
 #identical(NewDF, df_postgres)
 
-boxplot(NewDF)
-summary(NewDF)
+#boxplot(NewDF)
+#summary(NewDF)
+View(na_count(NewDF))
+table(is.na(NewDF))
+write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
+
+library(corrplot)
+#colnames(NewDF)
+res <- cor(NewDF)
+corrplot(as.matrix(res), method = "square")
+#typeof(NewDF)
+#res, type = "upper", order = "hclust", tl.col = "black", tl.srt = 45)
 
 #ggplot(df_postgres, aes(x = as.factor(cyl), y = mpg, fill = as.factor(cyl))) + geom_boxplot() + theme_bw()
 
