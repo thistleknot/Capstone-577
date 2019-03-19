@@ -125,3 +125,4 @@ colListNames <- paste(join(colList,list)[,1],join(colList,list)[,2])
 
 colnames(res)<-colListNames
 corrplot(res, method = "square")
+write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
