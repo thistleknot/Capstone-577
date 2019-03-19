@@ -111,26 +111,11 @@ test<-list(c(col.num))
 #merge(life_expectancy, income_disparity, all.x = TRUE)
 
 colnames(res)
-#colnames(NewDF)
-
-#https://www.rdocumentation.org/packages/expss/versions/0.8.10/topics/vlookup
-#vlookup(lookup_value, dict, result_column = 2, lookup_column = 1)
 
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
-#NewDF
 colList <- data.frame(colnames(NewDF))
 colnames(colList) <- "V1"
-#https://www.rdocumentation.org/packages/dplyr/versions/0.7.8/topics/join
-
-#join(data.frame(colnames(NewDF)), list[,1:2], by = "V1", type = "left", match = "all")
 
 merge(colList, list, by = "V1")
 
 corrplot(res, method = "square")
-
-
-#typeof(NewDF)
-#res, type = "upper", order = "hclust", tl.col = "black", tl.srt = 45)
-
-#ggplot(df_postgres, aes(x = as.factor(cyl), y = mpg, fill = as.factor(cyl))) + geom_boxplot() + theme_bw()
-
