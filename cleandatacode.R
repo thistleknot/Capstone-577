@@ -142,39 +142,50 @@ NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(6), to=a
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(7), to=as.double(1), verbose = FALSE)
 
 #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
-#7 for grades
-median(NewDF[,"V7221"][NewDF[,"V7221"]>-1])
+#https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
+V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>-1])
+NewDF[V7221_Index,"V7221"] <- 1
+V7221_Index <- NewDF[,"V7221"] > 1
+NewDF[V7221_Index,"V7221"] <- 0
 
 #5 for college grad father
-median(NewDF[,"V7215"][NewDF[,"V7215"]>-1])
+V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>-1])
+NewDF[V7225_Index,"V7215"] <- 1
+V7215_Index <- NewDF[,"V7215"] > 1
+NewDF[V7215_Index,"V7215"] <- 0
 
 #4 #hours for computer use for internet leisure
-median(NewDF[,"V7551"][NewDF[,"V7551"]>-1])
+V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>-1])
+NewDF[V7225_Index,"V7551"] <- 1
+V7551_Index <- NewDF[,"V7551"] > 1
+NewDF[V7551_Index,"V7551"] <- 0
 
 #5
-median(NewDF[,"V7552"][NewDF[,"V7552"]>-1])
+V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>-1])
+NewDF[V7552_Index,"V7552"] <- 1
+V7552_Index <- NewDF[,"V7552"] > 1
+NewDF[V7552_Index,"V7552"] <- 0
 
-median(NewDF[,"V7552"][NewDF[,"V7553"]>-1])
-
-median(NewDF[,"V7552"][NewDF[,"V7589"]>-1])
-
-
-
-NewDF <- replace.value( NewDF, list[,2][convert1Index], from=as.integer(7), to=as.double(1), verbose = FALSE)
+#4
+V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>-1])
+NewDF[V7553_Index,"V7553"] <- 1
+V7553_Index <- NewDF[,"V7553"] > 1
+NewDF[V7553_Index,"V7553"] <- 0
 
 
-#converted 1 index
-index <- NewDF[,"V7112"] == -9
-#table(is.na(data[,"V7101"]))
-NewDF[,"V7112"]
-NewDF[,"V7112D"] <- NewDF[,"V7112"]
-NewDF[,"V7112D"][index] <- 0
-NewDF[,"V7112D"][!index] <- NewDF[,"V7112"][!index]
+#4
+V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>-1])
+NewDF[V7562_Index,"V7562"] <- 1
+V7562_Index <- NewDF[,"V7562"] > 1
+NewDF[V7562_Index,"V7562"] <- 0
 
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
+
+#2
+V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>-1])
+NewDF[V7563_Index,"V7563"] <- 1
+V7563_Index <- NewDF[,"V7563"] > 1
+NewDF[V7563_Index,"V7563"] <- 0
+
 
 #correlation matrix
 res <- cor(NewDF)
