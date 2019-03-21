@@ -209,9 +209,14 @@ NewDF[,"V507NC"] <- NewDF[,"V507"] == 2
 NewDF[,"V507W"] <- NewDF[,"V507"] == 4
 
 #for those that equal 1, report so I can assign a new value 
-NewDF[,"V507NE"][NewDF[,"V507NE"] == 1] <- 1
-NewDF[,"V507NC"][NewDF[,"V507NC"] == 1] <- 1
-NewDF[,"V507W"][NewDF[,"V507W"] == 1] <- 1
+#NewDF[,"V507NE"][NewDF[,"V507NE"] == 1] <- 1
+#NewDF[,"V507NC"][NewDF[,"V507NC"] == 1] <- 1
+#NewDF[,"V507W"][NewDF[,"V507W"] == 1] <- 1
+
+#0 to -1
+NewDF[,"V507NE"][NewDF[,"V507NE"] == 0] <- -1
+NewDF[,"V507NC"][NewDF[,"V507NC"] == 0] <- -1
+NewDF[,"V507W"][NewDF[,"V507W"] == 0] <- -1
 
 drop <- c("V507")
 
