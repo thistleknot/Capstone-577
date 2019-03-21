@@ -6,6 +6,7 @@ library(plyr)
 require("RPostgreSQL")
 library(RPostgreSQL)
 require(ggplot2)
+library(anchors)
 
 pw <- {"Read1234"}
 
@@ -104,10 +105,10 @@ write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
 
 library(corrplot)
 #colnames(NewDF)
-fa
+
 summary(NewDF)
 
-list[,2]
+#list[,2]
 
 NewDF <- data[,(c(col.num))]
 
@@ -124,11 +125,24 @@ length(colnames(NewDF))
 #index <- df$b == 0
 #df$est[index] <- (df$a[index] - 5)/2.533 
 
+convert1Index <- list[,2] == 1
+list[,1][convert1Index]
+
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(-9), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(-8), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(1), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(2), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(3), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(4), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(5), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(6), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(7), to=as.double(1), verbose = FALSE)
+
 #converted 1 index
 index <- NewDF[,"V7112"] == -9
+#table(is.na(data[,"V7101"]))
+NewDF[,"V7112"]
 NewDF[,"V7112D"] <- NewDF[,"V7112"]
-#NewDF[,"V7112"][index]
-#NewDF[index,"V7112"]
 NewDF[,"V7112D"][index] <- 0
 NewDF[,"V7112D"][!index] <- NewDF[,"V7112"][!index]
 
@@ -144,7 +158,7 @@ colnames(NewDF)
 #colnames(NewDF)
 
 #ecdf(NewDF)
-plot(ecdf(NewDF[,2]))
+#plot(ecdf(NewDF[,1]))
 #View(ecdf(NewDF[,2]))
 
 colnames(NewDF)
@@ -158,11 +172,15 @@ colnames(colList) <- "V1"
 
 #corrplot(res, method = "square")
 
-library(anchors)
+colnames(NewDF)
+
+
 boxplot(NewDF)
 summary(NewDF)
 
-colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,2])
+
+
+colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,3])
   
 #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
 join(colList,list)
