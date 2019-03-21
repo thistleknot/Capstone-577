@@ -129,6 +129,7 @@ length(colnames(NewDF))
 
 convert1Index <- list[,2] == 1
 convert2Index <- list[,2] == 2
+convert3Index <- list[,2] == 3
 #list[,1][convert1Index]
 
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(-1), verbose = FALSE)
@@ -172,13 +173,11 @@ NewDF[V7553_Index,"V7553"] <- 1
 V7553_Index <- NewDF[,"V7553"] > 1
 NewDF[V7553_Index,"V7553"] <- 0
 
-
 #4
 V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>-1])
 NewDF[V7562_Index,"V7562"] <- 1
 V7562_Index <- NewDF[,"V7562"] > 1
 NewDF[V7562_Index,"V7562"] <- 0
-
 
 #2
 V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>-1])
@@ -186,6 +185,18 @@ NewDF[V7563_Index,"V7563"] <- 1
 V7563_Index <- NewDF[,"V7563"] > 1
 NewDF[V7563_Index,"V7563"] <- 0
 
+#NewDF[convert3Index] >= 4
+
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(1), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(2), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(3), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(4), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(5), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(6), to=as.double(1), verbose = FALSE)
+
+#exclude rows with -1
+#https://stackoverflow.com/questions/8244021/remove-specific-rows-from-a-data-frame
+NewDF[ ! NewDF %in% c(-1), ]
 
 #correlation matrix
 res <- cor(NewDF)
