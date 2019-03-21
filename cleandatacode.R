@@ -62,6 +62,7 @@ colnames(data)
 #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
 
 col.num <- which(colnames(data) %in% as.character(list[,1]))
+#col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
 
 # loads the PostgreSQL driver
 pg <- dbDriver("PostgreSQL")
@@ -96,32 +97,57 @@ df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
 
 #boxplot(NewDF)
 #summary(NewDF)
-#View(na_count(NewDF))
+View(na_count(NewDF))
+
 table(is.na(NewDF))
 write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
 
 library(corrplot)
 #colnames(NewDF)
-
+fa
 summary(NewDF)
 
 list[,2]
 
 NewDF <- data[,(c(col.num))]
+
+library(dplyr) 
+
+#drop na's
+#https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
+NewDF <- NewDF %>% filter_all(all_vars(!is.na(.)))
+
 length(colnames(NewDF))
-length(colnames(list[,1]))
+
+#transformations
+#https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
+#index <- df$b == 0
+#df$est[index] <- (df$a[index] - 5)/2.533 
+
+#converted 1 index
+index <- NewDF[,"V7112"] == -9
+NewDF[,"V7112D"] <- NewDF[,"V7112"]
+#NewDF[,"V7112"][index]
+#NewDF[index,"V7112"]
+NewDF[,"V7112D"][index] <- 0
+NewDF[,"V7112D"][!index] <- NewDF[,"V7112"][!index]
+
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
 
 #correlation matrix
 res <- cor(NewDF)
-
 colnames(NewDF)
+#View(res)
+#colnames(NewDF)
 
 #ecdf(NewDF)
 plot(ecdf(NewDF[,2]))
 #View(ecdf(NewDF[,2]))
 
 colnames(NewDF)
-test<-list(c(col.num))
 
 colnames(res)
 
@@ -130,16 +156,11 @@ colnames(res)
 colList <- data.frame(colnames(NewDF))
 colnames(colList) <- "V1"
 
-corrplot(res, method = "square")
+#corrplot(res, method = "square")
 
 library(anchors)
 boxplot(NewDF)
-NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
-NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
-#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
 summary(NewDF)
-
 
 colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,2])
   
