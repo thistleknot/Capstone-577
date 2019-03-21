@@ -38,7 +38,7 @@ data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
 
 list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 
-#dim(data)
+# dim(data)
 # check missing with for loop
 # The below code gives the number of missing values for each variables
 
@@ -80,6 +80,8 @@ conn = dbConnect(drv=pg
 dbExistsTable(conn, "temp_table_data")
 
 NewDF <- data[,(c(col.num))]
+
+#V7589 empty
 
 #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
 #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
@@ -126,10 +128,11 @@ length(colnames(NewDF))
 #df$est[index] <- (df$a[index] - 5)/2.533 
 
 convert1Index <- list[,2] == 1
-list[,1][convert1Index]
+convert2Index <- list[,2] == 2
+#list[,1][convert1Index]
 
-NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(-9), to=as.double(-1), verbose = FALSE)
-NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(-8), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(-1), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(1), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(2), to=as.double(1), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(3), to=as.double(1), verbose = FALSE)
@@ -137,6 +140,28 @@ NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(4), to=a
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(5), to=as.double(1), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(6), to=as.double(1), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(7), to=as.double(1), verbose = FALSE)
+
+#https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
+#7 for grades
+median(NewDF[,"V7221"][NewDF[,"V7221"]>-1])
+
+#5 for college grad father
+median(NewDF[,"V7215"][NewDF[,"V7215"]>-1])
+
+#4 #hours for computer use for internet leisure
+median(NewDF[,"V7551"][NewDF[,"V7551"]>-1])
+
+#5
+median(NewDF[,"V7552"][NewDF[,"V7552"]>-1])
+
+median(NewDF[,"V7552"][NewDF[,"V7553"]>-1])
+
+median(NewDF[,"V7552"][NewDF[,"V7589"]>-1])
+
+
+
+NewDF <- replace.value( NewDF, list[,2][convert1Index], from=as.integer(7), to=as.double(1), verbose = FALSE)
+
 
 #converted 1 index
 index <- NewDF[,"V7112"] == -9
@@ -177,6 +202,7 @@ colnames(NewDF)
 
 boxplot(NewDF)
 summary(NewDF)
+nEWdf[,]
 
 
 
