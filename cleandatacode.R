@@ -31,7 +31,10 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 #write.csv(d_combined, file = "MyData.csv")
 #data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
 
-data <- d_combined
+write.csv(d_combined,paste0(sourceDir,"combined.csv"))
+
+data <- read.csv(paste0(sourceDir,"combined.csv"), header=FALSE, sep=,)
+
 list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 
 #dim(data)
@@ -89,6 +92,8 @@ df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
 
 #identical(NewDF, df_postgres)
 
+#v508 was dropped or v8528
+
 #boxplot(NewDF)
 #summary(NewDF)
 View(na_count(NewDF))
@@ -97,12 +102,22 @@ write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
 
 library(corrplot)
 #colnames(NewDF)
-res <- cor(NewDF)
+
+summary(NewDF)
+
 list[,2]
 length(colnames(NewDF))
 length(colnames(list[,1]))
 
 NewDF <- data[,(c(col.num))]
+#correlation matrix
+res <- cor(NewDF)
+
+colnames(NewDF)
+
+ecdf(NewDF)
+plot(ecdf(NewDF[,2]))
+#View(ecdf(NewDF[,2]))
 
 colnames(NewDF)
 test<-list(c(col.num))
@@ -118,7 +133,6 @@ corrplot(res, method = "square")
 
 colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,2])
   
-
 #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
 join(colList,list)
 colListNames <- paste(join(colList,list)[,1],join(colList,list)[,2])
