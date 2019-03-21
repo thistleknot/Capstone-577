@@ -33,7 +33,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 write.csv(d_combined,paste0(sourceDir,"combined.csv"))
 
-data <- read.csv(paste0(sourceDir,"combined.csv"), header=FALSE, sep=,)
+data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
 
 list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
 
@@ -96,7 +96,7 @@ df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
 
 #boxplot(NewDF)
 #summary(NewDF)
-View(na_count(NewDF))
+#View(na_count(NewDF))
 table(is.na(NewDF))
 write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
 
@@ -106,16 +106,17 @@ library(corrplot)
 summary(NewDF)
 
 list[,2]
+
+NewDF <- data[,(c(col.num))]
 length(colnames(NewDF))
 length(colnames(list[,1]))
 
-NewDF <- data[,(c(col.num))]
 #correlation matrix
 res <- cor(NewDF)
 
 colnames(NewDF)
 
-ecdf(NewDF)
+#ecdf(NewDF)
 plot(ecdf(NewDF[,2]))
 #View(ecdf(NewDF[,2]))
 
@@ -130,6 +131,15 @@ colList <- data.frame(colnames(NewDF))
 colnames(colList) <- "V1"
 
 corrplot(res, method = "square")
+
+library(anchors)
+boxplot(NewDF)
+NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
+#NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(1), to=as.double(.5), verbose = FALSE)
+summary(NewDF)
+
 
 colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,2])
   
