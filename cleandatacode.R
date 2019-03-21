@@ -194,9 +194,13 @@ NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(4), to=a
 NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(5), to=as.double(1), verbose = FALSE)
 NewDF <- replace.value( NewDF, list[,1][convert3Index], from=as.integer(6), to=as.double(1), verbose = FALSE)
 
-#exclude rows with -1
-#https://stackoverflow.com/questions/8244021/remove-specific-rows-from-a-data-frame
-NewDF[ ! NewDF %in% c(-1), ]
+#https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
+#kills the analysis
+NewDF[NewDF == -1] <- -2
+NewDF[NewDF == 0] <- -1
+NewDF[NewDF == -2] <- 0
+
+#filtered <- NewDF[complete.cases(NewDF), ]
 
 #correlation matrix
 res <- cor(NewDF)
@@ -221,18 +225,14 @@ colnames(colList) <- "V1"
 
 colnames(NewDF)
 
-
-boxplot(NewDF)
-summary(NewDF)
-nEWdf[,]
-
-
+#boxplot(NewDF)
+#summary(NewDF)
 
 colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,3])
   
 #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
 join(colList,list)
-colListNames <- paste(join(colList,list)[,1],join(colList,list)[,2])
+colListNames <- paste(join(colList,list)[,1],join(colList,list)[,3])
 
 colnames(res)<-colListNames
 corrplot(res, method = "square")
