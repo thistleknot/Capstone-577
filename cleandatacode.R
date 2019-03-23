@@ -140,42 +140,46 @@ NewDF <- replace.value( NewDF, list[,1][convert1Index], from=as.integer(7), to=a
 
 #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
 #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
+
+#7: B+
 V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>-1])
 NewDF[V7221_Index,"V7221"] <- 1
 V7221_Index <- NewDF[,"V7221"] > 1
 NewDF[V7221_Index,"V7221"] <- 0
 
-#5 for college grad father
+#College graduate
+#5: for college grad father
 V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>-1])
 NewDF[V7215_Index,"V7215"] <- 1
 V7215_Index <- NewDF[,"V7215"] > 1
 NewDF[V7215_Index,"V7215"] <- 0
 
+#4: 3-5 Hours Internet
 #4 #hours for computer use for internet leisure
 V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>-1])
 NewDF[V7551_Index,"V7551"] <- 1
 V7551_Index <- NewDF[,"V7551"] > 1
 NewDF[V7551_Index,"V7551"] <- 0
 
-#5
+#5: 6-9 Hours Facebook
 V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>-1])
 NewDF[V7552_Index,"V7552"] <- 1
 V7552_Index <- NewDF[,"V7552"] > 1
 NewDF[V7552_Index,"V7552"] <- 0
 
-#4
+#4 3-5 Hours Gaming
 V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>-1])
 NewDF[V7553_Index,"V7553"] <- 1
 V7553_Index <- NewDF[,"V7553"] > 1
 NewDF[V7553_Index,"V7553"] <- 0
 
-#4
+#4 3-5 Hours Texting
 V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>-1])
 NewDF[V7562_Index,"V7562"] <- 1
 V7562_Index <- NewDF[,"V7562"] > 1
 NewDF[V7562_Index,"V7562"] <- 0
 
-#2
+#2: <1 Hour talking on cell phone
 V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>-1])
 NewDF[V7563_Index,"V7563"] <- 1
 V7563_Index <- NewDF[,"V7563"] > 1
