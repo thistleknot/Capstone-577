@@ -28,5 +28,3 @@ Steps
 		
 	then run 
 	cleandatacode.r
-
-	jobs@vixenmediagroup.com
