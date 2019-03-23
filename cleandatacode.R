@@ -116,10 +116,6 @@ NewDF <- data[,(c(col.num))]
 
 library(dplyr) 
 
-#drop na's
-#https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
-NewDF <- NewDF %>% filter_all(all_vars(!is.na(.)))
-
 length(colnames(NewDF))
 
 #transformations
@@ -202,58 +198,101 @@ NewDF[NewDF == -2] <- 0
 
 #filtered <- NewDF[complete.cases(NewDF), ]
 
-#for those that are true, assign 1, else false
-#base is South, which is 3
-NewDF[,"V507NE"] <- NewDF[,"V507"] == 1
-NewDF[,"V507NC"] <- NewDF[,"V507"] == 2
-NewDF[,"V507W"] <- NewDF[,"V507"] == 4
-
-#for those that equal 1, report so I can assign a new value 
-#NewDF[,"V507NE"][NewDF[,"V507NE"] == 1] <- 1
-#NewDF[,"V507NC"][NewDF[,"V507NC"] == 1] <- 1
-#NewDF[,"V507W"][NewDF[,"V507W"] == 1] <- 1
-
-#0 to -1
-NewDF[,"V507NE"][NewDF[,"V507NE"] == 0] <- -1
-NewDF[,"V507NC"][NewDF[,"V507NC"] == 0] <- -1
-NewDF[,"V507W"][NewDF[,"V507W"] == 0] <- -1
-
-drop <- c("V507")
-
-NewDF = NewDF[,!(names(NewDF) %in% drop)]
-
-#correlation matrix
-res <- cor(NewDF)
-colnames(NewDF)
-#View(res)
-#colnames(NewDF)
-
-#ecdf(NewDF)
-#plot(ecdf(NewDF[,1]))
-#View(ecdf(NewDF[,2]))
-
-colnames(NewDF)
-
-colnames(res)
-
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
 #merge(colList, list, by = "V1")[,2]
-colList <- data.frame(colnames(NewDF))
-colnames(colList) <- "V1"
 
-#corrplot(res, method = "square")
+yIndex <- list[,4] == 0
+lGeographyIndex <- list[,4] == 1
+lGenderIndex <- list[,4] == 2
+lGPAIndex <- list[,4] == 3
+lViolenceIndex <- list[,4] == 4
+lFather1Index <- list[,4] == 5
+lFather2Index <- list[,4] == 6
+lHabitsIndex <- list[,4] == 7
+lHealthIndex <- list[,4] == 8
+lPsycheIndex <- list[,4] == 9
 
-colnames(NewDF)
+y <- c()
+for (iterator in 1:sum(yIndex))
+{
+  y <- list[yIndex,][iterator,]
 
-#boxplot(NewDF)
-#summary(NewDF)
+  #val = 1
+  for (val in 1:9)
+  {
+    #val = 3
+    if (val == 1) colList <- list[lGeographyIndex,]
+    if (val == 2) colList <- list[lGenderIndex,]
+    if (val == 3) colList <- list[lGPAIndex,]
+    if (val == 4) colList <- list[lViolenceIndex,]
+    if (val == 5) colList <- list[lFather1Index,]
+    if (val == 6) colList <- list[lFather2Index,]
+    if (val == 7) colList <- list[lHabitsIndex,]
+    if (val == 8) colList <- list[lHealthIndex,]
+    if (val == 9) colList <- list[lPsycheIndex,]
+    
+    #colList <- rbind(list[yIndex,],colList)
+    colList <- rbind(y,colList)
+    
+    #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+    join(colList,list)
+    colListNames <- paste(join(colList,list)[,1],join(colList,list)[,3])
+    
+    #colList <- c()
+    #colList <- join(colList,list)
 
-colListNames <- paste(merge(list, colList, by = "V1")[,1],merge(colList, list, by = "V1")[,3])
+    #c(join(colList,list)[,1])
+    newList <-  join(colList,list[,c(1,3)])[,1, drop=TRUE]
+    
+    #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+    newList2 <- droplevels(newList, exclude = if(anyNA(levels(x))) NULL else NA)
+    
+    temp <- NewDF[,newList2]
+    colnames(temp) <- newList2 
+    temp[temp == 0] <- NA
+    trows <- nrow(temp)
+    #% na's
+    colSums(is.na(temp))/trows
+
+    #drop na's
+    #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
+    templist <- temp %>% filter_all(all_vars(!is.na(.)))
+    #NewDF[,"V7101"]
+    #colnames(NewDF)
+    
+    if (val == 1)
+    {
+      colnames(templist)
+      templist[,"V507NE"] <- templist[,"V507"] == 1
+      templist[,"V507NE"][templist[,"V507NE"] == 0] <- -1
+      templist[,"V507NC"] <- templist[,"V507"] == 2
+      templist[,"V507NC"][templist[,"V507NC"] == 0] <- -1
+      templist[,"V507W"] <- templist[,"V507"] == 4
+      templist[,"V507W"][templist[,"V507W"] == 0] <- -1
+
+      table(is.na(templist))
+      
+      drop <- c("V507")
+      templistNoGeo = templist[,!(names(templist) %in% drop)]
+      colnames(templistNoGeo)
+      templist <- c()
+      templist <- templistNoGeo
+    }
+
+    
+    res <- cor(templist)
+    
+ 
+    if(val==1) colnames(res)<-colnames(templist)
+    if(val>1) colnames(res)<-colListNames
+
+    if(nrow(templist)>0)
+    {
+      corrplot(res, method = "square")
+      write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
+    }
   
-#https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-join(colList,list)
-colListNames <- paste(join(colList,list)[,1],join(colList,list)[,3])
+  
+  }
+}
 
-colnames(res)<-colListNames
-corrplot(res, method = "square")
-write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
