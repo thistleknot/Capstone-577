@@ -147,13 +147,13 @@ NewDF[V7221_Index,"V7221"] <- 0
 
 #5 for college grad father
 V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>-1])
-NewDF[V7225_Index,"V7215"] <- 1
+NewDF[V7215_Index,"V7215"] <- 1
 V7215_Index <- NewDF[,"V7215"] > 1
 NewDF[V7215_Index,"V7215"] <- 0
 
 #4 #hours for computer use for internet leisure
 V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>-1])
-NewDF[V7225_Index,"V7551"] <- 1
+NewDF[V7551_Index,"V7551"] <- 1
 V7551_Index <- NewDF[,"V7551"] > 1
 NewDF[V7551_Index,"V7551"] <- 0
 
@@ -213,11 +213,15 @@ lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
 
 y <- c()
+#y iterator's
+#iterator=1
 for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
 
   #val = 1
+  
+  #categories
   for (val in 1:9)
   {
     #val = 3
@@ -257,6 +261,7 @@ for (iterator in 1:sum(yIndex))
     #drop na's
     #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
     templist <- temp %>% filter_all(all_vars(!is.na(.)))
+    #nrow(tempList)
     #NewDF[,"V7101"]
     #colnames(NewDF)
     
@@ -291,6 +296,7 @@ for (iterator in 1:sum(yIndex))
       corrplot(res, method = "square")
       write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
     }
+    summary(templist)
   
   
   }
