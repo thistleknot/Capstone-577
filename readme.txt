@@ -1,3 +1,6 @@
+filterlist.txt
+	columns
+	factor id, description, conversion profile, y variable flag
 
 Prerequisites
 	PostgreSQL-10.4-1-win64-bigsql
@@ -26,4 +29,4 @@ Steps
 	then run 
 	cleandatacode.r
 
-	
+	jobs@vixenmediagroup.com
