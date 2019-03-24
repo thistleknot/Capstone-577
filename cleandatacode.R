@@ -250,13 +250,14 @@ for (iterator in 1:sum(yIndex))
     #colList <- join(colList,list)
 
     #c(join(colList,list)[,1])
-    newList <-  join(colList,list[,c(1,3)])[,1, drop=TRUE]
+    newList <-  as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE])
     
     #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-    newList2 <- droplevels(newList, exclude = if(anyNA(levels(x))) NULL else NA)
+    #droplevels(newList)
+    #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
     
-    temp <- NewDF[,newList2]
-    colnames(temp) <- newList2 
+    temp <- NewDF[,newList]
+    colnames(temp) <- newList
     temp[temp == 0] <- NA
     trows <- nrow(temp)
     #% na's
@@ -299,9 +300,8 @@ for (iterator in 1:sum(yIndex))
     {
       corrplot(res, method = "square")
       write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
+      print(summary(templist))
     }
-    summary(templist)
-  
   
   }
 }
