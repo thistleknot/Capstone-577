@@ -64,6 +64,7 @@ colnames(data)
 
 #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
 
+#load from filterlist.txt
 col.num <- which(colnames(data) %in% as.character(list[,1]))
 #col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
 
@@ -148,7 +149,7 @@ NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), ve
 NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
 
 #7: B+
-V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>1])
+V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
 NewDF[V7221_Index,"V7221"] <- 1
 V7221_Index <- NewDF[,"V7221"] > 1
 NewDF[V7221_Index,"V7221"] <- 0
