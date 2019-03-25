@@ -226,6 +226,8 @@ lHabitsIndex <- list[,4] == 7
 lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
 
+set.seed(5)
+
 y <- c()
 #y iterator's
 #iterator=1
