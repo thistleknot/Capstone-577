@@ -7,6 +7,8 @@ require("RPostgreSQL")
 library(RPostgreSQL)
 require(ggplot2)
 library(anchors)
+require(caret)
+library(caret)
 
 pw <- {"Read1234"}
 
@@ -257,6 +259,7 @@ for (iterator in 1:sum(yIndex))
     #colList <- join(colList,list)
 
     #c(join(colList,list)[,1])
+    #join,then only use 1st column
     newList <-  as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE])
     
     #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
@@ -264,7 +267,7 @@ for (iterator in 1:sum(yIndex))
     #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
     
     temp <- NewDF[,newList]
-    colnames(temp) <- newList
+  #colnames(temp) <- paste(newList[,1],newList[,3])
     temp[temp == 0] <- NA
     trows <- nrow(temp)
     #% na's
@@ -294,24 +297,56 @@ for (iterator in 1:sum(yIndex))
       colnames(templistNoGeo)
       templist <- c()
       templist <- templistNoGeo
+      #colnames(templist) <- paste(join(templist,list)[,1],join(templist,list)[,3])
     }
 
+    #partition data before PCA 
     
-    res <- cor(templist)
     
- 
-    if(val==1) colnames(res)<-colnames(templist)
-    if(val>1) colnames(res)<-colListNames
+   
+    #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
+    
+    
+    #templist[,as.character(y[,1])]
 
-    if(nrow(templist)>0)
-    {
-      corrplot(res, method = "square")
-      write.csv(res,paste0(sourceDir,"correlationMatrix.csv"))
-      print(summary(templist))
+    
+    data <- templist
+    nrFolds <- 10
+    
+    # generate array containing fold-number for each sample (row)
+    folds <- rep_len(1:nrFolds, nrow(data))
+    
+    folds <- sample(folds, nrow(data))
+    
+    # actual cross validation
+    for(k in 1:nrFolds) {
+      # actual split of the data
+      fold <- which(folds == k)
+      
+      #PCA
+      data.train <- data[-fold,]
+      data.test <- data[fold,]
+      
+      #data.validation <- data.test[1:as.integer(nrow(data.test)/2),]
+      #data.test <- data.pretest[as.integer(nrow(data.test)/2)+1:,]
+      
+      res <- cor(data.train)
+      corrplot(res)
+      
+      # train and test your model with data.train and data.test
     }
+    
+  summary(NewDF)
+
   
   }
-  summary(NewDF)
   
 }
+
+filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,])    
+filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
+colnames(filtered) <- paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE]))
+res2 <- cor(filtered)
+corrplot(res2)
+#special subset of Habits, Health, and Psyche
 

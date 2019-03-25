@@ -1,33 +1,40 @@
-filterlist.txt
-	columns
-	factor id, description, conversion profile, category flag
+Input
+	filterlist.txt (github)
+		columns
+		factor id, description, conversion profile, category flag
 
-Prerequisites
-	PostgreSQL-10.4-1-win64-bigsql
-		set pw to Read1234
+	Prerequisites
+		PostgreSQL-10.4-1-win64-bigsql
+			set pw to Read1234
 
-	pgadmin4-4.3-x86
+		pgadmin4-4.3-x86
 
-
-Update 
-	in cleandatacode.r
-		sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+	Update 
+		in cleandatacode.r
+			sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+			
+		put following files in folder
 		
-	put following files in folder
-	
-		34574-0001-Data.csv
-		34574-0001-Data.csv
-		36149-0001-Data.csv
-		36407-0001-Data.csv
-		36799-0001-Data.csv
-		37183-0001-Data.csv
+		share drive
+		https://drive.google.com/drive/u/1/folders/1K-_ZnaQxEPVFo9iXG5w1GO6Zd_Z21Dv9
+		
+			34574-0001-Data.csv
+			34574-0001-Data.csv
+			36149-0001-Data.csv
+			36407-0001-Data.csv
+			36799-0001-Data.csv
+			37183-0001-Data.csv
+			
+			or
+			
+			combined.csv (577 share drive)
 	
 Steps
 	createdb.bat
 		creates database
 		
 	then run 
-	cleandatacode.r
+		cleandatacode.r
 
 Category Flags
 	Y's (0)
