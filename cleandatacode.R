@@ -326,9 +326,18 @@ for (iterator in 1:sum(yIndex))
       # actual split of the data
       fold <- which(folds == k)
       
-      #PCA
+      
       data.train <- data[-fold,]
       data.test <- data[fold,]
+      
+      #PCA
+      #head(iris)
+      d<-data.train
+      #head(d)
+      pc <- princomp (d, cor=TRUE, score=TRUE)
+      summary(pc)
+      
+      
       
       #data.validation <- data.test[1:as.integer(nrow(data.test)/2),]
       #data.test <- data.pretest[as.integer(nrow(data.test)/2)+1:,]
