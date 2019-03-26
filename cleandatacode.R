@@ -10,6 +10,8 @@ library(anchors)
 require(caret)
 library(caret)
 
+library(MASS)
+
 pw <- {"Read1234"}
 
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
@@ -304,20 +306,16 @@ for (iterator in 1:sum(yIndex))
     }
 
     #partition data before PCA 
-    
-    
-   
     #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
-    
     
     #templist[,as.character(y[,1])]
 
-    
     data <- templist
     nrFolds <- 10
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
+    
     
     folds <- sample(folds, nrow(data))
     
@@ -326,9 +324,32 @@ for (iterator in 1:sum(yIndex))
       # actual split of the data
       fold <- which(folds == k)
       
-      
       data.train <- data[-fold,]
       data.test <- data[fold,]
+      
+      full.model <- lm(data.train)
+      
+      #full.model <- lm(y=data.train[,1], x=data.train[,-1])
+      
+      #significance
+      #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
+      
+      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+  
+      # Fit the full model 
+
+      # Stepwise regression model
+      
+      #stepwise regression
+      #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+      
+      summary(full.model)
+      
+      
+
+      lm.res <- summary(full.model)
+      coef(lm.res)[,4]
+      View(full.model)
       
       #PCA
       #head(iris)
@@ -355,7 +376,7 @@ for (iterator in 1:sum(yIndex))
   
 }
 
-filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,])    
+filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
 filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
 colnames(filtered) <- paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE]))
 res2 <- cor(filtered)
