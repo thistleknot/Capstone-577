@@ -316,9 +316,17 @@ for (iterator in 1:sum(yIndex))
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
     
-    
     folds <- sample(folds, nrow(data))
     
+    #https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/
+    reduced <- c()
+    reduced <- c(numeric(length(data.train[,-1])),numeric(length = nrFolds))
+    
+    #https://www.tutorialspoint.com/r/r_arrays.htm
+    vector1 <- length(data.train[,-1])
+    vector2 <- numeric(length = nrFolds)
+    result <- array(c(vector1,vector2),dim = c(3,3,2))
+      
     # actual cross validation
     for(k in 1:nrFolds) {
       # actual split of the data
@@ -344,21 +352,11 @@ for (iterator in 1:sum(yIndex))
       #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
       
       summary(full.model)
-      
-      
-
       lm.res <- summary(full.model)
       coef(lm.res)[,4]
       View(full.model)
       
-      #PCA
-      #head(iris)
-      d<-data.train
-      #head(d)
-      pc <- princomp (d, cor=TRUE, score=TRUE)
-      summary(pc)
-      
-      
+      #lm(y~pc$sdev[1:3]
       
       #data.validation <- data.test[1:as.integer(nrow(data.test)/2),]
       #data.test <- data.pretest[as.integer(nrow(data.test)/2)+1:,]
@@ -367,7 +365,84 @@ for (iterator in 1:sum(yIndex))
       corrplot(res)
       
       # train and test your model with data.train and data.test
+      
+      #Regression model
+      full.model.train <- lm(data.train[,1]~., data=data.train)
+      full.model.test <- lm(data.test[,1]~., data=data.test)
+      
+      #full.model <- lm(y=data.train[,1], x=data.train[,-1])
+      
+      #significance()
+      #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
+      
+      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+      
+      # Fit the full model 
+      
+      # Stepwise regression model
+      
+      #stepwise regression
+      #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+      step.model.train <- stepAIC(full.model.train, direction = "both", 
+                                  trace = FALSE)
+      step.model.test <- stepAIC(full.model.test, direction = "both", 
+                                 trace = FALSE)
+      
+      reduced[,k] <- data.frame((step.model.train$coefficients))
+      
+      
+      
+      
+      summary(step.model.train)
+      #lm(formula = V8480 ~ V8502 + V8505 + V8509 + V8512 + V8514 + V8536 +
+      #V7501 + V8565, data = data.train)
+      
+      summary(step.model.test) 
+      #lm(formula = V8480 ~ V8502 + V8505 + V8509 + V8514 + V8536 + 
+      #    V7501 + V8565, data = data.test)
+      
+      #Calculating MSE for training data
+      mse.train<- mean(residuals(step.model.train)^2)
+      #mse.train
+      
+      #Calculating RMSE for training data
+      rmse.train <- sqrt(mse.train)
+      #rmse.train
+      
+      #Calculating MSE for testing data
+      mse.test <- mean(residuals(step.model.test)^2)
+      #mse.test
+      
+      #Calculating RMSE for testing data
+      rmse.test <- sqrt(mse.test)
+      #rmse.test
+      
+      #For Training data
+      #V8480= -1.680696+0.136087*V8502+0.183306*V8505-0.125640*V8509-0.031838*V8512-0.143121*V8514+0.256743*V8536-0.022045*V7501+0.506726*V8565
+      
+      #For testing data
+      #V8480= -1.71595+0.14148*V8502+0.15657*V8505-0.14001*V8509-0.14515*V8514+0.22792*V8536-0.02297*V7501+0.533686*V8565
+      
+      #PCA
+      #head(iris)
+      x<-data.train[,-1]
+      y<-data.train[,1]
+      #head(d)
+      pc <- prcomp(x)
+      #pc <- princomp (x, cor=TRUE, score=TRUE)
+      #pc$x[,1]
+      
+      #length(x)
+      pcaModel<- lm(y~pc$x[,1:length(x)])
+      
+      #summary(pcaModel)
+      
+      #summary(pc)
+      
+      #View(pc)
+      
     }
+    #reduced[1]
     
   summary(NewDF)
 

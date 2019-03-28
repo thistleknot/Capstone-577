@@ -1,3 +1,4 @@
+
 head(iris)
 d<-iris[,-5]
 head(d)
