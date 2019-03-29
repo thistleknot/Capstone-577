@@ -325,7 +325,11 @@ for (iterator in 1:sum(yIndex))
     #https://www.tutorialspoint.com/r/r_arrays.htm
     vector1 <- length(data.train[,-1])
     vector2 <- numeric(length = nrFolds)
-    result <- array(c(vector1,vector2),dim = c(3,3,2))
+    
+    result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
+    #result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
+    #result[1:9]
+    #result <- c()
       
     # actual cross validation
     for(k in 1:nrFolds) {
@@ -387,20 +391,17 @@ for (iterator in 1:sum(yIndex))
                                   trace = FALSE)
       step.model.test <- stepAIC(full.model.test, direction = "both", 
                                  trace = FALSE)
+      #reduced[,k] <- data.frame((step.model.train$coefficients))
       
-      reduced[,k] <- data.frame((step.model.train$coefficients))
+      #drop 1st intercept and y
+      names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       
+      print(names)
       
-      
-      
-      summary(step.model.train)
-      #lm(formula = V8480 ~ V8502 + V8505 + V8509 + V8512 + V8514 + V8536 +
-      #V7501 + V8565, data = data.train)
-      
+      #result[k] <- names
+
       summary(step.model.test) 
-      #lm(formula = V8480 ~ V8502 + V8505 + V8509 + V8514 + V8536 + 
-      #    V7501 + V8565, data = data.test)
-      
+
       #Calculating MSE for training data
       mse.train<- mean(residuals(step.model.train)^2)
       #mse.train
@@ -443,7 +444,7 @@ for (iterator in 1:sum(yIndex))
       
     }
     #reduced[1]
-    
+    result
   summary(NewDF)
 
   
