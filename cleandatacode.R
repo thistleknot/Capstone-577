@@ -172,7 +172,6 @@ NewDF[V7551_Index,"V7551"] <- 1
 V7551_Index <- NewDF[,"V7551"] > 1
 #NewDF[V7551_Index,"V7551"] <- -1
 
-
 #5: 6-9 Hours Facebook
 V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
 NewDF[V7552_Index,"V7552"] <- 1
@@ -236,7 +235,9 @@ y <- c()
 for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
-
+  y
+  #yname <- as.character(list[yIndex,][iterator,][,1])
+  #print(as.character(list[yIndex,][iterator,][,1]))
   #val = 1
   
   #categories
@@ -252,7 +253,7 @@ for (iterator in 1:sum(yIndex))
     if (val == 7) colList <- list[lHabitsIndex,]
     if (val == 8) colList <- list[lHealthIndex,]
     if (val == 9) colList <- list[lPsycheIndex,]
-    
+    y <- list[yIndex,][iterator,]
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
     
@@ -358,7 +359,7 @@ for (iterator in 1:sum(yIndex))
       summary(full.model)
       lm.res <- summary(full.model)
       coef(lm.res)[,4]
-      View(full.model)
+      #View(full.model)
       
       #lm(y~pc$sdev[1:3]
       
@@ -434,7 +435,7 @@ for (iterator in 1:sum(yIndex))
       #pc$x[,1]
       
       #length(x)
-      pcaModel<- lm(y~pc$x[,1:length(x)])
+      pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
       
       #summary(pcaModel)
       
@@ -445,7 +446,7 @@ for (iterator in 1:sum(yIndex))
     }
     #reduced[1]
     result
-  summary(NewDF)
+  #summary(NewDF)
 
   
   }
