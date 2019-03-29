@@ -235,7 +235,7 @@ y <- c()
 for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
-  y
+  #y
   #yname <- as.character(list[yIndex,][iterator,][,1])
   #print(as.character(list[yIndex,][iterator,][,1]))
   #val = 1
@@ -273,7 +273,7 @@ for (iterator in 1:sum(yIndex))
     #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
     
     temp <- NewDF[,newList]
-  #colnames(temp) <- paste(newList[,1],newList[,3])
+    #colnames(temp) <- paste(newList[,1],newList[,3])
     temp[temp == 0] <- NA
     trows <- nrow(temp)
     #% na's
@@ -327,11 +327,19 @@ for (iterator in 1:sum(yIndex))
     vector1 <- length(data.train[,-1])
     vector2 <- numeric(length = nrFolds)
     
-    result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
+    #result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
     #result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
     #result[1:9]
     #result <- c()
-      
+
+    names <- c()
+    
+    widthSize <- ncol(data.frame(data.train[,-1]))
+    width <- numeric(length = widthSize)
+    #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
+    klist <- array(width,dim=c(nrFolds,widthSize))
+    
+    print(y)
     # actual cross validation
     for(k in 1:nrFolds) {
       # actual split of the data
@@ -388,16 +396,26 @@ for (iterator in 1:sum(yIndex))
       
       #stepwise regression
       #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
-      step.model.train <- stepAIC(full.model.train, direction = "both", 
-                                  trace = FALSE)
-      step.model.test <- stepAIC(full.model.test, direction = "both", 
-                                 trace = FALSE)
+      
+      #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
+      step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+      step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
       #reduced[,k] <- data.frame((step.model.train$coefficients))
       
       #drop 1st intercept and y
       names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+      #trying to populate a list.
+
+      if (length(names)==0) names <- width
+      #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+      
+      #length(names)
+      klist[k,][1:length(names)] <- names
+      
+      #library(zoo)
       
       print(names)
+      #len(names)
       
       #result[k] <- names
 
@@ -418,13 +436,7 @@ for (iterator in 1:sum(yIndex))
       #Calculating RMSE for testing data
       rmse.test <- sqrt(mse.test)
       #rmse.test
-      
-      #For Training data
-      #V8480= -1.680696+0.136087*V8502+0.183306*V8505-0.125640*V8509-0.031838*V8512-0.143121*V8514+0.256743*V8536-0.022045*V7501+0.506726*V8565
-      
-      #For testing data
-      #V8480= -1.71595+0.14148*V8502+0.15657*V8505-0.14001*V8509-0.14515*V8514+0.22792*V8536-0.02297*V7501+0.533686*V8565
-      
+
       #PCA
       #head(iris)
       x<-data.train[,-1]
@@ -433,21 +445,17 @@ for (iterator in 1:sum(yIndex))
       pc <- prcomp(x)
       #pc <- princomp (x, cor=TRUE, score=TRUE)
       #pc$x[,1]
-      
-      #length(x)
+  
       pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
       
-      #summary(pcaModel)
-      
-      #summary(pc)
-      
-      #View(pc)
-      
     }
+    print(klist)
+    #print(names)
+    #print(result)
+    
     #reduced[1]
-    result
-  #summary(NewDF)
-
+    #result
+    #summary(NewDF)
   
   }
   
