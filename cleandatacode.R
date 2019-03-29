@@ -410,7 +410,7 @@ for (iterator in 1:sum(yIndex))
       #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       
       #length(names)
-      klist[k,][1:length(names)] <- names
+      #klist[k,][1:length(names)] <- names
       
       #library(zoo)
       
