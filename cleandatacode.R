@@ -398,8 +398,28 @@ for (iterator in 1:sum(yIndex))
       #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
       
       #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
-      step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+      testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
+
+      if(!is.null(testCaseTrain$message))
+      {
+        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") break
+      }
+      
+      step.model.train <- step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+
+      testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
+      if(!is.null(testCase$message))
+      {
+        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") break
+      }
+      
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+      #class(testCase)
+      
+      
+      #if(testCase$message!="AIC is -infinity for this model, so 'stepAIC' cannot proceed")
+      
+      
       #reduced[,k] <- data.frame((step.model.train$coefficients))
       
       #drop 1st intercept and y

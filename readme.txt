@@ -51,6 +51,9 @@ Category Flags
 		V8451,1,"#X BEER/LIFETIME",1
 		V7426,1,"#X SMKLESS/EVER",1
 		V7121,1,"#X CRACK/LIFETIM",1
+		
+		#bug:
+			
 		V7124,1,"#XOTH COKE/LIFE",1
 		V7164,1,"#X MDMA/LIFETIM",1
 		V7145,1,"#X STRD/LIFETIME",1
@@ -81,6 +84,8 @@ Category Flags
 
 		Father2 (6)
 			V7215,2,"FATHR EDUC LEVEL",0
+			
+			"Error in stepAIC(full.model.train, direction = "both", trace = FALSE) :"
 					
 		Habits (7)
 			V7551,2,"#HR/W INTERNET S",0
