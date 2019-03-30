@@ -237,7 +237,7 @@ for (iterator in 1:sum(yIndex))
   y <- list[yIndex,][iterator,]
   #y
   #yname <- as.character(list[yIndex,][iterator,][,1])
-  #print(as.character(list[yIndex,][iterator,][,1]))
+  print(as.character(list[yIndex,][iterator,][,1]))
   #val = 1
   
   #categories
@@ -312,7 +312,7 @@ for (iterator in 1:sum(yIndex))
     #templist[,as.character(y[,1])]
 
     data <- templist
-    nrFolds <- 10
+    nrFolds <- 3
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
@@ -339,7 +339,7 @@ for (iterator in 1:sum(yIndex))
     #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
     klist <- array(width,dim=c(nrFolds,widthSize))
     
-    print(y)
+    #print(colnamesy)
     # actual cross validation
     for(k in 1:nrFolds) {
       # actual split of the data
@@ -399,10 +399,13 @@ for (iterator in 1:sum(yIndex))
       
       #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
       testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
-
+      
       if(!is.null(testCaseTrain$message))
       {
-        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") break
+        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") {
+            names <- rownames(data.frame(full.model.train$coefficients))[][-1:-2]
+            break
+          }
       }
       
       step.model.train <- step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
@@ -411,6 +414,7 @@ for (iterator in 1:sum(yIndex))
       if(!is.null(testCase$message))
       {
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") break
+        
       }
       
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)

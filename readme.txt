@@ -53,6 +53,9 @@ Category Flags
 		V7121,1,"#X CRACK/LIFETIM",1
 		
 		#bug:
+		
+			report bug as inclusion of factors as opposed to breaking out of loop
+			also breaking out of loop might result in the rest of the variables not getting reported.
 			
 		V7124,1,"#XOTH COKE/LIFE",1
 		V7164,1,"#X MDMA/LIFETIM",1
