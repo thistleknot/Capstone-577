@@ -434,11 +434,19 @@ for (iterator in 1:sum(yIndex))
       #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       
       #length(names)
-      #klist[k,][1:length(names)] <- names
+      #klist[k,][1:length(names)] <- ifelse(is.na(klist[k,][1:length(names)]), names, klist[k,][1:length(names)])
+      
+      #type conversion tricks
+      castNamesDF <- data.frame(klist[k,][1:length(names)])
+      castNamesDF2 <- data.frame(names[1:length(names)])
+      
+      castNamesDF <- castNamesDF2
+      
+      names <- as.character(castNamesDF[,1])
       
       #library(zoo)
       
-      print(names)
+      #print(names)
       #len(names)
       
       #result[k] <- names
@@ -473,6 +481,9 @@ for (iterator in 1:sum(yIndex))
       pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
       
     }
+    
+    #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
+    #lapply(klist, function(x){ length(which(x==0))/length(x)})    
     print(klist)
     #print(names)
     #print(result)
