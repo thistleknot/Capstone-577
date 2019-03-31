@@ -267,7 +267,7 @@ y <- c()
 
     #c(join(colList,list)[,1])
     #join,then only use 1st column
-    newList <-  as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE])
+    newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
     
     #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
     #droplevels(newList)
@@ -304,7 +304,7 @@ y <- c()
       colnames(templistNoGeo)
       templist <- c()
       templist <- templistNoGeo
-      #colnames(templist) <- paste(join(templist,list)[,1],join(templist,list)[,3])
+      #colnames(templist) <- suppressMessages(paste(join(templist,list)[,1],join(templist,list)[,3]))
     }
 
     #partition data before PCA 
@@ -524,7 +524,7 @@ y <- c()
 
 filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
 filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
-colnames(filtered) <- paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE]))
+colnames(filtered) <- suppressMessages(paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE])))
 res2 <- cor(filtered)
 corrplot(res2)
 #special subset of Habits, Health, and Psyche
