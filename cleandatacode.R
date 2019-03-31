@@ -456,7 +456,7 @@ for (iterator in 1:sum(yIndex))
       #klist[k,][1:length(names)] <- names)
       print(k)
       #print(names)
-      namest <- rbind(names,namest)
+      namest <- data.frame(rbind(names,namest))[,,drop=FALSE]
 
       #testCase <- tryCatch(klist[k,][1:length(names)] <- names), error = function(e) e)
       
