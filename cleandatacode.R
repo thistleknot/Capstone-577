@@ -313,7 +313,7 @@ y <- c()
     #templist[,as.character(y[,1])]
 
     data <- templist
-    nrFolds <- 3
+    nrFolds <- 10
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
@@ -447,23 +447,25 @@ y <- c()
       #klist[k,][1:length(names)] <- ifelse(is.na(klist[k,][1:length(names)]), names, klist[k,][1:length(names)])
       
       #type conversion tricks
-      castNamesDF <- data.frame(klist[k,][1:length(names)])
-      castNamesDF2 <- data.frame(names[1:length(names)])
+      #castNamesDF <- data.frame(klist[k,][1:length(names)])
+      #castNamesDF2 <- data.frame(names[1:length(names)])
       
-      castNamesDF <- castNamesDF2
+      #castNamesDF <- castNamesDF2
       
       #names <- as.character(castNamesDF[,1])
       #klist[k,][1:length(names)] <- names)
       #print(k)
       #print(names)
-      namest <- data.frame(rbind(names,namest))[,,drop=FALSE]
+      #if(k==1) namest <- names
+      #if(!k==1) 
+      namest <- data.frame(rbind(namest,names))[,,drop=FALSE]
 
       #testCase <- tryCatch(klist[k,][1:length(names)] <- names), error = function(e) e)
       
       #if(!is.null(testCase$message))
       #{
         #if(testCase$message=="Error in klist[k, ] <- `*vtmp*` : 
-  #number of items to replace is not a multiple of replacement length") {
+      #number of items to replace is not a multiple of replacement length") {
           #k=1
           #klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
           #break
@@ -512,6 +514,7 @@ y <- c()
     #lapply(klist, function(x){ length(which(x==0))/length(x)})    
     #print(klist)
     print(namest)
+    #View(namest)
     #print(result)
     
     #reduced[1]
