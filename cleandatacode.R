@@ -232,7 +232,7 @@ set.seed(5)
 y <- c()
 #y iterator's
 #iterator=1
-for (iterator in 1:sum(yIndex))
+  for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
   #y
@@ -259,8 +259,8 @@ for (iterator in 1:sum(yIndex))
     colList <- rbind(y,colList)
     
     #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-    join(colList,list)
-    colListNames <- paste(join(colList,list)[,1],join(colList,list)[,3])
+    #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+    colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
     
     #colList <- c()
     #colList <- join(colList,list)
@@ -454,7 +454,7 @@ for (iterator in 1:sum(yIndex))
       
       #names <- as.character(castNamesDF[,1])
       #klist[k,][1:length(names)] <- names)
-      print(k)
+      #print(k)
       #print(names)
       namest <- data.frame(rbind(names,namest))[,,drop=FALSE]
 
