@@ -242,6 +242,7 @@ for (iterator in 1:sum(yIndex))
   
   #categories
   for (val in 1:9)
+    #val=8
   {
     #val = 3
     if (val == 1) colList <- list[lGeographyIndex,]
@@ -333,15 +334,20 @@ for (iterator in 1:sum(yIndex))
     #result <- c()
 
     names <- c()
+    namest <- c()
     
-    widthSize <- ncol(data.frame(data.train[,-1]))
-    width <- numeric(length = widthSize)
+    #widthSize <- ncol(data.frame(data.train[,-1]))
+    #width <- numeric(length = widthSize)
+    #width <- numeric(length = ncol(data.frame(data.train[,-1])))
     #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
-    klist <- array(width,dim=c(nrFolds,widthSize))
+    klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
+    #array(width,dim=c(nrFolds,widthSize))
     
     #print(colnamesy)
     # actual cross validation
+    #k=2
     for(k in 1:nrFolds) {
+
       # actual split of the data
       fold <- which(folds == k)
       
@@ -404,6 +410,9 @@ for (iterator in 1:sum(yIndex))
       {
         if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") {
             names <- rownames(data.frame(full.model.train$coefficients))[][-1:-2]
+            print(k)
+            print(names)
+            print("breaking")
             break
           }
       }
@@ -413,25 +422,26 @@ for (iterator in 1:sum(yIndex))
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
       if(!is.null(testCase$message))
       {
-        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") break
-        
+        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
+        {
+          print("breaking")
+          break
+        }
       }
       
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
       #class(testCase)
       
-      
       #if(testCase$message!="AIC is -infinity for this model, so 'stepAIC' cannot proceed")
-      
-      
+
       #reduced[,k] <- data.frame((step.model.train$coefficients))
       
       #drop 1st intercept and y
-      names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+      #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       #trying to populate a list.
 
-      if (length(names)==0) names <- width
-      #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+      #if (length(names)==0) names <- width
+      names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       
       #length(names)
       #klist[k,][1:length(names)] <- ifelse(is.na(klist[k,][1:length(names)]), names, klist[k,][1:length(names)])
@@ -442,7 +452,23 @@ for (iterator in 1:sum(yIndex))
       
       castNamesDF <- castNamesDF2
       
-      names <- as.character(castNamesDF[,1])
+      #names <- as.character(castNamesDF[,1])
+      #klist[k,][1:length(names)] <- names)
+      print(k)
+      #print(names)
+      namest <- rbind(names,namest)
+
+      #testCase <- tryCatch(klist[k,][1:length(names)] <- names), error = function(e) e)
+      
+      #if(!is.null(testCase$message))
+      #{
+        #if(testCase$message=="Error in klist[k, ] <- `*vtmp*` : 
+  #number of items to replace is not a multiple of replacement length") {
+          #k=1
+          #klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
+          #break
+        #}
+      #}
       
       #library(zoo)
       
@@ -484,8 +510,8 @@ for (iterator in 1:sum(yIndex))
     
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
     #lapply(klist, function(x){ length(which(x==0))/length(x)})    
-    print(klist)
-    #print(names)
+    #print(klist)
+    print(namest)
     #print(result)
     
     #reduced[1]
