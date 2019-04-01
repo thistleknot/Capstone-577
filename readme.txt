@@ -27,9 +27,7 @@ Input
 			
 			or
 			
-			combined.csv (577 share drive)
-	
-	seed 5 factor reduced results commit.txt
+			combined.csv (577 share drive)	
 	
 Steps
 	createdb.bat
@@ -117,8 +115,11 @@ Category Flags
 			V7501,3,"OFTN FEEL LONELY",0
 			V7507,3,"OFT WSH MOR FRND",0
 			V8565,3,"I AM OFTEN BORED",0
-			
-Identified relationships as of commit 3063ef8
+
+seed 5 factor reduced results commit.txt			
+
+	Milestone 1
+		Identified relationships as of commit 3063ef8
 
 	[1] "V7133"
 
