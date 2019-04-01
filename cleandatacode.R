@@ -336,8 +336,8 @@ y <- c()
     names <- c()
     namest <- c()
     
-    #widthSize <- ncol(data.frame(data.train[,-1]))
-    #width <- numeric(length = widthSize)
+    widthSize <- ncol(data.frame(data.train[,-1]))
+    width <- numeric(length = widthSize)
     #width <- numeric(length = ncol(data.frame(data.train[,-1])))
     #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
     klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
@@ -345,7 +345,7 @@ y <- c()
     
     #print(colnamesy)
     # actual cross validation
-    #k=2
+    #k=1
     for(k in 1:nrFolds) {
 
       # actual split of the data
@@ -409,9 +409,14 @@ y <- c()
       if(!is.null(testCaseTrain$message))
       {
         if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") {
-            names <- rownames(data.frame(full.model.train$coefficients))[][-1:-2]
-            print(k)
-            print(names)
+            #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+            
+            #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
+            #https://community.rstudio.com/t/type-error-after-rbind/16866/2
+            names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
+            namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
+            #print(k)
+            #print(names)
             print("breaking")
             break
           }
@@ -424,11 +429,13 @@ y <- c()
       {
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
         {
+          names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
+          namest <- data.frame(rbind(namest,names))[,,drop=FALSE]           
           print("breaking")
           break
         }
       }
-      
+
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
       #class(testCase)
       
@@ -441,8 +448,15 @@ y <- c()
       #trying to populate a list.
 
       #if (length(names)==0) names <- width
-      names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
       
+      if(is.null(testCaseTrain$message)&&is.null(testCaseTrain$message))
+      {
+        names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
+        namest <- data.frame(rbind(namest,names))[,,drop=FALSE]
+        
+        print(names)
+      }
+
       #length(names)
       #klist[k,][1:length(names)] <- ifelse(is.na(klist[k,][1:length(names)]), names, klist[k,][1:length(names)])
       
@@ -458,7 +472,6 @@ y <- c()
       #print(names)
       #if(k==1) namest <- names
       #if(!k==1) 
-      namest <- data.frame(rbind(namest,names))[,,drop=FALSE]
 
       #testCase <- tryCatch(klist[k,][1:length(names)] <- names), error = function(e) e)
       
@@ -513,7 +526,9 @@ y <- c()
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
     #lapply(klist, function(x){ length(which(x==0))/length(x)})    
     #print(klist)
-    print(namest)
+    
+    #not aggregating correctly
+    #print(namest)
     #View(namest)
     #print(result)
     
