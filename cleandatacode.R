@@ -416,7 +416,7 @@ y <- c()
             names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
             namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
             #print(k)
-            #print(names)
+            print(names)
             print("breaking")
             break
           }
@@ -430,7 +430,8 @@ y <- c()
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
         {
           names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
-          namest <- data.frame(rbind(namest,names))[,,drop=FALSE]           
+          namest <- data.frame(rbind(namest,names))[,,drop=FALSE]      
+          print(names)
           print("breaking")
           break
         }
