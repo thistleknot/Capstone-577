@@ -453,8 +453,10 @@ y <- c()
       {
         names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
         namest <- data.frame(rbind(namest,names))[,,drop=FALSE]
-        
-        print(names)
+      
+        if(length(names) > 0) {
+          print(names)
+        }
       }
 
       #length(names)
