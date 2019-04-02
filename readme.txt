@@ -122,6 +122,9 @@ seed 5 factor reduced results commit.txt
 		Identified relationships as of commit 3063ef8
 
 	[1] "V7133"
+		V8527 V8529 V8531 
+	
+		V8505 V8514
 
 		[1] "V8526" "V8527" "V8528" "V8529" "V8530" "V8531"
 		[1] "V8526" "V8527" "V8528" "V8529" "V8531"
