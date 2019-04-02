@@ -362,8 +362,8 @@ y <- c()
       if(k!=nrFolds) trainfold <- which(folds == k)
       if(k==nrFolds) trainfold <- which(folds == 1)
       
-      #data.train <- data[-fold,]
-      data.train <- data[trainfold,]
+      data.train <- data[-fold,]
+      #data.train <- data[trainfold,]
       
       data.test <- data[fold,]
       
