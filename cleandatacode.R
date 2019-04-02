@@ -334,7 +334,12 @@ y <- c()
     #result <- c()
 
     names <- c()
-    namest <- c()
+    #namest <- c()
+    namest <- data.train[0,-1]
+    
+    #empty column set
+    #https://stackoverflow.com/questions/6764756/how-to-copy-an-objects-structure-but-not-the-data
+    colnames(namest) <- colnames(data.train[0,-1])
     
     widthSize <- ncol(data.frame(data.train[,-1]))
     width <- numeric(length = widthSize)
@@ -342,11 +347,14 @@ y <- c()
     #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
     klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
     #array(width,dim=c(nrFolds,widthSize))
+    nrow(data.test)
     
     #print(colnamesy)
     # actual cross validation
     #k=1
     for(k in 1:nrFolds) {
+      #colnames(namest) <- 
+      #namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
 
       # actual split of the data
       fold <- which(folds == k)
@@ -388,7 +396,7 @@ y <- c()
       #Regression model
       full.model.train <- lm(data.train[,1]~., data=data.train)
       full.model.test <- lm(data.test[,1]~., data=data.test)
-      
+    
       #full.model <- lm(y=data.train[,1], x=data.train[,-1])
       
       #significance()
@@ -414,9 +422,19 @@ y <- c()
             #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
             #https://community.rstudio.com/t/type-error-after-rbind/16866/2
             names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
-            namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
+            #rbind(names,namest)
+            
             #print(k)
-            print(names)
+            
+            tempy <- as.character(colList[1,1])
+            tempxs <- names
+            
+            parse.model.test <- lm(data.test[,c(tempy,names)])
+            
+            names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+            namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]            
+            
+            print(names2)
             print("breaking")
             break
           }
@@ -430,70 +448,42 @@ y <- c()
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
         {
           names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
-          namest <- data.frame(rbind(namest,names))[,,drop=FALSE]      
-          print(names)
+            
+          
+          tempy <- as.character(colList[1,1])
+          tempxs <- names
+          
+          parse.model.test <- lm(data.test[,c(tempy,names)])
+          names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]    
+          
+          print(names2)
           print("breaking")
           break
         }
       }
 
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-      #class(testCase)
-      
-      #if(testCase$message!="AIC is -infinity for this model, so 'stepAIC' cannot proceed")
 
-      #reduced[,k] <- data.frame((step.model.train$coefficients))
-      
-      #drop 1st intercept and y
-      #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
-      #trying to populate a list.
-
-      #if (length(names)==0) names <- width
-      
       if(is.null(testCaseTrain$message)&&is.null(testCaseTrain$message))
       {
         names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
-        namest <- data.frame(rbind(namest,names))[,,drop=FALSE]
-      
+        
         if(length(names) > 0) {
-          print(names)
+          
+          
+          
+          tempy <- as.character(colList[1,1])
+          tempxs <- names
+          
+          parse.model.test <- lm(data.test[,c(tempy,names)])
+          
+          names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+          print(names2)
+          
         }
       }
-
-      #length(names)
-      #klist[k,][1:length(names)] <- ifelse(is.na(klist[k,][1:length(names)]), names, klist[k,][1:length(names)])
-      
-      #type conversion tricks
-      #castNamesDF <- data.frame(klist[k,][1:length(names)])
-      #castNamesDF2 <- data.frame(names[1:length(names)])
-      
-      #castNamesDF <- castNamesDF2
-      
-      #names <- as.character(castNamesDF[,1])
-      #klist[k,][1:length(names)] <- names)
-      #print(k)
-      #print(names)
-      #if(k==1) namest <- names
-      #if(!k==1) 
-
-      #testCase <- tryCatch(klist[k,][1:length(names)] <- names), error = function(e) e)
-      
-      #if(!is.null(testCase$message))
-      #{
-        #if(testCase$message=="Error in klist[k, ] <- `*vtmp*` : 
-      #number of items to replace is not a multiple of replacement length") {
-          #k=1
-          #klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
-          #break
-        #}
-      #}
-      
-      #library(zoo)
-      
-      #print(names)
-      #len(names)
-      
-      #result[k] <- names
 
       summary(step.model.test) 
 
@@ -531,6 +521,7 @@ y <- c()
     #print(klist)
     
     #not aggregating correctly
+    #colnames(namest) <- colnames(data.train[0,-1])
     #print(namest)
     #View(namest)
     #print(result)
