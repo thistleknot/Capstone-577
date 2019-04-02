@@ -359,7 +359,12 @@ y <- c()
       # actual split of the data
       fold <- which(folds == k)
       
-      data.train <- data[-fold,]
+      if(k!=nrFolds) trainfold <- which(folds == k)
+      if(k==nrFolds) trainfold <- which(folds == 1)
+      
+      #data.train <- data[-fold,]
+      data.train <- data[trainfold,]
+      
       data.test <- data[fold,]
       
       full.model <- lm(data.train)
@@ -421,13 +426,13 @@ y <- c()
             
             #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
             #https://community.rstudio.com/t/type-error-after-rbind/16866/2
-            names <- as.character(colList[-1,1])
+            names <- as.character(colnames(templist)[-1])
             #names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
             #rbind(names,namest)
             
             #print(k)
             
-            tempy <- as.character(colList[1,1])
+            tempy <- as.character(colnames(templist)[1]) 
             tempxs <- names
             
             parse.model.test <- lm(data.test[,c(tempy,names)])
@@ -449,9 +454,9 @@ y <- c()
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
         {
           #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
-          names <- as.character(colList[-1,1])
+          names <- as.character(colnames(templist)[-1])
 
-          tempy <- as.character(colList[1,1])
+          tempy <- as.character(colnames(templist)[1])
           tempxs <- names
           
           parse.model.test <- lm(data.test[,c(tempy,names)])
@@ -478,7 +483,7 @@ y <- c()
           
           
           
-          tempy <- as.character(colList[1,1])
+          tempy <- as.character(colnames(templist)[1])
           tempxs <- names
           
           parse.model.test <- lm(data.test[,c(tempy,names)])
