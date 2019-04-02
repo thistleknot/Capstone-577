@@ -434,7 +434,7 @@ y <- c()
             names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
             namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]            
             
-            print(names2)
+            if(length(names2) > 0) print(names2)
             print("breaking")
             break
           }
@@ -457,7 +457,8 @@ y <- c()
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]    
           
-          print(names2)
+          if(length(names2) > 0) print(names2)
+          
           print("breaking")
           break
         }
@@ -480,7 +481,7 @@ y <- c()
           
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
-          print(names2)
+          if(length(names2) > 0) print(names2)
           
         }
       }
@@ -505,6 +506,7 @@ y <- c()
 
       #PCA
       #head(iris)
+      
       x<-data.train[,-1]
       y<-data.train[,1]
       #head(d)
