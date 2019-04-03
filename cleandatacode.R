@@ -480,9 +480,7 @@ y <- c()
         names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
         
         if(length(names) > 0) {
-          
-          
-          
+
           tempy <- as.character(colnames(templist)[1])
           tempxs <- names
           
@@ -544,6 +542,31 @@ y <- c()
   }
   
 }
+
+V7115profile <- c("V7115","V8528","V8530")
+V7118profile <- c("V7118","V8512")
+V7097profile <- c("V7097","V8509","V8514")
+V7133profile <- c("V7133","V8509","V8512","V8514")
+
+#8528 and 8530 have a very high correlation
+filteredv7115 <- NewDF[,as.character(V7115profile)] %>% filter_all(all_vars(!is.na(.)))
+resv7115 <- cor(filteredv7115)
+corrplot(resv7115)
+
+filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+resv7118 <- cor(filteredv7118)
+corrplot(resv7118)
+
+#good model
+filteredv7097 <- NewDF[,as.character(V7097profile)] %>% filter_all(all_vars(!is.na(.)))
+resv7097 <- cor(filteredv7097)
+corrplot(resv7097)
+
+#8512 and 8512 have a very high correlation
+filteredv7133 <- NewDF[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
+resv7133 <- cor(filteredv7133)
+corrplot(resv7133)
+
 
 filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
 filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
