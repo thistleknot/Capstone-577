@@ -235,4 +235,27 @@ seed 5 factor reduced results commit.txt
 		[1] "V8526" "V8528"
 		[1] "V8526" "V8527" "V8528" "V8529" "V8530" "V8531"	
 
+Milestone 1.1
+	commit: efd61cf
+	seed 5
+	test validation ran results.txt
+	
+	[1] "V7115" - "V8528" "V8530"
+		V7115,1,"#X LSD/LIFETIME",1
+		V8528,3,"OFTN EAT FRUIT",0
+		V8530,3,"OFTN 7HRS SLEEP",0
+	
+	[1] "V7118" - "V8512"
+		V7118,1,"#X PSYD/LIFETIME",1
+		V8512,3,"SATISFD W MYSELF",0
+	
+	[1] "V7097" "V8509" - "V8514"
+	
+	[1] "V7133" - "V8509" "V8512" "V8514"
+		V7133,1,"#X TRQL/LIFETIME",1
+		V8509,3,"FUTURE HOPELESS",0
+		V8512,3,"SATISFD W MYSELF",0
+		V8514,3,"GOOD TO BE ALIVE",0
+	
+	
 	
