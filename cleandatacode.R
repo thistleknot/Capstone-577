@@ -511,17 +511,6 @@ y <- c()
       rmse.test <- sqrt(mse.test)
       #rmse.test
 
-      #PCA
-      #head(iris)
-      
-      x<-data.train[,-1]
-      y<-data.train[,1]
-      #head(d)
-      pc <- prcomp(x)
-      #pc <- princomp (x, cor=TRUE, score=TRUE)
-      #pc$x[,1]
-  
-      pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
       
     }
     
@@ -568,10 +557,26 @@ resv7133 <- cor(filteredv7133)
 corrplot(resv7133)
 
 
-filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
-filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
-colnames(filtered) <- suppressMessages(paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE])))
-res2 <- cor(filtered)
-corrplot(res2)
+#pc <- princomp (x, cor=TRUE, score=TRUE)
+#pc$x[,1]
+
+x<-filteredv7133[,-1]
+y<-filteredv7133[,1]
+pc <- prcomp(x)
+#head(d)
+
+pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
+regularModel <- lm(filteredv7133)
+
+summary(pcaModel)
+summary(regularModel)
+#PCA
+#head(iris)
+
+#filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
+#filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
+#colnames(filtered) <- suppressMessages(paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE])))
+#res2 <- cor(filtered)
+#corrplot(res2)
 #special subset of Habits, Health, and Psyche
 
