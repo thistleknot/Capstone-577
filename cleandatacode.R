@@ -211,6 +211,8 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
+set.seed(5)
+
 #setup holdout
 data <- NewDF
 nrFolds <- 11
@@ -238,8 +240,6 @@ lFather2Index <- list[,4] == 6
 lHabitsIndex <- list[,4] == 7
 lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
-
-set.seed(5)
 
 y <- c()
 #y iterator's
