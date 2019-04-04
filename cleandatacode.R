@@ -134,7 +134,7 @@ convert3Index <- list[,2] == 3
 
 #male to female
 
-NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+ <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
 NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
@@ -211,6 +211,18 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
+#setup holdout
+data <- NewDF
+nrFolds <- 11
+
+# generate array containing fold-number for each sample (row)
+folds <- rep_len(1:nrFolds, nrow(data))
+folds <- sample(folds, nrow(data))
+
+fold <- which(folds != 11)
+NewDF.holdout <- data[-fold,]
+NewDF.train <- data[fold,]
+
 #filtered <- NewDF[complete.cases(NewDF), ]
 
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
@@ -273,7 +285,7 @@ y <- c()
     #droplevels(newList)
     #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
     
-    temp <- NewDF[,newList]
+    temp <- NewDF.train[,newList]
     #colnames(temp) <- paste(newList[,1],newList[,3])
     temp[temp == 0] <- NA
     trows <- nrow(temp)
@@ -313,28 +325,17 @@ y <- c()
     #templist[,as.character(y[,1])]
 
     data <- templist
-    nrFolds <- 10
+    nrFolds <- 11
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
-    
     folds <- sample(folds, nrow(data))
     
     #https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/
     reduced <- c()
     reduced <- c(numeric(length(data.train[,-1])),numeric(length = nrFolds))
     
-    #https://www.tutorialspoint.com/r/r_arrays.htm
-    vector1 <- length(data.train[,-1])
-    vector2 <- numeric(length = nrFolds)
-    
-    #result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
-    #result <- array(c(vector1,vector2),dim = c(nrFolds,length(data.train[,-1]),1))
-    #result[1:9]
-    #result <- c()
-
     names <- c()
-    #namest <- c()
     namest <- data.train[0,-1]
     
     #empty column set
@@ -352,7 +353,8 @@ y <- c()
     #print(colnamesy)
     # actual cross validation
     #k=1
-    for(k in 1:nrFolds) {
+    #11th fold is holdout set used for testing models
+    for(k in 1:10) {
       #colnames(namest) <- 
       #namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
 
@@ -361,7 +363,7 @@ y <- c()
       
       if(k!=nrFolds) trainfold <- which(folds == k)
       if(k==nrFolds) trainfold <- which(folds == 1)
-      
+    
       data.train <- data[-fold,]
       #data.train <- data[trainfold,]
       
@@ -538,36 +540,59 @@ V7097profile <- c("V7097","V8509","V8514")
 V7133profile <- c("V7133","V8509","V8512","V8514")
 
 #8528 and 8530 have a very high correlation
-filteredv7115 <- NewDF[,as.character(V7115profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7115 <- NewDF.train[,as.character(V7115profile)] %>% filter_all(all_vars(!is.na(.)))
 resv7115 <- cor(filteredv7115)
 corrplot(resv7115)
 
-filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7118 <- NewDF.train[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 resv7118 <- cor(filteredv7118)
 corrplot(resv7118)
 
 #good model
-filteredv7097 <- NewDF[,as.character(V7097profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7097 <- NewDF.train[,as.character(V7097profile)] %>% filter_all(all_vars(!is.na(.)))
 resv7097 <- cor(filteredv7097)
 corrplot(resv7097)
 
 #8512 and 8512 have a very high correlation
-filteredv7133 <- NewDF[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7133 <- NewDF.train[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
 resv7133 <- cor(filteredv7133)
 corrplot(resv7133)
 
+x=filteredv7133[,-1]
+y=filteredv7133[,1]
 
-#pc <- princomp (x, cor=TRUE, score=TRUE)
-#pc$x[,1]
+pc <- prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE)
 
-x<-filteredv7133[,-1]
-y<-filteredv7133[,1]
-pc <- prcomp(x, center=TRUE, scale=TRUE)
-#pc$scale
-#head(d)
+#includes proportion of variance
+summary(prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE))
+corrplot(cor(cbind(filteredv7133[,1],prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE)$x)))
 
-pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
+#include data in new model for inclusion in a linear model
+#https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+
+pcaModel<- lm(y~pc$x[,1:length(data.frame(pc$x))])
+
+#predict using pca, just re-applying to training data.
+
+#attempting to apply to holdout set
+filteredv7133holdout <- NewDF.holdout[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
+ncol(filteredv7133holdout[-1])
+
+#applied PCA to holdout
+#nrow(y)
+x <- filteredv7133holdout[-1]
+y <- data.frame(filteredv7133holdout[1])
+nrow(pred)
+pred <- data.frame(predict(pc,x))
+pcaPred <- lm(cbind(y,pred))
+summary(pcaPred)
+
+summary(pcaModel)
 regularModel <- lm(filteredv7133)
+
+cor(pcaModel$effects)
+
+corrplot(cor(pcaModel$fitted.values))
 
 summary(pcaModel)
 summary(regularModel)
