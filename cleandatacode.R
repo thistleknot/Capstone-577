@@ -562,7 +562,8 @@ corrplot(resv7133)
 
 x<-filteredv7133[,-1]
 y<-filteredv7133[,1]
-pc <- prcomp(x)
+pc <- prcomp(x, center=TRUE, scale=TRUE)
+#pc$scale
 #head(d)
 
 pcaModel<- lm(y~pc$x[,1:length(data.frame(x))])
