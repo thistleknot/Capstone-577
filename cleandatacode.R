@@ -574,15 +574,11 @@ pcaModel<- lm(y~pc$x[,1:length(data.frame(pc$x))])
 
 #predict using pca, just re-applying to training data.
 
-#attempting to apply to holdout set
-filteredv7133holdout <- NewDF.holdout[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
-ncol(filteredv7133holdout[-1])
-
 #applied PCA to holdout
-#nrow(y)
+filteredv7133holdout <- NewDF.holdout[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
 x <- filteredv7133holdout[-1]
 y <- data.frame(filteredv7133holdout[1])
-nrow(pred)
+
 pred <- data.frame(predict(pc,x))
 pcaPred <- lm(cbind(y,pred))
 summary(pcaPred)
