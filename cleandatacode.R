@@ -249,13 +249,14 @@ y <- c()
 for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
+  alty <- list[yIndex,][-iterator,]
   #y
   #yname <- as.character(list[yIndex,][iterator,][,1])
   print(as.character(list[yIndex,][iterator,][,1]))
   #val = 1
   
   #categories
-  for (val in 1:9)
+  for (val in 1:10)
     #val=8
   {
     #val = 3
@@ -268,6 +269,10 @@ for (iterator in 1:sum(yIndex))
     if (val == 7) colList <- list[lHabitsIndex,]
     if (val == 8) colList <- list[lHealthIndex,]
     if (val == 9) colList <- list[lPsycheIndex,]
+    if (val == 10) colList <- alty[1]
+    
+    if (length(colList)==0)break
+    
     y <- list[yIndex,][iterator,]
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
