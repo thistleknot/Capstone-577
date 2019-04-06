@@ -9,7 +9,7 @@ require(ggplot2)
 library(anchors)
 require(caret)
 library(caret)
-
+library(corrplot)
 library(MASS)
 
 pw <- {"Read1234"}
@@ -36,9 +36,10 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 #write.csv(d_combined, file = "MyData.csv")
 #data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
 
-write.csv(d_combined,paste0(sourceDir,"combined.csv"))
+#write.csv(d_combined,paste0(sourceDir,"combined.csv"))
+#data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
 
-data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
+data <- d_combined
 
 list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
@@ -107,12 +108,11 @@ df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
 
 #boxplot(NewDF)
 #summary(NewDF)
-View(na_count(NewDF))
+#View(na_count(NewDF))
 
 table(is.na(NewDF))
-write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
+#write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
 
-library(corrplot)
 #colnames(NewDF)
 
 summary(NewDF)
@@ -337,22 +337,22 @@ for (iterator in 1:sum(yIndex))
     
     #https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/
     reduced <- c()
-    reduced <- c(numeric(length(data.train[,-1])),numeric(length = nrFolds))
+    reduced <- c(numeric(length(data[,-1])),numeric(length = nrFolds))
     
     names <- c()
-    namest <- data.train[0,-1]
+    namest <- data[0,-1]
     
     #empty column set
     #https://stackoverflow.com/questions/6764756/how-to-copy-an-objects-structure-but-not-the-data
-    colnames(namest) <- colnames(data.train[0,-1])
+    colnames(namest) <- colnames(data[0,-1])
     
-    widthSize <- ncol(data.frame(data.train[,-1]))
+    widthSize <- ncol(data.frame(data[,-1]))
     width <- numeric(length = widthSize)
     #width <- numeric(length = ncol(data.frame(data.train[,-1])))
     #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
-    klist <- array(numeric(length = ncol(data.frame(data.train[,-1]))),dim=c(nrFolds,ncol(data.frame(data.train[,-1]))))
+    klist <- array(numeric(length = ncol(data.frame(data[,-1]))),dim=c(nrFolds,ncol(data.frame(data[,-1]))))
     #array(width,dim=c(nrFolds,widthSize))
-    nrow(data.test)
+    
     
     #print(colnamesy)
     # actual cross validation
