@@ -258,7 +258,7 @@ for (iterator in 1:sum(yIndex))
   for (val in 1:9)
     #val=8
   {
-    #val = 4
+    #val = 3
     if (val == 1) colList <- list[lGeographyIndex,]
     if (val == 2) colList <- list[lGenderIndex,]
     if (val == 3) colList <- list[lGPAIndex,]
@@ -329,7 +329,7 @@ for (iterator in 1:sum(yIndex))
     data <- templist
     
     data[data == -1] <- 0
-    data[data == 1] <- -1
+    #data[data == 1] <- 1
     
     nrFolds <- 10
     
@@ -471,7 +471,7 @@ for (iterator in 1:sum(yIndex))
       
       #using best subset model selection
       #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
-      step.model.train <- step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+      step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
       if(!is.null(testCase$message))
