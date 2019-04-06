@@ -227,7 +227,6 @@ fold <- which(folds != 11)
 NewDF.holdout <- data[-fold,]
 NewDF.train <- data[fold,]
 
-
 #filtered <- NewDF[complete.cases(NewDF), ]
 
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
@@ -327,8 +326,11 @@ for (iterator in 1:sum(yIndex))
     #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
     
     #templist[,as.character(y[,1])]
-
     data <- templist
+    
+    data[data == -1] <- 0
+    data[data == 1] <- -1
+    
     nrFolds <- 10
     
     # generate array containing fold-number for each sample (row)
@@ -405,8 +407,8 @@ for (iterator in 1:sum(yIndex))
       # train and test your model with data.train and data.test
       
       #Regression model
-      full.model.train <- lm(data.train[,1]~., data=data.train)
-      full.model.test <- lm(data.test[,1]~., data=data.test)
+      full.model.train <- glm(data.train[,1]~., data=data.train)
+      full.model.test <- glm(data.test[,1]~., data=data.test)
     
       #full.model <- lm(y=data.train[,1], x=data.train[,-1])
       
@@ -423,7 +425,8 @@ for (iterator in 1:sum(yIndex))
       #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
       
       #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
-      testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
+
+            testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
       
       if(!is.null(testCaseTrain$message))
       {
@@ -441,7 +444,7 @@ for (iterator in 1:sum(yIndex))
             tempy <- as.character(colnames(templist)[1]) 
             tempxs <- names
             
-            parse.model.test <- lm(data.test[,c(tempy,names)])
+            parse.model.test <- glm(data.test[,c(tempy,names)])
             
             names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
             namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]            
@@ -452,6 +455,8 @@ for (iterator in 1:sum(yIndex))
           }
       }
       
+      #using best subset model selection
+      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
       step.model.train <- step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
@@ -465,7 +470,7 @@ for (iterator in 1:sum(yIndex))
           tempy <- as.character(colnames(templist)[1])
           tempxs <- names
           
-          parse.model.test <- lm(data.test[,c(tempy,names)])
+          parse.model.test <- glm(data.test[,c(tempy,names)])
           
           testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
           
@@ -490,7 +495,7 @@ for (iterator in 1:sum(yIndex))
           tempy <- as.character(colnames(templist)[1])
           tempxs <- names
           
-          parse.model.test <- lm(data.test[,c(tempy,names)])
+          parse.model.test <- glm(data.test[,c(tempy,names)])
           
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
@@ -574,7 +579,7 @@ corrplot(cor(cbind(filteredv7133[,1],prcomp(filteredv7133[,-1], center=TRUE, sca
 #include data in new model for inclusion in a linear model
 #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
 
-pcaModel<- lm(y~pc$x[,1:length(data.frame(pc$x))])
+pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
 
 #predict using pca, just re-applying to training data.
 
