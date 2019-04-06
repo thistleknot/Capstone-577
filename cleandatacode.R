@@ -258,7 +258,7 @@ for (iterator in 1:sum(yIndex))
   for (val in 1:9)
     #val=8
   {
-    #val = 3
+    #val = 4
     if (val == 1) colList <- list[lGeographyIndex,]
     if (val == 2) colList <- list[lGenderIndex,]
     if (val == 3) colList <- list[lGPAIndex,]
@@ -332,6 +332,11 @@ for (iterator in 1:sum(yIndex))
     data[data == 1] <- -1
     
     nrFolds <- 10
+    
+    #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
+    #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
+    cv.names=matrix(NA,nrFolds,(length(data)-1), dimnames=list(NULL, paste(1:(length(data)-1))))
+    colnames(cv.names) <- colnames(data[-1])
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
@@ -409,6 +414,8 @@ for (iterator in 1:sum(yIndex))
       #Regression model
       full.model.train <- glm(data.train[,1]~., data=data.train)
       full.model.test <- glm(data.test[,1]~., data=data.test)
+      
+      #full.model.train$
     
       #full.model <- lm(y=data.train[,1], x=data.train[,-1])
       
@@ -426,7 +433,7 @@ for (iterator in 1:sum(yIndex))
       
       #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
 
-            testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
+      testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
       
       if(!is.null(testCaseTrain$message))
       {
@@ -447,9 +454,16 @@ for (iterator in 1:sum(yIndex))
             parse.model.test <- glm(data.test[,c(tempy,names)])
             
             names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
-            namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]            
             
-            if(length(names2) > 0) print(names2)
+            for(h in 1:length(names2)) {
+              cv.names[k,names2[h]]=names2[h]
+              }
+            
+            namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
+            
+            if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+            
+            #if(length(names2) > 0) print(names2)
             print("breaking")
             break
           }
@@ -475,7 +489,9 @@ for (iterator in 1:sum(yIndex))
           testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
           
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
-          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]    
+          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+          
+          if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
           
           if(length(names2) > 0) print(names2)
           
@@ -499,7 +515,10 @@ for (iterator in 1:sum(yIndex))
           
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
-          if(length(names2) > 0) print(names2)
+          
+          if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+          
+          #if(length(names2) > 0) print(names2)
           
         }
       }
@@ -524,6 +543,7 @@ for (iterator in 1:sum(yIndex))
 
       
     }
+    print(cv.names)
     
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
     #lapply(klist, function(x){ length(which(x==0))/length(x)})    
@@ -542,6 +562,7 @@ for (iterator in 1:sum(yIndex))
   }
   
 }
+
 
 V7115profile <- c("V7115","V8528","V8530")
 V7118profile <- c("V7118","V8512")
