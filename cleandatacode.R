@@ -269,9 +269,10 @@ for (iterator in 1:sum(yIndex))
     if (val == 7) colList <- list[lHabitsIndex,]
     if (val == 8) colList <- list[lHealthIndex,]
     if (val == 9) colList <- list[lPsycheIndex,]
-    if (val == 10) colList <- alty[1]
+    if (val == 10) colList <- alty[,1]
     
-    if (length(colList)==0)break
+    
+    if (is.null(nrow(colList))) break
     
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
@@ -301,7 +302,7 @@ for (iterator in 1:sum(yIndex))
 
     #drop na's
     #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
-    templist <- temp %>% filter_all(all_vars(!is.na(.)))
+    templist <- data.frame(temp) %>% filter_all(all_vars(!is.na(.)))
     #nrow(tempList)
     #NewDF[,"V7101"]
     #colnames(NewDF)
