@@ -41,8 +41,8 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
-#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
@@ -273,7 +273,6 @@ for (iterator in 1:sum(yIndex))
     
     if (length(colList)==0)break
     
-    y <- list[yIndex,][iterator,]
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
     
@@ -368,7 +367,7 @@ for (iterator in 1:sum(yIndex))
     
     #print(colnamesy)
     # actual cross validation
-    #k=1
+    #k=2
     #11th fold is holdout set used for testing models
     for(k in 1:nrFolds) {
       #colnames(namest) <- 
@@ -479,6 +478,7 @@ for (iterator in 1:sum(yIndex))
       step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
+      
       if(!is.null(testCase$message))
       {
         if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
@@ -507,7 +507,7 @@ for (iterator in 1:sum(yIndex))
 
       step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
 
-      if(is.null(testCaseTrain$message)&&is.null(testCaseTrain$message))
+      if(is.null(testCase$message)&&is.null(testCaseTrain$message))
       {
         names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
         
