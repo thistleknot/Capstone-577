@@ -417,12 +417,17 @@ for (iterator in 1:sum(yIndex))
       # train and test your model with data.train and data.test
       
       #Regression model
+      #ncol(data.train)
       full.model.train <- glm(data.train[,1]~., data=data.train)
       full.model.test <- glm(data.test[,1]~., data=data.test)
       
       #basically, if both of these are significant, keep the coefficient
-      coef(summary(full.model.train))[,4]
-      coef(summary(full.model.test))[,4]
+      coef(summary(full.model.train))[,4][-1:-2]
+      
+      #https://stackoverflow.com/questions/14205583/filtering-data-in-a-dataframe-based-on-criteria
+      test2sig <- coef(summary(full.model.test))[,4][-1:-2]
+      
+      test2sigNames <- row.names(data.frame(test2sig[test2sig < .05]))
       
       #full.model.train$
     
@@ -451,7 +456,10 @@ for (iterator in 1:sum(yIndex))
             
             #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
             #https://community.rstudio.com/t/type-error-after-rbind/16866/2
+            
+            #names <- test2sigNames
             names <- as.character(colnames(templist)[-1])
+            
             #names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
             #rbind(names,namest)
             
@@ -484,9 +492,11 @@ for (iterator in 1:sum(yIndex))
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
       
+      #undefined columns selected happens when AIC hits -INF, we want low AIC
+      
       if(!is.null(testCase$message))
       {
-        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") 
+        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected")
         {
           #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
           names <- as.character(colnames(templist)[-1])
@@ -550,7 +560,6 @@ for (iterator in 1:sum(yIndex))
       #Calculating RMSE for testing data
       rmse.test <- sqrt(mse.test)
       #rmse.test
-
       
     }
     
