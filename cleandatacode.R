@@ -40,7 +40,9 @@ write.csv(d_combined,paste0(sourceDir,"combined.csv"))
 
 data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
 
-list<-read.csv(paste0(sourceDir,"filterList.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -134,7 +136,7 @@ convert3Index <- list[,2] == 3
 
 #male to female
 
- <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
 NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
@@ -225,6 +227,7 @@ fold <- which(folds != 11)
 NewDF.holdout <- data[-fold,]
 NewDF.train <- data[fold,]
 
+
 #filtered <- NewDF[complete.cases(NewDF), ]
 
 #https://stackoverflow.com/questions/1299871/how-to-join-merge-data-frames-inner-outer-left-right
@@ -244,7 +247,7 @@ lPsycheIndex <- list[,4] == 9
 y <- c()
 #y iterator's
 #iterator=1
-  for (iterator in 1:sum(yIndex))
+for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
   #y
@@ -285,6 +288,7 @@ y <- c()
     #droplevels(newList)
     #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
     
+    colnames(NewDF.train)
     temp <- NewDF.train[,newList]
     #colnames(temp) <- paste(newList[,1],newList[,3])
     temp[temp == 0] <- NA
@@ -325,7 +329,7 @@ y <- c()
     #templist[,as.character(y[,1])]
 
     data <- templist
-    nrFolds <- 11
+    nrFolds <- 10
     
     # generate array containing fold-number for each sample (row)
     folds <- rep_len(1:nrFolds, nrow(data))
@@ -354,7 +358,7 @@ y <- c()
     # actual cross validation
     #k=1
     #11th fold is holdout set used for testing models
-    for(k in 1:10) {
+    for(k in 1:nrFolds) {
       #colnames(namest) <- 
       #namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
 
@@ -577,10 +581,17 @@ pcaModel<- lm(y~pc$x[,1:length(data.frame(pc$x))])
 #applied PCA to holdout
 filteredv7133holdout <- NewDF.holdout[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
 x <- filteredv7133holdout[-1]
+#View(x)
 y <- data.frame(filteredv7133holdout[1])
 
 pred <- data.frame(predict(pc,x))
 pcaPred <- lm(cbind(y,pred))
+
+#predict(pcaPred,)
+
+
+#predict(pcaPred,filteredv7133holdout[-1])
+
 summary(pcaPred)
 
 summary(pcaModel)
