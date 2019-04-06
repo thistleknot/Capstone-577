@@ -295,9 +295,9 @@ for (iterator in 1:sum(yIndex))
     temp <- NewDF.train[,newList]
     #colnames(temp) <- paste(newList[,1],newList[,3])
     temp[temp == 0] <- NA
-    trows <- nrow(temp)
+    trows <- nrow(data.frame(temp))
     #% na's
-    colSums(is.na(temp))/trows
+    colSums(is.na(data.frame(temp)))/trows
 
     #drop na's
     #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
@@ -418,6 +418,10 @@ for (iterator in 1:sum(yIndex))
       #Regression model
       full.model.train <- glm(data.train[,1]~., data=data.train)
       full.model.test <- glm(data.test[,1]~., data=data.test)
+      
+      #basically, if both of these are significant, keep the coefficient
+      coef(summary(full.model.train))[,4]
+      coef(summary(full.model.test))[,4]
       
       #full.model.train$
     
