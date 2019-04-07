@@ -124,6 +124,10 @@ seed 5 factor reduced results commit.txt
 	Milestone 2
 		Identified relationships using colsums over a subsample of entire database
 
+Cross validation means that if the patterns show up more than half the time (5 out of 10 passes), they are probably truly significant.  I usually have a higher bar, such as the top quartile, or top 10-20%.
+	These are not just cross validated against training sets 10 times.  
+	To report a positive number.  The significant factors found during the training partition are applied to the validation partition, and what remains as significant are reported.
+		
 Seed5CV25PctFilterList.txt		
 	[1] "V7101"
 	V507NE V507NC  V507W 
