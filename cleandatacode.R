@@ -375,7 +375,6 @@ for (iterator in 1:sum(yIndex))
     klist <- array(numeric(length = ncol(data.frame(data[,-1]))),dim=c(nrFolds,ncol(data.frame(data[,-1]))))
     #array(width,dim=c(nrFolds,widthSize))
     
-    
     #print(colnamesy)
     # actual cross validation
     #k=7
@@ -553,6 +552,18 @@ for (iterator in 1:sum(yIndex))
           
           #if(length(names2) > 0) print(names2)
           
+        }
+        if(length(names)==0)
+        {
+          names <- c()
+          tempxs <- c()
+          
+          tempy <- as.character(colnames(templist)[1])
+          
+          names2 <- names
+          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+          
+          #colnames(data)[-1]
         }
       }
       
