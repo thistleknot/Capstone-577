@@ -527,7 +527,7 @@ for (iterator in 1:sum(yIndex))
           
           if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
           
-          if(length(names2) > 0) print(names2)
+          #if(length(names2) > 0) print(names2)
           
           #print("breaking")
           break
@@ -586,7 +586,7 @@ for (iterator in 1:sum(yIndex))
       {
         #https://stackoverflow.com/questions/4986101/counting-non-nas-in-a-data-frame-getting-answer-as-a-vector
         #print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
-        colSums(!is.na(data.frame(cv.names)))
+        print(colSums(!is.na(data.frame(cv.names))))
       }
 
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
