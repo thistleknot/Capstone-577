@@ -463,7 +463,7 @@ for (iterator in 1:sum(yIndex))
       
       if(!is.null(testCaseTrain$message))
       {
-        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed") {
+        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCaseTrain$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^") {
             #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
             
             #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
@@ -510,7 +510,7 @@ for (iterator in 1:sum(yIndex))
       
       if(!is.null(testCase$message))
       {
-        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected"||step.model.train$aic<10000)
+        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected"||step.model.train$aic<10000||testCase$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^")
         {
           #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
           names <- as.character(colnames(templist)[-1])
