@@ -425,9 +425,10 @@ for (iterator in 1:sum(yIndex))
       coef(summary(full.model.train))[,4][-1:-2]
       
       #https://stackoverflow.com/questions/14205583/filtering-data-in-a-dataframe-based-on-criteria
-      test2sig <- coef(summary(full.model.test))[,4][-1:-2]
-      
-      test2sigNames <- row.names(data.frame(test2sig[test2sig < .05]))
+      #test2sig <- coef(summary(full.model.test))[,4][-1:-2]
+      #
+      #Due to NaN in coefficient terms for p, along with -AIC, disabling this check for test2sig.  Else test2sig needs to check if the terms are Na or Nil or NAN
+      #test2sigNames <- row.names(data.frame(test2sig[test2sig < .05]))
       
       #full.model.train$
     
