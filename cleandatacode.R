@@ -116,6 +116,7 @@ table(is.na(NewDF))
 #colnames(NewDF)
 
 summary(NewDF)
+nrow(NewDF)
 
 #list[,2]
 
@@ -216,13 +217,19 @@ NewDF[NewDF == -2] <- 0
 set.seed(5)
 
 #setup holdout
+
 data <- NewDF
 #colnames(NewDF)
 nrFolds <- 11
 
+reduceFactor = .25
 # generate array containing fold-number for each sample (row)
 folds <- rep_len(1:nrFolds, nrow(data))
+
 folds <- sample(folds, nrow(data))
+#reduced
+folds <- folds[1:round(reduceFactor*nrow(data))]
+
 
 fold <- which(folds != 11)
 NewDF.holdout <- data[-fold,]
@@ -333,6 +340,8 @@ for (iterator in 1:sum(yIndex))
     #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
     
     #templist[,as.character(y[,1])]
+    #use filtered categorical data
+
     data <- templist
     
     data[data == -1] <- 0
@@ -484,7 +493,7 @@ for (iterator in 1:sum(yIndex))
             if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
             
             #if(length(names2) > 0) print(names2)
-            print("breaking")
+            #print("breaking")
             break
           }
       }
@@ -520,7 +529,7 @@ for (iterator in 1:sum(yIndex))
           
           if(length(names2) > 0) print(names2)
           
-          print("breaking")
+          #print("breaking")
           break
         }
       }
