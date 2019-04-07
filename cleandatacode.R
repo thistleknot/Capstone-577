@@ -582,7 +582,12 @@ for (iterator in 1:sum(yIndex))
     
     #http://r.789695.n4.nabble.com/How-to-delete-only-those-rows-in-a-dataframe-in-which-all-records-are-missing-td3990418.html
     
-    if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
+    if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) 
+      {
+        #https://stackoverflow.com/questions/4986101/counting-non-nas-in-a-data-frame-getting-answer-as-a-vector
+        #print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
+        colSums(!is.na(data.frame(cv.names)))
+      }
 
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
     #lapply(klist, function(x){ length(which(x==0))/length(x)})    
