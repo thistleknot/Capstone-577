@@ -230,7 +230,6 @@ folds <- sample(folds, nrow(data))
 #reduced
 folds <- folds[1:round(reduceFactor*nrow(data))]
 
-
 fold <- which(folds != 11)
 NewDF.holdout <- data[-fold,]
 NewDF.train <- data[fold,]
@@ -490,11 +489,11 @@ for (iterator in 1:sum(yIndex))
             
             namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
             
-            if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+            #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
             
             #if(length(names2) > 0) print(names2)
             #print("breaking")
-            break
+            #break
           }
       }
       
@@ -502,7 +501,7 @@ for (iterator in 1:sum(yIndex))
       #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
       
       #sometimes will skip (i.e. all na) due to large # of same values I suppose, so I added (step.model.train$aic<10000) to check
-      step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+      if(is.null(testCaseTrain$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
       
@@ -525,16 +524,16 @@ for (iterator in 1:sum(yIndex))
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
           
-          if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+          #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
           
           #if(length(names2) > 0) print(names2)
           
           #print("breaking")
-          break
+          #break
         }
       }
 
-      step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+      if(is.null(testCase$message)) step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
 
       if(is.null(testCase$message)&&is.null(testCaseTrain$message))
       {
@@ -550,12 +549,14 @@ for (iterator in 1:sum(yIndex))
           names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
           namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
           
-          if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+          #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
           
           #if(length(names2) > 0) print(names2)
           
         }
       }
+      
+      if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
 
       summary(step.model.test) 
 
