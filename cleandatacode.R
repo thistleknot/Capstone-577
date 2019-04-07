@@ -41,9 +41,9 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -280,7 +280,7 @@ for (iterator in 1:sum(yIndex))
     if (val == 10) colList <- alty
     
     
-    if (is.null(nrow(data.frame(colList)))) break
+    if (is.null(nrow(data.frame(alty)))) break
     
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
@@ -350,6 +350,7 @@ for (iterator in 1:sum(yIndex))
     
     #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
     #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
+    if((length(data)-1)==0) break
     cv.names=matrix(NA,nrFolds,(length(data)-1), dimnames=list(NULL, paste(1:(length(data)-1))))
     colnames(cv.names) <- colnames(data[-1])
     
