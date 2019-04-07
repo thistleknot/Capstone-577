@@ -217,6 +217,7 @@ set.seed(5)
 
 #setup holdout
 data <- NewDF
+#colnames(NewDF)
 nrFolds <- 11
 
 # generate array containing fold-number for each sample (row)
@@ -226,6 +227,7 @@ folds <- sample(folds, nrow(data))
 fold <- which(folds != 11)
 NewDF.holdout <- data[-fold,]
 NewDF.train <- data[fold,]
+colnames(NewDF.train)
 
 #filtered <- NewDF[complete.cases(NewDF), ]
 
@@ -245,7 +247,7 @@ lPsycheIndex <- list[,4] == 9
 
 y <- c()
 #y iterator's
-#iterator=1
+#iterator=2
 for (iterator in 1:sum(yIndex))
 {
   y <- list[yIndex,][iterator,]
@@ -253,7 +255,7 @@ for (iterator in 1:sum(yIndex))
   #y
   #yname <- as.character(list[yIndex,][iterator,][,1])
   print(as.character(list[yIndex,][iterator,][,1]))
-  #val = 1
+  #val = 10
   
   #categories
   for (val in 1:10)
@@ -269,10 +271,10 @@ for (iterator in 1:sum(yIndex))
     if (val == 7) colList <- list[lHabitsIndex,]
     if (val == 8) colList <- list[lHealthIndex,]
     if (val == 9) colList <- list[lPsycheIndex,]
-    if (val == 10) colList <- alty[,1]
+    if (val == 10) colList <- alty
     
     
-    if (is.null(nrow(colList))) break
+    if (is.null(nrow(data.frame(colList)))) break
     
     #colList <- rbind(list[yIndex,],colList)
     colList <- rbind(y,colList)
@@ -368,7 +370,7 @@ for (iterator in 1:sum(yIndex))
     
     #print(colnamesy)
     # actual cross validation
-    #k=2
+    #k=7
     #11th fold is holdout set used for testing models
     for(k in 1:nrFolds) {
       #colnames(namest) <- 
@@ -489,6 +491,8 @@ for (iterator in 1:sum(yIndex))
       
       #using best subset model selection
       #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+      
+      #sometimes will skip (i.e. all na) due to large # of same values I suppose, so I added (step.model.train$aic<10000) to check
       step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
       testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
@@ -497,7 +501,7 @@ for (iterator in 1:sum(yIndex))
       
       if(!is.null(testCase$message))
       {
-        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected")
+        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected"||step.model.train$aic<10000)
         {
           #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
           names <- as.character(colnames(templist)[-1])
