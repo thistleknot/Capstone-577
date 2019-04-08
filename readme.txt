@@ -51,12 +51,6 @@ Category Flags
 		V8451,1,"#X BEER/LIFETIME",1
 		V7426,1,"#X SMKLESS/EVER",1
 		V7121,1,"#X CRACK/LIFETIM",1
-		
-		#bug:
-		
-			report bug as inclusion of factors as opposed to breaking out of loop
-			also breaking out of loop might result in the rest of the variables not getting reported.
-			
 		V7124,1,"#XOTH COKE/LIFE",1
 		V7164,1,"#X MDMA/LIFETIM",1
 		V7145,1,"#X STRD/LIFETIME",1
@@ -76,28 +70,27 @@ Category Flags
 		Gender (2)
 			V7202,0,"R'S SEX",0
 
-		GPA (3)
+		GPA (3) (always excluded from substances cv results)
+			Midpoint is B+
 			V7221,2,"R HS GRADE/D=1",0	
 
-		Violence (4)
+		Violence (4) (always excluded from substances cv results)
 			V8517,1,"FRQ GANG FIGHT",0
 
-		Father1 (5)
+		Father1 (5) (always excluded from substances cv results)
 			V7206,0,"R'S HSHLD FATHER",0
 
-		Father2 (6)
+		Father2 (6  (always excluded from substances cv results), Median is 5, college graduate
 			V7215,2,"FATHR EDUC LEVEL",0
-			
-			"Error in stepAIC(full.model.train, direction = "both", trace = FALSE) :"
 					
-		Habits (7)
+		Habits (7) (always excluded from substances cv results)
 			V7551,2,"#HR/W INTERNET S",0
 			V7552,2,"DALY WEB FACEBK",0
 			V7553,2,"#HR GAMING",0
 			V7562,2,"#HR TEXT",0 
 			V7563,2,"#HR TALK CELL",0
 
-		Health (8)
+		Health (8) 
 			V8526,3,"OFTN EAT BRKFST",0
 			V8527,3,"OFTN EAT GN VEG",0
 			V8528,3,"OFTN EAT FRUIT",0
@@ -127,7 +120,49 @@ seed 5 factor reduced results commit.txt
 Cross validation means that if the patterns show up more than half the time (5 out of 10 passes), they are probably truly significant.  I usually have a higher bar, such as the top quartile, or top 10-20%.
 	These are not just cross validated against training sets 10 times.  
 	To report a positive number.  The significant factors found during the training partition are applied to the validation partition, and what remains as significant are reported.
-		
+
+Inferences
+	Factors that were included above the median # of times... (see factorAnalysiswFactors.png)
+
+	#HR GAMING
+	#HR TEXT 
+	#HR TALK CELL
+	OFTN EAT FRUIT
+	OFTN EXERCISE
+	OFTN 7HRS SLEEP
+	OFTN SLEEP <SHLD
+	SATISFD W MYSELF
+	GOOD TO BE ALIVE
+	I AM OFTEN BORED
+
+Chosen Research Questions
+V7118: #X PSYD/LIFETIME
+	V507W: W (7)
+	V7553: #HR GAMING (7)
+	V7562: #HR TEXT (6)
+	V8528: OFTN EAT FRUIT (5)
+	V8529: OFTN EXERCISE (6)
+	V8530: OFTN 7HRS SLEEP (8)
+	V8512: SATISFD W MYSELF (5)
+	V8514: GOOD TO BE ALIVE (5)
+	V8565: I AM OFTEN BORED (5)
+
+V8517: FRQ GANG FIGHT
+	V7553: #HR GAMING (6)
+	V7562: #HR TEXT (5)
+	V7563: #HR TALK CELL (5)
+	V7501: OFTN FEEL LONELY (5)
+	V7507: OFT WSH MOR FRND (6)
+
+V7221: R HS GRADE/D=1
+	V7553: #HR GAMING (6)
+	V7562: #HR TEXT (6)
+	V8530: OFTN 7HRS SLEEP (6)
+	V8531: OFTN SLEEP <SHLD (9)
+	V7501: OFTN FEEL LONELY (7)
+	V8565: I AM OFTEN BORED (7)
+	
+	
 Seed5CV25PctFilterList.txt		
 	[1] "V7101"
 	V507NE V507NC  V507W 
