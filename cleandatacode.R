@@ -672,7 +672,7 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
 #V7118
 {
  
-  resv7118 <- cor(filteredv7118)
+  resv7118 <- cor(filteredv7118.train)
   corrplot(resv7118)
   
   x=filteredv7118.train[,-1]
@@ -722,7 +722,6 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
   testModel
   
-  
   summary(regularModel)
   
   #%incorrect
@@ -731,7 +730,7 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
 
 #8517
 {
-  resv8517 <- cor(filteredv8517)
+  resv8517 <- cor(filteredv8517.train)
   corrplot(resv8517)
   
   x=filteredv8517.train[,-1]
@@ -790,6 +789,7 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
 
 #V7221
 {
+  resv7221 <- cor(filteredv7221.train)
   corrplot(resv7221)
   
   x=filteredv7221.train[,-1]
