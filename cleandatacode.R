@@ -715,6 +715,13 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   summary(pcaPred)
   
   regularModel <- glm(filteredv7118.train)
+  
+  testPred <- predict.glm(regularModel,filteredv7118holdout[,-1])
+  #predict(regulardModel,)
+  testPredResid <- (testPred-filteredv7118holdout[,1])
+  
+  count(abs(testPredResid)>.25)
+  
   testModel <- glm(filteredv7118holdout)
   summary(regularModel)
   summary(testModel)
@@ -773,6 +780,13 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   summary(pcaPred)
   
   regularModel <- glm(filteredv8517.train)
+  
+  testPred <- predict.glm(regularModel,filteredv8517holdout[,-1])
+  #predict(regulardModel,)
+  testPredResid <- (testPred-filteredv8517holdout[,1])
+  
+  count(abs(testPredResid)>.25)
+  
   testModel <- glm(filteredv8517holdout)
   summary(regularModel)
   summary(testModel)
@@ -780,12 +794,10 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
   testModel
   
-  
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-}
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)}
 
 #V7221
 {
@@ -832,6 +844,13 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   summary(pcaPred)
   
   regularModel <- glm(filteredv7221.train)
+  
+  testPred <- predict.glm(regularModel,filteredv7221holdout[,-1])
+  #predict(regulardModel,)
+  testPredResid <- (testPred-filteredv7221holdout[,1])
+  
+  count(abs(testPredResid)>.25)
+  
   testModel <- glm(filteredv7221holdout)
   summary(regularModel)
   summary(testModel)
@@ -839,10 +858,7 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
   testModel
   
-  
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-
-}
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)}
