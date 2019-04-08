@@ -428,10 +428,10 @@ for (iterator in 1:sum(yIndex))
       
       #Regression model
       #ncol(data.train)
-      colnames(data.train)
-      View(data.train)
+      #colnames(data.train)
+      #View(data.train)
       full.model.train <- glm(data.train[,1]~., data=data.train)
-      summary(full.model.train)
+      #summary(full.model.train)
       full.model.test <- glm(data.test[,1]~., data=data.test)
       
       #basically, if both of these are significant, keep the coefficient
@@ -477,7 +477,7 @@ for (iterator in 1:sum(yIndex))
             #names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
             #rbind(names,namest)
             
-            #print(k)
+            #print(colnames(y))
             
             tempy <- as.character(colnames(templist)[1]) 
             tempxs <- names
@@ -486,11 +486,19 @@ for (iterator in 1:sum(yIndex))
             
             names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
             
-            for(h in 1:length(tempxs)) {
-              #cv.names[k,names2[h]]=names2[h]
-              cv.names[k,names2[h]]=tempxs[h]
-              
+            colnames(y)
+            
+            #subset(tempxs, select=-c(colnames(y)))
+            
+            #questionable fix
+            #if(length(names2)==0){cv.names[k,names2[h]]=tempxs[h]}
+            #if(!length(names2)==0){
+              for(h in 1:length(names2)) {
+                cv.names[k,names2[h]]=names2[h]
+                #cv.names[k,names2[h]]=tempxs[h]
+                
               }
+            #}
             
             namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
             
@@ -625,64 +633,191 @@ for (iterator in 1:sum(yIndex))
   
 }
 
+#V7118
+{
+  V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
+  
+  #8528 and 8530 have a very high correlation
+  filteredv7118 <- NewDF.train[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+  resv7118 <- cor(filteredv7118)
+  corrplot(resv7118)
+  
+  x=filteredv7118[,-1]
+  y=filteredv7118[,1]
+  
+  pc <- prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)
+  
+  #includes proportion of variance
+  summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))$importance
+  #pc plot
+  plot(te[3,1:ncol(te)])
+  
+  corrplot(cor(cbind(filteredv7118[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
+  
+  #include data in new model for inclusion in a linear model
+  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+  
+  pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+  
+  #predict using pca, just re-applying to training data.
+  
+  #applied PCA to holdout
+  filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+  x <- filteredv7118holdout[-1]
+  #View(x)
+  y <- data.frame(filteredv7118holdout[1])
+  
+  pred <- data.frame(predict(pc,x))
+  pcaPred <- glm(cbind(y,pred))
+  
+  #predict(pcaPred,)
+  
+  #predict(pcaPred,filteredv7133holdout[-1])
+  
+  summary(pcaPred)
+  hist(pcaPred$residuals)
+  
+  summary(pcaModel)
+  summary(pcaPred)
+  
+  regularModel <- lm(filteredv7118)
+  testModel <- glm(filteredv7118holdout)
+  summary(regularModel)
+  summary(testModel)
+  hist(testModel$residuals)
+  
+  testModel
+  
+  
+  summary(regularModel)
+  
+  #%incorrect
+  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
+}
 
-V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
-V8517profile <- c("V7553","v7562","v7563","v7501","v7507")
-V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
+#8517
+{
+  V8517profile <- c("V7553","V7562","V7563","V7501","V7507")
+  #8528 and 8530 have a very high correlation
+  filteredv8517 <- NewDF.train[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+  resv8517 <- cor(filteredv8517)
+  corrplot(resv8517)
+  
+  x=filteredv8517[,-1]
+  y=filteredv8517[,1]
+  
+  pc <- prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE)
+  
+  #includes proportion of variance
+  summary(prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE))$importance
+  #pc plot
+  plot(te[3,1:ncol(te)])
+  
+  corrplot(cor(cbind(filteredv8517[,1],prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE)$x)))
+  
+  #include data in new model for inclusion in a linear model
+  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+  
+  pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+  
+  #predict using pca, just re-applying to training data.
+  
+  #applied PCA to holdout
+  filteredv8517holdout <- NewDF.holdout[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+  x <- filteredv8517holdout[-1]
+  #View(x)
+  y <- data.frame(filteredv8517holdout[1])
+  
+  pred <- data.frame(predict(pc,x))
+  pcaPred <- glm(cbind(y,pred))
+  
+  #predict(pcaPred,)
+  
+  #predict(pcaPred,filteredv7133holdout[-1])
+  
+  summary(pcaPred)
+  hist(pcaPred$residuals)
+  
+  summary(pcaModel)
+  summary(pcaPred)
+  
+  regularModel <- lm(filteredv8517)
+  testModel <- glm(filteredv8517holdout)
+  summary(regularModel)
+  summary(testModel)
+  hist(testModel$residuals)
+  
+  testModel
+  
+  
+  summary(regularModel)
+  
+  #%incorrect
+  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
+  
+}
 
-#8528 and 8530 have a very high correlation
-filteredv7118 <- NewDF.train[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
-resv7118 <- cor(filteredv7118)
-corrplot(resv7118)
-
-x=filteredv7118[,-1]
-y=filteredv7118[,1]
-
-pc <- prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)
-
-#includes proportion of variance
-summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))
-corrplot(cor(cbind(filteredv7118[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
-
-#include data in new model for inclusion in a linear model
-#https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-
-pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
-
-#predict using pca, just re-applying to training data.
-
-#applied PCA to holdout
-filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
-x <- filteredv7118holdout[-1]
-#View(x)
-y <- data.frame(filteredv7118holdout[1])
-
-pred <- data.frame(predict(pc,x))
-pcaPred <- lm(cbind(y,pred))
-
-#predict(pcaPred,)
-
-
-#predict(pcaPred,filteredv7133holdout[-1])
-
-summary(pcaPred)
-
-summary(pcaModel)
-regularModel <- lm(filteredv7118)
-
-cor(pcaModel$effects)
-
-corrplot(cor(pcaModel$fitted.values))
-
-summary(pcaModel)
-summary(regularModel)
-#PCA
-#head(iris)
-
-#filteredSubset <- rbind(list[lHabitsIndex,],list[lHealthIndex,],list[lPsycheIndex,],list[lGPAIndex,],list[lGenderIndex,])
-#filtered <- NewDF[,as.character(filteredSubset[,1])] %>% filter_all(all_vars(!is.na(.)))
-#colnames(filtered) <- suppressMessages(paste(as.character(join(filteredSubset,list[,c(1,3)])[,3, drop=TRUE]),as.character(join(filteredSubset,list[,c(1,3)])[,1, drop=TRUE])))
-#res2 <- cor(filtered)
-#corrplot(res2)
-#special subset of Habits, Health, and Psyche
-
+#V7221
+{
+  V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
+  #8528 and 8530 have a very high correlation
+  filteredv7221 <- NewDF.train[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+  resv7221 <- cor(filteredv7221)
+  corrplot(resv7221)
+  
+  x=filteredv7221[,-1]
+  y=filteredv7221[,1]
+  
+  pc <- prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE)
+  
+  #includes proportion of variance
+  summary(prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE))$importance
+  #pc plot
+  plot(te[3,1:ncol(te)])
+  
+  corrplot(cor(cbind(filteredv7221[,1],prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE)$x)))
+  
+  #include data in new model for inclusion in a linear model
+  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+  
+  pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+  
+  #predict using pca, just re-applying to training data.
+  
+  #applied PCA to holdout
+  filteredv7221holdout <- NewDF.holdout[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+  x <- filteredv7221holdout[-1]
+  #View(x)
+  y <- data.frame(filteredv7221holdout[1])
+  
+  pred <- data.frame(predict(pc,x))
+  pcaPred <- glm(cbind(y,pred))
+  
+  #predict(pcaPred,)
+  
+  #predict(pcaPred,filteredv7133holdout[-1])
+  
+  summary(pcaPred)
+  hist(pcaPred$residuals)
+  
+  summary(pcaModel)
+  summary(pcaPred)
+  
+  regularModel <- lm(filteredv7221)
+  testModel <- glm(filteredv7221holdout)
+  summary(regularModel)
+  summary(testModel)
+  hist(testModel$residuals)
+  
+  testModel
+  
+  
+  summary(regularModel)
+  
+  #%incorrect
+  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
+  
+}
