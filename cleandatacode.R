@@ -41,9 +41,9 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-#list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -428,7 +428,10 @@ for (iterator in 1:sum(yIndex))
       
       #Regression model
       #ncol(data.train)
+      colnames(data.train)
+      View(data.train)
       full.model.train <- glm(data.train[,1]~., data=data.train)
+      summary(full.model.train)
       full.model.test <- glm(data.test[,1]~., data=data.test)
       
       #basically, if both of these are significant, keep the coefficient
@@ -483,8 +486,10 @@ for (iterator in 1:sum(yIndex))
             
             names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
             
-            for(h in 1:length(names2)) {
-              cv.names[k,names2[h]]=names2[h]
+            for(h in 1:length(tempxs)) {
+              #cv.names[k,names2[h]]=names2[h]
+              cv.names[k,names2[h]]=tempxs[h]
+              
               }
             
             namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
