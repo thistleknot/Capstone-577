@@ -716,9 +716,24 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
   regularModel <- glm(filteredv7118.train)
   
+  # Define training control
+  
+  #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+  train.control <- trainControl(method = "repeatedcv", 
+                                number = 10, repeats = 3)
+  # Train the model
+  
+  model <- train(filteredv7118.train[-1], as.factor(filteredv7118.train[,1]), method = "glm",
+                 trControl = train.control)
+  # Summarize the results
+  #print(model)
+  #summary(model)  
+  
+  testPredCV <- predict.train(model,newdata=filteredv7118holdout[,-1])
+  
   testPred <- predict.glm(regularModel,filteredv7118holdout[,-1])
   #predict(regulardModel,)
-  testPredResid <- (testPred-filteredv7118holdout[,1])
+  testPredResid <- (testPredCV-filteredv7118holdout[,1])
   
   count(abs(testPredResid)>.25)
   
@@ -733,6 +748,8 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
   #%incorrect
   count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+  
+ 
 }
 
 #8517
