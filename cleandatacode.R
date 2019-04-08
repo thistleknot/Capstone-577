@@ -621,38 +621,23 @@ for (iterator in 1:sum(yIndex))
 }
 
 
-V7115profile <- c("V7115","V8528","V8530")
-V7118profile <- c("V7118","V8512")
-V7097profile <- c("V7097","V8509","V8514")
-V7133profile <- c("V7133","V8509","V8512","V8514")
+V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
+V8517profile <- c("V7553","v7562","v7563","v7501","v7507")
+V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
 
 #8528 and 8530 have a very high correlation
-filteredv7115 <- NewDF.train[,as.character(V7115profile)] %>% filter_all(all_vars(!is.na(.)))
-resv7115 <- cor(filteredv7115)
-corrplot(resv7115)
-
 filteredv7118 <- NewDF.train[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 resv7118 <- cor(filteredv7118)
 corrplot(resv7118)
 
-#good model
-filteredv7097 <- NewDF.train[,as.character(V7097profile)] %>% filter_all(all_vars(!is.na(.)))
-resv7097 <- cor(filteredv7097)
-corrplot(resv7097)
+x=filteredv7118[,-1]
+y=filteredv7118[,1]
 
-#8512 and 8512 have a very high correlation
-filteredv7133 <- NewDF.train[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
-resv7133 <- cor(filteredv7133)
-corrplot(resv7133)
-
-x=filteredv7133[,-1]
-y=filteredv7133[,1]
-
-pc <- prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE)
+pc <- prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)
 
 #includes proportion of variance
-summary(prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE))
-corrplot(cor(cbind(filteredv7133[,1],prcomp(filteredv7133[,-1], center=TRUE, scale=TRUE)$x)))
+summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))
+corrplot(cor(cbind(filteredv7118[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
 
 #include data in new model for inclusion in a linear model
 #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -662,10 +647,10 @@ pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
 #predict using pca, just re-applying to training data.
 
 #applied PCA to holdout
-filteredv7133holdout <- NewDF.holdout[,as.character(V7133profile)] %>% filter_all(all_vars(!is.na(.)))
-x <- filteredv7133holdout[-1]
+filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+x <- filteredv7118holdout[-1]
 #View(x)
-y <- data.frame(filteredv7133holdout[1])
+y <- data.frame(filteredv7118holdout[1])
 
 pred <- data.frame(predict(pc,x))
 pcaPred <- lm(cbind(y,pred))
@@ -678,7 +663,7 @@ pcaPred <- lm(cbind(y,pred))
 summary(pcaPred)
 
 summary(pcaModel)
-regularModel <- lm(filteredv7133)
+regularModel <- lm(filteredv7118)
 
 cor(pcaModel$effects)
 
