@@ -633,27 +633,60 @@ for (iterator in 1:sum(yIndex))
   
 }
 
+V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
+filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7118[filteredv7118 == 0] <- NA
+filteredv7118 <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
+filteredv7118[filteredv7118 == -1] <- 0
+filteredv7118.train <- filteredv7118
+filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7118holdout[filteredv7118holdout == 0] <- NA
+filteredv7118holdout <- filteredv7118holdout %>% filter_all(all_vars(!is.na(.)))
+filteredv7118holdout[filteredv7118holdout == -1] <- 0
+write.csv(filteredv7118,paste0(sourceDir,"filteredv7118.csv"))
+
+V8517profile <- c("V7553","V7562","V7563","V7501","V7507")
+filteredv8517 <- NewDF[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv8517[filteredv8517 == 0] <- NA
+filteredv8517 <- filteredv8517 %>% filter_all(all_vars(!is.na(.)))
+filteredv8517[filteredv8517 == -1] <- 0
+filteredv8517.train <- filteredv8517
+filteredv8517holdout <- NewDF.holdout[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv8517holdout[filteredv8517holdout == 0] <- NA
+filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
+filteredv8517holdout[filteredv8517holdout == -1] <- 0
+write.csv(filteredv8517,paste0(sourceDir,"filteredv8517.csv"))
+
+V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
+filteredv7221 <- NewDF[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7221[filteredv7221 == 0] <- NA
+filteredv7221 <- filteredv7221 %>% filter_all(all_vars(!is.na(.)))
+filteredv7221[filteredv7221 == -1] <- 0
+filteredv7221.train <- filteredv7221
+filteredv7221holdout <- NewDF.holdout[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7221holdout[filteredv7221holdout == 0] <- NA
+filteredv7221holdout <- filteredv7221holdout %>% filter_all(all_vars(!is.na(.)))
+filteredv7221holdout[filteredv7221holdout == -1] <- 0
+write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
+
 #V7118
 {
-  V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
-  
-  #8528 and 8530 have a very high correlation
-  filteredv7118 <- NewDF.train[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+ 
   resv7118 <- cor(filteredv7118)
   corrplot(resv7118)
   
-  x=filteredv7118[,-1]
-  y=filteredv7118[,1]
+  x=filteredv7118.train[,-1]
+  y=filteredv7118.train[,1]
   
-  pc <- prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)
+  pc <- prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE)
   
   #includes proportion of variance
-  summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))
-  te <- summary(prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE))$importance
+  summary(prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE))$importance
   #pc plot
   plot(te[3,1:ncol(te)])
   
-  corrplot(cor(cbind(filteredv7118[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
+  corrplot(cor(cbind(filteredv7118.train[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
   
   #include data in new model for inclusion in a linear model
   #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -663,7 +696,7 @@ for (iterator in 1:sum(yIndex))
   #predict using pca, just re-applying to training data.
   
   #applied PCA to holdout
-  filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+  
   x <- filteredv7118holdout[-1]
   #View(x)
   y <- data.frame(filteredv7118holdout[1])
@@ -681,7 +714,7 @@ for (iterator in 1:sum(yIndex))
   summary(pcaModel)
   summary(pcaPred)
   
-  regularModel <- lm(filteredv7118)
+  regularModel <- glm(filteredv7118.train)
   testModel <- glm(filteredv7118holdout)
   summary(regularModel)
   summary(testModel)
@@ -693,29 +726,26 @@ for (iterator in 1:sum(yIndex))
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
 }
 
 #8517
 {
-  V8517profile <- c("V7553","V7562","V7563","V7501","V7507")
-  #8528 and 8530 have a very high correlation
-  filteredv8517 <- NewDF.train[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
   resv8517 <- cor(filteredv8517)
   corrplot(resv8517)
   
-  x=filteredv8517[,-1]
-  y=filteredv8517[,1]
+  x=filteredv8517.train[,-1]
+  y=filteredv8517.train[,1]
   
-  pc <- prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE)
+  pc <- prcomp(filteredv8517.train[,-1], center=TRUE, scale=TRUE)
   
   #includes proportion of variance
-  summary(prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE))
-  te <- summary(prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE))$importance
+  summary(prcomp(filteredv8517.train[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv8517.train[,-1], center=TRUE, scale=TRUE))$importance
   #pc plot
   plot(te[3,1:ncol(te)])
   
-  corrplot(cor(cbind(filteredv8517[,1],prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE)$x)))
+  corrplot(cor(cbind(filteredv8517.train[,1],prcomp(filteredv8517[,-1], center=TRUE, scale=TRUE)$x)))
   
   #include data in new model for inclusion in a linear model
   #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -725,7 +755,7 @@ for (iterator in 1:sum(yIndex))
   #predict using pca, just re-applying to training data.
   
   #applied PCA to holdout
-  filteredv8517holdout <- NewDF.holdout[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+  
   x <- filteredv8517holdout[-1]
   #View(x)
   y <- data.frame(filteredv8517holdout[1])
@@ -743,7 +773,7 @@ for (iterator in 1:sum(yIndex))
   summary(pcaModel)
   summary(pcaPred)
   
-  regularModel <- lm(filteredv8517)
+  regularModel <- glm(filteredv8517.train)
   testModel <- glm(filteredv8517holdout)
   summary(regularModel)
   summary(testModel)
@@ -755,30 +785,25 @@ for (iterator in 1:sum(yIndex))
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
-  
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
 }
 
 #V7221
 {
-  V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
-  #8528 and 8530 have a very high correlation
-  filteredv7221 <- NewDF.train[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
-  resv7221 <- cor(filteredv7221)
   corrplot(resv7221)
   
-  x=filteredv7221[,-1]
-  y=filteredv7221[,1]
+  x=filteredv7221.train[,-1]
+  y=filteredv7221.train[,1]
   
-  pc <- prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE)
+  pc <- prcomp(filteredv7221.train[,-1], center=TRUE, scale=TRUE)
   
   #includes proportion of variance
-  summary(prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE))
-  te <- summary(prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE))$importance
+  summary(prcomp(filteredv7221.train[,-1], center=TRUE, scale=TRUE))
+  te <- summary(prcomp(filteredv7221.train[,-1], center=TRUE, scale=TRUE))$importance
   #pc plot
   plot(te[3,1:ncol(te)])
   
-  corrplot(cor(cbind(filteredv7221[,1],prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE)$x)))
+  corrplot(cor(cbind(filteredv7221.train[,1],prcomp(filteredv7221[,-1], center=TRUE, scale=TRUE)$x)))
   
   #include data in new model for inclusion in a linear model
   #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -788,7 +813,7 @@ for (iterator in 1:sum(yIndex))
   #predict using pca, just re-applying to training data.
   
   #applied PCA to holdout
-  filteredv7221holdout <- NewDF.holdout[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+  
   x <- filteredv7221holdout[-1]
   #View(x)
   y <- data.frame(filteredv7221holdout[1])
@@ -806,7 +831,7 @@ for (iterator in 1:sum(yIndex))
   summary(pcaModel)
   summary(pcaPred)
   
-  regularModel <- lm(filteredv7221)
+  regularModel <- glm(filteredv7221.train)
   testModel <- glm(filteredv7221holdout)
   summary(regularModel)
   summary(testModel)
@@ -818,6 +843,6 @@ for (iterator in 1:sum(yIndex))
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.5)$freq[2]/length(testModel$residuals)
-  
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+
 }
