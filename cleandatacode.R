@@ -44,7 +44,7 @@ data <- d_combined
 
 #list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-list<-read.csv(paste0(sourceDir,"filterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -215,15 +215,16 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
-set.seed(5)
+set.seed(6)
 
 #setup holdout
 
+reduceFactor = .25
+
 data <- NewDF
 #colnames(NewDF)
-nrFolds <- 11
+nrFolds <- 10
 
-reduceFactor = .10
 # generate array containing fold-number for each sample (row)
 folds <- rep_len(1:nrFolds, nrow(data))
 
@@ -231,7 +232,8 @@ folds <- sample(folds, nrow(data))
 #reduced
 folds <- folds[1:round(reduceFactor*nrow(data))]
 
-fold <- which(folds != 11)
+#holdout is 1/nrFolds
+fold <- which(folds != nrFolds)
 NewDF.holdout <- data[-fold,]
 NewDF.train <- data[fold,]
 colnames(NewDF.train)
@@ -347,7 +349,7 @@ for (iterator in 1:sum(yIndex))
     data[data == -1] <- 0
     #data[data == 1] <- 1
     
-    nrFolds <- 10
+    nrFolds <- 100
     
     #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
     #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
@@ -634,7 +636,7 @@ for (iterator in 1:sum(yIndex))
   
 }
 
-V7118profile <- c("V7118","V7553","V7562","V8528","V8529","V8530","V8512","V8514","V8565")
+V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
 filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118[filteredv7118 == 0] <- NA
 filteredv7118 <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
@@ -646,7 +648,7 @@ filteredv7118holdout <- filteredv7118holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout[filteredv7118holdout == -1] <- 0
 write.csv(filteredv7118,paste0(sourceDir,"filteredv7118.csv"))
 
-V8517profile <- c("V7553","V7562","V7563","V7501","V7507")
+V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
 filteredv8517 <- NewDF[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv8517[filteredv8517 == 0] <- NA
 filteredv8517 <- filteredv8517 %>% filter_all(all_vars(!is.na(.)))
@@ -658,7 +660,7 @@ filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == -1] <- 0
 write.csv(filteredv8517,paste0(sourceDir,"filteredv8517.csv"))
 
-V7221profile <- c("V7553","V7562","V8530","V8531","V7501","V8565")
+V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
 filteredv7221 <- NewDF[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7221[filteredv7221 == 0] <- NA
 filteredv7221 <- filteredv7221 %>% filter_all(all_vars(!is.na(.)))
@@ -755,14 +757,6 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
  
 }
 
-modelcv <- train(
-  SalePrice~ OverallQual + YearBuilt + YearRemodAdd + MasVnrArea +ExterQual + BsmtFinType1
-  + BsmtFinSF1 + TotalBsmtSF + X1stFlrSF + GrLivArea + KitchenQual + GarageCars, data=trainingdata,
-  method = "lm",
-  trControl = trainControl(
-    method = "cv", number = 10
-  )
-)
 
 
 #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
