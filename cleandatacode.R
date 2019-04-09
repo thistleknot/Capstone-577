@@ -11,6 +11,7 @@ require(caret)
 library(caret)
 library(corrplot)
 library(MASS)
+library(car)
 
 pw <- {"Read1234"}
 
@@ -222,7 +223,7 @@ data <- NewDF
 #colnames(NewDF)
 nrFolds <- 11
 
-reduceFactor = .25
+reduceFactor = .10
 # generate array containing fold-number for each sample (row)
 folds <- rep_len(1:nrFolds, nrow(data))
 
@@ -732,6 +733,8 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   testPredCV <- predict.train(model,newdata=filteredv7118holdout[,-1])
   
   testPred <- predict.glm(regularModel,filteredv7118holdout[,-1])
+  cor(testPred,filteredv7118holdout[,1])
+  
   #predict(regulardModel,)
   testPredResid <- (testPredCV-filteredv7118holdout[,1])
   
@@ -751,6 +754,35 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
  
 }
+
+modelcv <- train(
+  SalePrice~ OverallQual + YearBuilt + YearRemodAdd + MasVnrArea +ExterQual + BsmtFinType1
+  + BsmtFinSF1 + TotalBsmtSF + X1stFlrSF + GrLivArea + KitchenQual + GarageCars, data=trainingdata,
+  method = "lm",
+  trControl = trainControl(
+    method = "cv", number = 10
+  )
+)
+
+
+#http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
+holdoutmodelcv <- train(filteredv7118holdout[-1], filteredv7118holdout[,1], method = "glm", trControl = train.control)
+holdoutmodelcv$results
+summary(holdoutmodelcv$finalModel)
+vif(holdoutmodelcv$finalModel)
+#plot(holdoutmodelcv$finalModel)
+
+#check errors
+pcv <- predict(holdoutmodelcv, filteredv7118holdout[-1])
+errorcv <- (pcv- filteredv7118holdout[,1])
+RMSE_NewDatacv <- sqrt(mean(errorcv^2))
+
+#check errors against training
+pct <- predict(holdoutmodelcv, filteredv7118.train[-1])
+errorcv <- (pct- filteredv7118.train[,1])
+RMSE_NewDatacv <- sqrt(mean(errorcv^2))
+
+
 
 #8517
 {
@@ -799,6 +831,8 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   regularModel <- glm(filteredv8517.train)
   
   testPred <- predict.glm(regularModel,filteredv8517holdout[,-1])
+  
+  #cor(testPred,filteredv8517holdout[,1])
   #predict(regulardModel,)
   testPredResid <- (testPred-filteredv8517holdout[,1])
   
@@ -814,7 +848,8 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)}
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+}
 
 #V7221
 {
@@ -878,4 +913,5 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   summary(regularModel)
   
   #%incorrect
-  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)}
+  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+}
