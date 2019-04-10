@@ -218,16 +218,16 @@ NewDF[NewDF == -2] <- 0
 #setup holdout
 
 #static holdout
-holdoutSize = .25
+holdoutSize = .05
 
 #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-preTrainSize = .25
+preTrainSize = .05
 
 #monte carlo sample size that samples from the preTrain.
 #considering that we are doing at least 10 outer loops, 
 #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
 #In other words we want to exchaust small samples.
-trainMCSize = .05
+trainMCSize = .25
 
 base = 5
 set.seed(base)
@@ -258,7 +258,7 @@ lHabitsIndex <- list[,4] == 7
 lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
 
-#outer=1
+#outer=8
 #still iterates over a subset of the data that is not the holdout, which is important
 for (outer in 1:20)
 {
@@ -285,7 +285,7 @@ for (outer in 1:20)
       for (val in 1:10)
         #val=8
       {
-        #val = 3
+        #val = 2
         if (val == 1) colList <- list[lGeographyIndex,]
         if (val == 2) colList <- list[lGenderIndex,]
         if (val == 3) colList <- list[lGPAIndex,]
@@ -484,7 +484,8 @@ for (outer in 1:20)
           
           if(!is.null(testCaseTrain$message))
           {
-            if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCaseTrain$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^") {
+            
+            if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCaseTrain$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^"||testCaseTrain$message=="undefined columns selected") {
                 #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
                 
                 #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
@@ -503,9 +504,10 @@ for (outer in 1:20)
                 
                 parse.model.test <- glm(data.test[,c(tempy,names)])
                 
-                names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+                #names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+                names2 <- tempxs
                 
-                colnames(y)
+                #colnames(y[1])
                 
                 #subset(tempxs, select=-c(colnames(y)))
                 
