@@ -220,11 +220,14 @@ NewDF[NewDF == -2] <- 0
 #static holdout
 holdoutSize = .25
 
-#section of nonHoldout (1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+#proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
 preTrainSize = .25
 
 #monte carlo sample size that samples from the preTrain.
-trainMCSize = .25
+#considering that we are doing at least 10 outer loops, 
+#it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
+#In other words we want to exchaust small samples.
+trainMCSize = .05
 
 base = 5
 set.seed(base)
