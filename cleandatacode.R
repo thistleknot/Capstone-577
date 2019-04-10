@@ -508,11 +508,18 @@ for (outer in 1:10)
                 #questionable fix
                 #if(length(names2)==0){cv.names[k,names2[h]]=tempxs[h]}
                 #if(!length(names2)==0){
+                if(!length(names2)==0)
+                {
                   for(h in 1:length(names2)) {
-                    cv.names[k,names2[h]]=names2[h]
+                    
+                    if(!is.na(names2[h])) cv.names[k,names2[h]]=names2[h]
                     #cv.names[k,names2[h]]=tempxs[h]
                     
                   }
+                  
+                  
+                }
+                
                 #}
                 
                 namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
