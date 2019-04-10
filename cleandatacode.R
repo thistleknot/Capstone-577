@@ -227,7 +227,7 @@ preTrainSize = .05
 #considering that we are doing at least 10 outer loops, 
 #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
 #In other words we want to exchaust small samples.
-trainMCSize = .25
+trainMCSize = .10
 
 base = 5
 set.seed(base)
@@ -364,7 +364,7 @@ for (outer in 1:20)
         data[data == -1] <- 0
         #data[data == 1] <- 1
         
-        nrFolds <- 10
+        nrFolds <- 20
         
         #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
         #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
@@ -670,6 +670,13 @@ for (outer in 1:20)
 }
 
 V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
+#V7552
+#V7553
+#V7562
+#V7563
+#V8527	V8528	V8529	V8530	V8531
+#V8505	V8509	V8512	V8514	V8536	V7501	V7507	V8565
+
 filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118[filteredv7118 == 0] <- NA
 filteredv7118 <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
@@ -789,8 +796,6 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   
  
 }
-
-
 
 #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
 holdoutmodelcv <- train(filteredv7118holdout[-1], filteredv7118holdout[,1], method = "glm", trControl = train.control)
