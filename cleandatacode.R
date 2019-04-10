@@ -217,30 +217,27 @@ NewDF[NewDF == -2] <- 0
 
 #setup holdout
 
-reduceFactor = .25
+#static holdout
+holdoutSize = .25
 
-data <- NewDF
-#colnames(NewDF)
-nrFolds <- 10
+#section of nonHoldout (1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+preTrainSize = .25
 
-# generate array containing fold-number for each sample (row)
-folds <- rep_len(1:nrFolds, nrow(data))
+#monte carlo sample size that samples from the preTrain.
+trainMCSize = .25
 
 base = 5
-
 set.seed(base)
 
+#https://adv-r.hadley.nz/subsetting.html
+holdout <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
 
-folds <- sample(folds, nrow(data))
-#reduced
-#I exclude above round(reduceFactor*nrow(data)) in folds
-folds <- folds[1:round(reduceFactor*nrow(data))]
+NewDF.holdout <- NewDF[holdout, ]
+NewDf.nonHoldout <-NewDF[-holdout, ]
 
-#holdout is 1/nrFolds
-fold <- which(folds != nrFolds)
-NewDF.holdout <- data[-fold,]
-NewDF.train <- data[fold,]
-colnames(NewDF.train)
+preTrain <- sample(nrow(NewDf.nonHoldout), round(preTrainSize*nrow(NewDf.nonHoldout)))
+
+NewDF.preTrain <- NewDf.nonHoldout[preTrain,]
 
 #filtered <- NewDF[complete.cases(NewDF), ]
 
@@ -258,13 +255,17 @@ lHabitsIndex <- list[,4] == 7
 lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
 
+#outer=1
 #still iterates over a subset of the data that is not the holdout, which is important
-for (outer in 1:10)
+for (outer in 1:20)
 {
-    print(outer)
+  #Monte Carlo sample from non holdout, preTrain is !holdout
+  print(outer)
   
-    set.seed(base+outer)
-    
+  set.seed(base+outer)
+  
+  NewDF.train <- NewDF.preTrain[sample(nrow(NewDF.preTrain), round(trainMCSize*nrow(NewDF.preTrain))),]
+
     y <- c()
     #y iterator's
     #iterator=2
@@ -314,7 +315,7 @@ for (outer in 1:10)
         #droplevels(newList)
         #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
         
-        colnames(NewDF.train)
+        #colnames(NewDF.train)
         temp <- NewDF.train[,newList]
         #colnames(temp) <- paste(newList[,1],newList[,3])
         temp[temp == 0] <- NA
@@ -360,7 +361,7 @@ for (outer in 1:10)
         data[data == -1] <- 0
         #data[data == 1] <- 1
         
-        nrFolds <- 20
+        nrFolds <- 10
         
         #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
         #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
