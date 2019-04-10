@@ -226,7 +226,7 @@ nrFolds <- 10
 # generate array containing fold-number for each sample (row)
 folds <- rep_len(1:nrFolds, nrow(data))
 
-base = 6
+base = 5
 
 set.seed(base)
 
