@@ -215,8 +215,6 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
-set.seed(6)
-
 #setup holdout
 
 reduceFactor = .25
@@ -228,8 +226,14 @@ nrFolds <- 10
 # generate array containing fold-number for each sample (row)
 folds <- rep_len(1:nrFolds, nrow(data))
 
+base = 6
+
+set.seed(base)
+
+
 folds <- sample(folds, nrow(data))
 #reduced
+#I exclude above round(reduceFactor*nrow(data)) in folds
 folds <- folds[1:round(reduceFactor*nrow(data))]
 
 #holdout is 1/nrFolds
@@ -254,386 +258,402 @@ lHabitsIndex <- list[,4] == 7
 lHealthIndex <- list[,4] == 8
 lPsycheIndex <- list[,4] == 9
 
-y <- c()
-#y iterator's
-#iterator=2
-for (iterator in 1:sum(yIndex))
+#still iterates over a subset of the data that is not the holdout, which is important
+for (outer in 1:10)
 {
-  y <- list[yIndex,][iterator,]
-  alty <- list[yIndex,][-iterator,]
-  #y
-  #yname <- as.character(list[yIndex,][iterator,][,1])
-  print(as.character(list[yIndex,][iterator,][,1]))
-  #val = 10
+    print(outer)
   
-  #categories
-  for (val in 1:10)
-    #val=8
-  {
-    #val = 3
-    if (val == 1) colList <- list[lGeographyIndex,]
-    if (val == 2) colList <- list[lGenderIndex,]
-    if (val == 3) colList <- list[lGPAIndex,]
-    if (val == 4) colList <- list[lViolenceIndex,]
-    if (val == 5) colList <- list[lFather1Index,]
-    if (val == 6) colList <- list[lFather2Index,]
-    if (val == 7) colList <- list[lHabitsIndex,]
-    if (val == 8) colList <- list[lHealthIndex,]
-    if (val == 9) colList <- list[lPsycheIndex,]
-    if (val == 10) colList <- alty
+    set.seed(base+outer)
     
-    
-    if (is.null(nrow(data.frame(alty)))) break
-    
-    #colList <- rbind(list[yIndex,],colList)
-    colList <- rbind(y,colList)
-    
-    #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-    #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-    colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-    
-    #colList <- c()
-    #colList <- join(colList,list)
-
-    #c(join(colList,list)[,1])
-    #join,then only use 1st column
-    newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-    
-    #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-    #droplevels(newList)
-    #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-    
-    colnames(NewDF.train)
-    temp <- NewDF.train[,newList]
-    #colnames(temp) <- paste(newList[,1],newList[,3])
-    temp[temp == 0] <- NA
-    trows <- nrow(data.frame(temp))
-    #% na's
-    colSums(is.na(data.frame(temp)))/trows
-
-    #drop na's
-    #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
-    templist <- data.frame(temp) %>% filter_all(all_vars(!is.na(.)))
-    #nrow(tempList)
-    #NewDF[,"V7101"]
-    #colnames(NewDF)
-    
-    if (val == 1)
+    y <- c()
+    #y iterator's
+    #iterator=2
+    for (iterator in 1:sum(yIndex))
     {
-      colnames(templist)
-      templist[,"V507NE"] <- templist[,"V507"] == 1
-      templist[,"V507NE"][templist[,"V507NE"] == 0] <- -1
-      templist[,"V507NC"] <- templist[,"V507"] == 2
-      templist[,"V507NC"][templist[,"V507NC"] == 0] <- -1
-      templist[,"V507W"] <- templist[,"V507"] == 4
-      templist[,"V507W"][templist[,"V507W"] == 0] <- -1
-
-      table(is.na(templist))
+      y <- list[yIndex,][iterator,]
+      alty <- list[yIndex,][-iterator,]
+      #y
+      #yname <- as.character(list[yIndex,][iterator,][,1])
+      print(as.character(list[yIndex,][iterator,][,1]))
+      #val = 10
       
-      drop <- c("V507")
-      templistNoGeo = templist[,!(names(templist) %in% drop)]
-      colnames(templistNoGeo)
-      templist <- c()
-      templist <- templistNoGeo
-      #colnames(templist) <- suppressMessages(paste(join(templist,list)[,1],join(templist,list)[,3]))
-    }
-
-    #partition data before PCA 
-    #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
-    
-    #templist[,as.character(y[,1])]
-    #use filtered categorical data
-
-    data <- templist
-    
-    data[data == -1] <- 0
-    #data[data == 1] <- 1
-    
-    nrFolds <- 100
-    
-    #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
-    #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
-    if((length(data)-1)==0) break
-    cv.names=matrix(NA,nrFolds,(length(data)-1), dimnames=list(NULL, paste(1:(length(data)-1))))
-    colnames(cv.names) <- colnames(data[-1])
-    
-    # generate array containing fold-number for each sample (row)
-    folds <- rep_len(1:nrFolds, nrow(data))
-    folds <- sample(folds, nrow(data))
-    
-    #https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/
-    reduced <- c()
-    reduced <- c(numeric(length(data[,-1])),numeric(length = nrFolds))
-    
-    names <- c()
-    namest <- data[0,-1]
-    
-    #empty column set
-    #https://stackoverflow.com/questions/6764756/how-to-copy-an-objects-structure-but-not-the-data
-    colnames(namest) <- colnames(data[0,-1])
-    
-    widthSize <- ncol(data.frame(data[,-1]))
-    width <- numeric(length = widthSize)
-    #width <- numeric(length = ncol(data.frame(data.train[,-1])))
-    #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
-    klist <- array(numeric(length = ncol(data.frame(data[,-1]))),dim=c(nrFolds,ncol(data.frame(data[,-1]))))
-    #array(width,dim=c(nrFolds,widthSize))
-    
-    #print(colnamesy)
-    # actual cross validation
-    #k=7
-    #11th fold is holdout set used for testing models
-    for(k in 1:nrFolds) {
-      #colnames(namest) <- 
-      #namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
-
-      # actual split of the data
-      fold <- which(folds == k)
-      
-      if(k!=nrFolds) trainfold <- which(folds == k)
-      if(k==nrFolds) trainfold <- which(folds == 1)
-    
-      data.train <- data[-fold,]
-      #data.train <- data[trainfold,]
-      
-      data.test <- data[fold,]
-      
-      full.model <- lm(data.train)
-      
-      #full.model <- lm(y=data.train[,1], x=data.train[,-1])
-      
-      #significance
-      #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
-      
-      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
-  
-      # Fit the full model 
-
-      # Stepwise regression model
-      
-      #stepwise regression
-      #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
-      
-      summary(full.model)
-      lm.res <- summary(full.model)
-      coef(lm.res)[,4]
-      #View(full.model)
-      
-      #lm(y~pc$sdev[1:3]
-      
-      #data.validation <- data.test[1:as.integer(nrow(data.test)/2),]
-      #data.test <- data.pretest[as.integer(nrow(data.test)/2)+1:,]
-      
-      res <- cor(data.train)
-      corrplot(res)
-      
-      # train and test your model with data.train and data.test
-      
-      #Regression model
-      #ncol(data.train)
-      #colnames(data.train)
-      #View(data.train)
-      full.model.train <- glm(data.train[,1]~., data=data.train)
-      #summary(full.model.train)
-      full.model.test <- glm(data.test[,1]~., data=data.test)
-      
-      #basically, if both of these are significant, keep the coefficient
-      coef(summary(full.model.train))[,4][-1:-2]
-      
-      #https://stackoverflow.com/questions/14205583/filtering-data-in-a-dataframe-based-on-criteria
-      #test2sig <- coef(summary(full.model.test))[,4][-1:-2]
-      #
-      #Due to NaN in coefficient terms for p, along with -AIC, disabling this check for test2sig.  Else test2sig needs to check if the terms are Na or Nil or NAN
-      #test2sigNames <- row.names(data.frame(test2sig[test2sig < .05]))
-      
-      #full.model.train$
-    
-      #full.model <- lm(y=data.train[,1], x=data.train[,-1])
-      
-      #significance()
-      #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
-      
-      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
-      
-      # Fit the full model 
-      
-      # Stepwise regression model
-      
-      #stepwise regression
-      #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
-      
-      #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
-
-      testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
-      
-      if(!is.null(testCaseTrain$message))
+      #categories
+      for (val in 1:10)
+        #val=8
       {
-        if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCaseTrain$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^") {
-            #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
-            
-            #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
-            #https://community.rstudio.com/t/type-error-after-rbind/16866/2
-            
-            #names <- test2sigNames
-            names <- as.character(colnames(templist)[-1])
-            
-            #names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
-            #rbind(names,namest)
-            
-            #print(colnames(y))
-            
-            tempy <- as.character(colnames(templist)[1]) 
-            tempxs <- names
-            
-            parse.model.test <- glm(data.test[,c(tempy,names)])
-            
-            names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
-            
-            colnames(y)
-            
-            #subset(tempxs, select=-c(colnames(y)))
-            
-            #questionable fix
-            #if(length(names2)==0){cv.names[k,names2[h]]=tempxs[h]}
-            #if(!length(names2)==0){
-              for(h in 1:length(names2)) {
-                cv.names[k,names2[h]]=names2[h]
-                #cv.names[k,names2[h]]=tempxs[h]
-                
-              }
-            #}
-            
-            namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
-            
-            #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
-            
-            #if(length(names2) > 0) print(names2)
-            #print("breaking")
-            #break
-          }
-      }
-      
-      #using best subset model selection
-      #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
-      
-      #sometimes will skip (i.e. all na) due to large # of same values I suppose, so I added (step.model.train$aic<10000) to check
-      if(is.null(testCaseTrain$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
-
-      testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
-      
-      #undefined columns selected happens when AIC hits -INF, we want low AIC
-      
-      if(!is.null(testCase$message))
-      {
-        if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected"||step.model.train$aic<10000||testCase$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^")
+        #val = 3
+        if (val == 1) colList <- list[lGeographyIndex,]
+        if (val == 2) colList <- list[lGenderIndex,]
+        if (val == 3) colList <- list[lGPAIndex,]
+        if (val == 4) colList <- list[lViolenceIndex,]
+        if (val == 5) colList <- list[lFather1Index,]
+        if (val == 6) colList <- list[lFather2Index,]
+        if (val == 7) colList <- list[lHabitsIndex,]
+        if (val == 8) colList <- list[lHealthIndex,]
+        if (val == 9) colList <- list[lPsycheIndex,]
+        if (val == 10) colList <- alty
+        
+        
+        if (is.null(nrow(data.frame(alty)))) break
+        
+        #colList <- rbind(list[yIndex,],colList)
+        colList <- rbind(y,colList)
+        
+        #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+        #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+        colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+        
+        #colList <- c()
+        #colList <- join(colList,list)
+    
+        #c(join(colList,list)[,1])
+        #join,then only use 1st column
+        newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+        
+        #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+        #droplevels(newList)
+        #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+        
+        colnames(NewDF.train)
+        temp <- NewDF.train[,newList]
+        #colnames(temp) <- paste(newList[,1],newList[,3])
+        temp[temp == 0] <- NA
+        trows <- nrow(data.frame(temp))
+        #% na's
+        colSums(is.na(data.frame(temp)))/trows
+    
+        #drop na's
+        #https://stackoverflow.com/questions/4862178/remove-rows-with-all-or-some-nas-missing-values-in-data-frame
+        templist <- data.frame(temp) %>% filter_all(all_vars(!is.na(.)))
+        #nrow(tempList)
+        #NewDF[,"V7101"]
+        #colnames(NewDF)
+        
+        if (val == 1)
         {
-          #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
-          names <- as.character(colnames(templist)[-1])
-
-          tempy <- as.character(colnames(templist)[1])
-          tempxs <- names
+          colnames(templist)
+          templist[,"V507NE"] <- templist[,"V507"] == 1
+          templist[,"V507NE"][templist[,"V507NE"] == 0] <- -1
+          templist[,"V507NC"] <- templist[,"V507"] == 2
+          templist[,"V507NC"][templist[,"V507NC"] == 0] <- -1
+          templist[,"V507W"] <- templist[,"V507"] == 4
+          templist[,"V507W"][templist[,"V507W"] == 0] <- -1
+    
+          table(is.na(templist))
           
-          parse.model.test <- glm(data.test[,c(tempy,names)])
+          drop <- c("V507")
+          templistNoGeo = templist[,!(names(templist) %in% drop)]
+          colnames(templistNoGeo)
+          templist <- c()
+          templist <- templistNoGeo
+          #colnames(templist) <- suppressMessages(paste(join(templist,list)[,1],join(templist,list)[,3]))
+        }
+    
+        #partition data before PCA 
+        #https://stats.stackexchange.com/questions/61090/how-to-split-a-data-set-to-do-10-fold-cross-validation
+        
+        #templist[,as.character(y[,1])]
+        #use filtered categorical data
+    
+        data <- templist
+        
+        data[data == -1] <- 0
+        #data[data == 1] <- 1
+        
+        nrFolds <- 20
+        
+        #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
+        #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
+        if((length(data)-1)==0) break
+        cv.names=matrix(NA,nrFolds,(length(data)-1), dimnames=list(NULL, paste(1:(length(data)-1))))
+        cvagg.names=c()
+        colnames(cv.names) <- colnames(data[-1])
+        
+        # generate array containing fold-number for each sample (row)
+        folds <- rep_len(1:nrFolds, nrow(data))
+        folds <- sample(folds, nrow(data))
+        
+        #https://swcarpentry.github.io/r-novice-inflammation/15-supp-loops-in-depth/
+        reduced <- c()
+        reduced <- c(numeric(length(data[,-1])),numeric(length = nrFolds))
+        
+        names <- c()
+        namest <- data[0,-1]
+        
+        #empty column set
+        #https://stackoverflow.com/questions/6764756/how-to-copy-an-objects-structure-but-not-the-data
+        colnames(namest) <- colnames(data[0,-1])
+        
+        widthSize <- ncol(data.frame(data[,-1]))
+        width <- numeric(length = widthSize)
+        #width <- numeric(length = ncol(data.frame(data.train[,-1])))
+        #klist <- array(c(0,0,0),dim=c(nrFolds,widthSize))
+        klist <- array(numeric(length = ncol(data.frame(data[,-1]))),dim=c(nrFolds,ncol(data.frame(data[,-1]))))
+        #array(width,dim=c(nrFolds,widthSize))
+        
+        #print(colnamesy)
+        # actual cross validation
+        #k=7
+        #11th fold is holdout set used for testing models
+        for(k in 1:nrFolds) {
+          #colnames(namest) <- 
+          #namest <- data.frame(rbind(namest,names))[,,drop=FALSE]            
+    
+          # actual split of the data
+          fold <- which(folds == k)
           
+          if(k!=nrFolds) trainfold <- which(folds == k)
+          if(k==nrFolds) trainfold <- which(folds == 1)
+        
+          data.train <- data[-fold,]
+          #data.train <- data[trainfold,]
+          
+          data.test <- data[fold,]
+          
+          full.model <- lm(data.train)
+          
+          #full.model <- lm(y=data.train[,1], x=data.train[,-1])
+          
+          #significance
+          #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
+          
+          #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+      
+          # Fit the full model 
+    
+          # Stepwise regression model
+          
+          #stepwise regression
+          #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+          
+          summary(full.model)
+          lm.res <- summary(full.model)
+          coef(lm.res)[,4]
+          #View(full.model)
+          
+          #lm(y~pc$sdev[1:3]
+          
+          #data.validation <- data.test[1:as.integer(nrow(data.test)/2),]
+          #data.test <- data.pretest[as.integer(nrow(data.test)/2)+1:,]
+          
+          res <- cor(data.train)
+          corrplot(res)
+          
+          # train and test your model with data.train and data.test
+          
+          #Regression model
+          #ncol(data.train)
+          #colnames(data.train)
+          #View(data.train)
+          full.model.train <- glm(data.train[,1]~., data=data.train)
+          #summary(full.model.train)
+          full.model.test <- glm(data.test[,1]~., data=data.test)
+          
+          #basically, if both of these are significant, keep the coefficient
+          coef(summary(full.model.train))[,4][-1:-2]
+          
+          #https://stackoverflow.com/questions/14205583/filtering-data-in-a-dataframe-based-on-criteria
+          #test2sig <- coef(summary(full.model.test))[,4][-1:-2]
+          #
+          #Due to NaN in coefficient terms for p, along with -AIC, disabling this check for test2sig.  Else test2sig needs to check if the terms are Na or Nil or NAN
+          #test2sigNames <- row.names(data.frame(test2sig[test2sig < .05]))
+          
+          #full.model.train$
+        
+          #full.model <- lm(y=data.train[,1], x=data.train[,-1])
+          
+          #significance()
+          #https://stat.ethz.ch/pipermail/r-help/2005-December/084308.html
+          
+          #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+          
+          # Fit the full model 
+          
+          # Stepwise regression model
+          
+          #stepwise regression
+          #step.model <- stepAIC(full.model, direction = "both", trace = FALSE)
+          
+          #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
+    
+          testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
+          
+          if(!is.null(testCaseTrain$message))
+          {
+            if(testCaseTrain$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCaseTrain$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^") {
+                #names <- rownames(data.frame(step.model.train$coefficients[-1:-2]))
+                
+                #http://combine-australia.github.io/r-novice-gapminder/05-data-structures-part2.html
+                #https://community.rstudio.com/t/type-error-after-rbind/16866/2
+                
+                #names <- test2sigNames
+                names <- as.character(colnames(templist)[-1])
+                
+                #names <- as.character(data.frame(c1 = as.factor(rownames(data.frame(step.model.train$coefficients[-1:-2]))))$c1)
+                #rbind(names,namest)
+                
+                #print(colnames(y))
+                
+                tempy <- as.character(colnames(templist)[1]) 
+                tempxs <- names
+                
+                parse.model.test <- glm(data.test[,c(tempy,names)])
+                
+                names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+                
+                colnames(y)
+                
+                #subset(tempxs, select=-c(colnames(y)))
+                
+                #questionable fix
+                #if(length(names2)==0){cv.names[k,names2[h]]=tempxs[h]}
+                #if(!length(names2)==0){
+                  for(h in 1:length(names2)) {
+                    cv.names[k,names2[h]]=names2[h]
+                    #cv.names[k,names2[h]]=tempxs[h]
+                    
+                  }
+                #}
+                
+                namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]  
+                
+                #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+                
+                #if(length(names2) > 0) print(names2)
+                #print("breaking")
+                #break
+              }
+          }
+          
+          #using best subset model selection
+          #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
+          
+          #sometimes will skip (i.e. all na) due to large # of same values I suppose, so I added (step.model.train$aic<10000) to check
+          if(is.null(testCaseTrain$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+    
           testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
           
-          names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
-          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+          #undefined columns selected happens when AIC hits -INF, we want low AIC
           
-          #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+          if(!is.null(testCase$message))
+          {
+            if(testCase$message=="AIC is -infinity for this model, so 'stepAIC' cannot proceed"||testCase$message=="undefined columns selected"||step.model.train$aic<10000||testCase$message=="<text>:1:5: unexpected numeric constant\n1: ~ . NA\n        ^")
+            {
+              #names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
+              names <- as.character(colnames(templist)[-1])
+    
+              tempy <- as.character(colnames(templist)[1])
+              tempxs <- names
+              
+              parse.model.test <- glm(data.test[,c(tempy,names)])
+              
+              testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
+              
+              names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+              namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+              
+              #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+              
+              #if(length(names2) > 0) print(names2)
+              
+              #print("breaking")
+              #break
+            }
+          }
+    
+          if(is.null(testCase$message)) step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+    
+          if(is.null(testCase$message)&&is.null(testCaseTrain$message))
+          {
+            names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
+            
+            if(length(names) > 0) {
+    
+              tempy <- as.character(colnames(templist)[1])
+              tempxs <- names
+              
+              parse.model.test <- glm(data.test[,c(tempy,names)])
+              
+              names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
+              namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+              
+              #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+              
+              #if(length(names2) > 0) print(names2)
+              
+            }
+            if(length(names)==0)
+            {
+              names <- c()
+              tempxs <- c()
+              
+              tempy <- as.character(colnames(templist)[1])
+              
+              names2 <- names
+              namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
+              
+              #colnames(data)[-1]
+            }
+          }
           
-          #if(length(names2) > 0) print(names2)
+          if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
+    
+          summary(step.model.test) 
+    
+          #Calculating MSE for training data
+          mse.train<- mean(residuals(step.model.train)^2)
+          #mse.train
           
-          #print("breaking")
-          #break
+          #Calculating RMSE for training data
+          rmse.train <- sqrt(mse.train)
+          #rmse.train
+          
+          #Calculating MSE for testing data
+          mse.test <- mean(residuals(step.model.test)^2)
+          #mse.test
+          
+          #Calculating RMSE for testing data
+          rmse.test <- sqrt(mse.test)
+          #rmse.test
+          
         }
-      }
-
-      if(is.null(testCase$message)) step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-
-      if(is.null(testCase$message)&&is.null(testCaseTrain$message))
-      {
-        names <- as.character(rownames(data.frame(step.model.train$coefficients[-1:-2])))
         
-        if(length(names) > 0) {
-
-          tempy <- as.character(colnames(templist)[1])
-          tempxs <- names
+        #outputting results
+        #write.csv(cv.names,paste0(sourceDir,as.character(y[,1]),as.character(cv.names[1,1]),".csv"))
+        
+        #http://r.789695.n4.nabble.com/How-to-delete-only-those-rows-in-a-dataframe-in-which-all-records-are-missing-td3990418.html
+        
+        if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) 
+          {
+            #https://stackoverflow.com/questions/4986101/counting-non-nas-in-a-data-frame-getting-answer-as-a-vector
+            #print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
+            if(k!=1){
+              #cvagg.names <- cbind(cvagg.names,cv.names)
+              print(colSums(!is.na(data.frame(cv.names))))  
+            }
+          if(k==1) print(colSums(!is.na(data.frame(cv.names))))
+            
           
-          parse.model.test <- glm(data.test[,c(tempy,names)])
-          
-          names2 <- as.character(data.frame(c1 = as.factor(rownames(data.frame(parse.model.test$coefficients[-1:-2]))))$c1)
-          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
-          
-          #if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
-          
-          #if(length(names2) > 0) print(names2)
-          
-        }
-        if(length(names)==0)
-        {
-          names <- c()
-          tempxs <- c()
-          
-          tempy <- as.character(colnames(templist)[1])
-          
-          names2 <- names
-          namest <- data.frame(rbind(namest,names2))[,,drop=FALSE]
-          
-          #colnames(data)[-1]
-        }
+          }
+    
+        #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
+        #lapply(klist, function(x){ length(which(x==0))/length(x)})    
+        #print(klist)
+        
+        #not aggregating correctly
+        #colnames(namest) <- colnames(data.train[0,-1])
+        #print(namest)
+        #View(namest)
+        #print(result)
+        
+        #reduced[1]
+        #result
+        #summary(NewDF)
+      
       }
       
-      if(length(names2)>0) for(h in 1:length(names2)) {cv.names[k,names2[h]]=names2[h]}
-
-      summary(step.model.test) 
-
-      #Calculating MSE for training data
-      mse.train<- mean(residuals(step.model.train)^2)
-      #mse.train
-      
-      #Calculating RMSE for training data
-      rmse.train <- sqrt(mse.train)
-      #rmse.train
-      
-      #Calculating MSE for testing data
-      mse.test <- mean(residuals(step.model.test)^2)
-      #mse.test
-      
-      #Calculating RMSE for testing data
-      rmse.test <- sqrt(mse.test)
-      #rmse.test
       
     }
-    
-    #outputting results
-    #write.csv(cv.names,paste0(sourceDir,as.character(y[,1]),as.character(cv.names[1,1]),".csv"))
-    
-    #http://r.789695.n4.nabble.com/How-to-delete-only-those-rows-in-a-dataframe-in-which-all-records-are-missing-td3990418.html
-    
-    if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) 
-      {
-        #https://stackoverflow.com/questions/4986101/counting-non-nas-in-a-data-frame-getting-answer-as-a-vector
-        #print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
-        print(colSums(!is.na(data.frame(cv.names))))
-      }
-
-    #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
-    #lapply(klist, function(x){ length(which(x==0))/length(x)})    
-    #print(klist)
-    
-    #not aggregating correctly
-    #colnames(namest) <- colnames(data.train[0,-1])
-    #print(namest)
-    #View(namest)
-    #print(result)
-    
-    #reduced[1]
-    #result
-    #summary(NewDF)
-  
-  }
-  
 }
 
 V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
