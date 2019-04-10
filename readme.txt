@@ -146,6 +146,25 @@ V7118: #X PSYD/LIFETIME
 	V8512: SATISFD W MYSELF (5)
 	V8514: GOOD TO BE ALIVE (5)
 	V8565: I AM OFTEN BORED (5)
+	
+Note
+	V8517
+	set preTrain to .25
+	
+	If sample size is too small and nrFolds value is set too high... will get errors when there is no values in data[-folds]
+
+	folds <- rep_len(1:nrFolds, nrow(data))
+
+	> folds
+	[1] 8 9 1 5 7 6 2 3 4
+	> nrow(data)
+	[1] 9
+
+	full.model.train <- glm(data.train[,1]~., data=data.train)	
+	
+	Error in glm.fit(x = numeric(0), y = numeric(0), weights = NULL, start = NULL,  : 
+  object 'fit' not found
+  
 
 Commit 5847293 2019-04-09
 	v7118 

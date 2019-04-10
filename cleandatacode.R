@@ -43,8 +43,8 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
-#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -218,7 +218,7 @@ NewDF[NewDF == -2] <- 0
 #setup holdout
 
 #static holdout
-holdoutSize = .05
+holdoutSize = .01
 
 #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
 preTrainSize = .05
@@ -260,7 +260,7 @@ lPsycheIndex <- list[,4] == 9
 
 #outer=8
 #still iterates over a subset of the data that is not the holdout, which is important
-for (outer in 1:20)
+for (outer in 1:100)
 {
   #Monte Carlo sample from non holdout, preTrain is !holdout
   print(outer)
@@ -364,7 +364,7 @@ for (outer in 1:20)
         data[data == -1] <- 0
         #data[data == 1] <- 1
         
-        nrFolds <- 20
+        nrFolds <- 10
         
         #https://github.com/thistleknot/FredAPIR/blob/master/regression_analysis.R
         #cv.errors=matrix(NA,nrFolds,k, dimnames=list(NULL, paste(1:length(data))))
@@ -480,6 +480,7 @@ for (outer in 1:20)
           
           #try statement is expensive, but an if statement similar to what I do for the rownames just below... might not be
     
+          #give best model based on some metric
           testCaseTrain <- tryCatch(step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
           
           if(!is.null(testCaseTrain$message))
@@ -670,13 +671,9 @@ for (outer in 1:20)
 }
 
 V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
-#V7552
-#V7553
-#V7562
-#V7563
-#V8527	V8528	V8529	V8530	V8531
-#V8505	V8509	V8512	V8514	V8536	V7501	V7507	V8565
+#V7118profile <- c("V7118","V7552","V7553","V7562","V7563","V8527","V8528","V8529","V8530","V8531","V8505","V8509","V8512","V8514","V8536","V7501","V7507","V8565")
 
+#I don't actually have a separate training partition
 filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118[filteredv7118 == 0] <- NA
 filteredv7118 <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
@@ -687,6 +684,15 @@ filteredv7118holdout[filteredv7118holdout == 0] <- NA
 filteredv7118holdout <- filteredv7118holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout[filteredv7118holdout == -1] <- 0
 write.csv(filteredv7118,paste0(sourceDir,"filteredv7118.csv"))
+
+
+#http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+train.control <- trainControl(method = "repeatedcv", 
+                              number = 10, repeats = 3)
+# Train the model
+
+model <- train(filteredv7118.train[-1], as.factor(filteredv7118.train[,1]), method = "glm",
+               trControl = train.control)
 
 V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
 filteredv8517 <- NewDF[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
