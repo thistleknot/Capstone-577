@@ -308,16 +308,20 @@ for (holdoutReset in 1:widthDiviser)
     train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
     
     y <- c()
-    yname <- ""
+    yname <- c()
     #y iterator's
     #iterator=2
     
     for (iterator in 1:sum(yIndex))
     {
     
+      yname <- c()
       yname <- as.character(list[yIndex,][iterator,][,1])
       
+      y <- c()
       y <- list[yIndex,][iterator,]
+      
+      alty <- c()
       alty <- list[yIndex,][-iterator,]
       #y
       #yname <- as.character(list[yIndex,][iterator,][,1])
@@ -338,6 +342,7 @@ for (holdoutReset in 1:widthDiviser)
       for (val in 2:9)
         #val=2
       {
+        colList <- c()
         if (val == 2) colList <- list[lGenderIndex,]
         if (val == 3) colList <- list[lGPAIndex,]
         if (val == 4) colList <- list[lViolenceIndex,]
@@ -350,12 +355,15 @@ for (holdoutReset in 1:widthDiviser)
         if (is.null(nrow(data.frame(alty)))) break
         
         #colList <- rbind(list[yIndex,],colList)
+        
         colList <- rbind(y,colList)
         
         #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
         #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+        colListNames <- c()
         colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-        
+
+        newList <- c()        
         newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
         
         #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
