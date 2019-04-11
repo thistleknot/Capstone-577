@@ -252,11 +252,17 @@ for (holdoutReset in 1:widthDiviser)
   preTrainSize = 1/widthDiviser
   
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+  holdoutSet <- c()
   holdoutSet <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
+  
+  NewDF.holdoutSet <- c()
   NewDF.holdoutSet <- NewDF[holdoutSet,]
 
   #static for monte carlo training 
+  preNonHoldoutSet <- c()
   preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preHoldOutSize*nrow(NewDF[-holdoutSet,])))
+  
+  NewDF.preNonHoldoutSet <- c()
   NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
   
   #monte carlo sample size that samples from the preTrain.
@@ -273,16 +279,21 @@ for (holdoutReset in 1:widthDiviser)
     #https://adv-r.hadley.nz/subsetting.html
     
     #monte carlo resample of pre separated holdout and non holdout partitions!
+    holdout <- c()
     holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+    
+    NewDF.holdout <- c()
     NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+    
+    #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
+    #monte carlo resamples from a static holdout
+    #used for resampling monte carlo training set
+    preTrain <- c()
     preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+    
+    NewDF.preTrain <- c()
     NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
 
-    #monte carlo resamples from a static holdout
-    NewDF.nonHoldout <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
-    #used for resampling monte carlo training set
-    NewDF.nonHoldout <- NewDF.preNonHoldoutSet[NewDF.nonHoldout, ]
-    
     yIndex <- list[,4] == 0
     lGeographyIndex <- list[,4] == 1
     lGenderIndex <- list[,4] == 2
@@ -351,11 +362,13 @@ for (holdoutReset in 1:widthDiviser)
         #droplevels(newList)
         #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
         
+        data.train <- c()
         data.train <- NewDF.preTrain[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
         data.train[data.train == 0] <- NA
         data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
         data.train[data.train == -1] <- 0
         
+        data.test <- c()
         data.test <- NewDF.holdout[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
         data.test[data.test == 0] <- NA
         data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
@@ -444,28 +457,33 @@ for (holdoutReset in 1:widthDiviser)
         #print("2nd pass")
         profile <- c(yname,c(names))
         
+        filtered <- c()
         filtered <- NewDF[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
         filtered[filtered == 0] <- NA
         filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
         filtered[filtered == -1] <- 0
         
+        filtered.train <- c()
         filtered.train <- NewDF.preTrain[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+        
         filtered.train[filtered.train == 0] <- NA
         filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
         filtered.train[filtered.train == -1] <- 0
         
-        #filteredV7118.pop <- NewDf.nonHoldout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+        filteredholdout <- c()
         filteredholdout <- NewDF.holdout[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
         filteredholdout[filteredholdout == 0] <- NA
         filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
         filteredholdout[filteredholdout == -1] <- 0
         B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
         
+        B2Names <- c()
         B2Names <- c(yname,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
         print(B2Names)
         #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
         #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
         
+        filteredv2 <- c()
         filteredv2 <- NewDF[,as.character(B2Names)] %>% filter_all(all_vars(!is.na(.)))
         filteredv2[B2Names == 0] <- NA
         filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
