@@ -427,7 +427,7 @@ for (iterator in 1:sum(yIndex))
       print(paste("out of",colnames(data.train)))
       
       names <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-      print("selected:",names)
+      print(paste("selected:",names))
     
       #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
 
