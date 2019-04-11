@@ -1,4 +1,3 @@
-source("../bestglm.R")
 ## read in data ##
 #select
 library(dplyr)
@@ -28,7 +27,7 @@ predict.regsubsets = function(object, newdata, id, ...) {
 pw <- {"Read1234"}
 
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-
+source(paste0(sourceDir,"/bestglm.R"))
 # Read CSV into R
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
@@ -54,9 +53,9 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-#list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -381,7 +380,7 @@ for (iterator in 1:sum(yIndex))
       #doing cross validation over training data
     
       #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-      B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+      B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
       
       cverrs = B$Subsets[, "CV"]
       sdCV = B$Subsets[, "sdCV"]
@@ -466,13 +465,8 @@ for (iterator in 1:sum(yIndex))
 
 #V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
 #V7118profile <- c("V7118","V7552","V7553","V7562","V7563","V8527","V8528","V8529","V8530","V8531","V8505","V8509","V8512","V8514","V8536","V7501","V7507","V8565")
-#after doing two successive passes of bestglm (once on each domain, then aggregating back to this, useing cv passes)
+#after doing two successive passes of bestglm (once on each domain, then aggregating back to this, using cv passes)
 V7118profile <- c("V7118","V7202","V7551","V7552","V8526","V8527","V8502","V7507")
-B2 <- bestglm(Xy = cbind(data.frame(filteredv7118.train[,-1]),data.frame(filteredv7118.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
-B2Names <- c("V7118",as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
-V7118profile <- B2Names
-
-
 #I don't actually have a separate training partition
 #population
 filteredv7118 <- NewDF[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
@@ -486,24 +480,20 @@ filteredv7118.train <- NewDF.preTrain[,as.character(V7118profile)] %>% filter_al
 filteredv7118.train[filteredv7118.train == 0] <- NA
 filteredv7118.train <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
 filteredv7118.train[filteredv7118.train == -1] <- 0
-
-
-
 Holdout7118Model <- glm(filteredv7118holdout[B2Names])
-
 Holdout7118CVModel <- train(filteredv7118holdout[B2Names][-1], as.factor(filteredv7118holdout[B2Names][,1]), method = "glm",trControl = train.control)
-
 summary(Holdout7118CVModel)
 summary(Holdout7118Model)
-
 
 #filteredV7118.pop <- NewDf.nonHoldout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout[filteredv7118holdout == 0] <- NA
 filteredv7118holdout <- filteredv7118holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout[filteredv7118holdout == -1] <- 0
+B2 <- bestglm(Xy = cbind(data.frame(filteredv7118.train[,-1]),data.frame(filteredv7118.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+B2Names <- c("V7118",as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+V7118profile <- B2Names
 write.csv(filteredv7118,paste0(sourceDir,"filteredv7118.csv"))
-
 
 #summary(full.model.train)
 full.model.train <- glm(filteredv7118.train[,1]~., data=filteredv7118.train)
@@ -517,11 +507,8 @@ as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
 
 #V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
 V8517profile <- c("V8517","V7551","V8530","V8531","V8514","V8505")
-B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517.train[,-1]),data.frame(filteredv8517.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
-B28517Names <- c("V8517",as.character(rownames(data.frame(B28517$BestModel$coefficients)))[-1])
-V8517profile <- B28517Names
-
 filteredv8517 <- NewDF[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
+V8517profile <- B28517Names
 filteredv8517[filteredv8517 == 0] <- NA
 filteredv8517 <- filteredv8517 %>% filter_all(all_vars(!is.na(.)))
 filteredv8517[filteredv8517 == -1] <- 0
@@ -530,11 +517,15 @@ filteredv8517holdout <- NewDF.holdout[,as.character(V8517profile)] %>% filter_al
 filteredv8517holdout[filteredv8517holdout == 0] <- NA
 filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == -1] <- 0
+B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517.train[,-1]),data.frame(filteredv8517.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+B28517Names <- c("V8517",as.character(rownames(data.frame(B28517$BestModel$coefficients)))[-1])
 write.csv(filteredv8517,paste0(sourceDir,"filteredv8517.csv"))
 
 
-V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
+#V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
+V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512")
 filteredv7221 <- NewDF[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
+V7221profile <- B27221Names
 filteredv7221[filteredv7221 == 0] <- NA
 filteredv7221 <- filteredv7221 %>% filter_all(all_vars(!is.na(.)))
 filteredv7221[filteredv7221 == -1] <- 0
@@ -543,6 +534,8 @@ filteredv7221holdout <- NewDF.holdout[,as.character(V7221profile)] %>% filter_al
 filteredv7221holdout[filteredv7221holdout == 0] <- NA
 filteredv7221holdout <- filteredv7221holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7221holdout[filteredv7221holdout == -1] <- 0
+B27221 <- bestglm(Xy = cbind(data.frame(filteredv7221.train[,-1]),data.frame(filteredv7221.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+B27221Names <- c("V7221",as.character(rownames(data.frame(B27221$BestModel$coefficients)))[-1])
 write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
 
 #V7118

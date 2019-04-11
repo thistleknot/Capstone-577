@@ -115,7 +115,20 @@ seed 5 factor reduced results commit.txt
 		Identified relationships as of commit 3063ef8
 
 	Milestone 2
+		Cross validation
 		Identified relationships using colsums over a subsample of entire database
+		
+	Milestone 3
+		Implemented Cross Validation and stopped using stepAIC and opted for bestglm which allows for the smallest model to converge based on lowest cv error.  Bestglm has built in CV, which elinates the need for an external loop.
+		By aggregating these terms from each subdomain up, we construct a terms list that we feed into a new bestglm formula which spits out a new list.  This list when applied to the population shows extermely significant on all terms.  We tried monte carlo with a manual CV loop but find the cross validation does all the work of comprehensively testing our sample.
+		
+		We get the following
+		
+		"V7118" "V7202" "V7551" "V8502"
+		
+		"V8517" "V8530" "V8531"
+		
+		"V7221" "V7552" "V7562" "V7563" "V8527" "V8509" "V8512"
 
 Cross validation means that if the patterns show up more than half the time (5 out of 10 passes), they are probably truly significant.  I usually have a higher bar, such as the top quartile, or top 10-20%.
 	These are not just cross validated against training sets 10 times.  
