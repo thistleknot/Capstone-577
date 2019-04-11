@@ -155,7 +155,7 @@ V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512
 
 	I believe this gives me better models for the population and highlights what exists across the population more.  However.  I don't see how it really tells me which one will do better for the population.  As I can see that I can still measure that after the fact.  I think this is truly highlighting the least common denominator's though.
 
-So now our final model's are
+So now our final model's are (7a99c61)
 	"V7118", ~ "V7202"
 	"V8517" ~ "V8530" "V8531"   
 	"V7221" ~ "V7552" "V7562" "V7563" "V8527" "V8509"

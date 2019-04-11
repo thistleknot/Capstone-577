@@ -286,7 +286,7 @@ y <- c()
 #iterator=2
 for (iterator in 1:sum(yIndex))
 {
-  set.seed(base+outer)
+  #set.seed(base+outer)
   
   NewDF.train <- NewDF.preTrain[sample(nrow(NewDF.preTrain), round(trainMCSize*nrow(NewDF.preTrain))),]
   
@@ -542,7 +542,11 @@ filteredv8517v2[filteredv8517v2 == -1] <- 0
 write.csv(filteredv8517v2,paste0(sourceDir,"filteredv8517.csv"))
 
 #V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
-V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512")
+
+#seed 5
+#V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512")
+#seed 6
+#V7221profile <- c("V7221","V7562","V7563","V8527","V8531","V8509","V8512")
 filteredv7221 <- NewDF[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
 V7221profile <- B27221Names
 filteredv7221[filteredv7221 == 0] <- NA
@@ -555,6 +559,9 @@ filteredv7221holdout <- filteredv7221holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7221holdout[filteredv7221holdout == -1] <- 0
 B27221 <- bestglm(Xy = cbind(data.frame(filteredv7221holdout[,-1]),data.frame(filteredv7221holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
 B27221Names <- c("V7221",as.character(rownames(data.frame(B27221$BestModel$coefficients)))[-1])
+#post seed 6
+#V7221profile <- c("V7562","V7563","V8527")
+
 
 filteredv7221v2 <- NewDF[,as.character(B27221Names)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7221v2[B27221Names == 0] <- NA
