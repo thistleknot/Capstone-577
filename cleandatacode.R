@@ -53,11 +53,12 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-#gpa
-#7221
-#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
-#8517
-list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#7221 gpa
+list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+
+#8517 gang
+#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+
 #7118 (psychadelics)
 #list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
@@ -496,8 +497,13 @@ filteredv7118holdout <- filteredv7118holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout[filteredv7118holdout == -1] <- 0
 B2 <- bestglm(Xy = cbind(data.frame(filteredv7118holdout[,-1]),data.frame(filteredv7118holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1,TopModels = 5), family=binomial)
 B2Names <- c("V7118",as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
-V7118profile <- B2Names
-write.csv(filteredv7118,paste0(sourceDir,"filteredv7118.csv"))
+
+filteredv7118v2 <- NewDF[,as.character(B2Names)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7118v2[B2Names == 0] <- NA
+filteredv7118v2 <- filteredv7118v2 %>% filter_all(all_vars(!is.na(.)))
+filteredv7118v2[filteredv7118v2 == -1] <- 0
+
+write.csv(filteredv7118v2,paste0(sourceDir,"filteredv7118.csv"))
 
 #summary(full.model.train)
 full.model.train <- glm(filteredv7118.train[,1]~., data=filteredv7118.train)
@@ -523,8 +529,13 @@ filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == -1] <- 0
 B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517holdout[,-1]),data.frame(filteredv8517holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
 B28517Names <- c("V8517",as.character(rownames(data.frame(B28517$BestModel$coefficients)))[-1])
-V8517profile <- B28517Names
-write.csv(filteredv8517,paste0(sourceDir,"filteredv8517.csv"))
+
+filteredv8517v2 <- NewDF[,as.character(B28517Names)] %>% filter_all(all_vars(!is.na(.)))
+filteredv8517v2[B28517Names == 0] <- NA
+filteredv8517v2 <- filteredv8517v2 %>% filter_all(all_vars(!is.na(.)))
+filteredv8517v2[filteredv8517v2 == -1] <- 0
+
+write.csv(filteredv8517v2,paste0(sourceDir,"filteredv8517.csv"))
 
 #V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
 V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512")
@@ -540,7 +551,14 @@ filteredv7221holdout <- filteredv7221holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv7221holdout[filteredv7221holdout == -1] <- 0
 B27221 <- bestglm(Xy = cbind(data.frame(filteredv7221holdout[,-1]),data.frame(filteredv7221holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
 B27221Names <- c("V7221",as.character(rownames(data.frame(B27221$BestModel$coefficients)))[-1])
-write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
+
+filteredv7221v2 <- NewDF[,as.character(B27221Names)] %>% filter_all(all_vars(!is.na(.)))
+filteredv7221v2[B27221Names == 0] <- NA
+filteredv7221v2 <- filteredv7221v2 %>% filter_all(all_vars(!is.na(.)))
+filteredv7221v2[filteredv7221v2 == -1] <- 0
+
+write.csv(filteredv7221v2,paste0(sourceDir,"filteredv7221.csv"))
+#write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
 
 #V7118
 {

@@ -108,6 +108,53 @@ Category Flags
 			V7501,3,"OFTN FEEL LONELY",0
 			V7507,3,"OFT WSH MOR FRND",0
 			V8565,3,"I AM OFTEN BORED",0
+			
+I realized I never did a proper holdout analysis.  So I revisited the drawing board and basically
+
+I would higlight each subdomain using bestglm, example
+#training, bestglm would result in each category
+	V7118profile <- c("V7118",
+	#gender
+	"V7202",
+	#habits
+	"V7551","V7552",
+	#health
+	"V8526","V8527",
+	#psych
+	"V8502","V7507")
+
+	upon a new bstglm would reduce to 
+	V7118profile <- c("V7118","V7202","V7551","V8502")  
+
+	however upon holdout analyisis, only V7202 was significant.  
+	
+	So... I revisited my holdout analysis approach and fed V7118profile <- c("V7118","V7202","V7551","V7552","V8526","V8527","V8502","V7507") into 
+	
+	bestglm and only 
+	
+	V7202 came out.  
+	
+	I then fed this into the population and V7202 accounts for a classification matrix increase of +12.3% (from 50%).  With the inclusion of V7551 and V8502, the increase is +20%.  Which tells me the inclusion of V7551 and V8502 account for 8% of the deviation however, they are not present in the holdout sample (in this).  Which tells me that each sample should highlight difference presences of features that exist in the population apart from the bigger elements like gender (V7202).  Something to that affect.
+
+V8517profile <- c("V8517","V7551","V8530","V8531","V8514","V8505")
+	reduced after holdout to the same as before
+	"V8517" ~ "V8530" "V8531"  
+
+V7221profile <- c("V7221","V7552","V7562","V7563","V8527","V8502","V8509","V8512")
+	reduced to
+	"V7221" ~ "V7552" "V7562" "V7563" "V8527" "V8509"
+	(dropped V8512)
+
+	I believe this gives me better models for the population and highlights what exists across the population more.  However.  I don't see how it really tells me which one will do better for the population.  As I can see that I can still measure that after the fact.  I think this is truly highlighting the least common denominator's though.
+
+So now our final model's are
+	"V7118", ~ "V7202"
+	"V8517" ~ "V8530" "V8531"   
+	"V7221" ~ "V7552" "V7562" "V7563" "V8527" "V8509"
+
+I know without a doubt these will show true to the population.
+
+			
 
 seed 5 factor reduced results commit.txt			
 
