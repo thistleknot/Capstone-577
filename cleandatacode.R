@@ -419,12 +419,14 @@ for (holdoutReset in 1:widthDiviser)
           datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
           if(length(datalist)==1)
           {
+            names <- c()
             names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
           }
           
           if(length(as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])>1)
             for (i in 1:length(datalist))
           {
+            names <- c()
             names <- rbind(names,datalist[i])
           }
           
