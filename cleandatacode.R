@@ -387,7 +387,7 @@ for (holdoutReset in 1:widthDiviser)
         #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
         #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
         #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-        B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
+        B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
         
           {
             #cverrs = B$Subsets[, "CV"]
@@ -458,9 +458,6 @@ for (holdoutReset in 1:widthDiviser)
           #rmse.test <- sqrt(mse.test)
           #rmse.test
           
-        
-          
-          
           #second pass through holdout
           {
             #print("2nd pass")
@@ -468,7 +465,7 @@ for (holdoutReset in 1:widthDiviser)
             profile <- c(yname,c(names))
             
             filtered <- c()
-            filtered <- NewDF.preTrain[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+            filtered <- NewDF.preTrain[,as.character(profile), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
             filtered[filtered == 0] <- NA
             filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
             filtered[filtered == -1] <- 0
@@ -485,16 +482,16 @@ for (holdoutReset in 1:widthDiviser)
             filteredholdout[filteredholdout == 0] <- NA
             filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
             filteredholdout[filteredholdout == -1] <- 0
-            B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
+            B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
             
             B2Names <- c()
-            B2Names <- c(yname,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+            B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
             print(B2Names)
             #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
             #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
             
             filteredv2 <- c()
-            filteredv2 <- NewDF[,as.character(B2Names)] %>% filter_all(all_vars(!is.na(.)))
+            filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
             filteredv2[B2Names == 0] <- NA
             filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
             filteredv2[filteredv2 == -1] <- 0
