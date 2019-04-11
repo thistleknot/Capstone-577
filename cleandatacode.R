@@ -91,18 +91,18 @@ col.num <- which(colnames(data) %in% as.character(list[,1]))
 #col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
 
 # loads the PostgreSQL driver
-pg <- dbDriver("PostgreSQL")
+#pg <- dbDriver("PostgreSQL")
 # creates a connection to the postgres database
 # note that "con" will be used later in each connection to the database
-conn = dbConnect(drv=pg
-                 ,user="postgres"
-                 ,password="Read1234"
-                 ,host="localhost"
-                 ,port=5432
-                 ,dbname="analyticplatform"
-)
+#conn = dbConnect(drv=pg
+    #             ,user="postgres"
+   #              ,password="Read1234"
+  #               ,host="localhost"
+ #                ,port=5432
+#                 ,dbname="analyticplatform"
+#)
 
-dbExistsTable(conn, "temp_table_data")
+#dbExistsTable(conn, "temp_table_data")
 
 NewDF <- data[,(c(col.num))]
 
@@ -256,7 +256,7 @@ for (holdoutReset in 1:widthDiviser)
   NewDF.holdoutSet <- NewDF[holdoutSet,]
 
   #static for monte carlo training 
-  preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round((nrow(NewDF[-holdoutSet,])*preHoldOutSize)))
+  preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preHoldOutSize*nrow(NewDF[-holdoutSet,])))
   NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
   
   #monte carlo sample size that samples from the preTrain.
@@ -279,7 +279,7 @@ for (holdoutReset in 1:widthDiviser)
     NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
 
     #monte carlo resamples from a static holdout
-    NewDF.nonHoldout <- sample(nrow(NewDF.preNonHoldoutSet), round(nrow((NewDF.preNonHoldoutSet)*preTrainSize)))
+    NewDF.nonHoldout <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
     #used for resampling monte carlo training set
     NewDF.nonHoldout <- NewDF.preNonHoldoutSet[NewDF.nonHoldout, ]
     
@@ -366,7 +366,7 @@ for (holdoutReset in 1:widthDiviser)
           #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
           #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
           #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-          B <- bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial)
+          B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
           
           {
             #cverrs = B$Subsets[, "CV"]
@@ -441,7 +441,7 @@ for (holdoutReset in 1:widthDiviser)
       
       #second pass through holdout
       {
-        print("2nd pass")
+        #print("2nd pass")
         profile <- c(yname,c(names))
         
         filtered <- NewDF[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
@@ -459,7 +459,7 @@ for (holdoutReset in 1:widthDiviser)
         filteredholdout[filteredholdout == 0] <- NA
         filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
         filteredholdout[filteredholdout == -1] <- 0
-        B2 <- bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial)
+        B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
         
         B2Names <- c(yname,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
         print(B2Names)
