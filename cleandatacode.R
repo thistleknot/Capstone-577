@@ -1,3 +1,4 @@
+source("../bestglm.R")
 ## read in data ##
 #select
 library(dplyr)
@@ -53,8 +54,8 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
-#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
-list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
 #list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
@@ -378,7 +379,10 @@ for (iterator in 1:sum(yIndex))
 
             #https://freakonometrics.hypotheses.org/19925
       #doing cross validation over training data
+    
+      #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
       B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+      
       cverrs = B$Subsets[, "CV"]
       sdCV = B$Subsets[, "sdCV"]
       CVLo = cverrs - sdCV
