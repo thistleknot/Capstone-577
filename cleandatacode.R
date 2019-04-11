@@ -54,8 +54,8 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
-#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
-list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -274,6 +274,8 @@ lPsycheIndex <- list[,4] == 9
 #outer=8
 #still iterates over a subset of the data that is not the holdout, which is important
 
+train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+
 y <- c()
 #y iterator's
 #iterator=2
@@ -347,7 +349,9 @@ for (iterator in 1:sum(yIndex))
       
       #http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/154-stepwise-regression-essentials-in-r/
 
-      #give best model based on some metric
+      #give best model based on some metric (doesn't remove factors)
+      # Define training control
+      
       trainCase <- tryCatch(stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
       
       if(is.null(trainCase$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
@@ -370,21 +374,9 @@ for (iterator in 1:sum(yIndex))
        
       }
       
-      
-      #regularModel <- glm(filteredv7118.train)
-      
-      # Define training control
-      
       #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-      #train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
-      # Train the model
-      
-      #model <- train(filteredv7118.train[-1], as.factor(filteredv7118.train[,1]), method = "glm",trControl = train.control)
-      
-      #summary(model$finalModel)
-      #bestsubset = regsubsets(yFYield_CSUSHPINSA ~ ., data = MyData[xyList], nbest=1, nvmax=bestSize, method=c("exhaustive"))
-      
-      #https://freakonometrics.hypotheses.org/19925
+
+            #https://freakonometrics.hypotheses.org/19925
       #doing cross validation over training data
       B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
       cverrs = B$Subsets[, "CV"]
@@ -467,14 +459,15 @@ for (iterator in 1:sum(yIndex))
     #https://stackoverflow.com/questions/18958948/counting-zeros-in-columns-in-data-frame-in-r-and-express-as-percentage
 
 }
-  
-  
-
-
 
 #V7118profile <- c("V7118","V7552","V7553","V7562","V8527","V8528","V8529","V8530","V8531","V8509","V8512","V8514","V8565")
 #V7118profile <- c("V7118","V7552","V7553","V7562","V7563","V8527","V8528","V8529","V8530","V8531","V8505","V8509","V8512","V8514","V8536","V7501","V7507","V8565")
+#after doing two successive passes of bestglm (once on each domain, then aggregating back to this, useing cv passes)
 V7118profile <- c("V7118","V7202","V7551","V7552","V8526","V8527","V8502","V7507")
+B2 <- bestglm(Xy = cbind(data.frame(filteredv7118.train[,-1]),data.frame(filteredv7118.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+B2Names <- c("V7118",as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+V7118profile <- B2Names
+
 
 #I don't actually have a separate training partition
 #population
@@ -489,6 +482,16 @@ filteredv7118.train <- NewDF.preTrain[,as.character(V7118profile)] %>% filter_al
 filteredv7118.train[filteredv7118.train == 0] <- NA
 filteredv7118.train <- filteredv7118 %>% filter_all(all_vars(!is.na(.)))
 filteredv7118.train[filteredv7118.train == -1] <- 0
+
+
+
+Holdout7118Model <- glm(filteredv7118holdout[B2Names])
+
+Holdout7118CVModel <- train(filteredv7118holdout[B2Names][-1], as.factor(filteredv7118holdout[B2Names][,1]), method = "glm",trControl = train.control)
+
+summary(Holdout7118CVModel)
+summary(Holdout7118Model)
+
 
 #filteredV7118.pop <- NewDf.nonHoldout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv7118holdout <- NewDF.holdout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
@@ -508,10 +511,12 @@ step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
 as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
 as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
 
+#V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
+V8517profile <- c("V8517","V7551","V8530","V8531","V8514","V8505")
+B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517.train[,-1]),data.frame(filteredv8517.train[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+B28517Names <- c("V8517",as.character(rownames(data.frame(B28517$BestModel$coefficients)))[-1])
+V8517profile <- B28517Names
 
-
-
-V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
 filteredv8517 <- NewDF[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv8517[filteredv8517 == 0] <- NA
 filteredv8517 <- filteredv8517 %>% filter_all(all_vars(!is.na(.)))
@@ -522,6 +527,7 @@ filteredv8517holdout[filteredv8517holdout == 0] <- NA
 filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == -1] <- 0
 write.csv(filteredv8517,paste0(sourceDir,"filteredv8517.csv"))
+
 
 V7221profile <- c("V7221","V7553","V7562","V8530","V8531","V7501","V8565")
 filteredv7221 <- NewDF[,as.character(V7221profile)] %>% filter_all(all_vars(!is.na(.)))
@@ -586,10 +592,9 @@ write.csv(filteredv7221,paste0(sourceDir,"filteredv7221.csv"))
   # Define training control
   
   #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-  train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  
   trainModel <- train(filteredv7118.train[-1], as.factor(filteredv7118.train[,1]), method = "glm",trControl = train.control)
-  test.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
-  testModel <- train(filteredv7118holdout[-1], as.factor(filteredv7118holdout[,1]), method = "glm",trControl = test.control)
+  testModel <- train(filteredv7118holdout[-1], as.factor(filteredv7118holdout[,1]), method = "glm",trControl = train.control)
   
   testPredCV <- predict.train(model,newdata=filteredv7118holdout[,-1])
   
@@ -630,8 +635,6 @@ RMSE_NewDatacv <- sqrt(mean(errorcv^2))
 pct <- predict(holdoutmodelcv, filteredv7118.train[-1])
 errorcv <- (pct- filteredv7118.train[,1])
 RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-
-
 
 #8517
 {
