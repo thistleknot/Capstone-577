@@ -36,6 +36,14 @@ Steps
 	then run 
 		cleandatacode.r
 
+Hypothesis
+		at the 5% sample level using the aggregate data of the subset of the holdout.  We will derive a regression equation there.  Then we will check it against the population and see if it was within range.  If so, we will confirm our hypothesis.  As an addendum, we can derive a population level... this part I think I'd like to ask the professor about.
+		
+		V7118profile <- c("V7118","V7202","V7551","V8502")   
+		eventually reduced to ("V7118, "V7202") (after holdout analysis)
+
+		so... I can derive a regression equation at the holdout analysis juncture, and then see if it holds when I derive a newdataset of the population and derive it's new coefficient terms fitting a model.  See if it's terms fit within the range predicted at the holdout analysis level.  At these junctures, the datasets are aggregated independently (different sampling due to inclusion of different factors, i.e. na drops records based on what columns are included)
+		
 Category Flags
 	Y's (0)
 		V7101,1,"EVR SMK CIG,REGL",1

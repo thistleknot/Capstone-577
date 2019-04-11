@@ -385,6 +385,10 @@ for (iterator in 1:sum(yIndex))
       #doing cross validation over training data
     
       #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
+      #https://rdrr.io/cran/bestglm/man/bestglm.html
+      #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
+      #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
+      #https://rdrr.io/cran/bestglm/man/bestglm-package.html
       B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
       
       cverrs = B$Subsets[, "CV"]
