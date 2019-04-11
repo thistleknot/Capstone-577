@@ -253,7 +253,7 @@ for (holdoutReset in 1:widthDiviser)
   
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
   holdoutSet <- c()
-  holdoutSet <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
+  holdoutSet <- sample(nrow(NewDF), round(holdoutSet*nrow(NewDF)))
   
   NewDF.holdoutSet <- c()
   NewDF.holdoutSet <- NewDF[holdoutSet,]
@@ -495,9 +495,7 @@ for (holdoutReset in 1:widthDiviser)
         #summary(HoldoutCVModel)
         #summary(HoldoutModel)
       }
-    
   
-    
     #end of category iterator  
     }
   
