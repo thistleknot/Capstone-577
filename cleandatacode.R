@@ -299,7 +299,7 @@ for (iterator in 1:sum(yIndex))
   
   #categories
   for (val in 2:9)
-    #val=8
+    #val=2
   {
     if (val == 2) colList <- list[lGenderIndex,]
     if (val == 3) colList <- list[lGPAIndex,]
@@ -343,8 +343,8 @@ for (iterator in 1:sum(yIndex))
 
       # train and test your model with data.train and data.test
       
-      full.model.train <- glm(data.train[,1]~., data=data.train)
-      full.model.test <- glm(data.test[,1]~., data=data.test)
+      #full.model.train <- glm(data.train[,1]~., data=data.train)
+      #full.model.test <- glm(data.test[,1]~., data=data.test)
       
       #basically, if both of these are significant, keep the coefficient
       #coef(summary(full.model.train))[,4][-1:-2]
@@ -357,25 +357,25 @@ for (iterator in 1:sum(yIndex))
       #give best model based on some metric (doesn't remove factors)
       # Define training control
       
-      trainCase <- tryCatch(stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
+      #trainCase <- tryCatch(stepAIC(full.model.train, direction = "both", trace = FALSE), error = function(e) e)
       
-      if(is.null(trainCase$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+      #if(is.null(trainCase$message)) step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
 
-      ##testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
+      #testCase <- tryCatch(stepAIC(full.model.test, direction = "both", trace = FALSE), error = function(e) e)
       
       #undefined columns selected happens when AIC hits -INF, we want low AIC
 
       #if(is.null(testCase$message)) step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
 
-      ##if(is.null(testCase$message)&&is.null(testCaseTrain$message))
+      #if(is.null(testCase$message)&&is.null(trainCase$message))
       {
-        a <- namesTrain <- as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
-        b <- namesTest <- as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
+        #a <- namesTrain <- as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
+        #b <- namesTest <- as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
         #https://www.biostars.org/p/180451/
-        comparison <- a[a %in% b]
-        names <- unique(a,b)
-        print (comparison)
-        names <- comparison
+        #comparison <- a[a %in% b]
+        #names <- unique(a,b)
+        #print (comparison)
+        #names <- comparison
        
       }
       
@@ -389,7 +389,7 @@ for (iterator in 1:sum(yIndex))
       #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
       #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
       #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-      B <- bestglm(Xy = cbind(data.frame(data.train[,-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
+      B <- bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial)
       
       cverrs = B$Subsets[, "CV"]
       sdCV = B$Subsets[, "sdCV"]
@@ -424,9 +424,10 @@ for (iterator in 1:sum(yIndex))
       #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
       
       #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
+      print(paste("out of",colnames(data.train)))
       
       names <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-      print(names)
+      print("selected:",names)
     
       #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
 
@@ -455,15 +456,15 @@ for (iterator in 1:sum(yIndex))
     
     #http://r.789695.n4.nabble.com/How-to-delete-only-those-rows-in-a-dataframe-in-which-all-records-are-missing-td3990418.html
     
-    if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) 
+    #if(!sum(rowSums(is.na(data.frame(cv.names))))==(NCOL(data.frame(cv.names))*NROW(data.frame(cv.names)))) 
       {
         #https://stackoverflow.com/questions/4986101/counting-non-nas-in-a-data-frame-getting-answer-as-a-vector
         #print(data.frame(cv.names)[!(rowSums(is.na(data.frame(cv.names)))==NCOL(data.frame(cv.names))),])
-        if(k!=1){
+        #if(k!=1){
           #cvagg.names <- cbind(cvagg.names,cv.names)
-          print(colSums(!is.na(data.frame(cv.names))))  
-        }
-      if(k==1) print(colSums(!is.na(data.frame(cv.names))))
+          #print(colSums(!is.na(data.frame(cv.names))))  
+        #}
+      #if(k==1) print(colSums(!is.na(data.frame(cv.names))))
         
       
       }
