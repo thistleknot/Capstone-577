@@ -241,7 +241,8 @@ for (holdoutReset in 1:3)
   holdoutSize = .33 #(of set)
   
   #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-  preTrainSize = .05
+  preHoldOutSize = .15
+  preTrainSize = .33
   
   seedbase =5 
   set.seed(seedbase)
@@ -249,9 +250,10 @@ for (holdoutReset in 1:3)
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
   holdoutSet <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
   NewDF.holdoutSet <- NewDF[holdoutSet,]
-  
-  #used for resampling monte carlo training set
-  NewDF.nonHoldout <- NewDF[-holdoutSet, ]
+
+  #static for monte carlo training
+  preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(nrow((NewDF[-holdoutSet,])*preHoldOutSize)))
+  NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
   
   #monte carlo sample size that samples from the preTrain.
   #considering that we are doing at least 10 outer loops, 
@@ -272,9 +274,14 @@ for (holdoutReset in 1:3)
     #monte carlo resample of pre separated holdout and non holdout partitions!
     holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
     NewDF.holdout <- NewDF.holdoutSet[holdout, ]
-    preTrain <- sample(nrow(NewDf.nonHoldout), round(preTrainSize*nrow(NewDf.nonHoldout)))
-    NewDF.preTrain <- NewDf.nonHoldout[preTrain,]
-  
+    preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+    NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+
+    #monte carlo resamples from a static holdout
+    NewDF.nonHoldout <- sample(nrow(NewDF.preNonHoldoutSet), round(nrow((NewDF.preNonHoldoutSet)*preTrainSize)))
+    #used for resampling monte carlo training set
+    NewDF.nonHoldout <- NewDF.preNonHoldoutSet[NewDF.nonHoldout, ]
+    
     yIndex <- list[,4] == 0
     lGeographyIndex <- list[,4] == 1
     lGenderIndex <- list[,4] == 2
