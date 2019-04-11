@@ -455,10 +455,11 @@ for (holdoutReset in 1:widthDiviser)
       #second pass through holdout
       {
         #print("2nd pass")
+        profile <- c()
         profile <- c(yname,c(names))
         
         filtered <- c()
-        filtered <- NewDF[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+        filtered <- NewDF.preTrain[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
         filtered[filtered == 0] <- NA
         filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
         filtered[filtered == -1] <- 0
