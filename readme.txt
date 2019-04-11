@@ -36,6 +36,14 @@ Steps
 	then run 
 		cleandatacode.r
 
+	what it does is two loops.  One changes the seed each pass/iteration of cv over the sample.  The second pass is the base and it resamples from the population (not from a separate training partition, everything get's rescrambled, including holdout).  
+
+	
+	line 237
+	#static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+	line 266
+	#monte carlo resample of non holdout!
+		
 Hypothesis
 		at the 5% sample level using the aggregate data of the subset of the holdout.  We will derive a regression equation there.  Then we will check it against the population and see if it was within range.  If so, we will confirm our hypothesis.  As an addendum, we can derive a population level... this part I think I'd like to ask the professor about.
 		
