@@ -418,19 +418,19 @@ for (holdoutReset in 1:3)
             #summary(step.model.test) 
       
             #Calculating MSE for training data
-            mse.train<- mean(residuals(step.model.train)^2)
+            #mse.train<- mean(residuals(step.model.train)^2)
             #mse.train
             
             #Calculating RMSE for training data
-            rmse.train <- sqrt(mse.train)
+            #rmse.train <- sqrt(mse.train)
             #rmse.train
             
             #Calculating MSE for testing data
-            mse.test <- mean(residuals(step.model.test)^2)
+            #mse.test <- mean(residuals(step.model.test)^2)
             #mse.test
             
             #Calculating RMSE for testing data
-            rmse.test <- sqrt(mse.test)
+            #rmse.test <- sqrt(mse.test)
             #rmse.test
             
           }
@@ -489,10 +489,10 @@ full.model.train <- glm(filteredv7118.train[,1]~., data=filteredv7118.train)
 full.model.test <- glm(filteredv7118holdout[,1]~., data=filteredv7118holdout)
 
 #give best model based on some metric
-step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
-step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
-as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
+#step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+#step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+#as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
+#as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
 
 #V8517profile <- c("V8517","V7553","V7562","V7563","V7501","V7507")
 V8517profile <- c("V8517","V7551","V8530","V8531","V8514","V8505")
