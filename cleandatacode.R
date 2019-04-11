@@ -231,244 +231,252 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
-base =5 
-set.seed(base)
 
-#static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
-holdout <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
-NewDf.nonHoldout <-NewDF[-holdout, ]
-NewDF.holdout <- NewDF[holdout, ]
-
-#setup holdout
-
-#static holdout
-holdoutSize = .05
-
-#proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-preTrainSize = .05
-
-#monte carlo sample size that samples from the preTrain.
-#considering that we are doing at least 10 outer loops, 
-#it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
-#In other words we want to exchaust small samples.
-trainMCSize = .10
-
-for (resample in 0:2)
+for (holdoutReset in 1:3)
 {
-  base = resample
-  #print is inside inner loop
+  #setup holdout
   
-  set.seed(base)
+  #static holdout
+  holdoutSet = .15
+  holdoutSize = .33 #(of set)
   
-  ##before reseed
-  #https://adv-r.hadley.nz/subsetting.html
+  #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+  preTrainSize = .05
   
-  #monte carlo resample of non holdout!
-  preTrain <- sample(nrow(NewDf.nonHoldout), round(preTrainSize*nrow(NewDf.nonHoldout)))
-  NewDF.preTrain <- NewDf.nonHoldout[preTrain,]
-
-  yIndex <- list[,4] == 0
-  lGeographyIndex <- list[,4] == 1
-  lGenderIndex <- list[,4] == 2
-  lGPAIndex <- list[,4] == 3
-  lViolenceIndex <- list[,4] == 4
-  lFather1Index <- list[,4] == 5
-  lFather2Index <- list[,4] == 6
-  lHabitsIndex <- list[,4] == 7
-  lHealthIndex <- list[,4] == 8
-  lPsycheIndex <- list[,4] == 9
+  seedbase =5 
+  set.seed(seedbase)
   
+  #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+  holdoutSet <- sample(nrow(NewDF), round(holdoutSize*nrow(NewDF)))
+  NewDF.holdoutSet <- NewDF[holdoutSet,]
   
-  train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+  #used for resampling monte carlo training set
+  NewDF.nonHoldout <- NewDF[-holdoutSet, ]
   
+  #monte carlo sample size that samples from the preTrain.
+  #considering that we are doing at least 10 outer loops, 
+  #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
+  #In other words we want to exchaust small samples.
+  trainMCSize = .10
   
-  y <- c()
-  yname <- ""
-  #y iterator's
-  #iterator=2
-  
-  for (iterator in 1:sum(yIndex))
+  for (resample in 0:2)
   {
+    base = resample
+    #print is inside inner loop
+    
+    set.seed(base)
+    
+    ##before reseed
+    #https://adv-r.hadley.nz/subsetting.html
+    
+    #monte carlo resample of pre separated holdout and non holdout partitions!
+    holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+    NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+    preTrain <- sample(nrow(NewDf.nonHoldout), round(preTrainSize*nrow(NewDf.nonHoldout)))
+    NewDF.preTrain <- NewDf.nonHoldout[preTrain,]
   
-    yname <- as.character(list[yIndex,][iterator,][,1])
+    yIndex <- list[,4] == 0
+    lGeographyIndex <- list[,4] == 1
+    lGenderIndex <- list[,4] == 2
+    lGPAIndex <- list[,4] == 3
+    lViolenceIndex <- list[,4] == 4
+    lFather1Index <- list[,4] == 5
+    lFather2Index <- list[,4] == 6
+    lHabitsIndex <- list[,4] == 7
+    lHealthIndex <- list[,4] == 8
+    lPsycheIndex <- list[,4] == 9
     
-    y <- list[yIndex,][iterator,]
-    alty <- list[yIndex,][-iterator,]
-    #y
-    #yname <- as.character(list[yIndex,][iterator,][,1])
-    print(as.character(list[yIndex,][iterator,][,1]))
-    #val = 10
+    train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
     
-    #10 passes
-    for (loop in 1:3)
+    y <- c()
+    yname <- ""
+    #y iterator's
+    #iterator=2
+    
+    for (iterator in 1:sum(yIndex))
     {
-      names <- c()
-      #reseed
-      set.seed(base+loop)
-      print(paste("resample: ",base))
-      print(paste("[re]seed",loop))
-      #categories
-      for (val in 2:9)
-        #val=2
-      {
-        if (val == 2) colList <- list[lGenderIndex,]
-        if (val == 3) colList <- list[lGPAIndex,]
-        if (val == 4) colList <- list[lViolenceIndex,]
-        if (val == 5) colList <- list[lFather1Index,]
-        if (val == 6) colList <- list[lFather2Index,]
-        if (val == 7) colList <- list[lHabitsIndex,]
-        if (val == 8) colList <- list[lHealthIndex,]
-        if (val == 9) colList <- list[lPsycheIndex,]
-        
-        if (is.null(nrow(data.frame(alty)))) break
-        
-        #colList <- rbind(list[yIndex,],colList)
-        colList <- rbind(y,colList)
-        
-        #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-        #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-        colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-        
-        newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-        
-        #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-        #droplevels(newList)
-        #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-        
-        data.train <- NewDF.preTrain[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
-        data.train[data.train == 0] <- NA
-        data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
-        data.train[data.train == -1] <- 0
-        
-        data.test <- NewDF.holdout[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
-        data.test[data.test == 0] <- NA
-        data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
-        data.test[data.test == -1] <- 0
+    
+      yname <- as.character(list[yIndex,][iterator,][,1])
       
-          #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-          #https://rdrr.io/cran/bestglm/man/bestglm.html
-          #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
-          #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
-          #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-          B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial))
+      y <- list[yIndex,][iterator,]
+      alty <- list[yIndex,][-iterator,]
+      #y
+      #yname <- as.character(list[yIndex,][iterator,][,1])
+      print(as.character(list[yIndex,][iterator,][,1]))
+      #val = 10
+      
+      #10 passes
+      for (loop in 1:3)
+      {
+        names <- c()
+        #reseed
+        set.seed(base+loop)
+        print(paste("holdoutReset: ",holdoutReset))
+        print(paste("resample: ",base))
+        print(paste("[re]seed",loop))
+        #categories
+        for (val in 2:9)
+          #val=2
+        {
+          if (val == 2) colList <- list[lGenderIndex,]
+          if (val == 3) colList <- list[lGPAIndex,]
+          if (val == 4) colList <- list[lViolenceIndex,]
+          if (val == 5) colList <- list[lFather1Index,]
+          if (val == 6) colList <- list[lFather2Index,]
+          if (val == 7) colList <- list[lHabitsIndex,]
+          if (val == 8) colList <- list[lHealthIndex,]
+          if (val == 9) colList <- list[lPsycheIndex,]
           
-          {
-          cverrs = B$Subsets[, "CV"]
-          sdCV = B$Subsets[, "sdCV"]
-          CVLo = cverrs - sdCV
-          CVHi = cverrs + sdCV
-          ymax = max(CVHi)
-          ymin = min(CVLo)
-          k = 0:(length(cverrs) - 1)
-          plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-          points(k,cverrs,cex = 2,col="red",pch=16)
-          lines(k, cverrs, col = "red", lwd = 2)
-          axis(2, yaxp = c(0.6, 1.8, 6))
-          segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-          eps = 0.15
-          segments(k-eps, CVLo, k+eps, CVLo,  col = "blue", lwd = 2)
-          segments(k-eps, CVHi, k+eps, CVHi,  col = "blue", lwd = 2)
-          indMin = which.min(cverrs)
-          fmin = sdCV[indMin]
-          cutOff = fmin + cverrs[indMin]
-          abline(h = cutOff, lty = 2)
-          indMin = which.min(cverrs)
-          fmin = sdCV[indMin]
-          cutOff = fmin + cverrs[indMin]
-          min(which(cverrs < cutOff))
+          if (is.null(nrow(data.frame(alty)))) break
+          
+          #colList <- rbind(list[yIndex,],colList)
+          colList <- rbind(y,colList)
+          
+          #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+          #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+          colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+          
+          newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+          
+          #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+          #droplevels(newList)
+          #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+          
+          data.train <- NewDF.preTrain[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
+          data.train[data.train == 0] <- NA
+          data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
+          data.train[data.train == -1] <- 0
+          
+          data.test <- NewDF.holdout[,as.character(newList)] %>% filter_all(all_vars(!is.na(.)))
+          data.test[data.test == 0] <- NA
+          data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
+          data.test[data.test == -1] <- 0
+        
+            #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
+            #https://rdrr.io/cran/bestglm/man/bestglm.html
+            #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
+            #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
+            #https://rdrr.io/cran/bestglm/man/bestglm-package.html
+            B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[-1]),data.frame(data.train[1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1), family=binomial))
+            
+            {
+            cverrs = B$Subsets[, "CV"]
+            sdCV = B$Subsets[, "sdCV"]
+            CVLo = cverrs - sdCV
+            CVHi = cverrs + sdCV
+            ymax = max(CVHi)
+            ymin = min(CVLo)
+            k = 0:(length(cverrs) - 1)
+            plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+            points(k,cverrs,cex = 2,col="red",pch=16)
+            lines(k, cverrs, col = "red", lwd = 2)
+            axis(2, yaxp = c(0.6, 1.8, 6))
+            segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+            eps = 0.15
+            segments(k-eps, CVLo, k+eps, CVLo,  col = "blue", lwd = 2)
+            segments(k-eps, CVHi, k+eps, CVHi,  col = "blue", lwd = 2)
+            indMin = which.min(cverrs)
+            fmin = sdCV[indMin]
+            cutOff = fmin + cverrs[indMin]
+            abline(h = cutOff, lty = 2)
+            indMin = which.min(cverrs)
+            fmin = sdCV[indMin]
+            cutOff = fmin + cverrs[indMin]
+            min(which(cverrs < cutOff))
+            }
+            #(B$Subsets$CV-mean(B$Subsets$CV))/sd(B$Subsets$CV)
+            
+            #within one standard deviation from the min error
+            
+            #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
+            
+            #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
+            
+            #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
+            
+            datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            if(length(datalist)==1)
+            {
+              names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
+            }
+            
+            if(length(as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])>1)
+              for (i in 1:length(datalist))
+            {
+              names <- rbind(names,datalist[i])
+            }
+            
+            #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
+      
+            #summary(step.model.test) 
+      
+            #Calculating MSE for training data
+            mse.train<- mean(residuals(step.model.train)^2)
+            #mse.train
+            
+            #Calculating RMSE for training data
+            rmse.train <- sqrt(mse.train)
+            #rmse.train
+            
+            #Calculating MSE for testing data
+            mse.test <- mean(residuals(step.model.test)^2)
+            #mse.test
+            
+            #Calculating RMSE for testing data
+            rmse.test <- sqrt(mse.test)
+            #rmse.test
+            
           }
-          #(B$Subsets$CV-mean(B$Subsets$CV))/sd(B$Subsets$CV)
           
-          #within one standard deviation from the min error
+        print(c(names))
+        
+        #second pass through holdout
+        {
+          profile <- c(yname,c(names))
           
-          #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
+          filtered <- NewDF[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+          filtered[filtered == 0] <- NA
+          filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
+          filtered[filtered == -1] <- 0
           
-          #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
+          filtered.train <- NewDF.preTrain[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+          filtered.train[filtered.train == 0] <- NA
+          filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
+          filtered.train[filtered.train == -1] <- 0
           
-          #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
+          #filteredV7118.pop <- NewDf.nonHoldout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
+          filteredholdout <- NewDF.holdout[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
+          filteredholdout[filteredholdout == 0] <- NA
+          filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
+          filteredholdout[filteredholdout == -1] <- 0
+          B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1,TopModels = 5), family=binomial))
           
-          datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-          if(length(datalist)==1)
-          {
-            names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
-          }
+          B2Names <- c(yname,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+          print(B2Names)
+          HoldoutModel <- glm(filteredv7118holdout[colnames(filteredv7118)])
+          HoldoutCVModel <- train(filteredv7118holdout[colnames(filteredv7118)][-1], as.factor(filteredv7118holdout[colnames(filteredv7118)][,1]), method = "glm",trControl = train.control)
           
-          if(length(as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])>1)
-            for (i in 1:length(datalist))
-          {
-            names <- rbind(names,datalist[i])
-          }
+          filteredv2 <- NewDF[,as.character(B2Names)] %>% filter_all(all_vars(!is.na(.)))
+          filteredv2[B2Names == 0] <- NA
+          filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
+          filteredv2[filteredv2 == -1] <- 0
           
-          #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
-    
-          #summary(step.model.test) 
-    
-          #Calculating MSE for training data
-          mse.train<- mean(residuals(step.model.train)^2)
-          #mse.train
+          write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"base-",base,"-seed",loop,"filteredv1.csv"))
+          write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"base-",base,"-seed",loop,"filteredv2.csv"))
           
-          #Calculating RMSE for training data
-          rmse.train <- sqrt(mse.train)
-          #rmse.train
-          
-          #Calculating MSE for testing data
-          mse.test <- mean(residuals(step.model.test)^2)
-          #mse.test
-          
-          #Calculating RMSE for testing data
-          rmse.test <- sqrt(mse.test)
-          #rmse.test
-          
+          #summary(HoldoutCVModel)
+          #summary(HoldoutModel)
         }
-        
-      print(c(names))
-      
-      #second pass through holdout
-      {
-        profile <- c(yname,c(names))
-        
-        filtered <- NewDF[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
-        filtered[filtered == 0] <- NA
-        filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-        filtered[filtered == -1] <- 0
-        
-        filtered.train <- NewDF.preTrain[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
-        filtered.train[filtered.train == 0] <- NA
-        filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
-        filtered.train[filtered.train == -1] <- 0
-        
-        #filteredV7118.pop <- NewDf.nonHoldout[,as.character(V7118profile)] %>% filter_all(all_vars(!is.na(.)))
-        filteredholdout <- NewDF.holdout[,as.character(profile)] %>% filter_all(all_vars(!is.na(.)))
-        filteredholdout[filteredholdout == 0] <- NA
-        filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
-        filteredholdout[filteredholdout == -1] <- 0
-        B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1]),data.frame(filteredholdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=10, REP=1,TopModels = 5), family=binomial))
-        
-        B2Names <- c(yname,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
-        print(B2Names)
-        HoldoutModel <- glm(filteredv7118holdout[colnames(filteredv7118)])
-        HoldoutCVModel <- train(filteredv7118holdout[colnames(filteredv7118)][-1], as.factor(filteredv7118holdout[colnames(filteredv7118)][,1]), method = "glm",trControl = train.control)
-        
-        filteredv2 <- NewDF[,as.character(B2Names)] %>% filter_all(all_vars(!is.na(.)))
-        filteredv2[B2Names == 0] <- NA
-        filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
-        filteredv2[filteredv2 == -1] <- 0
-        
-        write.csv(filtered,paste0(sourceDir,yname,"base-",base,"-seed",loop,"filteredv1.csv"))
-        write.csv(filteredv2,paste0(sourceDir,yname,"-seed",base,"filteredv2.csv"))
-        
-        #summary(HoldoutCVModel)
-        #summary(HoldoutModel)
       }
+    
+    
+    #end of category iterator  
     }
   
-  
-  #end of category iterator  
+      #end of resample
   }
-
-    #end of resample
+  #end outermost loop
 }
-
 #summary(full.model.train)
 full.model.train <- glm(filteredv7118.train[,1]~., data=filteredv7118.train)
 full.model.test <- glm(filteredv7118holdout[,1]~., data=filteredv7118holdout)
