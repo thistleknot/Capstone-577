@@ -235,7 +235,7 @@ for(lister in 1:3)
   NewDF[NewDF == -2] <- 0
   
   #after lister, before holdoutReset
-  for (seeder 5:7)
+  for (seeder in 5:7)
   {
     
     seedbase=seeder
