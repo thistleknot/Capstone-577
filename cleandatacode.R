@@ -423,7 +423,7 @@ for (holdoutReset in 1:widthDiviser)
           #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
           
           #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
-          
+          names <- c()
           datalist <- c()
           datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
           if(length(datalist)==1)
@@ -493,14 +493,12 @@ for (holdoutReset in 1:widthDiviser)
             
             if(length(datalist2)==1)
             {
-              
               B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
             }
             
             if(length(as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])>1)
               for (i in 1:length(datalist2))
               {
-                
                 B2Names <- rbind(B2Names,datalist2[i])
               }
             
@@ -511,7 +509,7 @@ for (holdoutReset in 1:widthDiviser)
             
             filteredv2 <- c()
             filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
-            filteredv2[B2Names == 0] <- NA
+            filteredv2[filteredv2 == 0] <- NA
             filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
             filteredv2[filteredv2 == -1] <- 0
             
