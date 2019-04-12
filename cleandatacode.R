@@ -54,10 +54,10 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #7221 gpa
-list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 
 #8517 gang
-#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
 
 #7118 (psychadelics)
 #list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
@@ -524,22 +524,25 @@ for (holdoutReset in 1:widthDiviser)
       filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
       filteredv2[filteredv2 == -1] <- 0
       
-      #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"base-",seedbase,"filteredv1.csv"))
-      write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"base-",seedbase,"filteredv2.csv"))
+      #includes before variables are dropped.  Use for hypothesis tests.  
+      
       
       #summary(HoldoutCVModel)
       #summary(HoldoutModel)
     }
     if(length(names)==0) B2Names <- c()
+    write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
     
   
       #end of resample
   }
+  write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
+  write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
   #end outermost loop
 }
 #summary(full.model.train)
-full.model.train <- glm(filteredv7118.train[,1]~., data=filteredv7118.train)
-full.model.test <- glm(filteredv7118holdout[,1]~., data=filteredv7118holdout)
+full.model.train <- glm(filteredv2.train[,1]~., data=filtered.train)
+full.model.test <- glm(filteredv2holdout[,1]~., data=filteredv2holdout)
 
 #give best model based on some metric
 #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
