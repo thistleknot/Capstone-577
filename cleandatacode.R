@@ -342,7 +342,7 @@ for(lister in 1:3)
           #y
           #yname <- as.character(list[yIndex,][iterator,][,1])
           #rather than move to end of file
-          if (iterator==1 && resample==1 && holdoutReset==1) print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+          if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
           
           names <- c()
           
