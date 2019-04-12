@@ -594,7 +594,7 @@ for(lister in 1:3)
           if(res=="reached elapsed time limit [cpu=3s, elapsed=3s]")
           {
             #
-            print("error, resampling holdout from static holdout partition")
+            print("falling back to stepAIC, timeout reached")
             
             full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
             
