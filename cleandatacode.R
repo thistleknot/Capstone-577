@@ -235,10 +235,10 @@ for(lister in 1:3)
   NewDF[NewDF == -2] <- 0
   
   #after lister, before holdoutReset
-  seedbase=7
+  seedbase=5
   print(paste("seed",seedbase))
   
-  widthDiviser=2
+  widthDiviser=5
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
   
   for (holdoutReset in 1:widthDiviser)
@@ -394,7 +394,7 @@ for(lister in 1:3)
           #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
           #https://rdrr.io/cran/bestglm/man/bestglm-package.html
           holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-          B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser), family=binomial))
+          B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser), family=binomial))
           
           #plot(B$BestModel)
           #B$Subsets[(length(B$Subsets)-1)]
@@ -442,7 +442,7 @@ for(lister in 1:3)
             median(setnointerceptnoright)
             aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
           }
-
+          if(is.na(setnointercept[9])) aboveMedianCV <- NA
           
           
           #within one standard deviation from the min error
@@ -454,15 +454,16 @@ for(lister in 1:3)
           #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
           #don't reset names here, reset outside of categories
           datalist <- c()
-          datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-          #datalist <- aboveMedianCV
+          #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+          if(is.na(aboveMedianCV)) aboveMedianCV <- c()
+          datalist <- aboveMedianCV
           if(length(datalist)==1)
           {
             
             names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
           }
           
-          if(length(as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])>1)
+          if(length(datalist)>1)
             for (i in 1:length(datalist))
           {
             
@@ -523,7 +524,7 @@ for(lister in 1:3)
         filteredholdout[filteredholdout == 0] <- NA
         filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
         filteredholdout[filteredholdout == -1] <- 0
-        B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = 1), family=binomial))
+        B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser), family=binomial))
 
         {
           cverrs = B2$Subsets[, "CV"]
@@ -556,20 +557,23 @@ for(lister in 1:3)
         end<-length(setnointercept)-3
         setnointerceptnoright <- setnointercept[1:end]
         median(setnointerceptnoright)
-        aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-
+        
+        #if(is.na(setnointercept[9])) aboveMedianCV <- NA
+        holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+        if(is.na(holder)) aboveMedianCV <- c()
+        if(!is.na(holder)) aboveMedianCV <- holder
+        
         B2Names <- c()
-        B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
-        #B2Names <- aboveMedianCV
         datalist2 <- c()
-        datalist2 <- B2Names
+        datalist2 <- aboveMedianCV
+        #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
         
         if(length(datalist2)==1)
         {
           B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
         }
         
-        if(length(as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])>1)
+        if(length(datalist2)>1)
           for (i in 1:length(datalist2))
           {
             B2Names <- rbind(B2Names,datalist2[i])
