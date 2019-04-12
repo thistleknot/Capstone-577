@@ -57,6 +57,14 @@ Hypothesis
 		
 		Feature extractor will extract features that should display in random samples as significant.
 		
+		StepAIC
+		
+		vs CV
+		
+		different things
+		
+		V8517 still resulting on 0...
+		
 Category Flags
 	Y's (0)
 		V7101,1,"EVR SMK CIG,REGL",1

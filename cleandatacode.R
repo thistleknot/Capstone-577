@@ -55,7 +55,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:3)
+for(lister in 2:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -345,6 +345,7 @@ for(lister in 1:3)
           #rather than move to end of file
           if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
           
+          #aggregated after categories loop
           names <- c()
           
           print(paste("holdoutReset: ",holdoutReset,"resample: ",base))
@@ -352,9 +353,14 @@ for(lister in 1:3)
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
     
-          #categories #val=9
-          for (val in 2:9)
+          #categories 
+          #val=7
+          #for (val in 2:9)
           {
+            #used in category, rolled into names
+            datalist <- c()
+            datalist2 <- c()
+            
             colList <- c()
             if (val == 2) colList <- list[lGenderIndex,]
             if (val == 3) colList <- list[lGPAIndex,]
@@ -439,18 +445,19 @@ for(lister in 1:3)
             set<-round(colSums(B$Subsets))
             setnointercept <- set[-1]
             #plot CV
-            if(!is.na(setnointercept[9])) 
+            if(!is.null(setnointercept)) 
               {
-              plot(setnointercept[9])
+              #plot(setnointercept[9])
               end<-length(setnointercept)-3
               setnointerceptnoright <- setnointercept[1:end]
               
               #not sure how to get rownames
               plot(setnointerceptnoright)
               median(setnointerceptnoright)
+              aboveMedianCV <- c()
               aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
             }
-            if(is.na(setnointercept[9])) aboveMedianCV <- NA
+            if(is.null(setnointercept)) aboveMedianCV <- NA
             
             #within one standard deviation from the min error
             
@@ -460,18 +467,17 @@ for(lister in 1:3)
             
             #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
             #don't reset names here, reset outside of categories
-            datalist <- c()
             
             #this is creating empty entries.
             #if(length(aboveMedianCV)>0) aboveMedianCV <- c()
             
-            #if(length(aboveMedianCV)>0) aboveMedianCV <- c()
-            datalist <- aboveMedianCV
-            
+            if(length(aboveMedianCV)>0) datalist <- aboveMedianCV
+               
             #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-            if(length(datalist)==1)
+            
+            if((!is.na(datalist))&&(length(datalist)==1))
             {
-              names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
+              names <- rbind(names,datalist)
             }
             
             if(length(datalist)>1)
@@ -505,6 +511,7 @@ for(lister in 1:3)
           }
           #print("category pass")  
           print(c(names))
+          #View(names)
          
           #end of yPass 
         }
@@ -621,9 +628,9 @@ for(lister in 1:3)
             
             #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
             
-            if(length(datalist2)==1)
+            if((!is.na(datalist2))&&(length(datalist2)==1))
             {
-              B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+              B2Names <- rbind(B2Names,datalist2)
             }
             
             if(length(datalist2)>1)
@@ -767,7 +774,7 @@ for(lister in 1:3)
 
         if(length(names)==0) B2Names <- c()
         write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
-      
+        
         #end of resample
       }
       write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
