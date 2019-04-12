@@ -252,15 +252,15 @@ for(lister in 1:3)
       #setup holdout
       
       #static holdout
-      holdoutSetSize = .02
+      holdoutSetSize = .05
       
-      underOverSampleFactor=.9
+      underOverSampleFactor=1
       
       #% to resample from resampled static hold out set
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preHoldOutSize = .04
+      preHoldOutSize = .05/(1-holdoutSetSize) #forces it to be 5%
       
       #% of training resamples from static nonholdout
       preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -461,7 +461,7 @@ for(lister in 1:3)
             #don't reset names here, reset outside of categories
             datalist <- c()
             #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-            if(is.na(aboveMedianCV)) aboveMedianCV <- c()
+            if(!length(aboveMedianCV)>0) aboveMedianCV <- c()
             datalist <- aboveMedianCV
             if(length(datalist)==1)
             {
@@ -566,8 +566,8 @@ for(lister in 1:3)
           
           #if(is.na(setnointercept[9])) aboveMedianCV <- NA
           holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-          if(is.na(holder)) aboveMedianCV <- c()
-          if(!is.na(holder)) aboveMedianCV <- holder
+          if(!length(holder)>0) aboveMedianCV <- c()
+          if(length(holder)>0) aboveMedianCV <- holder
           
           B2Names <- c()
           datalist2 <- c()
@@ -691,7 +691,8 @@ for(lister in 1:3)
           holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
           holdoutmodelcv$results
           summary(holdoutmodelcv$finalModel)
-          vif(holdoutmodelcv$finalModel)
+          #tryCatch()
+          #vif(holdoutmodelcv$finalModel)
           #plot(holdoutmodelcv$finalModel)
           
           #check errors
