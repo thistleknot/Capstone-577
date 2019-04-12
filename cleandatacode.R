@@ -244,14 +244,16 @@ for (holdoutReset in 1:widthDiviser)
   #static holdout
   holdoutSetSize = .05
   
-  #can choose to undersample using a value such as .75
-  holdoutSize = 1/widthDiviser #(of set) #(never fully iterates over subsample)
+  underOverSampleFactor=1
+  
+  #% to resample from resampled static hold out set
+  holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
   
   #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
   preHoldOutSize = .05
   
-  #can choose to undersample using a value such as .75
-  preTrainSize = 1/widthDiviser #(never fully iterates over subsample)
+  #% of training resamples from static nonholdout
+  preTrainSize = underOverSampleFactor/widthDiviser #(never fully iterates over subsample)
   
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
   holdoutSet <- c()
