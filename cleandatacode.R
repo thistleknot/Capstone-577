@@ -53,6 +53,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
 data <- d_combined
 
+#lister=2
 for(lister in 1:3)
 {
   #7221 gpa
@@ -314,7 +315,7 @@ for(lister in 1:3)
       lHealthIndex <- list[,4] == 8
       lPsycheIndex <- list[,4] == 9
       
-      #train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+      train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
       
       y <- c()
       yname <- c()
@@ -395,6 +396,13 @@ for(lister in 1:3)
           holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
           B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser), family=binomial))
           
+          set<-round(colSums(B$Subsets))
+          setnointercept <- set[-1]
+          end<-length(setnointercept)-3
+          setnointerceptnoright <- setnointercept[1:end]
+          median(setnointerceptnoright)
+          aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+          
             {
               #cverrs = B$Subsets[, "CV"]
               #sdCV = B$Subsets[, "sdCV"]
@@ -431,7 +439,8 @@ for(lister in 1:3)
             #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
             #don't reset names here, reset outside of categories
             datalist <- c()
-            datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            datalist <- aboveMedianCV
             if(length(datalist)==1)
             {
               
@@ -501,11 +510,19 @@ for(lister in 1:3)
         filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
         filteredholdout[filteredholdout == -1] <- 0
         B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = 1), family=binomial))
-        
+
+        set<-round(colSums(B2$Subsets))
+        setnointercept <- set[-1]
+        end<-length(setnointercept)-3
+        setnointerceptnoright <- setnointercept[1:end]
+        median(setnointerceptnoright)
+        aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+
         #B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
         
         datalist2 <- c()
-        datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+        #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+        datalist2 <- aboveMedianCV
         
         if(length(datalist2)==1)
         {
@@ -547,6 +564,101 @@ for(lister in 1:3)
     write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
     write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
     #end outermost loop
+    
+    {
+      
+      res <- cor(filtered.train)
+      corrplot(res)
+      
+      x=filtered.train[,-1]
+      y=filtered.train[,1]
+      
+      pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+      
+      #includes proportion of variance
+      summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
+      te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
+      #pc plot
+      plot(te[3,1:ncol(te)])
+      
+      corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+      
+      #include data in new model for inclusion in a linear model
+      #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+      
+      pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+      
+      #predict using pca, just re-applying to training data.
+      
+      #applied PCA to holdout
+      
+      x <- filteredholdout[-1]
+      
+      y <- data.frame(filteredholdout[1])
+      
+      pred <- data.frame(predict(pc,x))
+      pcaPred <- glm(cbind(y,pred))
+      
+      #predict(pcaPred,)
+      
+      #predict(pcaPred,filteredv7133holdout[-1])
+      
+      summary(pcaPred)
+      hist(pcaPred$residuals)
+      
+      summary(pcaModel)
+      summary(pcaPred)
+      
+      regularTrainModel <- glm(filtered.train)
+      regularTestModel <- glm(filteredholdout)
+      
+      # Define training control
+      
+      #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+      
+      trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
+      testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
+      
+      testPredCV <- predict.train(model,newdata=filteredholdout[,-1])
+      
+      testPred <- predict.glm(regularModel,filteredholdout[,-1])
+      cor(testPred,filteredholdout[,1])
+      
+      #predict(regulardModel,)
+      testPredResid <- (testPredCV-filteredholdout[,1])
+      
+      count(abs(testPredResid)>.25)
+      
+      testModel <- glm(filteredholdout)
+      summary(trainModel)
+      summary(testModel)
+      
+      summary(regularTrainModel)
+      summary(regularTestModel)
+      
+      #%incorrect
+      count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+      
+      
+    }
+    
+    #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
+    holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
+    holdoutmodelcv$results
+    summary(holdoutmodelcv$finalModel)
+    vif(holdoutmodelcv$finalModel)
+    #plot(holdoutmodelcv$finalModel)
+    
+    #check errors
+    pcv <- predict(holdoutmodelcv, filteredv7118holdout[-1])
+    errorcv <- (pcv- filteredv7118holdout[,1])
+    RMSE_NewDatacv <- sqrt(mean(errorcv^2))
+    
+    #check errors against training
+    pct <- predict(holdoutmodelcv, filteredv7118.train[-1])
+    errorcv <- (pct- filteredv7118.train[,1])
+    RMSE_NewDatacv <- sqrt(mean(errorcv^2))
+    
   }
 #end of lister
 }
@@ -569,12 +681,19 @@ filteredv8517[filteredv8517 == 0] <- NA
 filteredv8517 <- filteredv8517 %>% filter_all(all_vars(!is.na(.)))
 filteredv8517[filteredv8517 == -1] <- 0
 filteredv8517.train <- filteredv8517
+
 filteredv8517holdout <- NewDF.holdout[,as.character(V8517profile)] %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == 0] <- NA
 filteredv8517holdout <- filteredv8517holdout %>% filter_all(all_vars(!is.na(.)))
 filteredv8517holdout[filteredv8517holdout == -1] <- 0
-B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517holdout[,-1]),data.frame(filteredv8517holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3), family=binomial)
-B28517Names <- c("V8517",as.character(rownames(data.frame(B28517$BestModel$coefficients)))[-1])
+#need to run code within resample
+B28517 <- bestglm(Xy = cbind(data.frame(filteredv8517holdout[,-1]),data.frame(filteredv8517holdout[,1])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels=1), family=binomial)
+B28517Names <- c("V8517",as.character(rownames(data.frame(View(B28517$Subsets)$coefficients)))[-1])
+
+#
+#View(B28517$Subsets)
+
+B28517$ModelReport
 
 filteredv8517v2 <- NewDF[,as.character(B28517Names)] %>% filter_all(all_vars(!is.na(.)))
 filteredv8517v2[B28517Names == 0] <- NA
@@ -607,99 +726,6 @@ write.csv(filteredv7221v2,paste0(sourceDir,base,"filteredv7221v2.csv"))
 write.csv(filteredv7221,paste0(sourceDir,base,"filteredv7221v1.csv"))
 
 #V7118
-{
- 
-  resv7118 <- cor(filteredv7118.train)
-  corrplot(resv7118)
-  
-  x=filteredv7118.train[,-1]
-  y=filteredv7118.train[,1]
-  
-  pc <- prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE)
-  
-  #includes proportion of variance
-  summary(prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE))
-  te <- summary(prcomp(filteredv7118.train[,-1], center=TRUE, scale=TRUE))$importance
-  #pc plot
-  plot(te[3,1:ncol(te)])
-  
-  corrplot(cor(cbind(filteredv7118.train[,1],prcomp(filteredv7118[,-1], center=TRUE, scale=TRUE)$x)))
-  
-  #include data in new model for inclusion in a linear model
-  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-  
-  pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
-  
-  #predict using pca, just re-applying to training data.
-  
-  #applied PCA to holdout
-  
-  x <- filteredv7118holdout[-1]
-  
-  y <- data.frame(filteredv7118holdout[1])
-
-  pred <- data.frame(predict(pc,x))
-  pcaPred <- glm(cbind(y,pred))
-  
-  #predict(pcaPred,)
-  
-  #predict(pcaPred,filteredv7133holdout[-1])
-  
-  summary(pcaPred)
-  hist(pcaPred$residuals)
-  
-  summary(pcaModel)
-  summary(pcaPred)
-  
-  regularTrainModel <- glm(filteredv7118.train)
-  regularTestModel <- glm(filteredv7118holdout)
-  
-  # Define training control
-  
-  #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-  
-  trainModel <- train(filteredv7118.train[-1], as.factor(filteredv7118.train[,1]), method = "glm",trControl = train.control)
-  testModel <- train(filteredv7118holdout[-1], as.factor(filteredv7118holdout[,1]), method = "glm",trControl = train.control)
-  
-  testPredCV <- predict.train(model,newdata=filteredv7118holdout[,-1])
-  
-  testPred <- predict.glm(regularModel,filteredv7118holdout[,-1])
-  cor(testPred,filteredv7118holdout[,1])
-  
-  #predict(regulardModel,)
-  testPredResid <- (testPredCV-filteredv7118holdout[,1])
-  
-  count(abs(testPredResid)>.25)
-  
-  testModel <- glm(filteredv7118holdout)
-  summary(trainModel)
-  summary(testModel)
-  
-  summary(regularTrainModel)
-  summary(regularTestModel)
-  
-  #%incorrect
-  count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-  
- 
-}
-
-#http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
-holdoutmodelcv <- train(filteredv7118holdout[-1], filteredv7118holdout[,1], method = "glm", trControl = train.control)
-holdoutmodelcv$results
-summary(holdoutmodelcv$finalModel)
-vif(holdoutmodelcv$finalModel)
-#plot(holdoutmodelcv$finalModel)
-
-#check errors
-pcv <- predict(holdoutmodelcv, filteredv7118holdout[-1])
-errorcv <- (pcv- filteredv7118holdout[,1])
-RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-
-#check errors against training
-pct <- predict(holdoutmodelcv, filteredv7118.train[-1])
-errorcv <- (pct- filteredv7118.train[,1])
-RMSE_NewDatacv <- sqrt(mean(errorcv^2))
 
 #8517
 {

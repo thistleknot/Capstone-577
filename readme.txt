@@ -925,3 +925,7 @@ Seed 6 results
 	[1] "V7202" "V7221" "V8528" "V8502" "V8512" "V8536" "V7501" "V8565"
 	[1] "holdout pass: "
 	[1] "V7202"	
+	
+Citations
+
+	http://www.et.bs.ehu.es/cran/web/packages/bestglm/vignettes/bestglm.pdf
