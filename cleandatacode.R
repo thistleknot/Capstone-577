@@ -235,174 +235,303 @@ for(lister in 1:3)
   NewDF[NewDF == -2] <- 0
   
   #after lister, before holdoutReset
-  seedbase=5
-  print(paste("seed",seedbase))
-  
-  widthDiviser=5
-  #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
-  
-  for (holdoutReset in 1:widthDiviser)
+  for (seeder 5:7)
   {
-    set.seed(seedbase)
-    #setup holdout
     
-    #static holdout
-    holdoutSetSize = .05
+    seedbase=seeder
+    print(paste("seed",seedbase))
     
-    underOverSampleFactor=1
+    widthDiviser=2
+    #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
     
-    #% to resample from resampled static hold out set
-    holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
-    
-    #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-    preHoldOutSize = .05
-    
-    #% of training resamples from static nonholdout
-    preTrainSize = underOverSampleFactor/widthDiviser #(never fully iterates over subsample)
-    
-    #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
-    holdoutSet <- c()
-    holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-    
-    NewDF.holdoutSet <- c()
-    NewDF.holdoutSet <- NewDF[holdoutSet,]
-  
-    #static for monte carlo training 
-    preNonHoldoutSet <- c()
-    preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preHoldOutSize*nrow(NewDF[-holdoutSet,])))
-    
-    NewDF.preNonHoldoutSet <- c()
-    NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
-    
-    #monte carlo sample size that samples from the preTrain.
-    #considering that we are doing at least 10 outer loops, 
-    #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
-    #trainMCSize = .10
-    
-    #resample=1
-    for (resample in 1:widthDiviser)
+    for (holdoutReset in 1:widthDiviser)
     {
-      base = resample
-      #print is inside inner loop
+      set.seed(seedbase)
+      #setup holdout
       
-      ##before reseed
-      #https://adv-r.hadley.nz/subsetting.html
+      #static holdout
+      holdoutSetSize = .05
       
-      #monte carlo resample from pre separated holdout (this means new holdout each subsample)
-      holdout <- c()
-      holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+      underOverSampleFactor=1
       
-      NewDF.holdout <- c()
-      NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+      #% to resample from resampled static hold out set
+      holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
-      #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
-      #monte carlo resamples from a static holdout
-      #used for resampling monte carlo training set from non holdout partitions!
-      preTrain <- c()
-      preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+      #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+      preHoldOutSize = .05
       
-      NewDF.preTrain <- c()
-      NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
-  
-      yIndex <- list[,4] == 0
-      lGeographyIndex <- list[,4] == 1
-      lGenderIndex <- list[,4] == 2
-      lGPAIndex <- list[,4] == 3
-      lViolenceIndex <- list[,4] == 4
-      lFather1Index <- list[,4] == 5
-      lFather2Index <- list[,4] == 6
-      lHabitsIndex <- list[,4] == 7
-      lHealthIndex <- list[,4] == 8
-      lPsycheIndex <- list[,4] == 9
+      #% of training resamples from static nonholdout
+      preTrainSize = underOverSampleFactor/widthDiviser #(never fully iterates over subsample)
       
-      train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+      #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+      holdoutSet <- c()
+      holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
       
-      y <- c()
-      yname <- c()
-      #y iterator's
-      #iterator=2
+      NewDF.holdoutSet <- c()
+      NewDF.holdoutSet <- NewDF[holdoutSet,]
+    
+      #static for monte carlo training 
+      preNonHoldoutSet <- c()
+      preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preHoldOutSize*nrow(NewDF[-holdoutSet,])))
       
-      for (iterator in 1:sum(yIndex))
+      NewDF.preNonHoldoutSet <- c()
+      NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+      
+      #monte carlo sample size that samples from the preTrain.
+      #considering that we are doing at least 10 outer loops, 
+      #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
+      #trainMCSize = .10
+      
+      #resample=1
+      for (resample in 1:widthDiviser)
       {
-      
-        yname <- c()
-        yname <- as.character(list[yIndex,][iterator,][,1])
+        base = resample
+        #print is inside inner loop
+        
+        ##before reseed
+        #https://adv-r.hadley.nz/subsetting.html
+        
+        #monte carlo resample from pre separated holdout (this means new holdout each subsample)
+        holdout <- c()
+        holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+        
+        NewDF.holdout <- c()
+        NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+        
+        #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
+        #monte carlo resamples from a static holdout
+        #used for resampling monte carlo training set from non holdout partitions!
+        preTrain <- c()
+        preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+        
+        NewDF.preTrain <- c()
+        NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+    
+        yIndex <- list[,4] == 0
+        lGeographyIndex <- list[,4] == 1
+        lGenderIndex <- list[,4] == 2
+        lGPAIndex <- list[,4] == 3
+        lViolenceIndex <- list[,4] == 4
+        lFather1Index <- list[,4] == 5
+        lFather2Index <- list[,4] == 6
+        lHabitsIndex <- list[,4] == 7
+        lHealthIndex <- list[,4] == 8
+        lPsycheIndex <- list[,4] == 9
+        
+        train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
         
         y <- c()
-        y <- list[yIndex,][iterator,]
+        yname <- c()
+        #y iterator's
+        #iterator=2
         
-        alty <- c()
-        alty <- list[yIndex,][-iterator,]
-        #y
-        #yname <- as.character(list[yIndex,][iterator,][,1])
-        print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
-        
-        names <- c()
-        
-        print(paste("holdoutReset: ",holdoutReset))
-        print(paste("resample: ",base))
-  
-        #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
-        #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
-  
-        #categories #val=4
-        for (val in 2:9)
+        for (iterator in 1:sum(yIndex))
         {
-          colList <- c()
-          if (val == 2) colList <- list[lGenderIndex,]
-          if (val == 3) colList <- list[lGPAIndex,]
-          if (val == 4) colList <- list[lViolenceIndex,]
-          if (val == 5) colList <- list[lFather1Index,]
-          if (val == 6) colList <- list[lFather2Index,]
-          if (val == 7) colList <- list[lHabitsIndex,]
-          if (val == 8) colList <- list[lHealthIndex,]
-          if (val == 9) colList <- list[lPsycheIndex,]
-          
-          if (is.null(nrow(data.frame(alty)))) break
-          
-          #colList <- rbind(list[yIndex,],colList)
-          
-          colList <- rbind(y,colList)
-          
-          #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-          #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-          colListNames <- c()
-          colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-  
-          newList <- c()        
-          newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-          
-          #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-          #droplevels(newList)
-          #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-          
-          data.train <- c()
-          data.train <- NewDF.preTrain[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          data.train[data.train == 0] <- NA
-          data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
-          data.train[data.train == -1] <- 0
-          
-          data.test <- c()
-          data.test <- NewDF.holdout[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          data.test[data.test == 0] <- NA
-          data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
-          data.test[data.test == -1] <- 0
         
-          #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-          #https://rdrr.io/cran/bestglm/man/bestglm.html
-          #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
-          #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
-          #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-          holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-          B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser), family=binomial))
+          yname <- c()
+          yname <- as.character(list[yIndex,][iterator,][,1])
           
-          #plot(B$BestModel)
-          #B$Subsets[(length(B$Subsets)-1)]
+          y <- c()
+          y <- list[yIndex,][iterator,]
           
-          #https://dzone.com/articles/variable-selection-using-cross-validation-and-othe
+          alty <- c()
+          alty <- list[yIndex,][-iterator,]
+          #y
+          #yname <- as.character(list[yIndex,][iterator,][,1])
+          print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+          
+          names <- c()
+          
+          print(paste("holdoutReset: ",holdoutReset))
+          print(paste("resample: ",base))
+    
+          #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
+          #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
+    
+          #categories #val=4
+          for (val in 2:9)
           {
-            cverrs = B$Subsets[, "CV"]
-            sdCV = B$Subsets[, "sdCV"]
+            colList <- c()
+            if (val == 2) colList <- list[lGenderIndex,]
+            if (val == 3) colList <- list[lGPAIndex,]
+            if (val == 4) colList <- list[lViolenceIndex,]
+            if (val == 5) colList <- list[lFather1Index,]
+            if (val == 6) colList <- list[lFather2Index,]
+            if (val == 7) colList <- list[lHabitsIndex,]
+            if (val == 8) colList <- list[lHealthIndex,]
+            if (val == 9) colList <- list[lPsycheIndex,]
+            
+            if (is.null(nrow(data.frame(alty)))) break
+            
+            #colList <- rbind(list[yIndex,],colList)
+            
+            colList <- rbind(y,colList)
+            
+            #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+            #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+            colListNames <- c()
+            colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+    
+            newList <- c()        
+            newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+            
+            #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+            #droplevels(newList)
+            #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+            
+            data.train <- c()
+            data.train <- NewDF.preTrain[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+            data.train[data.train == 0] <- NA
+            data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
+            data.train[data.train == -1] <- 0
+            
+            data.test <- c()
+            data.test <- NewDF.holdout[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+            data.test[data.test == 0] <- NA
+            data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
+            data.test[data.test == -1] <- 0
+          
+            #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
+            #https://rdrr.io/cran/bestglm/man/bestglm.html
+            #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
+            #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
+            #https://rdrr.io/cran/bestglm/man/bestglm-package.html
+            holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
+            B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser), family=binomial))
+            
+            #plot(B$BestModel)
+            #B$Subsets[(length(B$Subsets)-1)]
+            
+            #https://dzone.com/articles/variable-selection-using-cross-validation-and-othe
+            {
+              cverrs = B$Subsets[, "CV"]
+              sdCV = B$Subsets[, "sdCV"]
+              CVLo = cverrs - sdCV
+              CVHi = cverrs + sdCV
+              ymax = max(CVHi)
+              ymin = min(CVLo)
+              k = 0:(length(cverrs) - 1)
+              plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+              points(k,cverrs,cex = 2,col="red",pch=16)
+              lines(k, cverrs, col = "red", lwd = 2)
+              axis(2, yaxp = c(0.6, 1.8, 6))
+              segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+              eps = 0.15
+              segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
+              segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
+              indMin = which.min(cverrs)
+              fmin = sdCV[indMin]
+              cutOff = fmin + cverrs[indMin]
+              abline(h = cutOff, lty = 2)
+              indMin = which.min(cverrs)
+              fmin = sdCV[indMin]
+              cutOff = fmin + cverrs[indMin]
+              min(which(cverrs < cutOff))
+            }
+            
+            #(B$Subsets$CV-mean(B$Subsets$CV))/sd(B$Subsets$CV)
+            
+            set<-round(colSums(B$Subsets))
+            setnointercept <- set[-1]
+            #plot CV
+            if(!is.na(setnointercept[9])) 
+              {
+              plot(setnointercept[9])
+              end<-length(setnointercept)-3
+              setnointerceptnoright <- setnointercept[1:end]
+              
+              #not sure how to get rownames
+              plot(setnointerceptnoright)
+              median(setnointerceptnoright)
+              aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+            }
+            if(is.na(setnointercept[9])) aboveMedianCV <- NA
+            
+            
+            #within one standard deviation from the min error
+            
+            #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
+            
+            #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
+            
+            #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
+            #don't reset names here, reset outside of categories
+            datalist <- c()
+            #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            if(is.na(aboveMedianCV)) aboveMedianCV <- c()
+            datalist <- aboveMedianCV
+            if(length(datalist)==1)
+            {
+              
+              names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
+            }
+            
+            if(length(datalist)>1)
+              for (i in 1:length(datalist))
+            {
+              
+              names <- rbind(names,datalist[i])
+            }
+            
+            #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
+      
+            #summary(step.model.test) 
+      
+            #Calculating MSE for training data
+            #mse.train<- mean(residuals(step.model.train)^2)
+            #mse.train
+            
+            #Calculating RMSE for training data
+            #rmse.train <- sqrt(mse.train)
+            #rmse.train
+            
+            #Calculating MSE for testing data
+            #mse.test <- mean(residuals(step.model.test)^2)
+            #mse.test
+            
+            #Calculating RMSE for testing data
+            #rmse.test <- sqrt(mse.test)
+            #rmse.test
+              
+            #end of category iterator  
+          }
+          print("category pass")  
+          print(c(names))
+         
+          #end of yPass 
+        }
+        #second pass through 
+        if(length(names)!=0)
+        {
+          
+          #print("2nd pass")
+          B2Names <- c()
+          profile <- c()
+          profile <- c(yname,c(names))
+          
+          filtered <- c()
+          filtered <- NewDF.preTrain[,as.character(profile), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          filtered[filtered == 0] <- NA
+          filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
+          filtered[filtered == -1] <- 0
+          
+          filtered.train <- c()
+          filtered.train <- NewDF.preTrain[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          
+          filtered.train[filtered.train == 0] <- NA
+          filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
+          filtered.train[filtered.train == -1] <- 0
+          
+          filteredholdout <- c()
+          filteredholdout <- NewDF.holdout[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          filteredholdout[filteredholdout == 0] <- NA
+          filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
+          filteredholdout[filteredholdout == -1] <- 0
+          B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser), family=binomial))
+  
+          {
+            cverrs = B2$Subsets[, "CV"]
+            sdCV = B2$Subsets[, "sdCV"]
             CVLo = cverrs - sdCV
             CVHi = cverrs + sdCV
             ymax = max(CVHi)
@@ -426,302 +555,178 @@ for(lister in 1:3)
             min(which(cverrs < cutOff))
           }
           
-          #(B$Subsets$CV-mean(B$Subsets$CV))/sd(B$Subsets$CV)
-          
-          set<-round(colSums(B$Subsets))
+          set<-round(colSums(B2$Subsets))
           setnointercept <- set[-1]
-          #plot CV
-          if(!is.na(setnointercept[9])) 
+          end<-length(setnointercept)-3
+          setnointerceptnoright <- setnointercept[1:end]
+          median(setnointerceptnoright)
+          
+          #if(is.na(setnointercept[9])) aboveMedianCV <- NA
+          holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+          if(is.na(holder)) aboveMedianCV <- c()
+          if(!is.na(holder)) aboveMedianCV <- holder
+          
+          B2Names <- c()
+          datalist2 <- c()
+          datalist2 <- aboveMedianCV
+          #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+          
+          if(length(datalist2)==1)
+          {
+            B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+          }
+          
+          if(length(datalist2)>1)
+            for (i in 1:length(datalist2))
             {
-            plot(setnointercept[9])
-            end<-length(setnointercept)-3
-            setnointerceptnoright <- setnointercept[1:end]
-            
-            #not sure how to get rownames
-            plot(setnointerceptnoright)
-            median(setnointerceptnoright)
-            aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-          }
-          if(is.na(setnointercept[9])) aboveMedianCV <- NA
+              B2Names <- rbind(B2Names,datalist2[i])
+            }
           
+          if(length(B2Names)!=0) 
+            {
+              print("holdout pass: ")
+              print(c(B2Names))
+              
+              #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
+              #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
+              
+              filteredv2 <- c()
+              filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
+              filteredv2[filteredv2 == 0] <- NA
+              filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
+              filteredv2[filteredv2 == -1] <- 0
+              
+              #includes before variables are dropped.  Use for hypothesis tests.  
+              
+              #summary(HoldoutCVModel)
+              #summary(HoldoutModel)        
+            }
           
-          #within one standard deviation from the min error
+          #extended PCA analysis
           
-          #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
-          
-          #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
-          
-          #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
-          #don't reset names here, reset outside of categories
-          datalist <- c()
-          #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-          if(is.na(aboveMedianCV)) aboveMedianCV <- c()
-          datalist <- aboveMedianCV
-          if(length(datalist)==1)
           {
             
-            names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
+            res <- cor(filtered.train)
+            corrplot(res)
+            
+            x=filtered.train[,-1]
+            y=filtered.train[,1]
+            
+            pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+            
+            #includes proportion of variance
+            summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
+            te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
+            #pc plot
+            plot(te[3,1:ncol(te)])
+            
+            corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+            
+            #include data in new model for inclusion in a linear model
+            #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+            
+            pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+            
+            #predict using pca, just re-applying to training data.
+            
+            #applied PCA to holdout
+            
+            x <- filteredholdout[-1]
+            
+            y <- data.frame(filteredholdout[1])
+            
+            pred <- data.frame(predict(pc,x))
+            pcaPred <- glm(cbind(y,pred))
+            
+            #predict(pcaPred,)
+            
+            #predict(pcaPred,filteredv7133holdout[-1])
+            
+            summary(pcaPred)
+            hist(abs(pcaPred$residuals))
+            
+            summary(pcaModel)
+            summary(pcaPred)
+            
+            regularTrainModel <- glm(filtered.train)
+            regularTestModel <- glm(filteredholdout)
+            
+            # Define training control
+            
+            #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+            
+            trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
+            testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
+            
+            testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
+            
+            testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
+            cor(testPred,filteredholdout[,1])
+            
+            #predict(regular Model,)
+            
+            testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
+            
+            print(count(abs(testPredResid)>.0))
+            
+            testModel <- glm(filteredholdout)
+            summary(trainModel)
+            summary(testModel)
+            
+            summary(regularTrainModel)
+            summary(regularTestModel)
+            
+            #%incorrect
+            incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+            print(incorrect)
+            
+            
           }
           
-          if(length(datalist)>1)
-            for (i in 1:length(datalist))
-          {
-            
-            names <- rbind(names,datalist[i])
-          }
+          #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
+          holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
+          holdoutmodelcv$results
+          summary(holdoutmodelcv$finalModel)
+          vif(holdoutmodelcv$finalModel)
+          #plot(holdoutmodelcv$finalModel)
           
-          #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
-    
-          #summary(step.model.test) 
-    
-          #Calculating MSE for training data
-          #mse.train<- mean(residuals(step.model.train)^2)
-          #mse.train
+          #check errors
+          pcv <- predict(holdoutmodelcv, filteredholdout[-1])
+          errorcv <- (pcv- filteredholdout[,1])
+          RMSE_NewDatacv <- sqrt(mean(errorcv^2))
           
-          #Calculating RMSE for training data
-          #rmse.train <- sqrt(mse.train)
-          #rmse.train
+          #check errors against training
+          pct <- predict(holdoutmodelcv, filtered.train[-1])
+          errorcv <- (pct- filtered.train[,1])
+          RMSE_NewDatacv <- sqrt(mean(errorcv^2))
           
-          #Calculating MSE for testing data
-          #mse.test <- mean(residuals(step.model.test)^2)
-          #mse.test
+          full.model.train <- glm(filtered.train[,1]~., data=filtered.train)
+          full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
+          #summary(full.model.train)
           
-          #Calculating RMSE for testing data
-          #rmse.test <- sqrt(mse.test)
-          #rmse.test
-            
-          #end of category iterator  
+          #give best model based on some metric
+          #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+          #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+          
+          #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
+          #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
+          
+          #end seconnd pass
         }
-        print("category pass")  
-        print(c(names))
-       
-        #end of yPass 
+        if(length(names)==0) B2Names <- c()
+        write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
+      
+        #end of resample
       }
-      #second pass through 
-      if(length(names)!=0)
-      {
-        
-        #print("2nd pass")
-        B2Names <- c()
-        profile <- c()
-        profile <- c(yname,c(names))
-        
-        filtered <- c()
-        filtered <- NewDF.preTrain[,as.character(profile), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-        filtered[filtered == 0] <- NA
-        filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-        filtered[filtered == -1] <- 0
-        
-        filtered.train <- c()
-        filtered.train <- NewDF.preTrain[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-        
-        filtered.train[filtered.train == 0] <- NA
-        filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
-        filtered.train[filtered.train == -1] <- 0
-        
-        filteredholdout <- c()
-        filteredholdout <- NewDF.holdout[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-        filteredholdout[filteredholdout == 0] <- NA
-        filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
-        filteredholdout[filteredholdout == -1] <- 0
-        B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser), family=binomial))
-
-        {
-          cverrs = B2$Subsets[, "CV"]
-          sdCV = B2$Subsets[, "sdCV"]
-          CVLo = cverrs - sdCV
-          CVHi = cverrs + sdCV
-          ymax = max(CVHi)
-          ymin = min(CVLo)
-          k = 0:(length(cverrs) - 1)
-          plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-          points(k,cverrs,cex = 2,col="red",pch=16)
-          lines(k, cverrs, col = "red", lwd = 2)
-          axis(2, yaxp = c(0.6, 1.8, 6))
-          segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-          eps = 0.15
-          segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
-          segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
-          indMin = which.min(cverrs)
-          fmin = sdCV[indMin]
-          cutOff = fmin + cverrs[indMin]
-          abline(h = cutOff, lty = 2)
-          indMin = which.min(cverrs)
-          fmin = sdCV[indMin]
-          cutOff = fmin + cverrs[indMin]
-          min(which(cverrs < cutOff))
-        }
-        
-        set<-round(colSums(B2$Subsets))
-        setnointercept <- set[-1]
-        end<-length(setnointercept)-3
-        setnointerceptnoright <- setnointercept[1:end]
-        median(setnointerceptnoright)
-        
-        #if(is.na(setnointercept[9])) aboveMedianCV <- NA
-        holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-        if(is.na(holder)) aboveMedianCV <- c()
-        if(!is.na(holder)) aboveMedianCV <- holder
-        
-        B2Names <- c()
-        datalist2 <- c()
-        datalist2 <- aboveMedianCV
-        #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
-        
-        if(length(datalist2)==1)
-        {
-          B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
-        }
-        
-        if(length(datalist2)>1)
-          for (i in 1:length(datalist2))
-          {
-            B2Names <- rbind(B2Names,datalist2[i])
-          }
-        
-        if(length(B2Names)!=0) 
-          {
-            print("holdout pass: ")
-            print(c(B2Names))
-            
-            #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
-            #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
-            
-            filteredv2 <- c()
-            filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
-            filteredv2[filteredv2 == 0] <- NA
-            filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
-            filteredv2[filteredv2 == -1] <- 0
-            
-            #includes before variables are dropped.  Use for hypothesis tests.  
-            
-            #summary(HoldoutCVModel)
-            #summary(HoldoutModel)        
-          }
-        
-        #extended PCA analysis
-        
-        {
-          
-          res <- cor(filtered.train)
-          corrplot(res)
-          
-          x=filtered.train[,-1]
-          y=filtered.train[,1]
-          
-          pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
-          
-          #includes proportion of variance
-          summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
-          te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
-          #pc plot
-          plot(te[3,1:ncol(te)])
-          
-          corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
-          
-          #include data in new model for inclusion in a linear model
-          #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-          
-          pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
-          
-          #predict using pca, just re-applying to training data.
-          
-          #applied PCA to holdout
-          
-          x <- filteredholdout[-1]
-          
-          y <- data.frame(filteredholdout[1])
-          
-          pred <- data.frame(predict(pc,x))
-          pcaPred <- glm(cbind(y,pred))
-          
-          #predict(pcaPred,)
-          
-          #predict(pcaPred,filteredv7133holdout[-1])
-          
-          summary(pcaPred)
-          hist(abs(pcaPred$residuals))
-          
-          summary(pcaModel)
-          summary(pcaPred)
-          
-          regularTrainModel <- glm(filtered.train)
-          regularTestModel <- glm(filteredholdout)
-          
-          # Define training control
-          
-          #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-          
-          trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
-          testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
-          
-          testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
-          
-          testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
-          cor(testPred,filteredholdout[,1])
-          
-          #predict(regular Model,)
-          
-          testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
-          
-          print(count(abs(testPredResid)>.0))
-          
-          testModel <- glm(filteredholdout)
-          summary(trainModel)
-          summary(testModel)
-          
-          summary(regularTrainModel)
-          summary(regularTestModel)
-          
-          #%incorrect
-          incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-          print(incorrect)
-          
-          
-        }
-        
-        #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
-        holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
-        holdoutmodelcv$results
-        summary(holdoutmodelcv$finalModel)
-        vif(holdoutmodelcv$finalModel)
-        #plot(holdoutmodelcv$finalModel)
-        
-        #check errors
-        pcv <- predict(holdoutmodelcv, filteredholdout[-1])
-        errorcv <- (pcv- filteredholdout[,1])
-        RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-        
-        #check errors against training
-        pct <- predict(holdoutmodelcv, filtered.train[-1])
-        errorcv <- (pct- filtered.train[,1])
-        RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-        
-        full.model.train <- glm(filtered.train[,1]~., data=filtered.train)
-        full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-        #summary(full.model.train)
-        
-        #give best model based on some metric
-        #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
-        #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-        
-        #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
-        #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
-        
-        #end seconnd pass
-      }
-      if(length(names)==0) B2Names <- c()
-      write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
-    
-      #end of resample
-    }
-    write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
-    write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
-    #end outermost loop
-
-   #end of holdoutReset 
-  }
+      write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
+      write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
+      #end outermost loop
   
+     #end of holdoutReset 
+    }
+  
+    #end seed
+  }
   
 #end of lister
 }
