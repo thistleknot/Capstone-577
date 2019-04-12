@@ -38,11 +38,14 @@ Steps
 
 	what it does is two loops.  One changes the seed each pass/iteration of cv over the sample.  The second pass is the base and it resamples from the population (not from a separate training partition, everything get's rescrambled, including holdout).  
 
-	
 	line 237
 	#static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
 	line 266
 	#monte carlo resample of non holdout!
+	
+	line 240: 
+	NewDF.holdout
+	Holdout is always same static regardless of monte carlo resample.
 		
 Hypothesis
 		at the 5% sample level using the aggregate data of the subset of the holdout.  We will derive a regression equation there.  Then we will check it against the population and see if it was within range.  If so, we will confirm our hypothesis.  As an addendum, we can derive a population level... this part I think I'd like to ask the professor about.
@@ -51,6 +54,8 @@ Hypothesis
 		eventually reduced to ("V7118, "V7202") (after holdout analysis)
 
 		so... I can derive a regression equation at the holdout analysis juncture, and then see if it holds when I derive a newdataset of the population and derive it's new coefficient terms fitting a model.  See if it's terms fit within the range predicted at the holdout analysis level.  At these junctures, the datasets are aggregated independently (different sampling due to inclusion of different factors, i.e. na drops records based on what columns are included)
+		
+		Feature extractor will extract features that should display in random samples as significant.
 		
 Category Flags
 	Y's (0)
@@ -192,6 +197,45 @@ seed 5 factor reduced results commit.txt
 		"V8517" "V8530" "V8531"
 		
 		"V7221" "V7552" "V7562" "V7563" "V8527" "V8509" "V8512"
+		
+	Milestone 4
+		Implemented cross validation, monte carlo resampling of sub sample, and resampling of holdout/non holdout data in 2 distinct loops.  I use a width factor that controls all the loops to include # of k folds and cv iterations.  Set to 2 atm.  Default will be 3.
+		
+		So far
+		
+		8517 ~ 8530 , 8531
+		
+		7221 ~ 8512
+		
+		[1] "V8517"
+[1] "holdoutReset:  1"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V8505" "V8509" "V8514" "V8536" "V7507" "V8565"
+[1] "holdout pass: "
+[1] "V8514" "V8536" "V8565"
+[1] "V8517"
+[1] "holdoutReset:  1"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V8514" "V8536" "V8565"
+[1] "holdout pass: "
+[1] "V8514" "V8565"
+[1] "V8517"
+[1] "holdoutReset:  2"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V8505" "V8509" "V8514" "V8536" "V7507" "V8565"
+[1] "holdout pass: "
+[1] "V8514" "V8536" "V8565"
+[1] "V8517"
+[1] "holdoutReset:  2"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V8514" "V8536" "V8565"
+[1] "holdout pass: "
+[1] "V8514" "V8565"
+		
 
 Cross validation means that if the patterns show up more than half the time (5 out of 10 passes), they are probably truly significant.  I usually have a higher bar, such as the top quartile, or top 10-20%.
 	These are not just cross validated against training sets 10 times.  
@@ -565,3 +609,90 @@ Seed5CV25PctGPA.txt
 		0     0     1     4     6     9 
 	V8502 V8505 V8509 V8512 V8514 V8536 V7501 V7507 V8565 
 		0     3     4     3     4     2     7     4     7 		
+		
+Milestone 4.2
+
+[1] "Y: V7221"
+[1] "holdoutReset:  1"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7202" "V7206" "V7215" "V7552" "V7562" "V7563" "V8527" "V8509" "V8512"
+[1] "holdout pass: "
+[1] "V7202" "V7206"
+[1] "Y: V7221"
+[1] "holdoutReset:  1"
+[1] "resample:  2"
+[1] "1st pass"
+ [1] "V7202" "V8517" "V7206" "V7215" "V7552" "V7562" "V7563" "V8527" "V8502" "V8512" "V8536"
+[1] "holdout pass: "
+[1] "V7202" "V8517" "V7206" "V7215" "V7562" "V7563" "V8536"
+[1] "Y: V7221"
+[1] "holdoutReset:  2"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7202" "V7206" "V7215" "V7552" "V7562" "V7563" "V8527" "V8509" "V8512"
+[1] "holdout pass: "
+[1] "V7202" "V7206"
+[1] "Y: V7221"
+[1] "holdoutReset:  2"
+[1] "resample:  2"
+[1] "1st pass"
+ [1] "V7202" "V8517" "V7206" "V7215" "V7552" "V7562" "V7563" "V8527" "V8502" "V8512" "V8536"
+[1] "holdout pass: "
+[1] "V7202" "V8517" "V7206" "V7215" "V7562" "V7563" "V8536"
+[1] "Y: V8517"
+[1] "holdoutReset:  1"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7551" "V8530" "V8531" "V8514" "V8565"
+[1] "holdout pass: "
+[1] "V8530" "V8531" "V8565"
+[1] "Y: V8517"
+[1] "holdoutReset:  1"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V7551" "V8528" "V8530" "V8514" "V8565"
+[1] "holdout pass: "
+[1] "V8528" "V8530" "V8565"
+[1] "Y: V8517"
+[1] "holdoutReset:  2"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7551" "V8530" "V8531" "V8514" "V8565"
+[1] "holdout pass: "
+[1] "V8530" "V8531" "V8565"
+[1] "Y: V8517"
+[1] "holdoutReset:  2"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V7551" "V8528" "V8530" "V8514" "V8565"
+[1] "holdout pass: "
+[1] "V8528" "V8530" "V8565"
+[1] "Y: V7118"
+[1] "holdoutReset:  1"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7202" "V7551" "V8502"
+[1] "holdout pass: "
+[1] "V7202"
+[1] "Y: V7118"
+[1] "holdoutReset:  1"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V7202" "V7551" "V7552" "V8526" "V8527" "V8529" "V8531" "V8502" "V7501"
+[1] "holdout pass: "
+[1] "V7202"
+[1] "Y: V7118"
+[1] "holdoutReset:  2"
+[1] "resample:  1"
+[1] "1st pass"
+[1] "V7202" "V7551" "V8502"
+[1] "holdout pass: "
+[1] "V7202"
+[1] "Y: V7118"
+[1] "holdoutReset:  2"
+[1] "resample:  2"
+[1] "1st pass"
+[1] "V7202" "V7551" "V7552" "V8526" "V8527" "V8529" "V8531" "V8502" "V7501"
+[1] "holdout pass: "
+[1] "V7202"
