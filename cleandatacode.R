@@ -461,9 +461,10 @@ for(lister in 1:3)
             #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
             #don't reset names here, reset outside of categories
             datalist <- c()
-            #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            
             if(!length(aboveMedianCV)>0) aboveMedianCV <- c()
-            datalist <- aboveMedianCV
+            #datalist <- aboveMedianCV
+            datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
             if(length(datalist)==1)
             {
               
@@ -541,14 +542,14 @@ for(lister in 1:3)
           xy <- cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE]))
           res <- withTimeout({
             B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, method = "exhaustive", intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
-          }, timeout = 3, onTimeout = "warning")
+          }, timeout = 20, onTimeout = "warning")
           
           #most likely due to large # of vars
           #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
           #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
           #so defaulting to stepaic
           
-          if(!res=="reached elapsed time limit [cpu=3s, elapsed=3s]")
+          if(!res=="reached elapsed time limit [cpu=20s, elapsed=20s]")
           {
             cverrs = B2$Subsets[, "CV"]
             sdCV = B2$Subsets[, "sdCV"]
@@ -588,10 +589,10 @@ for(lister in 1:3)
           
           B2Names <- c()
           datalist2 <- c()
-          datalist2 <- aboveMedianCV
-          #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+          #datalist2 <- aboveMedianCV
+          datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
           
-          if(res=="reached elapsed time limit [cpu=3s, elapsed=3s]")
+          if(res=="reached elapsed time limit [cpu=20s, elapsed=20s]")
           {
             #
             print("falling back to stepAIC, timeout reached")
