@@ -234,15 +234,17 @@ for(lister in 1:3)
   NewDF[NewDF == 0] <- -1
   NewDF[NewDF == -2] <- 0
   
+  
+  start=5
+  widthDiviser=2
+  #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
+  
   #after lister, before holdoutReset
-  for (seeder in 5:7)
+  for (seeder in start:(start+(widthDiviser-1)))
   {
     
     seedbase=seeder
     print(paste("seed",seedbase))
-    
-    widthDiviser=2
-    #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
     
     for (holdoutReset in 1:widthDiviser)
     {
@@ -250,18 +252,18 @@ for(lister in 1:3)
       #setup holdout
       
       #static holdout
-      holdoutSetSize = .05
+      holdoutSetSize = .02
       
-      underOverSampleFactor=1
+      underOverSampleFactor=.9
       
       #% to resample from resampled static hold out set
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preHoldOutSize = .05
+      preHoldOutSize = .04
       
       #% of training resamples from static nonholdout
-      preTrainSize = underOverSampleFactor/widthDiviser #(never fully iterates over subsample)
+      preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
       
       #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
       holdoutSet <- c()
@@ -328,6 +330,7 @@ for(lister in 1:3)
         for (iterator in 1:sum(yIndex))
         {
         
+          #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
           yname <- c()
           yname <- as.character(list[yIndex,][iterator,][,1])
           
@@ -338,12 +341,12 @@ for(lister in 1:3)
           alty <- list[yIndex,][-iterator,]
           #y
           #yname <- as.character(list[yIndex,][iterator,][,1])
-          print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+          #rather than move to end of file
+          if (iterator==1 && resample==1 && holdoutReset==1) print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
           
           names <- c()
           
-          print(paste("holdoutReset: ",holdoutReset))
-          print(paste("resample: ",base))
+          print(paste("holdoutReset: ",holdoutReset,"resample: ",base))
     
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
@@ -495,7 +498,7 @@ for(lister in 1:3)
               
             #end of category iterator  
           }
-          print("category pass")  
+          #print("category pass")  
           print(c(names))
          
           #end of yPass 
@@ -584,7 +587,7 @@ for(lister in 1:3)
           
           if(length(B2Names)!=0) 
             {
-              print("holdout pass: ")
+              #print("holdout pass: ")
               print(c(B2Names))
               
               #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
@@ -667,7 +670,8 @@ for(lister in 1:3)
             
             testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
             
-            print(count(abs(testPredResid)>.0))
+            #print(count(abs(testPredResid)>.0))
+            hist(abs(testPredResid))
             
             testModel <- glm(filteredholdout)
             summary(trainModel)
@@ -677,8 +681,8 @@ for(lister in 1:3)
             summary(regularTestModel)
             
             #%incorrect
-            incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-            print(incorrect)
+            #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+            #print(incorrect)
             
             
           }
@@ -728,6 +732,8 @@ for(lister in 1:3)
     #end seed
   }
   
+  #spacer
+  print("")
 #end of lister
 }
 
