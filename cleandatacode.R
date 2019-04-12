@@ -64,7 +64,6 @@ for(lister in 1:3)
   #7118 (psychadelics)
   if (lister==3) list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
   
-  print("")
   # dim(data)
   # check missing with for loop
   # The below code gives the number of missing values for each variables
@@ -234,7 +233,9 @@ for(lister in 1:3)
   NewDF[NewDF == 0] <- -1
   NewDF[NewDF == -2] <- 0
   
-  seedbase=5
+  #after lister, before holdoutReset
+  seedbase=7
+  print(paste("seed",seedbase))
   
   widthDiviser=2
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
@@ -546,7 +547,7 @@ for(lister in 1:3)
     write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
     write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
     #end outermost loop
-}
+  }
 #end of lister
 }
 
