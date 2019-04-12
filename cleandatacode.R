@@ -352,7 +352,7 @@ for(lister in 1:3)
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
     
-          #categories #val=4
+          #categories #val=9
           for (val in 2:9)
           {
             colList <- c()
@@ -407,6 +407,7 @@ for(lister in 1:3)
             #B$Subsets[(length(B$Subsets)-1)]
             
             #https://dzone.com/articles/variable-selection-using-cross-validation-and-othe
+            if(!is.null(B$Subsets))
             {
               cverrs = B$Subsets[, "CV"]
               sdCV = B$Subsets[, "sdCV"]
@@ -415,7 +416,7 @@ for(lister in 1:3)
               ymax = max(CVHi)
               ymin = min(CVLo)
               k = 0:(length(cverrs) - 1)
-              plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+              if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
               points(k,cverrs,cex = 2,col="red",pch=16)
               lines(k, cverrs, col = "red", lwd = 2)
               axis(2, yaxp = c(0.6, 1.8, 6))
@@ -451,7 +452,6 @@ for(lister in 1:3)
             }
             if(is.na(setnointercept[9])) aboveMedianCV <- NA
             
-            
             #within one standard deviation from the min error
             
             #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
@@ -462,12 +462,15 @@ for(lister in 1:3)
             #don't reset names here, reset outside of categories
             datalist <- c()
             
-            if(!length(aboveMedianCV)>0) aboveMedianCV <- c()
-            #datalist <- aboveMedianCV
-            datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
+            #this is creating empty entries.
+            #if(length(aboveMedianCV)>0) aboveMedianCV <- c()
+            
+            #if(length(aboveMedianCV)>0) aboveMedianCV <- c()
+            datalist <- aboveMedianCV
+            
+            #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
             if(length(datalist)==1)
             {
-              
               names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
             }
             
@@ -539,17 +542,26 @@ for(lister in 1:3)
           #res="reached elapsed time limit [cpu=1.08s, elapsed=1.08s]"
 
           #if error, resample holdout          
-          xy <- cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE]))
-          res <- withTimeout({
-            B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, method = "exhaustive", intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
-          }, timeout = 20, onTimeout = "warning")
+          
+          #res <- withTimeout({
+          
+          #stepaic
+          #due to the fact that only B2 times out, I suspect this is due to highly correlated variables that don't appear in the first [B]estglm.  So I'm going to run stepAIC first before I run best subsets.
+          full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
+          step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+          datalist2 <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
+          
+          xy <- cbind(data.frame(filteredholdout[datalist2][,-1 , drop = FALSE]),data.frame(filteredholdout[datalist2][,1 , drop = FALSE]))
+          
+          B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
+          #}, timeout = 60, onTimeout = "warning")
           
           #most likely due to large # of vars
           #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
           #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
           #so defaulting to stepaic
           
-          if(!res=="reached elapsed time limit [cpu=20s, elapsed=20s]")
+          #if(!res=="reached elapsed time limit [cpu=60, elapsed=60]")
           {
             cverrs = B2$Subsets[, "CV"]
             sdCV = B2$Subsets[, "sdCV"]
@@ -558,7 +570,7 @@ for(lister in 1:3)
             ymax = max(CVHi)
             ymin = min(CVLo)
             k = 0:(length(cverrs) - 1)
-            plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+            if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
             points(k,cverrs,cex = 2,col="red",pch=16)
             lines(k, cverrs, col = "red", lwd = 2)
             axis(2, yaxp = c(0.6, 1.8, 6))
@@ -575,36 +587,28 @@ for(lister in 1:3)
             cutOff = fmin + cverrs[indMin]
             min(which(cverrs < cutOff))
             
+            if(!is.null(B2$Subsets))
+            {
             set<-round(colSums(B2$Subsets))
             setnointercept <- set[-1]
             end<-length(setnointercept)-3
             setnointerceptnoright <- setnointercept[1:end]
             median(setnointerceptnoright)
+            }
           }
+
+          aboveMedianCV <- c()
           
-          #if(is.na(setnointercept[9])) aboveMedianCV <- NA
-          holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-          if(!length(holder)>0) aboveMedianCV <- c()
-          if(length(holder)>0) aboveMedianCV <- holder
+          if(!is.null(setnointercept)) aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
           
           B2Names <- c()
           datalist2 <- c()
-          #datalist2 <- aboveMedianCV
-          datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
           
-          if(res=="reached elapsed time limit [cpu=20s, elapsed=20s]")
-          {
-            #
-            print("falling back to stepAIC, timeout reached")
-            
-            full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-            
-            step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-            
-            datalist2 <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
-            
-          } 
+          if(!length(aboveMedianCV)>0) 
+          if(length(aboveMedianCV)>0) datalist2 <- aboveMedianCV
           
+          #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+         
           if(length(datalist2)==1)
           {
             B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
