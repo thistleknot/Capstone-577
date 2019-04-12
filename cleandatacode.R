@@ -387,7 +387,7 @@ for (holdoutReset in 1:widthDiviser)
         #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
         #https://rdrr.io/cran/bestglm/man/bestglm-package.html
         holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-        B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
+        B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser), family=binomial))
         
           {
             #cverrs = B$Subsets[, "CV"]
@@ -494,7 +494,7 @@ for (holdoutReset in 1:widthDiviser)
       filteredholdout[filteredholdout == 0] <- NA
       filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
       filteredholdout[filteredholdout == -1] <- 0
-      B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
+      B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = 1), family=binomial))
       
       #B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
       
@@ -528,7 +528,6 @@ for (holdoutReset in 1:widthDiviser)
           
           #includes before variables are dropped.  Use for hypothesis tests.  
           
-          
           #summary(HoldoutCVModel)
           #summary(HoldoutModel)        
         }
@@ -536,7 +535,6 @@ for (holdoutReset in 1:widthDiviser)
     }
     if(length(names)==0) B2Names <- c()
     write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
-    
   
     #end of resample
   }
