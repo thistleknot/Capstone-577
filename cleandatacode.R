@@ -54,13 +54,13 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #7221 gpa
-#list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 
 #8517 gang
 #list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
 
 #7118 (psychadelics)
-list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -233,7 +233,7 @@ NewDF[NewDF == -2] <- 0
 
 seedbase=5
 
-widthDiviser=3
+widthDiviser=2
 #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
 
 for (holdoutReset in 1:widthDiviser)
@@ -244,12 +244,14 @@ for (holdoutReset in 1:widthDiviser)
   #static holdout
   holdoutSetSize = .05
   
-  holdoutSize = .75/widthDiviser #(of set) #(never fully iterates over subsample)
+  #can choose to undersample using a value such as .75
+  holdoutSize = 1/widthDiviser #(of set) #(never fully iterates over subsample)
   
   #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
   preHoldOutSize = .05
   
-  preTrainSize = .75/widthDiviser #(never fully iterates over subsample)
+  #can choose to undersample using a value such as .75
+  preTrainSize = 1/widthDiviser #(never fully iterates over subsample)
   
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
   holdoutSet <- c()
