@@ -16,6 +16,7 @@ library(leaps)
 library(bestglm)
 library(compare)
 library(dplyr)
+library("R.utils")
 
 predict.regsubsets = function(object, newdata, id, ...) {
   form = as.formula(object$call[[2]])
@@ -320,7 +321,7 @@ for(lister in 1:3)
         lHealthIndex <- list[,4] == 8
         lPsycheIndex <- list[,4] == 9
         
-        train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+        train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = 1)
         
         y <- c()
         yname <- c()
@@ -400,7 +401,7 @@ for(lister in 1:3)
             #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
             #https://rdrr.io/cran/bestglm/man/bestglm-package.html
             holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-            B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser), family=binomial))
+            B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
             
             #plot(B$BestModel)
             #B$Subsets[(length(B$Subsets)-1)]
@@ -530,8 +531,24 @@ for(lister in 1:3)
           filteredholdout[filteredholdout == 0] <- NA
           filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
           filteredholdout[filteredholdout == -1] <- 0
-          B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser), family=binomial))
-  
+          #can get stuck here for some odd reason..., so I'm switching to an alternative CV method as a way to alleviate the bug.
+          
+          B2 <- c()
+          res <- c()
+          #res="reached elapsed time limit [cpu=1.08s, elapsed=1.08s]"
+
+          #if error, resample holdout          
+          xy <- cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE]))
+          res <- withTimeout({
+            B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, method = "exhaustive", intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
+          }, timeout = 3, onTimeout = "warning")
+          
+          #most likely due to large # of vars
+          #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
+          #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
+          #so defaulting to stepaic
+          
+          if(!res=="reached elapsed time limit [cpu=3s, elapsed=3s]")
           {
             cverrs = B2$Subsets[, "CV"]
             sdCV = B2$Subsets[, "sdCV"]
@@ -556,13 +573,13 @@ for(lister in 1:3)
             fmin = sdCV[indMin]
             cutOff = fmin + cverrs[indMin]
             min(which(cverrs < cutOff))
+            
+            set<-round(colSums(B2$Subsets))
+            setnointercept <- set[-1]
+            end<-length(setnointercept)-3
+            setnointerceptnoright <- setnointercept[1:end]
+            median(setnointerceptnoright)
           }
-          
-          set<-round(colSums(B2$Subsets))
-          setnointercept <- set[-1]
-          end<-length(setnointercept)-3
-          setnointerceptnoright <- setnointercept[1:end]
-          median(setnointerceptnoright)
           
           #if(is.na(setnointercept[9])) aboveMedianCV <- NA
           holder <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
@@ -573,6 +590,19 @@ for(lister in 1:3)
           datalist2 <- c()
           datalist2 <- aboveMedianCV
           #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+          
+          if(res=="reached elapsed time limit [cpu=3s, elapsed=3s]")
+          {
+            #
+            print("error, resampling holdout from static holdout partition")
+            
+            full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
+            
+            step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
+            
+            datalist2 <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
+            
+          } 
           
           if(length(datalist2)==1)
           {
@@ -589,9 +619,6 @@ for(lister in 1:3)
             {
               #print("holdout pass: ")
               print(c(B2Names))
-              
-              #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
-              #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
               
               filteredv2 <- c()
               filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
@@ -716,7 +743,7 @@ for(lister in 1:3)
           #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
           #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
           
-          #end seconnd pass
+          #end second pass
         }
         if(length(names)==0) B2Names <- c()
         write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
