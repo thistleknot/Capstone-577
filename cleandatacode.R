@@ -424,17 +424,18 @@ for (holdoutReset in 1:widthDiviser)
           
           #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
           
+          datalist <- c()
           datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
           if(length(datalist)==1)
           {
-            names <- c()
+            
             names <- rbind(names,as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])
           }
           
           if(length(as.character(rownames(data.frame(B$BestModel$coefficients)))[-1])>1)
             for (i in 1:length(datalist))
           {
-            names <- c()
+            
             names <- rbind(names,datalist[i])
           }
           
@@ -485,8 +486,26 @@ for (holdoutReset in 1:widthDiviser)
             B2 <- suppressMessages(bestglm(Xy = cbind(data.frame(filteredholdout[,-1 , drop = FALSE]),data.frame(filteredholdout[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=3, REP=3,TopModels = 1), family=binomial))
             
             B2Names <- c()
-            B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
-            print(B2Names)
+            #B2Names <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+            
+            datalist2 <- c()
+            datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+            
+            if(length(datalist2)==1)
+            {
+              
+              B2Names <- rbind(names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+            }
+            
+            if(length(as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])>1)
+              for (i in 1:length(datalist2))
+              {
+                
+                B2Names <- rbind(B2Names,datalist2[i])
+              }
+            
+            if(length(B2Names)!=0) print(B2Names)
+            
             #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
             #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
             
