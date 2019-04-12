@@ -494,7 +494,7 @@ for (holdoutReset in 1:widthDiviser)
             if(length(datalist2)==1)
             {
               
-              B2Names <- rbind(names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
+              B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
             }
             
             if(length(as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])>1)
