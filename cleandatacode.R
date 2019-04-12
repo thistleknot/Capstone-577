@@ -537,6 +537,8 @@ for(lister in 1:3)
           filteredholdout[filteredholdout == -1] <- 0
           #can get stuck here for some odd reason..., so I'm switching to an alternative CV method as a way to alleviate the bug.
           
+          datalist2 <- profile
+          
           B2 <- c()
           res <- c()
           #res="reached elapsed time limit [cpu=1.08s, elapsed=1.08s]"
@@ -547,80 +549,90 @@ for(lister in 1:3)
           
           #stepaic
           #due to the fact that only B2 times out, I suspect this is due to highly correlated variables that don't appear in the first [B]estglm.  So I'm going to run stepAIC first before I run best subsets.
-          full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-          step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-          datalist2 <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
+          #full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
+          #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
           
-          xy <- cbind(data.frame(filteredholdout[datalist2][,-1 , drop = FALSE]),data.frame(filteredholdout[datalist2][,1 , drop = FALSE]))
+          #when stepAIC guts the variables... nothing is reported... (no minimum error models...)
           
-          B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
-          #}, timeout = 60, onTimeout = "warning")
+          #which means... stepaic should only be used as fallback?
+          #summary(full.model.test)
           
-          #most likely due to large # of vars
-          #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
-          #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
-          #so defaulting to stepaic
+          #names <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
+          #still checking for name even though it was recently converted to datalistv2
+          if(length(names)>0) 
           
-          #if(!res=="reached elapsed time limit [cpu=60, elapsed=60]")
           {
-            cverrs = B2$Subsets[, "CV"]
-            sdCV = B2$Subsets[, "sdCV"]
-            CVLo = cverrs - sdCV
-            CVHi = cverrs + sdCV
-            ymax = max(CVHi)
-            ymin = min(CVLo)
-            k = 0:(length(cverrs) - 1)
-            if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-            points(k,cverrs,cex = 2,col="red",pch=16)
-            lines(k, cverrs, col = "red", lwd = 2)
-            axis(2, yaxp = c(0.6, 1.8, 6))
-            segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-            eps = 0.15
-            segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
-            segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
-            indMin = which.min(cverrs)
-            fmin = sdCV[indMin]
-            cutOff = fmin + cverrs[indMin]
-            abline(h = cutOff, lty = 2)
-            indMin = which.min(cverrs)
-            fmin = sdCV[indMin]
-            cutOff = fmin + cverrs[indMin]
-            min(which(cverrs < cutOff))
+            xy <- cbind(data.frame(filteredholdout[datalist2][,-1 , drop = FALSE]),data.frame(filteredholdout[datalist2][,1 , drop = FALSE]))
             
-            if(!is.null(B2$Subsets))
+            B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
+            #}, timeout = 60, onTimeout = "warning")
+            
+            #most likely due to large # of vars
+            #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
+            #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
+            #so defaulting to stepaic
+            
+            #if(!res=="reached elapsed time limit [cpu=60, elapsed=60]")
             {
-            set<-round(colSums(B2$Subsets))
-            setnointercept <- set[-1]
-            end<-length(setnointercept)-3
-            setnointerceptnoright <- setnointercept[1:end]
-            median(setnointerceptnoright)
+              cverrs = B2$Subsets[, "CV"]
+              sdCV = B2$Subsets[, "sdCV"]
+              CVLo = cverrs - sdCV
+              CVHi = cverrs + sdCV
+              ymax = max(CVHi)
+              ymin = min(CVLo)
+              k = 0:(length(cverrs) - 1)
+              if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+              points(k,cverrs,cex = 2,col="red",pch=16)
+              lines(k, cverrs, col = "red", lwd = 2)
+              axis(2, yaxp = c(0.6, 1.8, 6))
+              segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+              eps = 0.15
+              segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
+              segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
+              indMin = which.min(cverrs)
+              fmin = sdCV[indMin]
+              cutOff = fmin + cverrs[indMin]
+              abline(h = cutOff, lty = 2)
+              indMin = which.min(cverrs)
+              fmin = sdCV[indMin]
+              cutOff = fmin + cverrs[indMin]
+              min(which(cverrs < cutOff))
+              
+              if(!is.null(B2$Subsets))
+              {
+                set<-round(colSums(B2$Subsets))
+                setnointercept <- set[-1]
+                end<-length(setnointercept)-3
+                setnointerceptnoright <- setnointercept[1:end]
+                median(setnointerceptnoright)
+              }
             }
-          }
-
-          aboveMedianCV <- c()
-          
-          if(!is.null(setnointercept)) aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-          
-          B2Names <- c()
-          datalist2 <- c()
-          
-          if(!length(aboveMedianCV)>0) 
-          if(length(aboveMedianCV)>0) datalist2 <- aboveMedianCV
-          
-          #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
-         
-          if(length(datalist2)==1)
-          {
-            B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
-          }
-          
-          if(length(datalist2)>1)
-            for (i in 1:length(datalist2))
+            
+            aboveMedianCV <- c()
+            
+            if(!is.null(setnointercept)) aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
+            
+            B2Names <- c()
+            datalist2 <- c()
+            
+            #if(!length(aboveMedianCV)>0) 
+              
+            if(length(aboveMedianCV)>0) datalist2 <- aboveMedianCV
+            
+            #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
+            
+            if(length(datalist2)==1)
             {
-              B2Names <- rbind(B2Names,datalist2[i])
+              B2Names <- rbind(B2Names,as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1])
             }
-          
-          if(length(B2Names)!=0) 
+            
+            if(length(datalist2)>1)
+              for (i in 1:length(datalist2))
+              {
+                B2Names <- rbind(B2Names,datalist2[i])
+              }
+            
+            if(length(B2Names)!=0) 
             {
               #print("holdout pass: ")
               print(c(B2Names))
@@ -636,120 +648,123 @@ for(lister in 1:3)
               #summary(HoldoutCVModel)
               #summary(HoldoutModel)        
             }
-          
-          #extended PCA analysis
-          
-          {
             
-            res <- cor(filtered.train)
-            corrplot(res)
+            #extended PCA analysis
             
-            x=filtered.train[,-1]
-            y=filtered.train[,1]
+            {
+              
+              res <- cor(filtered.train)
+              corrplot(res)
+              
+              x=filtered.train[,-1]
+              y=filtered.train[,1]
+              
+              pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+              
+              #includes proportion of variance
+              summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
+              te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
+              #pc plot
+              plot(te[3,1:ncol(te)])
+              
+              corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+              
+              #include data in new model for inclusion in a linear model
+              #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+              
+              pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+              
+              #predict using pca, just re-applying to training data.
+              
+              #applied PCA to holdout
+              
+              x <- filteredholdout[-1]
+              
+              y <- data.frame(filteredholdout[1])
+              
+              pred <- data.frame(predict(pc,x))
+              pcaPred <- glm(cbind(y,pred))
+              
+              #predict(pcaPred,)
+              
+              #predict(pcaPred,filteredv7133holdout[-1])
+              
+              summary(pcaPred)
+              hist(abs(pcaPred$residuals))
+              
+              summary(pcaModel)
+              summary(pcaPred)
+              
+              regularTrainModel <- glm(filtered.train)
+              regularTestModel <- glm(filteredholdout)
+              
+              # Define training control
+              
+              #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+              
+              trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
+              testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
+              
+              testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
+              
+              testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
+              cor(testPred,filteredholdout[,1])
+              
+              #predict(regular Model,)
+              
+              testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
+              
+              #print(count(abs(testPredResid)>.0))
+              hist(abs(testPredResid))
+              
+              testModel <- glm(filteredholdout)
+              summary(trainModel)
+              summary(testModel)
+              
+              summary(regularTrainModel)
+              summary(regularTestModel)
+              
+              #%incorrect
+              #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+              #print(incorrect)
+              
+              
+            }
             
-            pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+            #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
+            holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
+            holdoutmodelcv$results
+            summary(holdoutmodelcv$finalModel)
+            #tryCatch()
+            #vif(holdoutmodelcv$finalModel)
+            #plot(holdoutmodelcv$finalModel)
             
-            #includes proportion of variance
-            summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
-            te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
-            #pc plot
-            plot(te[3,1:ncol(te)])
+            #check errors
+            pcv <- predict(holdoutmodelcv, filteredholdout[-1])
+            errorcv <- (pcv- filteredholdout[,1])
+            RMSE_NewDatacv <- sqrt(mean(errorcv^2))
             
-            corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+            #check errors against training
+            pct <- predict(holdoutmodelcv, filtered.train[-1])
+            errorcv <- (pct- filtered.train[,1])
+            RMSE_NewDatacv <- sqrt(mean(errorcv^2))
             
-            #include data in new model for inclusion in a linear model
-            #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+            full.model.train <- glm(filtered.train[,1]~., data=filtered.train)
+            full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
+            #summary(full.model.train)
             
-            pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
+            #give best model based on some metric
+            #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
+            #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
             
-            #predict using pca, just re-applying to training data.
+            #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
+            #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
             
-            #applied PCA to holdout
-            
-            x <- filteredholdout[-1]
-            
-            y <- data.frame(filteredholdout[1])
-            
-            pred <- data.frame(predict(pc,x))
-            pcaPred <- glm(cbind(y,pred))
-            
-            #predict(pcaPred,)
-            
-            #predict(pcaPred,filteredv7133holdout[-1])
-            
-            summary(pcaPred)
-            hist(abs(pcaPred$residuals))
-            
-            summary(pcaModel)
-            summary(pcaPred)
-            
-            regularTrainModel <- glm(filtered.train)
-            regularTestModel <- glm(filteredholdout)
-            
-            # Define training control
-            
-            #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-            
-            trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
-            testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
-            
-            testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
-            
-            testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
-            cor(testPred,filteredholdout[,1])
-            
-            #predict(regular Model,)
-            
-            testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
-            
-            #print(count(abs(testPredResid)>.0))
-            hist(abs(testPredResid))
-            
-            testModel <- glm(filteredholdout)
-            summary(trainModel)
-            summary(testModel)
-            
-            summary(regularTrainModel)
-            summary(regularTestModel)
-            
-            #%incorrect
-            #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-            #print(incorrect)
-            
+            #end second pass
+          }
             
           }
-          
-          #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
-          holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
-          holdoutmodelcv$results
-          summary(holdoutmodelcv$finalModel)
-          #tryCatch()
-          #vif(holdoutmodelcv$finalModel)
-          #plot(holdoutmodelcv$finalModel)
-          
-          #check errors
-          pcv <- predict(holdoutmodelcv, filteredholdout[-1])
-          errorcv <- (pcv- filteredholdout[,1])
-          RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-          
-          #check errors against training
-          pct <- predict(holdoutmodelcv, filtered.train[-1])
-          errorcv <- (pct- filtered.train[,1])
-          RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-          
-          full.model.train <- glm(filtered.train[,1]~., data=filtered.train)
-          full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-          #summary(full.model.train)
-          
-          #give best model based on some metric
-          #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
-          #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-          
-          #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
-          #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
-          
-          #end second pass
-        }
+
         if(length(names)==0) B2Names <- c()
         write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
       
