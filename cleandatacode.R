@@ -619,13 +619,13 @@ for(lister in 1:3)
       trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
       testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
       
-      testPredCV <- predict.train(model,newdata=filteredholdout[,-1])
+      testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
       
-      testPred <- predict.glm(regularModel,filteredholdout[,-1])
+      testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
       cor(testPred,filteredholdout[,1])
       
-      #predict(regulardModel,)
-      testPredResid <- (testPredCV-filteredholdout[,1])
+      #predict(regular Model,)
+      #testPredResid <- (testPredCV,filteredholdout[,1])
       
       count(abs(testPredResid)>.25)
       
@@ -637,7 +637,8 @@ for(lister in 1:3)
       summary(regularTestModel)
       
       #%incorrect
-      count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+      incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+      print(incorrect)
       
       
     }
@@ -650,13 +651,13 @@ for(lister in 1:3)
     #plot(holdoutmodelcv$finalModel)
     
     #check errors
-    pcv <- predict(holdoutmodelcv, filteredv7118holdout[-1])
-    errorcv <- (pcv- filteredv7118holdout[,1])
+    pcv <- predict(holdoutmodelcv, filteredholdout[-1])
+    errorcv <- (pcv- filteredholdout[,1])
     RMSE_NewDatacv <- sqrt(mean(errorcv^2))
     
     #check errors against training
-    pct <- predict(holdoutmodelcv, filteredv7118.train[-1])
-    errorcv <- (pct- filteredv7118.train[,1])
+    pct <- predict(holdoutmodelcv, filtered.train[-1])
+    errorcv <- (pct- filtered.train[,1])
     RMSE_NewDatacv <- sqrt(mean(errorcv^2))
     
   }
