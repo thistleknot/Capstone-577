@@ -508,9 +508,9 @@ bestglm <-
       else
         if (gaussianQ){
           if (IncludeInterceptQ)
-            BestModel <-lm(y~., data=data.frame(Xy[,c(bestset[-1],FALSE),drop=FALSE],y=y), ...)
+            BestModel <-lm(y~., data=data.frame(Xy[,c(bestset[,-1],FALSE),drop=FALSE],y=y), ...)
           else
-            BestModel <-lm(y~-1+., data=data.frame(Xy[,c(bestset[-1],FALSE),drop=FALSE],y=y), ...)
+            BestModel <-lm(y~-1+., data=data.frame(Xy[,c(bestset[,-1],FALSE),drop=FALSE],y=y), ...)
         }
       else {
         if (IncludeInterceptQ)

@@ -57,10 +57,10 @@ data <- d_combined
 #list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
 
 #8517 gang
-list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+#list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
 
 #7118 (psychadelics)
-#list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
 
 # dim(data)
 # check missing with for loop
@@ -231,9 +231,9 @@ NewDF[NewDF == -1] <- -2
 NewDF[NewDF == 0] <- -1
 NewDF[NewDF == -2] <- 0
 
-seedbase=5 
+seedbase=5
 
-widthDiviser=2
+widthDiviser=3
 #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
 
 for (holdoutReset in 1:widthDiviser)
@@ -244,12 +244,12 @@ for (holdoutReset in 1:widthDiviser)
   #static holdout
   holdoutSetSize = .05
   
-  holdoutSize = 1/widthDiviser #(of set)
+  holdoutSize = .75/widthDiviser #(of set) #(never fully iterates over subsample)
   
   #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
   preHoldOutSize = .05
   
-  preTrainSize = 1/widthDiviser
+  preTrainSize = .75/widthDiviser #(never fully iterates over subsample)
   
   #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
   holdoutSet <- c()
@@ -270,6 +270,7 @@ for (holdoutReset in 1:widthDiviser)
   #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
   #trainMCSize = .10
   
+  #resample=1
   for (resample in 1:widthDiviser)
   {
     base = resample
@@ -278,7 +279,7 @@ for (holdoutReset in 1:widthDiviser)
     ##before reseed
     #https://adv-r.hadley.nz/subsetting.html
     
-    #monte carlo resample of pre separated holdout and non holdout partitions!
+    #monte carlo resample from pre separated holdout (this means new holdout each subsample)
     holdout <- c()
     holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
     
@@ -287,7 +288,7 @@ for (holdoutReset in 1:widthDiviser)
     
     #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
     #monte carlo resamples from a static holdout
-    #used for resampling monte carlo training set
+    #used for resampling monte carlo training set from non holdout partitions!
     preTrain <- c()
     preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
     
@@ -305,7 +306,7 @@ for (holdoutReset in 1:widthDiviser)
     lHealthIndex <- list[,4] == 8
     lPsycheIndex <- list[,4] == 9
     
-    train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+    #train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
     
     y <- c()
     yname <- c()
@@ -325,11 +326,8 @@ for (holdoutReset in 1:widthDiviser)
       alty <- list[yIndex,][-iterator,]
       #y
       #yname <- as.character(list[yIndex,][iterator,][,1])
-      print(as.character(list[yIndex,][iterator,][,1]))
-      #val = 10
+      print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
       
-      #10 passes
-    
       names <- c()
       
       print(paste("holdoutReset: ",holdoutReset))
@@ -338,9 +336,8 @@ for (holdoutReset in 1:widthDiviser)
       #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
       #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
 
-      #categories
+      #categories #val=4
       for (val in 2:9)
-        #val=2
       {
         colList <- c()
         if (val == 2) colList <- list[lGenderIndex,]
@@ -387,7 +384,8 @@ for (holdoutReset in 1:widthDiviser)
         #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
         #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
         #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-        B <- suppressMessages(bestglm(Xy = cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE])), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
+        holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
+        B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=1), family=binomial))
         
           {
             #cverrs = B$Subsets[, "CV"]
@@ -423,7 +421,7 @@ for (holdoutReset in 1:widthDiviser)
           #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
           
           #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
-          names <- c()
+          #don't reset names here, reset outside of categories
           datalist <- c()
           datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
           if(length(datalist)==1)
@@ -512,29 +510,33 @@ for (holdoutReset in 1:widthDiviser)
           B2Names <- rbind(B2Names,datalist2[i])
         }
       
-      if(length(B2Names)!=0) print("holdout pass: ")
-      if(length(B2Names)!=0) print(c(B2Names))
+      if(length(B2Names)!=0) 
+        {
+          print("holdout pass: ")
+          print(c(B2Names))
+          
+          #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
+          #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
+          
+          filteredv2 <- c()
+          filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
+          filteredv2[filteredv2 == 0] <- NA
+          filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
+          filteredv2[filteredv2 == -1] <- 0
+          
+          #includes before variables are dropped.  Use for hypothesis tests.  
+          
+          
+          #summary(HoldoutCVModel)
+          #summary(HoldoutModel)        
+        }
       
-      #HoldoutModel <- glm(filteredholdout[colnames(filtered)])
-      #HoldoutCVModel <- train(filteredholdout[colnames(filtered)][-1], as.factor(filteredholdout[colnames(filtered)][,1]), method = "glm",trControl = train.control)
-      
-      filteredv2 <- c()
-      filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
-      filteredv2[filteredv2 == 0] <- NA
-      filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
-      filteredv2[filteredv2 == -1] <- 0
-      
-      #includes before variables are dropped.  Use for hypothesis tests.  
-      
-      
-      #summary(HoldoutCVModel)
-      #summary(HoldoutModel)
     }
     if(length(names)==0) B2Names <- c()
     write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
     
   
-      #end of resample
+    #end of resample
   }
   write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
   write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
