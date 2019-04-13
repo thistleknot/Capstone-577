@@ -483,21 +483,22 @@ for(lister in 1:3)
             #end of category iterator  
           }
           #print("category pass")  
-          Taggregated <- c()
+          #Taggregated <- c()
           Hfiltered <- c()
           
-          data.trainAggregate <- c()
-          data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          data.trainAggregate[data.trainAggregate == 0] <- NA
-          data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
-          data.trainAggregate[data.trainAggregate == -1] <- 0
+          #data.trainAggregate <- c()
+          #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          #data.trainAggregate[data.trainAggregate == 0] <- NA
+          #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
+          #data.trainAggregate[data.trainAggregate == -1] <- 0
           #print(table(is.na(data.trainAggregate)))
           
           #pass to test/holdout partition to filter and refine on another pass
-          Taggregated <- sub_returnCVNames(data.trainAggregate)
+          #Taggregated <- sub_returnCVNames(data.trainAggregate)
+          print(c(namesTV))
           
           data.testAggregate <- c()
-          data.testAggregate <- NewDF.holdout[,as.character(c(yname,Taggregated)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          data.testAggregate <- NewDF.holdout[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
           data.testAggregate[data.testAggregate == 0] <- NA
           data.testAggregate <- data.testAggregate %>% filter_all(all_vars(!is.na(.)))
           data.testAggregate[data.testAggregate == -1] <- 0
