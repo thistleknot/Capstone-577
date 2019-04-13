@@ -18,6 +18,7 @@ library(compare)
 library(dplyr)
 library("R.utils")
 
+#good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 widthDiviser=2
 
 sub_returnCVNames <- function(data_sent){
@@ -91,7 +92,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:3)
+for(lister in 1:1)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -318,11 +319,8 @@ for(lister in 1:3)
       NewDF.preNonHoldoutSet <- c()
       NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
       
-      #monte carlo sample size that samples from the preTrain.
-      #considering that we are doing at least 10 outer loops, 
-      #it doesn't make sense to oversaturate by having a large sample size since (i.e. 25% x 10 = 250% coverage) we're already cross validating at the lower level.  
-      #trainMCSize = .10
-      
+      #monte carlo resample from static sets
+
       #resample=1
       for (resample in 1:widthDiviser)
       {
@@ -400,6 +398,7 @@ for(lister in 1:3)
             datalist1 <- c()
             datalist2 <- c()
             
+            #end up with no records due to na's, and so any variables.  Inverse relationship.
             colList <- c()
             if (val == 2) colList <- list[lGenderIndex,]
             if (val == 3) colList <- list[lGPAIndex,]
@@ -445,14 +444,15 @@ for(lister in 1:3)
             datalist1 <- suppressWarnings(sub_returnCVNames(data.train))
             
             testCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                     error=function(e) testCase <- suppressWarnings(sub_returnCVNames(data.train)))
+                     error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
             
             #https://www.r-bloggers.com/careful-with-trycatch/
                 
             #print(table(is.na(data.test)))
             #datalist2 <- sub_returnCVNames(data.test)
             
-            if(length(datalist1)>1)
+            #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
+            if(length(datalist1)>=1)
               for (i in 1:length(datalist1))
               {
                 namesTV <- rbind(namesTV,datalist1[i])
@@ -543,26 +543,48 @@ for(lister in 1:3)
   #spacer
   print(c("3: ", finalList))
   
-  #PCA Analysis
+  #PCA Analysis, scratch space post analysis, currently need to do classification matrix.  would recommend doing it on samples?  
+  #Also derive population stuff here
   #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
   {
+    #reseed
+    
+    holdoutSet <- c()
+    holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
+    NewDF.holdoutSet <- c()
+    NewDF.holdoutSet <- NewDF[holdoutSet,]
+    preNonHoldoutSet <- c()
+    preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
+    NewDF.preNonHoldoutSet <- c()
+    NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+    holdout <- c()
+    holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+    NewDF.holdout <- c()
+    NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+    preTrain <- c()
+    preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+    NewDF.preTrain <- c()
+    NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+    #end reseed
     
     filtered <- c()
-    filtered <- NewDF.preTrain[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
     filtered[filtered == 0] <- NA
     filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
     filtered[filtered == -1] <- 0
     
     filtered.train <- c()
+    #join columns
     filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    
+    #important to note when applying the NA filtering, should be after sample!?  
+    #No, sample needs to be of complete records... ugh...  No point in sampling an incomplete record
+    #my concern is, if .train is within the non .train (i.e. the population).  No need for me to export the .train as it's not dynamically different than the population.
     filtered.train[filtered.train == 0] <- NA
     filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
     filtered.train[filtered.train == -1] <- 0
     
     filtered.test <- c()
     filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    
     filtered.test[filtered.test == 0] <- NA
     filtered.test <- filtered %>% filter_all(all_vars(!is.na(.)))
     filtered.test[filtered.test == -1] <- 0    
@@ -581,12 +603,12 @@ for(lister in 1:3)
     #pc plot
     plot(te[3,1:ncol(te)])
     
-    corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+    #correlation plot of sample
+    corrplot(cor(cbind(filtered.train[,1],prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)$x)))
     
     #include data in new model for inclusion in a linear model
     #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-    
-    
+
     suppressMessages(pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))]))
     
     #predict using pca, just re-applying to training data.
@@ -636,7 +658,7 @@ for(lister in 1:3)
     #View(filtered.train[-1])
     
     #print(count(abs(testPredResid)>.0))
-    hist(abs(testPredResid))
+    #hist(abs(testPredResid))
     
     testModel <- suppressMessages(glm(filtered.test))
     summary(trainModel)
@@ -649,6 +671,20 @@ for(lister in 1:3)
     #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
     #print(incorrect)
     
+    write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))
+    
+    #population
+    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+    
+    summary(trainModel)
+    
+    merged <- rbind(filtered.train,filtered.test)
+    holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
+    
+    B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    
+    print(B$Subsets)
     
   }
   

@@ -1035,3 +1035,7 @@ Citations
 
 	http://www.et.bs.ehu.es/cran/web/packages/bestglm/vignettes/bestglm.pdf
 	
+	CV (2009?)
+	
+	Measures of central tendency (Median)
+	
