@@ -59,7 +59,6 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-
 pw <- {"Read1234"}
 
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
@@ -274,6 +273,9 @@ for(lister in 1:3)
   widthDiviser=2
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
   
+  #resets each new file
+  finalList <- c()
+  
   #after lister, before holdoutReset
   for (seeder in start:(start+(widthDiviser-1)))
   {
@@ -437,8 +439,14 @@ for(lister in 1:3)
             data.test[data.test == -1] <- 0
             
             #subcategory specific
-            #print(table(is.na(data.train)))
-            datalist1 <- sub_returnCVNames(data.train)
+            
+            datalist1 <- suppressWarnings(sub_returnCVNames(data.train))
+            
+            testCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                     error=function(e) testCase <- suppressWarnings(sub_returnCVNames(data.train)))
+            
+            #https://www.r-bloggers.com/careful-with-trycatch/
+                
             #print(table(is.na(data.test)))
             #datalist2 <- sub_returnCVNames(data.test)
             
@@ -504,14 +512,25 @@ for(lister in 1:3)
           data.testAggregate[data.testAggregate == -1] <- 0
           #print(table(is.na(data.testAggregate)))
           
-          Hfiltered <- sub_returnCVNames(data.testAggregate)
+          Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))
           
           #conjoined <- Taggregated[Taggregated %in% Haggregated]
           print(c(Hfiltered))
+          
+          if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+          
+          #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
+          #p5[p5$id %in% current, ]
+          
+          
+          if(!(iterator==1 && lister==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- data.frame(finalList)[data.frame(finalList) %in% data.frame(Hfiltered),]
+          print(finalList)
           #View(names)
          
           #end of yPass 
         }
+        
+        if(iterator!=1) (colnames(data) %in% as.character(list[,1]))
        
       }
       #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
