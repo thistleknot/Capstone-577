@@ -46,6 +46,17 @@ Steps
 	line 240: 
 	NewDF.holdout
 	Holdout is always same static regardless of monte carlo resample.
+	
+	Vars
+		WidthDivisor
+			Sets
+				% of sample size in terms of holdout as well as training/validation partitions
+				
+				Default is 3, integer's from 2 to 5 are recommended.
+				CV width
+				CV passes
+				# of models
+				Width of loops
 		
 Hypothesis
 		at the 5% sample level using the aggregate data of the subset of the holdout.  We will derive a regression equation there.  Then we will check it against the population and see if it was within range.  If so, we will confirm our hypothesis.  As an addendum, we can derive a population level... this part I think I'd like to ask the professor about.
@@ -933,6 +944,92 @@ Seed 6 results
 	[1] "V7202" "V7221" "V8528" "V8502" "V8512" "V8536" "V7501" "V8565"
 	[1] "holdout pass: "
 	[1] "V7202"	
+	
+Milestone 5
+	[1] "seed 5"
+	[1] "Y: V7221"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7552" "V7553" "V7563" "V8526" "V8527" "V8531" "V8509" "V8514" "V8536" "V7501" "V7507"
+	[1] "V7551" "V8526" "V8509" "V8514" "V8536" "V7507"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7552" "V7553" "V7563" "V8527" "V8529" "V8531" "V8509" "V8514" "V8536" "V7501" "V7507"
+	[1] "V7553" "V7563" "V8509" "V8514" "V8536" "V7507"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7552" "V7553" "V7563" "V8526" "V8527" "V8531" "V8509" "V8514" "V8536" "V7501" "V7507"
+	[1] "V7551" "V8526" "V8509" "V8514" "V8536" "V7507"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7552" "V7553" "V7563" "V8527" "V8529" "V8531" "V8509" "V8514" "V8536" "V7501" "V7507"
+	[1] "V7553" "V7563" "V8509" "V8514" "V8536" "V7507"
+	[1] "seed 6"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7552" "V7562" "V8526" "V8527" "V8531" "V8505" "V8509" "V8514" "V8536" "V8565"
+	[1] "V7551" "V7552" "V7562" "V8526" "V8509" "V8565"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7552" "V7562" "V7563" "V8526" "V8530" "V8531" "V8502" "V8505" "V8509" "V8512" "V8536"
+	[1] "V7552" "V7563" "V8531" "V8505" "V8509" "V8536"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7552" "V7562" "V8526" "V8527" "V8531" "V8505" "V8509" "V8514" "V8536" "V8565"
+	[1] "V7551" "V7552" "V7562" "V8526" "V8509" "V8565"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7552" "V7562" "V7563" "V8526" "V8530" "V8531" "V8502" "V8505" "V8509" "V8512" "V8536"
+	[1] "V7552" "V7563" "V8531" "V8505" "V8509" "V8536"
+	[1] ""
+	[1] "seed 5"
+	[1] "Y: V8517"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7552" "V7562" "V8528" "V8529" "V8531" "V8502" "V8505" "V8509" "V8514" "V8565"
+	[1] "V7551" "V8528" "V8529" "V8531" "V8509" "V8565"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7551" "V7552" "V7562" "V8526" "V8528" "V8529" "V8505" "V8509" "V8512" "V8514" "V8536" "V8565"
+	[1] "V7551" "V8528" "V8529" "V8509" "V8512" "V8565"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7552" "V7562" "V8528" "V8529" "V8531" "V8502" "V8505" "V8509" "V8514" "V8565"
+	[1] "V7551" "V8528" "V8529" "V8531" "V8509" "V8565"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7551" "V7552" "V7562" "V8526" "V8528" "V8529" "V8505" "V8509" "V8512" "V8514" "V8536" "V8565"
+	[1] "V7551" "V8528" "V8529" "V8509" "V8512" "V8565"
+	[1] "seed 6"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7552" "V7563" "V8528" "V8529" "V8530" "V8509" "V8514" "V8536" "V7507" "V8565"
+	[1] "V7551" "V7552" "V8528" "V8529" "V8509" "V8565"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7551" "V7552" "V7563" "V8528" "V8529" "V8531" "V8505" "V8514" "V8536" "V7507" "V8565"
+	[1] "V7551" "V7552" "V8528" "V8529" "V8531" "V8565"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7552" "V7563" "V8528" "V8529" "V8530" "V8509" "V8514" "V8536" "V7507" "V8565"
+	[1] "V7551" "V7552" "V8528" "V8529" "V8509" "V8565"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7551" "V7552" "V7563" "V8528" "V8529" "V8531" "V8505" "V8514" "V8536" "V7507" "V8565"
+	[1] "V7551" "V7552" "V8528" "V8529" "V8531" "V8565"
+	[1] ""
+	[1] "seed 5"
+	[1] "Y: V7118"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7553" "V7563" "V8528" "V8529" "V8530" "V8531" "V8509" "V8512" "V8536" "V7507" "V8565"
+	[1] "V7553" "V8529" "V8530" "V8509" "V7507" "V8565"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7551" "V7553" "V7562" "V7563" "V8526" "V8527" "V8529" "V8502" "V8512" "V8514" "V8536" "V7507"
+	[1] "V7551" "V7553" "V7562" "V8526" "V8529" "V8502"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7553" "V7563" "V8528" "V8529" "V8530" "V8531" "V8509" "V8512" "V8536" "V7507" "V8565"
+	[1] "V7553" "V8529" "V8530" "V8509" "V7507" "V8565"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7551" "V7553" "V7562" "V7563" "V8526" "V8527" "V8529" "V8502" "V8512" "V8514" "V8536" "V7507"
+	[1] "V7551" "V7553" "V7562" "V8526" "V8529" "V8502"
+	[1] "seed 6"
+	[1] "holdoutReset:  1 resample:  1"
+	 [1] "V7551" "V7552" "V7553" "V7562" "V7563" "V8526" "V8527" "V8528" "V8502" "V8505" "V7501" "V7507" "V8565"
+	[1] "V7551" "V7552" "V7562" "V7563" "V8527" "V8505" "V7507"
+	[1] "holdoutReset:  1 resample:  2"
+	 [1] "V7551" "V7562" "V7563" "V8526" "V8528" "V8531" "V8505" "V8512" "V8536" "V7501" "V7507" "V8565"
+	[1] "V7551" "V8526" "V8528" "V8512" "V8536" "V7507"
+	[1] "holdoutReset:  2 resample:  1"
+	 [1] "V7551" "V7552" "V7553" "V7562" "V7563" "V8526" "V8527" "V8528" "V8502" "V8505" "V7501" "V7507" "V8565"
+	[1] "V7551" "V7552" "V7562" "V7563" "V8527" "V8505" "V7507"
+	[1] "holdoutReset:  2 resample:  2"
+	 [1] "V7551" "V7562" "V7563" "V8526" "V8528" "V8531" "V8505" "V8512" "V8536" "V7501" "V7507" "V8565"
+	[1] "V7551" "V8526" "V8528" "V8512" "V8536" "V7507"
+	[1] ""	
 	
 Citations
 

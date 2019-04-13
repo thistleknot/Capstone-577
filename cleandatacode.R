@@ -18,6 +18,8 @@ library(compare)
 library(dplyr)
 library("R.utils")
 
+widthDiviser=3
+
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
@@ -270,7 +272,7 @@ for(lister in 1:3)
   NewDF[NewDF == -2] <- 0
   
   start=5
-  widthDiviser=2
+  
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
   
   #resets each new file
@@ -289,7 +291,7 @@ for(lister in 1:3)
       #setup holdout
       
       #static holdout
-      holdoutSetSize = .0125
+      holdoutSetSize = widthDiviser/100
       
       underOverSampleFactor=1
       
@@ -297,7 +299,7 @@ for(lister in 1:3)
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preNonHoldOutSize =  .0125/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+      preNonHoldOutSize =  (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
       
       #% of training resamples from static nonholdout
       preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -524,7 +526,7 @@ for(lister in 1:3)
           
           
           if(!(iterator==1 && lister==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- data.frame(finalList)[data.frame(finalList) %in% data.frame(Hfiltered),]
-          print(finalList)
+          if(!is.null(finalList)) print(finalList)
           #View(names)
          
           #end of yPass 
