@@ -18,12 +18,47 @@ library(compare)
 library(dplyr)
 library("R.utils")
 
-predict.regsubsets = function(object, newdata, id, ...) {
-  form = as.formula(object$call[[2]])
-  mat = model.matrix(form, newdata)
-  coefi = coef(object, id = id)
-  mat[, names(coefi)] %*% coefi
+sub_returnCVNames <- function(data_sent){
+  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  
+  set<-round(colSums(B$Subsets))[-1]
+  
+  if(!is.null(B$Subsets))
+  {
+    cverrs = B$Subsets[, "CV"]
+    sdCV = B$Subsets[, "sdCV"]
+    CVLo = cverrs - sdCV
+    CVHi = cverrs + sdCV
+    ymax = max(CVHi)
+    ymin = min(CVLo)
+    k = 0:(length(cverrs) - 1)
+    if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+    points(k,cverrs,cex = 2,col="red",pch=16)
+    lines(k, cverrs, col = "red", lwd = 2)
+    axis(2, yaxp = c(0.6, 1.8, 6))
+    segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+    eps = 0.15
+    segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
+    segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
+    indMin = which.min(cverrs)
+    fmin = sdCV[indMin]
+    cutOff = fmin + cverrs[indMin]
+    abline(h = cutOff, lty = 2)
+    indMin = which.min(cverrs)
+    fmin = sdCV[indMin]
+    cutOff = fmin + cverrs[indMin]
+    min(which(cverrs < cutOff))
+  }
+ 
+  left=length(set)-3
+  result <- set[1:left]
+  
+  #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
+  return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
+
 
 pw <- {"Read1234"}
 
@@ -55,7 +90,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 2:3)
+for(lister in 1:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -235,9 +270,8 @@ for(lister in 2:3)
   NewDF[NewDF == 0] <- -1
   NewDF[NewDF == -2] <- 0
   
-  
   start=5
-  widthDiviser=2
+  widthDiviser=3
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
   
   #after lister, before holdoutReset
@@ -346,7 +380,8 @@ for(lister in 2:3)
           if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
           
           #aggregated after categories loop
-          names <- c()
+          namesTV <- c()
+          namesH <- c()
           
           print(paste("holdoutReset: ",holdoutReset,"resample: ",base))
     
@@ -355,10 +390,10 @@ for(lister in 2:3)
     
           #categories 
           #val=7
-          #for (val in 2:9)
+          for (val in 2:9)
           {
             #used in category, rolled into names
-            datalist <- c()
+            datalist1 <- c()
             datalist2 <- c()
             
             colList <- c()
@@ -400,93 +435,29 @@ for(lister in 2:3)
             data.test[data.test == 0] <- NA
             data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
             data.test[data.test == -1] <- 0
+            
+            #subcategory specific
+            datalist1 <- sub_returnCVNames(data.train)
+            datalist2 <- sub_returnCVNames(data.test)
+            
+            if(length(datalist1)>1)
+              for (i in 1:length(datalist1))
+              {
+                namesTV <- rbind(namesTV,datalist1[i])
+              }
           
+            if(length(datalist2)>1)
+              for (i in 1:length(datalist2))
+              {
+                namesH <- rbind(namesH,datalist2[i])
+              }
+            
             #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
             #https://rdrr.io/cran/bestglm/man/bestglm.html
             #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
             #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
             #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-            holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-            B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-            
-            #plot(B$BestModel)
-            #B$Subsets[(length(B$Subsets)-1)]
-            
-            #https://dzone.com/articles/variable-selection-using-cross-validation-and-othe
-            if(!is.null(B$Subsets))
-            {
-              cverrs = B$Subsets[, "CV"]
-              sdCV = B$Subsets[, "sdCV"]
-              CVLo = cverrs - sdCV
-              CVHi = cverrs + sdCV
-              ymax = max(CVHi)
-              ymin = min(CVLo)
-              k = 0:(length(cverrs) - 1)
-              if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-              points(k,cverrs,cex = 2,col="red",pch=16)
-              lines(k, cverrs, col = "red", lwd = 2)
-              axis(2, yaxp = c(0.6, 1.8, 6))
-              segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-              eps = 0.15
-              segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
-              segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
-              indMin = which.min(cverrs)
-              fmin = sdCV[indMin]
-              cutOff = fmin + cverrs[indMin]
-              abline(h = cutOff, lty = 2)
-              indMin = which.min(cverrs)
-              fmin = sdCV[indMin]
-              cutOff = fmin + cverrs[indMin]
-              min(which(cverrs < cutOff))
-            }
-            
-            #(B$Subsets$CV-mean(B$Subsets$CV))/sd(B$Subsets$CV)
-            
-            set<-round(colSums(B$Subsets))
-            setnointercept <- set[-1]
-            #plot CV
-            if(!is.null(setnointercept)) 
-              {
-              #plot(setnointercept[9])
-              end<-length(setnointercept)-3
-              setnointerceptnoright <- setnointercept[1:end]
-              
-              #not sure how to get rownames
-              plot(setnointerceptnoright)
-              median(setnointerceptnoright)
-              aboveMedianCV <- c()
-              aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-            }
-            if(is.null(setnointercept)) aboveMedianCV <- NA
-            
-            #within one standard deviation from the min error
-            
-            #https://stackoverflow.com/questions/51107901/how-do-i-filter-a-range-of-numbers-in-r
-            
-            #B$Subsets%>% filter(CV %in% min(B$Subsets$CV):(min(B$Subsets$CV)+sd(B$Subsets$CV)))
-            
-            #B$Subsets$[B$Subsets$CV >= min(B$Subsets$CV) & B$Subsets$CV <= (min(B$Subsets$CV)+sd(B$Subsets$CV)) ]
-            #don't reset names here, reset outside of categories
-            
-            #this is creating empty entries.
-            #if(length(aboveMedianCV)>0) aboveMedianCV <- c()
-            
-            if(length(aboveMedianCV)>0) datalist <- aboveMedianCV
-               
-            #datalist <- as.character(rownames(data.frame(B$BestModel$coefficients)))[-1]
-            
-            if((!is.na(datalist))&&(length(datalist)==1))
-            {
-              names <- rbind(names,datalist)
-            }
-            
-            if(length(datalist)>1)
-              for (i in 1:length(datalist))
-            {
-              
-              names <- rbind(names,datalist[i])
-            }
-            
+
             #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
       
             #summary(step.model.test) 
@@ -510,155 +481,50 @@ for(lister in 2:3)
             #end of category iterator  
           }
           #print("category pass")  
-          print(c(names))
+          
+          data.trainAggregate <- c()
+          data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          data.trainAggregate[data.trainAggregate == 0] <- NA
+          data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
+          data.trainAggregate[data.trainAggregate == -1] <- 0
+          
+          #pass to test/holdout partition to filter and refine on another pass
+          Taggregated <- sub_returnCVNames(data.trainAggregate)
+          
+          data.testAggregate <- c()
+          data.testAggregate <- NewDF.holdout[,as.character(c(yname,Taggregated)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          data.testAggregate[data.testAggregate == 0] <- NA
+          data.testAggregate <- data.testAggregate %>% filter_all(all_vars(!is.na(.)))
+          data.testAggregate[data.testAggregate == -1] <- 0
+          
+          Hfiltered <- sub_returnCVNames(data.testAggregate)
+          
+          #conjoined <- Taggregated[Taggregated %in% Haggregated]
+          print(c(Hfiltered))
           #View(names)
          
           #end of yPass 
         }
-        #second pass through 
-        if(length(names)!=0)
-        {
-          
-          #print("2nd pass")
-          B2Names <- c()
-          profile <- c()
-          profile <- c(yname,c(names))
-          
-          filtered <- c()
-          filtered <- NewDF.preTrain[,as.character(profile), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          filtered[filtered == 0] <- NA
-          filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-          filtered[filtered == -1] <- 0
-          
-          filtered.train <- c()
-          filtered.train <- NewDF.preTrain[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          
-          filtered.train[filtered.train == 0] <- NA
-          filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
-          filtered.train[filtered.train == -1] <- 0
-          
-          filteredholdout <- c()
-          filteredholdout <- NewDF.holdout[,as.character(profile),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          filteredholdout[filteredholdout == 0] <- NA
-          filteredholdout <- filteredholdout %>% filter_all(all_vars(!is.na(.)))
-          filteredholdout[filteredholdout == -1] <- 0
-          #can get stuck here for some odd reason..., so I'm switching to an alternative CV method as a way to alleviate the bug.
-          
-          datalist2 <- profile
-          
-          B2 <- c()
-          res <- c()
-          #res="reached elapsed time limit [cpu=1.08s, elapsed=1.08s]"
-
-          #if error, resample holdout          
-          
-          #res <- withTimeout({
-          
-          #stepaic
-          #due to the fact that only B2 times out, I suspect this is due to highly correlated variables that don't appear in the first [B]estglm.  So I'm going to run stepAIC first before I run best subsets.
-          #full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-          #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-          
-          #when stepAIC guts the variables... nothing is reported... (no minimum error models...)
-          
-          #which means... stepaic should only be used as fallback?
-          #summary(full.model.test)
-          
-          #names <- rownames(data.frame(step.model.test$coefficients))[-1][-1]
-          #still checking for name even though it was recently converted to datalistv2
-          if(length(names)>0) 
-          
-          {
-            xy <- cbind(data.frame(filteredholdout[datalist2][,-1 , drop = FALSE]),data.frame(filteredholdout[datalist2][,1 , drop = FALSE]))
-            
-            B2 <- suppressMessages(bestglm(Xy = xy, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser,TopModels = widthDiviser, BestModels = widthDiviser), family=binomial, intercept = TRUE, weights = NULL, nvmax = "default", RequireFullEnumerationQ = FALSE))
-            #}, timeout = 60, onTimeout = "warning")
-            
-            #most likely due to large # of vars
-            #https://stackoverflow.com/questions/12012746/bestglm-alternatives-for-dataset-with-many-variables
-            #Well, for starters an exhaustive search for the best subset of 40 variables requires creating 2^40 models which is over a trillion. That is likely your issue.
-            #so defaulting to stepaic
-            
-            #if(!res=="reached elapsed time limit [cpu=60, elapsed=60]")
-            {
-              cverrs = B2$Subsets[, "CV"]
-              sdCV = B2$Subsets[, "sdCV"]
-              CVLo = cverrs - sdCV
-              CVHi = cverrs + sdCV
-              ymax = max(CVHi)
-              ymin = min(CVLo)
-              k = 0:(length(cverrs) - 1)
-              if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-              points(k,cverrs,cex = 2,col="red",pch=16)
-              lines(k, cverrs, col = "red", lwd = 2)
-              axis(2, yaxp = c(0.6, 1.8, 6))
-              segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-              eps = 0.15
-              segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
-              segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
-              indMin = which.min(cverrs)
-              fmin = sdCV[indMin]
-              cutOff = fmin + cverrs[indMin]
-              abline(h = cutOff, lty = 2)
-              indMin = which.min(cverrs)
-              fmin = sdCV[indMin]
-              cutOff = fmin + cverrs[indMin]
-              min(which(cverrs < cutOff))
-              
-              if(!is.null(B2$Subsets))
-              {
-                set<-round(colSums(B2$Subsets))
-                setnointercept <- set[-1]
-                end<-length(setnointercept)-3
-                setnointerceptnoright <- setnointercept[1:end]
-                median(setnointerceptnoright)
-              }
-            }
-            
-            aboveMedianCV <- c()
-            
-            if(!is.null(setnointercept)) aboveMedianCV <- as.character(rownames(data.frame(which(setnointerceptnoright >= median(setnointerceptnoright)))))
-            
-            B2Names <- c()
-            datalist2 <- c()
-            
-            #if(!length(aboveMedianCV)>0) 
-              
-            if(length(aboveMedianCV)>0) datalist2 <- aboveMedianCV
-            
-            #datalist2 <- as.character(rownames(data.frame(B2$BestModel$coefficients)))[-1]
-            
-            if((!is.na(datalist2))&&(length(datalist2)==1))
-            {
-              B2Names <- rbind(B2Names,datalist2)
-            }
-            
-            if(length(datalist2)>1)
-              for (i in 1:length(datalist2))
-              {
-                B2Names <- rbind(B2Names,datalist2[i])
-              }
-            
-            if(length(B2Names)!=0) 
-            {
-              #print("holdout pass: ")
-              print(c(B2Names))
-              
-              filteredv2 <- c()
-              filteredv2 <- NewDF[,c(yname,as.character(B2Names)), drop = FALSE] %>% filter_all(all_vars(!is.na(.)))
-              filteredv2[filteredv2 == 0] <- NA
-              filteredv2 <- filteredv2 %>% filter_all(all_vars(!is.na(.)))
-              filteredv2[filteredv2 == -1] <- 0
-              
-              #includes before variables are dropped.  Use for hypothesis tests.  
-              
-              #summary(HoldoutCVModel)
-              #summary(HoldoutModel)        
-            }
-            
+       
             #extended PCA analysis
             
             {
+              
+              filtered <- c()
+              filtered <- NewDF.preTrain[,as.character(c(yname,Hfiltered)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+              filtered[filtered == 0] <- NA
+              filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
+              filtered[filtered == -1] <- 0
+              
+              filtered.train <- c()
+              filtered.train <- NewDF.preTrain[,as.character(c(yname,Hfiltered)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+              
+              filtered.train[filtered.train == 0] <- NA
+              filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
+              filtered.train[filtered.train == -1] <- 0
+              
+              filteredholdout <- c()
+              filteredholdout <- NewDF.holdout[,as.character(c(yname,Hfiltered)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
               
               res <- cor(filtered.train)
               corrplot(res)
@@ -767,18 +633,12 @@ for(lister in 2:3)
             #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
             #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
             
-            #end second pass
-          }
-            
-          }
-
-        if(length(names)==0) B2Names <- c()
-        write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
+        #write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
         
         #end of resample
       }
       write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
-      write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
+      #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
       #end outermost loop
   
      #end of holdoutReset 
