@@ -287,7 +287,7 @@ for(lister in 2:3)
       #setup holdout
       
       #static holdout
-      holdoutSetSize = .025
+      holdoutSetSize = .0125
       
       underOverSampleFactor=1
       
@@ -295,7 +295,7 @@ for(lister in 2:3)
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preNonHoldOutSize =  .05/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+      preNonHoldOutSize =  .0125/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
       
       #% of training resamples from static nonholdout
       preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -440,7 +440,7 @@ for(lister in 2:3)
             #print(table(is.na(data.train)))
             datalist1 <- sub_returnCVNames(data.train)
             #print(table(is.na(data.test)))
-            datalist2 <- sub_returnCVNames(data.test)
+            #datalist2 <- sub_returnCVNames(data.test)
             
             if(length(datalist1)>1)
               for (i in 1:length(datalist1))
@@ -448,10 +448,10 @@ for(lister in 2:3)
                 namesTV <- rbind(namesTV,datalist1[i])
               }
           
-            if(length(datalist2)>1)
-              for (i in 1:length(datalist2))
+            #if(length(datalist2)>1)
+              #for (i in 1:length(datalist2))
               {
-                namesH <- rbind(namesH,datalist2[i])
+                #namesH <- rbind(namesH,datalist2[i])
               }
             
             #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
