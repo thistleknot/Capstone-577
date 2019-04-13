@@ -1029,8 +1029,9 @@ Milestone 5
 	[1] "holdoutReset:  2 resample:  2"
 	 [1] "V7551" "V7562" "V7563" "V8526" "V8528" "V8531" "V8505" "V8512" "V8536" "V7501" "V7507" "V8565"
 	[1] "V7551" "V8526" "V8528" "V8512" "V8536" "V7507"
-	[1] ""	
+	[1] ""		
 	
 Citations
 
 	http://www.et.bs.ehu.es/cran/web/packages/bestglm/vignettes/bestglm.pdf
+	

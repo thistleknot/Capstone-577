@@ -18,7 +18,7 @@ library(compare)
 library(dplyr)
 library("R.utils")
 
-widthDiviser=3
+widthDiviser=2
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -91,7 +91,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:3)
+for(lister in 3:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -505,7 +505,7 @@ for(lister in 1:3)
           
           #pass to test/holdout partition to filter and refine on another pass
           #Taggregated <- sub_returnCVNames(data.trainAggregate)
-          print(c(namesTV))
+          print(c("Training pass (1st filter): ", namesTV))
           
           data.testAggregate <- c()
           data.testAggregate <- NewDF.holdout[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
@@ -517,18 +517,13 @@ for(lister in 1:3)
           Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))
           
           #conjoined <- Taggregated[Taggregated %in% Haggregated]
-          print(c(Hfiltered))
+          print(c("Holdout Pass (2nd filter): ", Hfiltered))
           
           if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
           #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
           #p5[p5$id %in% current, ]
           
-          
-          if(!(iterator==1 && lister==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- data.frame(finalList)[data.frame(finalList) %in% data.frame(Hfiltered),]
-          if(!is.null(finalList)) print(finalList)
-          #View(names)
-         
           #end of yPass 
         }
         
@@ -546,7 +541,8 @@ for(lister in 1:3)
   }
   
   #spacer
-  print("")
+  print(c("Common to all hold-out Pass (3rd Filter): ", finalList))
+  
 #end of lister
 }
 
