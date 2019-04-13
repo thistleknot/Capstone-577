@@ -21,7 +21,7 @@ library("R.utils")
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=10, REP=1, TopModels=5, BestModels = 5), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -90,7 +90,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 2:3)
+for(lister in 1:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -355,7 +355,7 @@ for(lister in 2:3)
         lHealthIndex <- list[,4] == 8
         lPsycheIndex <- list[,4] == 9
         
-        train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = 1)
+        train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
         
         y <- c()
         yname <- c()
