@@ -21,7 +21,7 @@ library("R.utils")
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=10, REP=1, TopModels=5, BestModels = 5), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -90,7 +90,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:3)
+for(lister in 2:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -166,7 +166,7 @@ for(lister in 1:3)
   #summary(NewDF)
   #View(na_count(NewDF))
   
-  table(is.na(NewDF))
+  #table(is.na(NewDF))
   #write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
   
   #colnames(NewDF)
@@ -271,7 +271,7 @@ for(lister in 1:3)
   NewDF[NewDF == -2] <- 0
   
   start=5
-  widthDiviser=3
+  widthDiviser=2
   #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
   
   #after lister, before holdoutReset
@@ -287,7 +287,7 @@ for(lister in 1:3)
       #setup holdout
       
       #static holdout
-      holdoutSetSize = .05
+      holdoutSetSize = .025
       
       underOverSampleFactor=1
       
@@ -295,7 +295,7 @@ for(lister in 1:3)
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preHoldOutSize = .05/(1-holdoutSetSize) #forces it to be 5%
+      preNonHoldOutSize =  .05/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
       
       #% of training resamples from static nonholdout
       preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -309,7 +309,7 @@ for(lister in 1:3)
     
       #static for monte carlo training 
       preNonHoldoutSet <- c()
-      preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preHoldOutSize*nrow(NewDF[-holdoutSet,])))
+      preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
       
       NewDF.preNonHoldoutSet <- c()
       NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
@@ -437,7 +437,9 @@ for(lister in 1:3)
             data.test[data.test == -1] <- 0
             
             #subcategory specific
+            #print(table(is.na(data.train)))
             datalist1 <- sub_returnCVNames(data.train)
+            #print(table(is.na(data.test)))
             datalist2 <- sub_returnCVNames(data.test)
             
             if(length(datalist1)>1)
@@ -481,12 +483,15 @@ for(lister in 1:3)
             #end of category iterator  
           }
           #print("category pass")  
+          Taggregated <- c()
+          Hfiltered <- c()
           
           data.trainAggregate <- c()
           data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
           data.trainAggregate[data.trainAggregate == 0] <- NA
           data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
           data.trainAggregate[data.trainAggregate == -1] <- 0
+          #print(table(is.na(data.trainAggregate)))
           
           #pass to test/holdout partition to filter and refine on another pass
           Taggregated <- sub_returnCVNames(data.trainAggregate)
@@ -496,6 +501,7 @@ for(lister in 1:3)
           data.testAggregate[data.testAggregate == 0] <- NA
           data.testAggregate <- data.testAggregate %>% filter_all(all_vars(!is.na(.)))
           data.testAggregate[data.testAggregate == -1] <- 0
+          #print(table(is.na(data.testAggregate)))
           
           Hfiltered <- sub_returnCVNames(data.testAggregate)
           
@@ -506,138 +512,8 @@ for(lister in 1:3)
           #end of yPass 
         }
        
-            #extended PCA analysis
-            
-            {
-              
-              filtered <- c()
-              filtered <- NewDF.preTrain[,as.character(c(yname,Hfiltered)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-              filtered[filtered == 0] <- NA
-              filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-              filtered[filtered == -1] <- 0
-              
-              filtered.train <- c()
-              filtered.train <- NewDF.preTrain[,as.character(c(yname,Hfiltered)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-              
-              filtered.train[filtered.train == 0] <- NA
-              filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
-              filtered.train[filtered.train == -1] <- 0
-              
-              filteredholdout <- c()
-              filteredholdout <- NewDF.holdout[,as.character(c(yname,Hfiltered)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-              
-              res <- cor(filtered.train)
-              corrplot(res)
-              
-              x=filtered.train[,-1]
-              y=filtered.train[,1]
-              
-              pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
-              
-              #includes proportion of variance
-              summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
-              te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
-              #pc plot
-              plot(te[3,1:ncol(te)])
-              
-              corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
-              
-              #include data in new model for inclusion in a linear model
-              #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-              
-              pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))])
-              
-              #predict using pca, just re-applying to training data.
-              
-              #applied PCA to holdout
-              
-              x <- filteredholdout[-1]
-              
-              y <- data.frame(filteredholdout[1])
-              
-              pred <- data.frame(predict(pc,x))
-              pcaPred <- glm(cbind(y,pred))
-              
-              #predict(pcaPred,)
-              
-              #predict(pcaPred,filteredv7133holdout[-1])
-              
-              summary(pcaPred)
-              hist(abs(pcaPred$residuals))
-              
-              summary(pcaModel)
-              summary(pcaPred)
-              
-              regularTrainModel <- glm(filtered.train)
-              regularTestModel <- glm(filteredholdout)
-              
-              # Define training control
-              
-              #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-              
-              trainModel <- train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control)
-              testModel <- train(filteredholdout[-1], as.factor(filteredholdout[,1]), method = "glm",trControl = train.control)
-              
-              testPredCV <- predict.train(trainModel,newdata=filteredholdout[,-1])
-              
-              testPred <- predict.glm(trainModel$finalModel,filteredholdout[,-1])
-              cor(testPred,filteredholdout[,1])
-              
-              #predict(regular Model,)
-              
-              testPredResid <- as.integer(testPredCV)-(as.integer(filteredholdout[,1])+1)
-              
-              #print(count(abs(testPredResid)>.0))
-              hist(abs(testPredResid))
-              
-              testModel <- glm(filteredholdout)
-              summary(trainModel)
-              summary(testModel)
-              
-              summary(regularTrainModel)
-              summary(regularTestModel)
-              
-              #%incorrect
-              #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-              #print(incorrect)
-              
-              
-            }
-            
-            #http://rstudio-pubs-static.s3.amazonaws.com/413041_9289a50ccb0e4f4ab84b22b6b1f4ac4f.html
-            holdoutmodelcv <- train(filteredholdout[-1], filteredholdout[,1], method = "glm", trControl = train.control)
-            holdoutmodelcv$results
-            summary(holdoutmodelcv$finalModel)
-            #tryCatch()
-            #vif(holdoutmodelcv$finalModel)
-            #plot(holdoutmodelcv$finalModel)
-            
-            #check errors
-            pcv <- predict(holdoutmodelcv, filteredholdout[-1])
-            errorcv <- (pcv- filteredholdout[,1])
-            RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-            
-            #check errors against training
-            pct <- predict(holdoutmodelcv, filtered.train[-1])
-            errorcv <- (pct- filtered.train[,1])
-            RMSE_NewDatacv <- sqrt(mean(errorcv^2))
-            
-            full.model.train <- glm(filtered.train[,1]~., data=filtered.train)
-            full.model.test <- glm(filteredholdout[,1]~., data=filteredholdout)
-            #summary(full.model.train)
-            
-            #give best model based on some metric
-            #step.model.train <- stepAIC(full.model.train, direction = "both", trace = FALSE)
-            #step.model.test <- stepAIC(full.model.test, direction = "both", trace = FALSE)
-            
-            #as.character(rownames(data.frame(step.model.train$coefficients)))[-1:-2]
-            #as.character(rownames(data.frame(step.model.test$coefficients)))[-1:-2]
-            
-        #write.csv(filteredholdout,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredholdout.csv"))
-        
-        #end of resample
       }
-      write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
+      #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
       #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
       #end outermost loop
   
