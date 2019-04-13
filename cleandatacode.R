@@ -91,7 +91,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 3:3)
+for(lister in 1:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -542,6 +542,116 @@ for(lister in 3:3)
   
   #spacer
   print(c("3: ", finalList))
+  
+  #PCA Analysis
+  #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
+  {
+    
+    filtered <- c()
+    filtered <- NewDF.preTrain[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    filtered[filtered == 0] <- NA
+    filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
+    filtered[filtered == -1] <- 0
+    
+    filtered.train <- c()
+    filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    
+    filtered.train[filtered.train == 0] <- NA
+    filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
+    filtered.train[filtered.train == -1] <- 0
+    
+    filtered.test <- c()
+    filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    
+    filtered.test[filtered.test == 0] <- NA
+    filtered.test <- filtered %>% filter_all(all_vars(!is.na(.)))
+    filtered.test[filtered.test == -1] <- 0    
+    
+    res <- cor(filtered.train)
+    corrplot(res)
+    
+    x=filtered.train[,-1]
+    y=filtered.train[,1]
+    
+    pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+    
+    #includes proportion of variance
+    summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
+    te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
+    #pc plot
+    plot(te[3,1:ncol(te)])
+    
+    corrplot(cor(cbind(filtered.train[,1],prcomp(filtered[,-1], center=TRUE, scale=TRUE)$x)))
+    
+    #include data in new model for inclusion in a linear model
+    #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+    
+    
+    suppressMessages(pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))]))
+    
+    #predict using pca, just re-applying to training data.
+    
+    #applied PCA to holdout
+    
+    x <- filtered.test[,-1, drop=FALSE]
+    
+    y <- data.frame(filtered.test[,1, drop=FALSE])
+    
+    #does this make it linear?
+    pred <- predict(pc,x)
+    #plot(data.frame(y,drop=FALSE),pred)
+    pcaPred <- lm(cbind(y,pred))
+    
+    #predict(pcaPred,)
+    
+    #predict(pcaPred,filteredv7133holdout[-1])
+    
+    #summary(pcaPred)
+    hist(abs(pcaPred$residuals))
+    
+    summary(pcaModel)
+    #summary(pcaPred)
+    
+    regularTrainModel <- suppressMessages(glm(filtered.train))
+    regularTestModel <- suppressMessages(glm(filtered.test))
+    
+    # Define training control
+    
+    #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
+    yname <- colnames(filtered.train[,1,drop=FALSE])
+    nrow(y)
+    x=filtered.train[,-1,drop=FALSE]
+    y=(filtered.train[,1,drop=FALSE])
+
+    #View(filtered.train[,1])
+    #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
+    trainModel <- suppressMessages(train(filtered.train[-1], as.factor(filtered.train[,1]),method = "glm",trControl = train.control))
+    testModel <- suppressMessages(train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control))
+    
+    testPredCV <- predict.train(trainModel,newdata=filtered.test[,-1])
+    
+    #testPred <- predict.glm(trainModel$finalModel,filtered.test[,-1])
+    cbind(as.integer(testPredCV),as.integer(filtered.test[,1]))
+    #cor()
+    #View(filtered.train[-1])
+    
+    #print(count(abs(testPredResid)>.0))
+    hist(abs(testPredResid))
+    
+    testModel <- suppressMessages(glm(filtered.test))
+    summary(trainModel)
+    summary(testModel)
+    
+    #summary(regularTrainModel)
+    #summary(regularTestModel)
+    
+    #%incorrect
+    #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
+    #print(incorrect)
+    
+    
+  }
+  
   
 #end of lister
 }
