@@ -505,7 +505,7 @@ for(lister in 3:3)
           
           #pass to test/holdout partition to filter and refine on another pass
           #Taggregated <- sub_returnCVNames(data.trainAggregate)
-          print(c("Training pass (1st filter): ", namesTV))
+          print(c("1: ", namesTV))
           
           data.testAggregate <- c()
           data.testAggregate <- NewDF.holdout[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
@@ -517,7 +517,7 @@ for(lister in 3:3)
           Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))
           
           #conjoined <- Taggregated[Taggregated %in% Haggregated]
-          print(c("Holdout Pass (2nd filter): ", Hfiltered))
+          print(c("2: ", Hfiltered))
           
           if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
@@ -541,7 +541,7 @@ for(lister in 3:3)
   }
   
   #spacer
-  print(c("Common to all hold-out Pass (3rd Filter): ", finalList))
+  print(c("3: ", finalList))
   
 #end of lister
 }
