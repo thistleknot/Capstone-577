@@ -21,7 +21,7 @@ library("R.utils")
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer widthDivisor.
-widthDiviser=2
+widthDiviser=1
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -57,7 +57,7 @@ sub_returnCVNames <- function(data_sent){
     cutOff = fmin + cverrs[indMin]
     min(which(cverrs < cutOff))
   }
- 
+  
   left=length(set)-3
   result <- set[1:left]
   
@@ -65,9 +65,52 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
+sub_returnCVNamesExclMin <- function(data_sent){
+  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  
+  if (widthDiviser==1)  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!widthDiviser==1) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  
+  set<-round(colSums(B$Subsets))[-1]
+  
+  if(!is.null(B$Subsets))
+  {
+    cverrs = B$Subsets[, "CV"]
+    sdCV = B$Subsets[, "sdCV"]
+    CVLo = cverrs - sdCV
+    CVHi = cverrs + sdCV
+    ymax = max(CVHi)
+    ymin = min(CVLo)
+    k = 0:(length(cverrs) - 1)
+    if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+    points(k,cverrs,cex = 2,col="red",pch=16)
+    lines(k, cverrs, col = "red", lwd = 2)
+    axis(2, yaxp = c(0.6, 1.8, 6))
+    segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+    eps = 0.15
+    segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
+    segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
+    indMin = which.min(cverrs)
+    fmin = sdCV[indMin]
+    cutOff = fmin + cverrs[indMin]
+    abline(h = cutOff, lty = 2)
+    indMin = which.min(cverrs)
+    fmin = sdCV[indMin]
+    cutOff = fmin + cverrs[indMin]
+    min(which(cverrs < cutOff))
+  }
+  
+  left=length(set)-3
+  result <- set[1:left]
+  
+  #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
+  return(as.character(rownames(data.frame(which(result > min(result))))))
+}
+
 pw <- {"Read1234"}
 
-sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="/home/rstudio/577/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -104,7 +147,7 @@ for(lister in 1:3)
   if (lister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
   
   #7118 (psychadelics)
-  if (lister==3) list<-read.csv(paste0(sourceDir,"reducedfilterlist.txt"), header=FALSE, sep=,)
+  if (lister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
   
   # dim(data)
   # check missing with for loop
@@ -139,10 +182,10 @@ for(lister in 1:3)
   # creates a connection to the postgres database
   # note that "con" will be used later in each connection to the database
   #conn = dbConnect(drv=pg
-      #             ,user="postgres"
-     #              ,password="Read1234"
-    #               ,host="localhost"
-   #                ,port=5432
+  #             ,user="postgres"
+  #              ,password="Read1234"
+  #               ,host="localhost"
+  #                ,port=5432
   #                 ,dbname="analyticplatform"
   #)
   
@@ -283,7 +326,10 @@ for(lister in 1:3)
   finalList <- c()
   
   #after lister, before holdoutReset
-  for (seeder in start:(start+(widthDiviser-1)))
+  
+  if(widthDivisor==1) end = 2
+  if(!widthDiviser==1) end = (start+(widthDiviser-1))
+  for (seeder in start:end)
   {
     
     seedbase=seeder
@@ -316,7 +362,7 @@ for(lister in 1:3)
       
       NewDF.holdoutSet <- c()
       NewDF.holdoutSet <- NewDF[holdoutSet,]
-    
+      
       #static for monte carlo training 
       preNonHoldoutSet <- c()
       preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
@@ -325,8 +371,10 @@ for(lister in 1:3)
       NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
       
       #monte carlo resample from static sets
-
-      #resample=1
+      
+      if(widthDivisor==1) resample = 2
+      if(!widthDiviser==1) resample = widthDiviser
+      
       for (resample in 1:widthDiviser)
       {
         base = resample
@@ -350,7 +398,7 @@ for(lister in 1:3)
         
         NewDF.preTrain <- c()
         NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
-    
+        
         yIndex <- list[,4] == 0
         lGeographyIndex <- list[,4] == 1
         lGenderIndex <- list[,4] == 2
@@ -362,8 +410,10 @@ for(lister in 1:3)
         lHealthIndex <- list[,4] == 8
         lPsycheIndex <- list[,4] == 9
         
-        train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
         
+        if(widthDivisor==1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+        if(!widthDiviser==1) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
+       
         y <- c()
         yname <- c()
         #y iterator's
@@ -371,7 +421,7 @@ for(lister in 1:3)
         
         for (iterator in 1:sum(yIndex))
         {
-        
+          
           #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
           yname <- c()
           yname <- as.character(list[yIndex,][iterator,][,1])
@@ -391,10 +441,10 @@ for(lister in 1:3)
           namesH <- c()
           
           print(paste("holdoutReset: ",holdoutReset,"resample: ",base))
-    
+          
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
-    
+          
           #categories 
           #val=7
           for (val in 2:9)
@@ -424,14 +474,14 @@ for(lister in 1:3)
             #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
             colListNames <- c()
             colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-    
+            
             newList <- c()        
             newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
             
             #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
             #droplevels(newList)
             #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-
+            
             source(paste0(sourceDir,"/resampleMC.R"))
             
             #subcategory specific
@@ -439,10 +489,10 @@ for(lister in 1:3)
             datalist1 <- suppressWarnings(sub_returnCVNames(data.train))
             
             testCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                     error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+                                 error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
             
             #https://www.r-bloggers.com/careful-with-trycatch/
-                
+            
             #print(table(is.na(data.test)))
             #datalist2 <- sub_returnCVNames(data.test)
             
@@ -458,23 +508,23 @@ for(lister in 1:3)
             {
               namesTV <- rbind(namesTV,datalist1)
             }
-          
+            
             #if(length(datalist2)>1)
-              #for (i in 1:length(datalist2))
-              {
-                #namesH <- rbind(namesH,datalist2[i])
-              }
+            #for (i in 1:length(datalist2))
+            {
+              #namesH <- rbind(namesH,datalist2[i])
+            }
             
             #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
             #https://rdrr.io/cran/bestglm/man/bestglm.html
             #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
             #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
             #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-
+            
             #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
-      
+            
             #summary(step.model.test) 
-      
+            
             #Calculating MSE for training data
             #mse.train<- mean(residuals(step.model.train)^2)
             #mse.train
@@ -490,7 +540,7 @@ for(lister in 1:3)
             #Calculating RMSE for testing data
             #rmse.test <- sqrt(mse.test)
             #rmse.test
-              
+            
             #end of category iterator  
           }
           #print("category pass")  
@@ -518,7 +568,7 @@ for(lister in 1:3)
           #print(table(is.na(data.testAggregate)))
           
           testCase <- tryCatch((Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))), 
-                                 error=function(e) Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate)))
+                               error=function(e) Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate)))
           
           #conjoined <- Taggregated[Taggregated %in% Haggregated]
           print(c("2: ", Hfiltered))
@@ -532,21 +582,40 @@ for(lister in 1:3)
         }
         
         if(iterator!=1) (colnames(data) %in% as.character(list[,1]))
-       
+        
       }
       #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
       #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
       #end outermost loop
-  
-     #end of holdoutReset 
+      
+      #end of holdoutReset 
     }
-  
+    
     #end seed
   }
   
   #spacer
   print(c("3: ", finalList))
   
+  
+  #validate against population    
+  #population
+  
+  filtered <- c()
+  filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+  filtered[filtered == 0] <- NA
+  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+  filtered <- temp
+  filtered[filtered == -1] <- 0    
+  trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+  testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+  
+  print("population")
+  print(summary(trainModel$finalModel))
+  
+  write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))  
+  
+  #also doing another pass after this finalList creating a finalListCV
   #PCA Analysis, scratch space post analysis, currently need to do classification matrix.  would recommend doing it on samples?  
   #Also derive population stuff here
   #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
@@ -571,7 +640,7 @@ for(lister in 1:3)
     
     x=data.train[,-1]
     y=data.train[,1]
-
+    
     pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
     
     #includes proportion of variance
@@ -585,7 +654,7 @@ for(lister in 1:3)
     
     #include data in new model for inclusion in a linear model
     #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-
+    
     suppressMessages(pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))]))
     
     #predict using pca, just re-applying to training data.
@@ -621,73 +690,35 @@ for(lister in 1:3)
     #nrow(y)
     x=data.train[,-1,drop=FALSE]
     y=(data.train[,1,drop=FALSE])
-
+    
     #View(data.train[,1])
     #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
     trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
     testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
     
-    testPredCV <- predict.train(trainModel,newdata=data.test[,-1])
+    holderOfData.train <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
+    holderOfData.test <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
     
-    #testPred <- predict.glm(trainModel$finalModel,data.test[,-1])
-    cbind(as.integer(testPredCV),as.integer(data.test[,1]))
-    #cor()
-    #View(data.train[-1])
     
-    #print(count(abs(testPredResid)>.0))
-    #hist(abs(testPredResid))
+    if (widthDiviser==1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
+    if (widthDiviser!=1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=WidthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
+    print (A$Subsets)
+    if (widthDiviser==1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
+    if (widthDiviser!=1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=WidthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
+    print(B$Subsets)
     
-    testModel <- suppressMessages(glm(data.test))
-    
-    summary(trainModel)
-    summary(testModel)
-    
-    #summary(regularTrainModel)
-    #summary(regularTestModel)
-    
-    #%incorrect
-    #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
-    #print(incorrect)
-    
-    newList <- c()
-    newList <- c(yname,finalList)
-    {
-      #reseed
-      source(paste0(sourceDir,"/reseed.R"))    
-      #end reseed
-    }
-    
-    merged <- rbind(data.train,data.test)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
-    #B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-    colnames(merged)
-    
-    #filter
-    finalListCV <- sub_returnCVNames(merged)
-    #print(B$Subsets)
-    #finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
-    
-    newList <- c()
-    newList <- c(yname,finalListCV)
-    
-    #derive model against double wide partition
-    
-    #reseed
-    {
-      source(paste0(sourceDir,"/reseed.R"))
-    }
-    
-    #test against new partitions
-    #colnames(data.train)
-    merged <- rbind(data.train,data.test)
+    #filter min
+    finalListCV <- sub_returnCVNamesExclMin(merged)
+    print(c("4: ", finalListCV))
     
     trainModel <- c()
     trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
     print("test 1")
     print(summary(trainModel))
     #I swear I was doing predicitons before with better accuracy
-
+    
     #reseed
     {
       source(paste0(sourceDir,"/reseed.R"))
@@ -709,26 +740,10 @@ for(lister in 1:3)
     
     #http://www.r-tutor.com/elementary-statistics/logistic-regression/estimated-logistic-regression-equation
     #https://www.theanalysisfactor.com/r-tutorial-glm1/
-
-    #validate against population    
-    #population
     
-    filtered <- c()
-    filtered <- NewDF[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == 0] <- NA
-    temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-    filtered <- temp
-    filtered[filtered == -1] <- 0    
-    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
-
-    print("population")
-    print(summary(trainModel$finalModel))
-    
-    write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))
   }
-
-#end of lister
+  
+  #end of lister
 }
 
 
