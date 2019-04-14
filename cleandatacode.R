@@ -320,6 +320,7 @@ for(lister in 1:1)
   NewDF[NewDF == -1] <- -2
   NewDF[NewDF == 0] <- -1
   NewDF[NewDF == -2] <- 0
+  
   #0 = na
   #-1 = negative
   #1 = positve
@@ -605,7 +606,6 @@ for(lister in 1:1)
   
   #spacer
   print(c("3: ", finalList))
-  
   
   #validate against population    
   #population
