@@ -208,6 +208,12 @@ V7118 #X PSYD/LIFETIME
 I know without a doubt these will show true to the population.
 
 Major Functions
+
+Future Direction:
+	Exclude >1q
+	Problem is... these are limited to 5 in the subset window, would be nice to modify the bestglm.r file to include all the subsets up to k and then filter by those colsums >=median or even >= 3q
+	
+	Exclude min of best subset on final bout after 3rd pass?
   
   sub_returnCVNames <- function(data_sent){
     holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
