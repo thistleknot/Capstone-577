@@ -92,7 +92,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:1)
+for(lister in 1:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -426,17 +426,21 @@ for(lister in 1:1)
             #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
             #droplevels(newList)
             #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-            
+
             data.train <- c()
-            data.train <- NewDF.preTrain[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+            data.train <- NewDF.preTrain[,as.character(c(newList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
             data.train[data.train == 0] <- NA
-            data.train <- data.train %>% filter_all(all_vars(!is.na(.)))
+            temp <- data.train[] %>% filter_all(all_vars(!is.na(.)))
+            data.train <- c()
+            data.train <- temp
             data.train[data.train == -1] <- 0
-            
+
             data.test <- c()
             data.test <- NewDF.holdout[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
             data.test[data.test == 0] <- NA
-            data.test <- data.test %>% filter_all(all_vars(!is.na(.)))
+            temp <- data.test[] %>% filter_all(all_vars(!is.na(.)))
+            data.test <- c()
+            data.test <- temp
             data.test[data.test == -1] <- 0
             
             #subcategory specific
@@ -452,11 +456,17 @@ for(lister in 1:1)
             #datalist2 <- sub_returnCVNames(data.test)
             
             #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
-            if(length(datalist1)>=1)
+            #print(c(datalist1))
+            #print(length(datalist1))
+            if(length(datalist1)>1)
               for (i in 1:length(datalist1))
               {
                 namesTV <- rbind(namesTV,datalist1[i])
               }
+            if(length(datalist1)==1)
+            {
+              namesTV <- rbind(namesTV,datalist1)
+            }
           
             #if(length(datalist2)>1)
               #for (i in 1:length(datalist2))
@@ -510,7 +520,9 @@ for(lister in 1:1)
           data.testAggregate <- c()
           data.testAggregate <- NewDF.holdout[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
           data.testAggregate[data.testAggregate == 0] <- NA
-          data.testAggregate <- data.testAggregate %>% filter_all(all_vars(!is.na(.)))
+          temp <- data.testAggregate[] %>% filter_all(all_vars(!is.na(.)))
+          data.testAggregate <- c()
+          data.testAggregate <- temp
           data.testAggregate[data.testAggregate == -1] <- 0
           #print(table(is.na(data.testAggregate)))
           
@@ -547,8 +559,10 @@ for(lister in 1:1)
   #Also derive population stuff here
   #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
   {
-    #reseed
+    #due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
+    #What I might need to do is remove na's from newDF
     
+    #reseed
     holdoutSet <- c()
     holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
     NewDF.holdoutSet <- c()
@@ -567,30 +581,27 @@ for(lister in 1:1)
     NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
     #end reseed
     
-    filtered <- c()
-    filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == 0] <- NA
-    filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == -1] <- 0
-    
     filtered.train <- c()
-    #join columns
     filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    #important to note when applying the NA filtering, should be after sample!?  
-    #No, sample needs to be of complete records... ugh...  No point in sampling an incomplete record
-    #my concern is, if .train is within the non .train (i.e. the population).  No need for me to export the .train as it's not dynamically different than the population.
     filtered.train[filtered.train == 0] <- NA
-    filtered.train <- filtered %>% filter_all(all_vars(!is.na(.)))
+    temp <- filtered.train[] %>% filter_all(all_vars(!is.na(.)))
+    filtered.train <- c()
+    filtered.train <- temp
     filtered.train[filtered.train == -1] <- 0
     
     filtered.test <- c()
     filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
     filtered.test[filtered.test == 0] <- NA
-    filtered.test <- filtered %>% filter_all(all_vars(!is.na(.)))
+    temp <- filtered.test[] %>% filter_all(all_vars(!is.na(.)))
+    filtered.test <- c()
+    filtered.test <- temp
     filtered.test[filtered.test == -1] <- 0    
     
     res <- cor(filtered.train)
     corrplot(res)
+    
+    x= c()
+    y= c()
     
     x=filtered.train[,-1]
     y=filtered.train[,1]
@@ -661,6 +672,7 @@ for(lister in 1:1)
     #hist(abs(testPredResid))
     
     testModel <- suppressMessages(glm(filtered.test))
+    
     summary(trainModel)
     summary(testModel)
     
@@ -671,24 +683,69 @@ for(lister in 1:1)
     #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
     #print(incorrect)
     
-    write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))
+    #reseed
+    holdoutSet <- c()
+    holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
+    NewDF.holdoutSet <- c()
+    NewDF.holdoutSet <- NewDF[holdoutSet,]
+    preNonHoldoutSet <- c()
+    preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
+    NewDF.preNonHoldoutSet <- c()
+    NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+    holdout <- c()
+    holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+    NewDF.holdout <- c()
+    NewDF.holdout <- NewDF.holdoutSet[holdout, ]
     
-    #population
-    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+    preTrain <- c()
+    preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+    NewDF.preTrain <- c()
+    NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+    filtered.train <- c()
+    filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    filtered.train[filtered.train == 0] <- NA
+    temp <- filtered.train[] %>% filter_all(all_vars(!is.na(.)))
+    filtered.train <- c()
+    filtered.train <- temp
+    filtered.train[filtered.train == -1] <- 0
+    #filtered.train
     
-    summary(trainModel)
+    filtered.test <- c()
+    filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    filtered.test[filtered.test == 0] <- NA
+    temp <- filtered.test[] %>% filter_all(all_vars(!is.na(.)))
+    filtered.test <- c()
+    filtered.test <- temp
+    filtered.test[filtered.test == -1] <- 0     
+    #filtered.test
+    #end reseed    
     
     merged <- rbind(filtered.train,filtered.test)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
     B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-    
     print(B$Subsets)
+    finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
+    print(finalListCV)
     
+    filtered <- c()
+    filtered <- NewDF[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    filtered[filtered == 0] <- NA
+    temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+    filtered <- c()
+    filtered <- temp
+    filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
+    filtered[filtered == -1] <- 0
+        
+    #population
+    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+
+    print(summary(trainModel$finalModel))
+    
+    write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))
   }
-  
-  
+
 #end of lister
 }
 
