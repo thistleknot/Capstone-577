@@ -700,7 +700,6 @@ for(lister in 1:3)
     holderOfData.train <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
     holderOfData.test <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
     
-    
     if (widthDiviser==1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
     if (widthDiviser!=1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=WidthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
     print (A$Subsets)
@@ -708,15 +707,21 @@ for(lister in 1:3)
     if (widthDiviser!=1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=WidthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
     print(B$Subsets)
     
+    merged <- rbind(data.train,data.test)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
     #filter min
     finalListCV <- sub_returnCVNamesExclMin(merged)
     print(c("4: ", finalListCV))
     
+    holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
+    
+    B <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
+    print(B$Subsets)
+    
     trainModel <- c()
     trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
-    print("test 1")
+    print("test model")
     print(summary(trainModel))
     #I swear I was doing predicitons before with better accuracy
     
@@ -737,7 +742,7 @@ for(lister in 1:3)
     trainModelPred <- round(predict.glm(trainModel$finalModel, merged))
     print("test 2")
     print(summary(testModel$finalModel))
-    hist(trainModelPred-merged[,1])
+    hist(abs(trainModelPred-merged[,1]))
     
     #http://www.r-tutor.com/elementary-statistics/logistic-regression/estimated-logistic-regression-equation
     #https://www.theanalysisfactor.com/r-tutorial-glm1/

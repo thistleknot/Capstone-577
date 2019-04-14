@@ -48,9 +48,12 @@ Steps
 	Holdout is always same static regardless of monte carlo resample.
 	
 	Vars
-		WidthDivisor
+		widthDivisor
 			Sets
 				% of sample size in terms of holdout as well as training/validation partitions
+				
+				Min of 1 seed width
+				min of 1 CV width
 				
 				Default is 3, integer's from 2 to 5 are recommended.
 				CV width
