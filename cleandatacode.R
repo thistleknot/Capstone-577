@@ -19,12 +19,15 @@ library(dplyr)
 library("R.utils")
 
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
-widthDiviser=2
+#1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
+#therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer widthDivisor.
+widthDiviser=1
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (widthDiviser==1)  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!widthDiviser==1) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -92,7 +95,7 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 data <- d_combined
 
 #lister=2
-for(lister in 1:3)
+for(lister in 1:1)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -293,6 +296,7 @@ for(lister in 1:3)
       
       #static holdout
       holdoutSetSize = widthDiviser/100
+      #holdoutSetSize = 1.25/100
       
       underOverSampleFactor=1
       
@@ -300,7 +304,8 @@ for(lister in 1:3)
       holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
       
       #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-      preNonHoldOutSize =  (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+      #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+      preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
       
       #% of training resamples from static nonholdout
       preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -563,39 +568,10 @@ for(lister in 1:3)
     #What I might need to do is remove na's from newDF
     
     #reseed
-    holdoutSet <- c()
-    holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-    NewDF.holdoutSet <- c()
-    NewDF.holdoutSet <- NewDF[holdoutSet,]
-    preNonHoldoutSet <- c()
-    preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
-    NewDF.preNonHoldoutSet <- c()
-    NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
-    holdout <- c()
-    holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
-    NewDF.holdout <- c()
-    NewDF.holdout <- NewDF.holdoutSet[holdout, ]
-    preTrain <- c()
-    preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
-    NewDF.preTrain <- c()
-    NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
-    #end reseed
-    
-    filtered.train <- c()
-    filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered.train[filtered.train == 0] <- NA
-    temp <- filtered.train[] %>% filter_all(all_vars(!is.na(.)))
-    filtered.train <- c()
-    filtered.train <- temp
-    filtered.train[filtered.train == -1] <- 0
-    
-    filtered.test <- c()
-    filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered.test[filtered.test == 0] <- NA
-    temp <- filtered.test[] %>% filter_all(all_vars(!is.na(.)))
-    filtered.test <- c()
-    filtered.test <- temp
-    filtered.test[filtered.test == -1] <- 0    
+    {
+      #reseed
+      source(paste0(sourceDir,"/reseed.R"))
+    }
     
     res <- cor(filtered.train)
     corrplot(res)
@@ -683,50 +659,62 @@ for(lister in 1:3)
     #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
     #print(incorrect)
     
-    #reseed
-    holdoutSet <- c()
-    holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-    NewDF.holdoutSet <- c()
-    NewDF.holdoutSet <- NewDF[holdoutSet,]
-    preNonHoldoutSet <- c()
-    preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
-    NewDF.preNonHoldoutSet <- c()
-    NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
-    holdout <- c()
-    holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
-    NewDF.holdout <- c()
-    NewDF.holdout <- NewDF.holdoutSet[holdout, ]
-    
-    preTrain <- c()
-    preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
-    NewDF.preTrain <- c()
-    NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
-    filtered.train <- c()
-    filtered.train <- NewDF.preTrain[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered.train[filtered.train == 0] <- NA
-    temp <- filtered.train[] %>% filter_all(all_vars(!is.na(.)))
-    filtered.train <- c()
-    filtered.train <- temp
-    filtered.train[filtered.train == -1] <- 0
-    #filtered.train
-    
-    filtered.test <- c()
-    filtered.test <- NewDF.holdout[,as.character(c(yname,finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered.test[filtered.test == 0] <- NA
-    temp <- filtered.test[] %>% filter_all(all_vars(!is.na(.)))
-    filtered.test <- c()
-    filtered.test <- temp
-    filtered.test[filtered.test == -1] <- 0     
-    #filtered.test
-    #end reseed    
+    {
+      #reseed
+      source(paste0(sourceDir,"/reseed.R"))    
+      #end reseed
+    }
     
     merged <- rbind(filtered.train,filtered.test)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
-    B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-    print(B$Subsets)
-    finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
+    #B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    finalListCV <- sub_returnCVNames(merged)
+    #print(B$Subsets)
+    #finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
+    
     print(finalListCV)
+    
+    #derive model against double wide partition
+    
+    #reseed
+    {
+      source(paste0(sourceDir,"/reseed.R"))
+    }
+    
+    #test against new merged partition
+
+    modelApplied.train <- c()
+    modelApplied.train <- data.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.train[modelApplied.train == 0] <- NA
+    temp <- modelApplied.train[] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.train <- c()
+    modelApplied.train <- temp
+    modelApplied.train[modelApplied.train == -1] <- 0   
+    
+    modelApplied.test <- c()
+    modelApplied.test <- data.test[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.test[modelApplied.test == 0] <- NA
+    temp <- modelApplied.test[] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.test <- c()
+    modelApplied.test <- temp
+    modelApplied.test[modelApplied.test == -1] <- 0     
+    
+    trainModel <- c()
+    trainModel <- suppressMessages(merged(modelApplied.train[-1], as.factor(modelApplied.train[,1]),method = "glm",trControl = train.control))
+    print(summary(trainModel))
+    trainModelPred <- predict.glm(trainModel,data.train)
+    
+    testModel <- c()
+    testModelPred <- c()
+    testModel <- suppressMessages(merged(modelApplied.test[-1], as.factor(modelApplied.test[,1]),method = "glm",trControl = train.control))
+    testModelPred <- predict.glm(trainModel,data.test)
+    print(summary(testModel))
+    
+    hist(predict.glm)
+
+    #validate against population    
+    #population
     
     filtered <- c()
     filtered <- NewDF[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
@@ -734,10 +722,7 @@ for(lister in 1:3)
     temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
     filtered <- c()
     filtered <- temp
-    filtered <- filtered %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == -1] <- 0
-        
-    #population
+    filtered[filtered == -1] <- 0    
     trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
     testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
 
