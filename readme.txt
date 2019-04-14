@@ -207,7 +207,61 @@ V7118 #X PSYD/LIFETIME
 
 I know without a doubt these will show true to the population.
 
-			
+Major Functions
+  
+  sub_returnCVNames <- function(data_sent){
+    holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+    
+    if (widthDiviser==1)  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    if (!widthDiviser==1) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    
+    set<-round(colSums(B$Subsets))[-1]
+    
+    if(!is.null(B$Subsets))
+    {
+      cverrs = B$Subsets[, "CV"]
+      sdCV = B$Subsets[, "sdCV"]
+      CVLo = cverrs - sdCV
+      CVHi = cverrs + sdCV
+      ymax = max(CVHi)
+      ymin = min(CVLo)
+      k = 0:(length(cverrs) - 1)
+      if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
+      points(k,cverrs,cex = 2,col="red",pch=16)
+      lines(k, cverrs, col = "red", lwd = 2)
+      axis(2, yaxp = c(0.6, 1.8, 6))
+      segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
+      eps = 0.15
+      segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
+      segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
+      indMin = which.min(cverrs)
+      fmin = sdCV[indMin]
+      cutOff = fmin + cverrs[indMin]
+      abline(h = cutOff, lty = 2)
+      indMin = which.min(cverrs)
+      fmin = sdCV[indMin]
+      cutOff = fmin + cverrs[indMin]
+      min(which(cverrs < cutOff))
+    }
+   
+    left=length(set)-3
+    result <- set[1:left]
+    
+    #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
+    return(as.character(rownames(data.frame(which(result >= median(result))))))
+  }  
+
+% formula
+
+  My % resampling cost is
+  I had to write this out because I'm keenly aware that sampling costs $.
+  
+  (2x)^x+(2x)^3
+  the 2 represents training[/validation] and test (i.e. holdout) partitions, the ^x represents iterations as well as the integer size which represents the % value (the value is divided by 100).
+  
+  the ^3 is the final pruning of the set of factors through a new double wide merged partition set
+  then a subsequent one where a fit is derived to confirm significance
+  then a 3rd where measures of accuracy are performed  
 
 seed 5 factor reduced results commit.txt			
 
