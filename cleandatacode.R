@@ -140,8 +140,8 @@ data <- d_combined
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-#lister=2
-for(lister in 1:3)
+#lister=1
+for(lister in 1:1)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -280,7 +280,7 @@ for(lister in 1:3)
   unique(NewDF[,"V7551"])
   NewDF[V7551_Index,"V7551"] <- 1
   V7551_Index <- NewDF[,"V7551"] > 1
-  #NewDF[V7551_Index,"V7551"] <- -1
+  NewDF[V7551_Index,"V7551"] <- 0
   
   #5: 6-9 Hours Facebook
   V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
@@ -701,6 +701,12 @@ for(lister in 1:3)
   #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
   trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
   testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
+
+  print("sig 1")
+  print(summary(trainModel))
+  
+  print("sig 2")
+  print(summary(testModel))
   
   holderOfData.train <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
   holderOfData.test <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
@@ -716,8 +722,8 @@ for(lister in 1:3)
   holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
   
   #filter min
-  finalListCV <- sub_returnCVNamesExclMin(merged)
-  print(c("4: ", finalListCV))
+  #finalListCV <- sub_returnCVNamesExclMin(merged)
+  #print(c("4: ", finalListCV))
   
   holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
   
@@ -726,7 +732,7 @@ for(lister in 1:3)
   
   trainModel <- c()
   trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
-  print("test model")
+  print("comb sig")
   print(summary(trainModel))
   #I swear I was doing predicitons before with better accuracy
   

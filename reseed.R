@@ -1,4 +1,5 @@
 #reseed
+#MC Reseed
 holdoutSet <- c()
 holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
 NewDF.holdoutSet <- c()
