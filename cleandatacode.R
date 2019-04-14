@@ -21,7 +21,7 @@ library("R.utils")
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer widthDivisor.
-widthDiviser=1
+widthDiviser=2
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -67,8 +67,8 @@ sub_returnCVNames <- function(data_sent){
 
 pw <- {"Read1234"}
 
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-source(paste0(sourceDir,"/bestglm.R"))
+sourceDir="/home/rstudio/577/Capstone-577/"
+source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
@@ -432,21 +432,7 @@ for(lister in 1:1)
             #droplevels(newList)
             #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
 
-            data.train <- c()
-            data.train <- NewDF.preTrain[,as.character(c(newList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-            data.train[data.train == 0] <- NA
-            temp <- data.train[] %>% filter_all(all_vars(!is.na(.)))
-            data.train <- c()
-            data.train <- temp
-            data.train[data.train == -1] <- 0
-
-            data.test <- c()
-            data.test <- NewDF.holdout[,as.character(newList), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-            data.test[data.test == 0] <- NA
-            temp <- data.test[] %>% filter_all(all_vars(!is.na(.)))
-            data.test <- c()
-            data.test <- temp
-            data.test[data.test == -1] <- 0
+            source(paste0(sourceDir,"/resampleMC.R"))
             
             #subcategory specific
             
@@ -531,7 +517,8 @@ for(lister in 1:1)
           data.testAggregate[data.testAggregate == -1] <- 0
           #print(table(is.na(data.testAggregate)))
           
-          Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))
+          testCase <- tryCatch((Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))), 
+                                 error=function(e) Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate)))
           
           #conjoined <- Taggregated[Taggregated %in% Haggregated]
           print(c("2: ", Hfiltered))
@@ -567,7 +554,9 @@ for(lister in 1:1)
     #due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
     #What I might need to do is remove na's from newDF
     
-    #reseed
+    newList <- c()
+    newList <- finalList
+    #reseed (uses filtered.train vs data.train and finalList.csv)
     {
       #reseed
       source(paste0(sourceDir,"/reseed.R"))
@@ -659,6 +648,8 @@ for(lister in 1:1)
     #incorrect <- count(abs(testModel$residuals)>.25)$freq[2]/length(testModel$residuals)
     #print(incorrect)
     
+    newList <- c()
+    newList <- finalList
     {
       #reseed
       source(paste0(sourceDir,"/reseed.R"))    
@@ -669,6 +660,7 @@ for(lister in 1:1)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
     #B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    colnames(merged)
     finalListCV <- sub_returnCVNames(merged)
     #print(B$Subsets)
     #finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
@@ -683,9 +675,9 @@ for(lister in 1:1)
     }
     
     #test against new merged partition
-
+    #colnames(data.train)
     modelApplied.train <- c()
-    modelApplied.train <- data.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.train <- filtered.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
     modelApplied.train[modelApplied.train == 0] <- NA
     temp <- modelApplied.train[] %>% filter_all(all_vars(!is.na(.)))
     modelApplied.train <- c()
@@ -693,7 +685,7 @@ for(lister in 1:1)
     modelApplied.train[modelApplied.train == -1] <- 0   
     
     modelApplied.test <- c()
-    modelApplied.test <- data.test[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+    modelApplied.test <- filtered.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
     modelApplied.test[modelApplied.test == 0] <- NA
     temp <- modelApplied.test[] %>% filter_all(all_vars(!is.na(.)))
     modelApplied.test <- c()
@@ -703,7 +695,7 @@ for(lister in 1:1)
     trainModel <- c()
     trainModel <- suppressMessages(merged(modelApplied.train[-1], as.factor(modelApplied.train[,1]),method = "glm",trControl = train.control))
     print(summary(trainModel))
-    trainModelPred <- predict.glm(trainModel,data.train)
+    trainModelPred <- predict.glm(trainModel,filtered.train)
     
     testModel <- c()
     testModelPred <- c()
