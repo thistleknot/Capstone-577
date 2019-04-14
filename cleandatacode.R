@@ -20,14 +20,15 @@ library("R.utils")
 
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
-#therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer widthDivisor.
-widthDiviser=1
+#therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
+
+widthDiviser = 1
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
-  if (widthDiviser==1)  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!widthDiviser==1) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -68,8 +69,8 @@ sub_returnCVNames <- function(data_sent){
 sub_returnCVNamesExclMin <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
   
-  if (widthDiviser==1)  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!widthDiviser==1) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (! (widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -327,8 +328,8 @@ for(lister in 1:3)
   
   #after lister, before holdoutReset
   
-  if(widthDivisor==1) end = 2
-  if(!widthDiviser==1) end = (start+(widthDiviser-1))
+  if (widthDiviser == 1) end = 2
+  if (!(widthDiviser == 1)) end = (start+(widthDiviser-1))
   for (seeder in start:end)
   {
     
@@ -372,8 +373,8 @@ for(lister in 1:3)
       
       #monte carlo resample from static sets
       
-      if(widthDivisor==1) resample = 2
-      if(!widthDiviser==1) resample = widthDiviser
+      if (widthDiviser == 1) resample = 2
+      if ((!widthDiviser == 1)) resample = widthDiviser
       
       for (resample in 1:widthDiviser)
       {
@@ -411,8 +412,8 @@ for(lister in 1:3)
         lPsycheIndex <- list[,4] == 9
         
         
-        if(widthDivisor==1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-        if(!widthDiviser==1) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
+        if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+        if (!(widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
        
         y <- c()
         yname <- c()
