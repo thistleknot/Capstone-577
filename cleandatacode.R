@@ -21,7 +21,7 @@ library("R.utils")
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer widthDivisor.
-widthDiviser=2
+widthDiviser=1
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -555,32 +555,33 @@ for(lister in 1:1)
     #What I might need to do is remove na's from newDF
     
     newList <- c()
-    newList <- finalList
-    #reseed (uses filtered.train vs data.train and finalList.csv)
+    newList <- c(yname,finalList)
+    #reseed (uses data.train vs data.train and finalList.csv)
     {
       #reseed
       source(paste0(sourceDir,"/reseed.R"))
     }
     
-    res <- cor(filtered.train)
+    res <- cor(data.train)
     corrplot(res)
     
     x= c()
     y= c()
+    #yname <- c()
     
-    x=filtered.train[,-1]
-    y=filtered.train[,1]
-    
-    pc <- prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)
+    x=data.train[,-1]
+    y=data.train[,1]
+
+    pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
     
     #includes proportion of variance
-    summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))
-    te <- summary(prcomp(filtered.train[,-1], center=TRUE, scale=TRUE))$importance
+    summary(prcomp(data.train[,-1], center=TRUE, scale=TRUE))
+    te <- summary(prcomp(data.train[,-1], center=TRUE, scale=TRUE))$importance
     #pc plot
     plot(te[3,1:ncol(te)])
     
     #correlation plot of sample
-    corrplot(cor(cbind(filtered.train[,1],prcomp(filtered.train[,-1], center=TRUE, scale=TRUE)$x)))
+    corrplot(cor(cbind(data.train[,1],prcomp(data.train[,-1], center=TRUE, scale=TRUE)$x)))
     
     #include data in new model for inclusion in a linear model
     #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -591,9 +592,9 @@ for(lister in 1:1)
     
     #applied PCA to holdout
     
-    x <- filtered.test[,-1, drop=FALSE]
+    x <- data.test[,-1, drop=FALSE]
     
-    y <- data.frame(filtered.test[,1, drop=FALSE])
+    y <- data.frame(data.test[,1, drop=FALSE])
     
     #does this make it linear?
     pred <- predict(pc,x)
@@ -610,33 +611,33 @@ for(lister in 1:1)
     summary(pcaModel)
     #summary(pcaPred)
     
-    regularTrainModel <- suppressMessages(glm(filtered.train))
-    regularTestModel <- suppressMessages(glm(filtered.test))
+    regularTrainModel <- suppressMessages(glm(data.train))
+    regularTestModel <- suppressMessages(glm(data.test))
     
     # Define training control
     
     #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-    yname <- colnames(filtered.train[,1,drop=FALSE])
-    nrow(y)
-    x=filtered.train[,-1,drop=FALSE]
-    y=(filtered.train[,1,drop=FALSE])
+    #yname <- colnames(data.train[,1,drop=FALSE])
+    #nrow(y)
+    x=data.train[,-1,drop=FALSE]
+    y=(data.train[,1,drop=FALSE])
 
-    #View(filtered.train[,1])
+    #View(data.train[,1])
     #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
-    trainModel <- suppressMessages(train(filtered.train[-1], as.factor(filtered.train[,1]),method = "glm",trControl = train.control))
-    testModel <- suppressMessages(train(filtered.train[-1], as.factor(filtered.train[,1]), method = "glm",trControl = train.control))
+    trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
+    testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
     
-    testPredCV <- predict.train(trainModel,newdata=filtered.test[,-1])
+    testPredCV <- predict.train(trainModel,newdata=data.test[,-1])
     
-    #testPred <- predict.glm(trainModel$finalModel,filtered.test[,-1])
-    cbind(as.integer(testPredCV),as.integer(filtered.test[,1]))
+    #testPred <- predict.glm(trainModel$finalModel,data.test[,-1])
+    cbind(as.integer(testPredCV),as.integer(data.test[,1]))
     #cor()
-    #View(filtered.train[-1])
+    #View(data.train[-1])
     
     #print(count(abs(testPredResid)>.0))
     #hist(abs(testPredResid))
     
-    testModel <- suppressMessages(glm(filtered.test))
+    testModel <- suppressMessages(glm(data.test))
     
     summary(trainModel)
     summary(testModel)
@@ -649,23 +650,26 @@ for(lister in 1:1)
     #print(incorrect)
     
     newList <- c()
-    newList <- finalList
+    newList <- c(yname,finalList)
     {
       #reseed
       source(paste0(sourceDir,"/reseed.R"))    
       #end reseed
     }
     
-    merged <- rbind(filtered.train,filtered.test)
+    merged <- rbind(data.train,data.test)
     holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
     
     #B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
     colnames(merged)
+    
+    #filter
     finalListCV <- sub_returnCVNames(merged)
     #print(B$Subsets)
     #finalListCV <- c(rownames(data.frame(B$BestModel$coefficients))[-1])
     
-    print(finalListCV)
+    newList <- c()
+    newList <- c(yname,finalListCV)
     
     #derive model against double wide partition
     
@@ -674,36 +678,37 @@ for(lister in 1:1)
       source(paste0(sourceDir,"/reseed.R"))
     }
     
-    #test against new merged partition
+    #test against new partitions
     #colnames(data.train)
-    modelApplied.train <- c()
-    modelApplied.train <- filtered.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    modelApplied.train[modelApplied.train == 0] <- NA
-    temp <- modelApplied.train[] %>% filter_all(all_vars(!is.na(.)))
-    modelApplied.train <- c()
-    modelApplied.train <- temp
-    modelApplied.train[modelApplied.train == -1] <- 0   
-    
-    modelApplied.test <- c()
-    modelApplied.test <- filtered.train[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    modelApplied.test[modelApplied.test == 0] <- NA
-    temp <- modelApplied.test[] %>% filter_all(all_vars(!is.na(.)))
-    modelApplied.test <- c()
-    modelApplied.test <- temp
-    modelApplied.test[modelApplied.test == -1] <- 0     
+    merged <- rbind(data.train,data.test)
     
     trainModel <- c()
-    trainModel <- suppressMessages(merged(modelApplied.train[-1], as.factor(modelApplied.train[,1]),method = "glm",trControl = train.control))
+    trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
+    print("test 1")
     print(summary(trainModel))
-    trainModelPred <- predict.glm(trainModel,filtered.train)
+    #I swear I was doing predicitons before with better accuracy
+
+    #reseed
+    {
+      source(paste0(sourceDir,"/reseed.R"))
+    }
+    
+    #test against new partitions
+    #colnames(data.train)
+    merged <- rbind(data.train,data.test)
     
     testModel <- c()
     testModelPred <- c()
-    testModel <- suppressMessages(merged(modelApplied.test[-1], as.factor(modelApplied.test[,1]),method = "glm",trControl = train.control))
-    testModelPred <- predict.glm(trainModel,data.test)
-    print(summary(testModel))
+    testModel <- suppressMessages(train(merged[,-1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control))
     
-    hist(predict.glm)
+    #using newly acquired merged data, and prior trained model, derive predictions
+    trainModelPred <- round(predict.glm(trainModel$finalModel, merged))
+    print("test 2")
+    print(summary(testModel$finalModel))
+    hist(trainModelPred-merged[,1])
+    
+    #http://www.r-tutor.com/elementary-statistics/logistic-regression/estimated-logistic-regression-equation
+    #https://www.theanalysisfactor.com/r-tutorial-glm1/
 
     #validate against population    
     #population
@@ -712,12 +717,12 @@ for(lister in 1:1)
     filtered <- NewDF[,as.character(c(yname,finalListCV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
     filtered[filtered == 0] <- NA
     temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-    filtered <- c()
     filtered <- temp
     filtered[filtered == -1] <- 0    
     trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
     testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
 
+    print("population")
     print(summary(trainModel$finalModel))
     
     write.csv(filtered,(paste0(sourceDir,yname,"-",widthDiviser,"-","filtered.csv")))
