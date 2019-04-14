@@ -8,6 +8,7 @@ preNonHoldoutSet <- c()
 preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
 NewDF.preNonHoldoutSet <- c()
 NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+
 holdout <- c()
 holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
 NewDF.holdout <- c()
@@ -18,4 +19,4 @@ preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.p
 NewDF.preTrain <- c()
 NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
 
-source(paste0(sourceDir,"/resampleMC.R"))
+#don't call resampleMC.R from within this, you don't have the nameList yet, this is only index

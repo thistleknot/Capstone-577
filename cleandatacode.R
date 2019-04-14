@@ -320,6 +320,9 @@ for(lister in 1:1)
   NewDF[NewDF == -1] <- -2
   NewDF[NewDF == 0] <- -1
   NewDF[NewDF == -2] <- 0
+  #0 = na
+  #-1 = negative
+  #1 = positve
   
   start=5
   
@@ -413,7 +416,6 @@ for(lister in 1:1)
         lHealthIndex <- list[,4] == 8
         lPsycheIndex <- list[,4] == 9
         
-        
         if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
         if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
        
@@ -485,6 +487,10 @@ for(lister in 1:1)
             #droplevels(newList)
             #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
             
+            #needs to be inside category when newList is generated
+            #don't re-use for csv's... csv's... are already cleaned
+            #repurpose instead
+            #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
             source(paste0(sourceDir,"/resampleMC.R"))
             
             #subcategory specific
@@ -625,17 +631,20 @@ for(lister in 1:1)
 #PCA Analysis, scratch space post analysis, currently need to do classification matrix.  would recommend doing it on samples?  
 #Also derive population stuff here
 #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
-{
-  #due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
-  #What I might need to do is remove na's from newDF
-  
-  newList <- c()
-  newList <- c(yname,finalList)
-  #reseed (uses data.train vs data.train and finalList.csv)
-  {
-    #reseed
-    source(paste0(sourceDir,"/reseed.R"))
-  }
+
+
+#due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
+#What I might need to do is remove na's from newDF
+files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.names=TRUE, recursive=FALSE)
+
+for (postProcess in 1:length(files))
+{ 
+  #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned.
+  PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1]
+
+  #reseed
+  source(paste0(sourceDir,"/reseedPost.R"))
+  source(paste0(sourceDir,"/resampleMCpost.R"))
   
   res <- cor(data.train)
   corrplot(res)
@@ -701,7 +710,7 @@ for(lister in 1:1)
   #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
   trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
   testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
-
+  
   print("sig 1")
   print(summary(trainModel))
   
@@ -737,9 +746,8 @@ for(lister in 1:1)
   #I swear I was doing predicitons before with better accuracy
   
   #reseed
-  {
-    source(paste0(sourceDir,"/reseed.R"))
-  }
+  source(paste0(sourceDir,"/reseedPost.R"))
+  source(paste0(sourceDir,"/resampleMCpost.R"))
   
   #test against new partitions
   #colnames(data.train)
@@ -757,7 +765,6 @@ for(lister in 1:1)
   
   #http://www.r-tutor.com/elementary-statistics/logistic-regression/estimated-logistic-regression-equation
   #https://www.theanalysisfactor.com/r-tutorial-glm1/
-  
 }
-
-
+  
+  
