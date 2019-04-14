@@ -330,7 +330,7 @@ for(lister in 1:3)
   
   #after lister, before holdoutReset
   
-  if (widthDiviser == 1) end = 2
+  if (widthDiviser == 1) end = (start+1)
   if (!(widthDiviser == 1)) end = (start+(widthDiviser-1))
   for (seeder in start:end)
   {
