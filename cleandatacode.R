@@ -22,7 +22,7 @@ library("R.utils")
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
-widthDiviser = 1
+widthDiviser = 2
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -141,7 +141,7 @@ data <- d_combined
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #lister=1
-for(lister in 1:1)
+for(lister in 1:3)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -495,8 +495,6 @@ for(lister in 1:1)
             source(paste0(sourceDir,"/resampleMC.R"))
             
             #subcategory specific
-            
-            datalist1 <- suppressWarnings(sub_returnCVNames(data.train))
             
             testCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                  error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
