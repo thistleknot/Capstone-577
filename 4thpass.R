@@ -1,3 +1,48 @@
+{
+  widthDiviser = 2
+  
+  if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+  if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+  
+  set.seed(seedbase)
+  #setup holdout
+  
+  #static holdout
+  holdoutSetSize = widthDiviser/100
+  #holdoutSetSize = 1.25/100
+  
+  underOverSampleFactor=1
+  
+  #% to resample from resampled static hold out set
+  holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
+  
+  #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+  #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+  preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+  
+  #% of training resamples from static nonholdout
+  preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
+  
+  #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+  holdoutSet <- c()
+  holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
+  
+  NewDF.holdoutSet <- c()
+  NewDF.holdoutSet <- NewDF[holdoutSet,]
+  
+  #static for monte carlo training 
+  preNonHoldoutSet <- c()
+  preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
+  
+  NewDF.preNonHoldoutSet <- c()
+  NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+  
+  #monte carlo resample from static sets
+  
+  if (widthDiviser == 1) resample = 2
+  if ((!widthDiviser == 1)) resample = widthDiviser
+  
+}
 
 #also doing another pass after this finalList creating a finalListCV
 #PCA Analysis, scratch space post analysis, currently need to do classification matrix.  would recommend doing it on samples?  
@@ -88,11 +133,23 @@ for (postProcess in 1:length(files))
   trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
   testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
   
+  A <- c()
+  holderOfData <- c()
+  holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
+  A <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+
+  B <- c()
+  holderOfData <- c()
+  holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+    
   print("sig 1")
+  print(A$Subsets)
   print(summary(trainModel))
   
   print("sig 2")
   print(summary(testModel))
+  print(B$Subsets)
   
   holderOfData.train <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
   holderOfData.test <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
@@ -104,20 +161,20 @@ for (postProcess in 1:length(files))
   if (widthDiviser!=1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
   print(B$Subsets)
   
+  merged <- c()
+  holderOfData <- c()
   merged <- rbind(data.train,data.test)
   holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
   
-  #filter min
-  #finalListCV <- sub_returnCVNamesExclMin(merged)
-  #print(c("4: ", finalListCV))
-  
-  holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
-  
+  B <- c()
   B <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
   print(B$Subsets)
   
   trainModel <- c()
   trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
+  print("test 1")
+  print(summary(trainModel$finalModel))
+  print(B$Subsets)
   print("comb sig")
   print(summary(trainModel))
   #I swear I was doing predicitons before with better accuracy
@@ -126,9 +183,13 @@ for (postProcess in 1:length(files))
   source(paste0(sourceDir,"/reseedPost.R"))
   source(paste0(sourceDir,"/resampleMCpost.R"))
   
-  #test against new partitions
-  #colnames(data.train)
+  merged <- c()
+  holderOfData <- c()
   merged <- rbind(data.train,data.test)
+  holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
+  
+  B <- c()
+  B <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
   
   testModel <- c()
   testModelPred <- c()
@@ -137,6 +198,7 @@ for (postProcess in 1:length(files))
   #using newly acquired merged data, and prior trained model, derive predictions
   trainModelPred <- round(predict.glm(trainModel$finalModel, merged))
   print("test 2")
+  print(B$Subsets)
   print(summary(testModel$finalModel))
   hist(abs(trainModelPred-merged[,1]))
   
