@@ -637,9 +637,14 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.nam
 
 for (postProcess in 1:length(files))
 { 
+
   #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned.
   PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1]
 
+  trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
+  print("population")
+  print(summary(trainModel$finalModel))
+  
   #reseed
   source(paste0(sourceDir,"/reseedPost.R"))
   source(paste0(sourceDir,"/resampleMCpost.R"))
