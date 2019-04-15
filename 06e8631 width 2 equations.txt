@@ -1,0 +1,78 @@
+06e8631 
+
+7221 
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.6015  -1.0600  -0.4302   0.9970   2.3752  
+
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -2.33352    0.07290 -32.012  < 2e-16 ***
+V7202        2.19105    0.09494  23.079  < 2e-16 ***
+V7221       -0.15282    0.06561  -2.329   0.0199 *  
+V7206        0.28572    0.06848   4.172 3.01e-05 ***
+V7215        0.02426    0.06453   0.376   0.7069    
+V7553       -0.07865    0.12283  -0.640   0.5220    
+V7562        0.79003    0.12002   6.582 4.63e-11 ***
+V8530       -0.42576    0.10157  -4.192 2.77e-05 ***
+V8512        0.36762    0.08706   4.222 2.42e-05 ***
+V7501        0.62658    0.13642   4.593 4.37e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 8016.4  on 6048  degrees of freedom
+Residual deviance: 6450.2  on 6039  degrees of freedom
+AIC: 6470.2
+
+8517
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7058  -1.2513   0.7956   0.9887   1.9799  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.52723    0.03051 -50.060   <2e-16 ***
+V7202        1.09559    0.02875  38.107   <2e-16 ***
+V7206        0.58672    0.01554  37.756   <2e-16 ***
+V7215        0.46662    0.01367  34.139   <2e-16 ***
+V7552        0.01701    0.01698   1.002    0.316    
+V7553       -0.28089    0.02705 -10.382   <2e-16 ***
+V7563        0.42665    0.02595  16.443   <2e-16 ***
+V8526        0.34938    0.02509  13.925   <2e-16 ***
+V8527        0.20090    0.02302   8.726   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 130165  on 95593  degrees of freedom
+Residual deviance: 122976  on 95585  degrees of freedom
+AIC: 122994
+
+7118
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-5.1984  -0.1080  -0.0839  -0.0839   3.5543  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -5.80899    0.15924 -36.479  < 2e-16 ***
+V7202        0.66743    0.15968   4.180 2.92e-05 ***
+V7206       -0.50556    0.08294  -6.095 1.09e-09 ***
+V8526        2.66728    0.16462  16.203  < 2e-16 ***
+V8528        5.06212    0.11188  45.245  < 2e-16 ***
+V8531        4.13532    0.15696  26.346  < 2e-16 ***
+V8502        1.14251    0.09339  12.234  < 2e-16 ***
+V8505        1.25526    0.07836  16.018  < 2e-16 ***
+V8565        4.39092    0.11295  38.877  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 31740.6  on 72093  degrees of freedom
+Residual deviance:  6462.9  on 72085  degrees of freedom
+AIC: 6480.9
