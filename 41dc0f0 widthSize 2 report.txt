@@ -1,0 +1,751 @@
+[1] "seed 5"
+[1] "Y: V7221"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8529" "V8502" "V8509" "V8512" "V8536" "V7507"
+[1] "2: "   "V7202" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7553" "V7562" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8512" "V8536" "V7501"
+[1] "2: "   "V7202" "V7101" "V7215" "V7553" "V7562" "V7563" "V8526" "V8536"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8529" "V8502" "V8509" "V8512" "V8536" "V7507"
+[1] "2: "   "V7202" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7553" "V7562" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8512" "V8536" "V7501"
+[1] "2: "   "V7202" "V7101" "V7215" "V7553" "V7562" "V7563" "V8526" "V8536"
+[1] "seed 6"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8512" "V8536" "V7501"
+[1] "2: "   "V7202" "V7101" "V8517" "V8527" "V8530" "V8502" "V8512" "V8536"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8530" "V8502" "V8505" "V8509" "V8536" "V7501"
+[1] "2: "   "V7202" "V8517" "V7206" "V7563" "V8526" "V8527" "V8502" "V7501"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8512" "V8536" "V7501"
+[1] "2: "   "V7202" "V7101" "V8517" "V8527" "V8530" "V8502" "V8512" "V8536"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7101" "V8517" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527" "V8530" "V8502" "V8505" "V8509" "V8536" "V7501"
+[1] "2: "   "V7202" "V8517" "V7206" "V7563" "V8526" "V8527" "V8502" "V7501"
+[1] "3: "   "V7202" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8527"
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7058  -1.2513   0.7956   0.9887   1.9799  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.52723    0.03051 -50.060   <2e-16 ***
+V7202        1.09559    0.02875  38.107   <2e-16 ***
+V7206        0.58672    0.01554  37.756   <2e-16 ***
+V7215        0.46662    0.01367  34.139   <2e-16 ***
+V7552        0.01701    0.01698   1.002    0.316    
+V7553       -0.28089    0.02705 -10.382   <2e-16 ***
+V7563        0.42665    0.02595  16.443   <2e-16 ***
+V8526        0.34938    0.02509  13.925   <2e-16 ***
+V8527        0.20090    0.02302   8.726   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 130165  on 95593  degrees of freedom
+Residual deviance: 122976  on 95585  degrees of freedom
+AIC: 122994
+
+Number of Fisher Scoring iterations: 4
+
+[1] "seed 5"
+[1] "Y: V8517"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7551" "V7552" "V7563" "V8526" "V8528" "V8531" "V8502" "V8505" "V8514" "V8536" "V8565"
+[1] "2: "   "V7202" "V7206" "V8526" "V8528" "V8531" "V8502" "V8505" "V8565"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8528" "V8529" "V8505" "V8509" "V8514" "V8536" "V8565"
+[1] "2: "   "V7202" "V7221" "V7101" "V7206" "V7563" "V8528" "V8505" "V8565"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7551" "V7552" "V7563" "V8526" "V8528" "V8531" "V8502" "V8505" "V8514" "V8536" "V8565"
+[1] "2: "   "V7202" "V7206" "V8526" "V8528" "V8531" "V8502" "V8505" "V8565"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7552" "V7553" "V7563" "V8526" "V8528" "V8529" "V8505" "V8509" "V8514" "V8536" "V8565"
+[1] "2: "   "V7202" "V7221" "V7101" "V7206" "V7563" "V8528" "V8505" "V8565"
+[1] "seed 6"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7551" "V7552" "V7563" "V8528" "V8529" "V8531" "V8514" "V8536" "V7501" "V7507" "V8565"
+[1] "2: "   "V7221" "V7101" "V7215" "V7552" "V8528" "V8531" "V8514" "V8565"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7552" "V7553" "V7563" "V8528" "V8529" "V8531" "V8505" "V8514" "V8536" "V7507" "V8565"
+[1] "2: "   "V7202" "V7221" "V7215" "V7552" "V8528" "V8531" "V8505" "V8514"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7551" "V7552" "V7563" "V8528" "V8529" "V8531" "V8514" "V8536" "V7501" "V7507" "V8565"
+[1] "2: "   "V7221" "V7101" "V7215" "V7552" "V8528" "V8531" "V8514" "V8565"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V7101" "V7206" "V7215" "V7552" "V7553" "V7563" "V8528" "V8529" "V8531" "V8505" "V8514" "V8536" "V7507" "V8565"
+[1] "2: "   "V7202" "V7221" "V7215" "V7552" "V8528" "V8531" "V8505" "V8514"
+[1] "3: "   "V7202" "V7206" "V8526" "V8528" "V8531" "V8502" "V8505" "V8565"
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-5.1984  -0.1080  -0.0839  -0.0839   3.5543  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -5.80899    0.15924 -36.479  < 2e-16 ***
+V7202        0.66743    0.15968   4.180 2.92e-05 ***
+V7206       -0.50556    0.08294  -6.095 1.09e-09 ***
+V8526        2.66728    0.16462  16.203  < 2e-16 ***
+V8528        5.06212    0.11188  45.245  < 2e-16 ***
+V8531        4.13532    0.15696  26.346  < 2e-16 ***
+V8502        1.14251    0.09339  12.234  < 2e-16 ***
+V8505        1.25526    0.07836  16.018  < 2e-16 ***
+V8565        4.39092    0.11295  38.877  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 31740.6  on 72093  degrees of freedom
+Residual deviance:  6462.9  on 72085  degrees of freedom
+AIC: 6480.9
+
+Number of Fisher Scoring iterations: 8
+
+[1] "seed 5"
+[1] "Y: V7118"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7551" "V7553" "V7562" "V7563" "V8526" "V8530" "V8531" "V8502" "V8512" "V8514" "V8536" "V7501"
+ [1] "2: "   "V7202" "V7221" "V7206" "V7215" "V7553" "V7562" "V8530" "V8512" "V7501"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7553" "V7562" "V8528" "V8529" "V8531" "V8502" "V8505" "V8512" "V8514" "V7501" "V8565"
+ [1] "2: "   "V7221" "V8517" "V7206" "V7553" "V7562" "V8505" "V8512" "V8514" "V7501"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7551" "V7553" "V7562" "V7563" "V8526" "V8530" "V8531" "V8502" "V8512" "V8514" "V8536" "V7501"
+ [1] "2: "   "V7202" "V7221" "V7206" "V7215" "V7553" "V7562" "V8530" "V8512" "V7501"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7553" "V7562" "V8528" "V8529" "V8531" "V8502" "V8505" "V8512" "V8514" "V7501" "V8565"
+ [1] "2: "   "V7221" "V8517" "V7206" "V7553" "V7562" "V8505" "V8512" "V8514" "V7501"
+[1] "seed 6"
+[1] "holdoutReset:  1 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7562" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8536" "V7507" "V8565"
+[1] "2: "   "V7202" "V7221" "V8517" "V7562" "V8530" "V8502" "V8509" "V7507"
+[1] "holdoutReset:  1 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7551" "V7552" "V7563" "V8526" "V8528" "V8531" "V8505" "V8509" "V8512" "V8514" "V8536" "V7507"
+ [1] "2: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7563" "V8528" "V8505" "V8512" "V7507"
+[1] "holdoutReset:  2 resample:  1"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7562" "V7563" "V8526" "V8527" "V8530" "V8502" "V8509" "V8536" "V7507" "V8565"
+[1] "2: "   "V7202" "V7221" "V8517" "V7562" "V8530" "V8502" "V8509" "V7507"
+[1] "holdoutReset:  2 resample:  2"
+ [1] "1: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7551" "V7552" "V7563" "V8526" "V8528" "V8531" "V8505" "V8509" "V8512" "V8514" "V8536" "V7507"
+ [1] "2: "   "V7202" "V7221" "V8517" "V7206" "V7215" "V7552" "V7563" "V8528" "V8505" "V8512" "V7507"
+ [1] "3: "   "V7202" "V7221" "V7206" "V7215" "V7553" "V7562" "V8530" "V8512" "V7501"
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.6015  -1.0600  -0.4302   0.9970   2.3752  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -2.33352    0.07290 -32.012  < 2e-16 ***
+V7202        2.19105    0.09494  23.079  < 2e-16 ***
+V7221       -0.15282    0.06561  -2.329   0.0199 *  
+V7206        0.28572    0.06848   4.172 3.01e-05 ***
+V7215        0.02426    0.06453   0.376   0.7069    
+V7553       -0.07865    0.12283  -0.640   0.5220    
+V7562        0.79003    0.12002   6.582 4.63e-11 ***
+V8530       -0.42576    0.10157  -4.192 2.77e-05 ***
+V8512        0.36762    0.08706   4.222 2.42e-05 ***
+V7501        0.62658    0.13642   4.593 4.37e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 8016.4  on 6048  degrees of freedom
+Residual deviance: 6450.2  on 6039  degrees of freedom
+AIC: 6470.2
+
+Number of Fisher Scoring iterations: 4
+
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.6015  -1.0600  -0.4302   0.9970   2.3752  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -2.33352    0.07290 -32.012  < 2e-16 ***
+V7202        2.19105    0.09494  23.079  < 2e-16 ***
+V7221       -0.15282    0.06561  -2.329   0.0199 *  
+V7206        0.28572    0.06848   4.172 3.01e-05 ***
+V7215        0.02426    0.06453   0.376   0.7069    
+V7553       -0.07865    0.12283  -0.640   0.5220    
+V7562        0.79003    0.12002   6.582 4.63e-11 ***
+V8530       -0.42576    0.10157  -4.192 2.77e-05 ***
+V8512        0.36762    0.08706   4.222 2.42e-05 ***
+V7501        0.62658    0.13642   4.593 4.37e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 8016.4  on 6048  degrees of freedom
+Residual deviance: 6450.2  on 6039  degrees of freedom
+AIC: 6470.2
+
+Number of Fisher Scoring iterations: 4
+
+[1] "sig 1"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.6604  -0.4547  -0.3939   0.5470   2.1612  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)   
+(Intercept)   -2.5173     0.7856  -3.204  0.00135 **
+V7202          3.0362     1.2141   2.501  0.01239 * 
+V7221         -1.5108     0.9063  -1.667  0.09550 . 
+V7206         -0.3127     1.0210  -0.306  0.75942   
+V7215          1.7944     0.8796   2.040  0.04134 * 
+V7553         19.2354  3956.1806   0.005  0.99612   
+V7562        -18.3686  3956.1805  -0.005  0.99630   
+V8530         -0.1529     1.2131  -0.126  0.89971   
+V8512         -0.9127     1.0175  -0.897  0.36973   
+V7501         16.9207  1873.4960   0.009  0.99279   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 78.859  on 59  degrees of freedom
+Residual deviance: 48.743  on 50  degrees of freedom
+AIC: 68.743
+
+Number of Fisher Scoring iterations: 16
+
+[1] "sig 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.3843  -0.9546  -0.5168   1.0459   2.0394  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)   
+(Intercept)   -1.94600    0.65939  -2.951  0.00317 **
+V7202          0.81570    1.02389   0.797  0.42565   
+V7221         -0.09095    0.69898  -0.130  0.89648   
+V7206         -0.20596    0.75411  -0.273  0.78476   
+V7215          0.93438    0.74903   1.247  0.21223   
+V7553          0.01639    1.53258   0.011  0.99147   
+V7562          0.95076    1.56882   0.606  0.54449   
+V8530         -0.07591    1.05061  -0.072  0.94240   
+V8512          0.27338    0.84440   0.324  0.74613   
+V7501         15.96796 1455.39766   0.011  0.99125   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 74.920  on 59  degrees of freedom
+Residual deviance: 65.078  on 50  degrees of freedom
+AIC: 85.078
+
+Number of Fisher Scoring iterations: 14
+
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7221 V7206 V7215 V7553 V7562 V8530 V8512 V7501 logLikelihood        CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -39.42947 0.2338889 0.006285394
+1*      TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -32.31979 0.1913528 0.031021526
+2       TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE     -29.65380 0.2356661 0.017293263
+3       TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE     -28.41091 0.1893093 0.020751274
+4       TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE     -26.44221 0.1745755 0.036832723
+5       TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE FALSE  TRUE  TRUE     -25.69422 0.2085274 0.048548930
+6       TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE  TRUE     -25.10159 0.2025420 0.025732431
+7       TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE     -24.42592 0.2116836 0.011172214
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE     -24.37942 0.3049866 0.069642943
+9       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -24.37144 0.2608853 0.026349103
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7221 V7206 V7215 V7553 V7562 V8530 V8512 V7501 logLikelihood        CV        sdCV
+0*      TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -37.45988 0.2305556 0.025196757
+1       TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE     -34.82276 0.2228799 0.027765052
+2       TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE FALSE     -33.79375 0.2109151 0.022783763
+3       TRUE FALSE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE  TRUE     -32.94024 0.2088451 0.030692061
+4       TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE FALSE  TRUE     -32.65514 0.2316940 0.019829121
+5       TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE FALSE  TRUE  TRUE     -32.58701 0.2781183 0.043214812
+6       TRUE  TRUE FALSE  TRUE  TRUE FALSE  TRUE FALSE  TRUE  TRUE     -32.55341 0.2912875 0.036420064
+7       TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE  TRUE  TRUE     -32.54172 0.3214513 0.002380405
+8       TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE     -32.53908 0.3424165 0.094875211
+9       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -32.53903 0.4213937 0.037395245
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7221 V7206 V7215 V7553 V7562 V8530 V8512 V7501 logLikelihood        CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -77.05617 0.2426389 0.024329353
+1*      TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -68.15212 0.1975872 0.006687929
+2       TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE     -64.21974 0.1998311 0.022469385
+3       TRUE  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE  TRUE     -62.69053 0.1976756 0.013600040
+4       TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE     -61.53591 0.2033834 0.006516135
+5       TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE FALSE  TRUE     -60.88208 0.1971757 0.008828957
+6       TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE  TRUE     -60.86585 0.1982825 0.021400012
+7       TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE     -60.86377 0.2210303 0.028332041
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE     -60.86299 0.2384212 0.027027913
+9       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -60.86241 0.2435038 0.021924460
+[1] "comb sig"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.6995  -0.7676  -0.4690   0.9715   2.1841  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -2.15180    0.49118  -4.381 1.18e-05 ***
+V7202          1.54256    0.74260   2.077   0.0378 *  
+V7221         -0.54409    0.49335  -1.103   0.2701    
+V7206         -0.02446    0.55884  -0.044   0.9651    
+V7215          0.90438    0.48826   1.852   0.0640 .  
+V7553          0.90442    1.31002   0.690   0.4900    
+V7562         -0.04398    1.29438  -0.034   0.9729    
+V8530         -0.04983    0.76243  -0.065   0.9479    
+V8512         -0.08698    0.61529  -0.141   0.8876    
+V7501         16.78853 1044.63579   0.016   0.9872    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 154.11  on 119  degrees of freedom
+Residual deviance: 121.72  on 110  degrees of freedom
+AIC: 141.72
+
+Number of Fisher Scoring iterations: 15
+
+[1] "test 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.9148  -0.9346  -0.3397   1.0173   2.4005  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -2.82357    0.62994  -4.482 7.39e-06 ***
+V7202        2.10145    0.74713   2.813  0.00491 ** 
+V7221        0.11581    0.49166   0.236  0.81378    
+V7206        0.58213    0.46554   1.250  0.21114    
+V7215        0.13302    0.48079   0.277  0.78203    
+V7553        1.32066    0.98709   1.338  0.18092    
+V7562        0.22946    0.91932   0.250  0.80290    
+V8530        0.23937    0.71601   0.334  0.73815    
+V8512        0.08237    0.60036   0.137  0.89087    
+V7501        1.12484    0.95081   1.183  0.23680    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 156.59  on 119  degrees of freedom
+Residual deviance: 122.16  on 110  degrees of freedom
+AIC: 142.16
+
+Number of Fisher Scoring iterations: 5
+
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7058  -1.2513   0.7956   0.9887   1.9799  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.52723    0.03051 -50.060   <2e-16 ***
+V7202        1.09559    0.02875  38.107   <2e-16 ***
+V7206        0.58672    0.01554  37.756   <2e-16 ***
+V7215        0.46662    0.01367  34.139   <2e-16 ***
+V7552        0.01701    0.01698   1.002    0.316    
+V7553       -0.28089    0.02705 -10.382   <2e-16 ***
+V7563        0.42665    0.02595  16.443   <2e-16 ***
+V8526        0.34938    0.02509  13.925   <2e-16 ***
+V8527        0.20090    0.02302   8.726   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 130165  on 95593  degrees of freedom
+Residual deviance: 122976  on 95585  degrees of freedom
+AIC: 122994
+
+Number of Fisher Scoring iterations: 4
+
+[1] "sig 1"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8030  -1.2343   0.7898   0.9708   1.8813  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.74700    0.34360  -5.084 3.69e-07 ***
+V7202        1.47703    0.32190   4.588 4.47e-06 ***
+V7206        0.80446    0.15580   5.163 2.42e-07 ***
+V7215        0.37423    0.14062   2.661  0.00778 ** 
+V7552       -0.02692    0.17274  -0.156  0.87614    
+V7553       -0.68074    0.28740  -2.369  0.01785 *  
+V7563        0.49758    0.27603   1.803  0.07144 .  
+V8526        0.17307    0.26298   0.658  0.51047    
+V8527       -0.03238    0.25238  -0.128  0.89790    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1286.5  on 955  degrees of freedom
+Residual deviance: 1198.2  on 947  degrees of freedom
+AIC: 1216.2
+
+Number of Fisher Scoring iterations: 4
+
+[1] "sig 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7741  -1.2543   0.7860   0.9749   1.9513  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -1.7426     0.3032  -5.747 9.07e-09 ***
+V7202         1.1518     0.2902   3.969 7.22e-05 ***
+V7206         0.5768     0.1587   3.635 0.000278 ***
+V7215         0.5109     0.1399   3.652 0.000260 ***
+V7552         0.1931     0.1771   1.090 0.275612    
+V7553        -0.3437     0.2770  -1.241 0.214651    
+V7563         0.6514     0.2633   2.474 0.013363 *  
+V8526         0.3264     0.2431   1.342 0.179496    
+V8527         0.3025     0.2211   1.369 0.171132    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1294.2  on 955  degrees of freedom
+Residual deviance: 1202.8  on 947  degrees of freedom
+AIC: 1220.8
+
+Number of Fisher Scoring iterations: 4
+
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V7215 V7552 V7553 V7563 V8526 V8527 logLikelihood        CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -643.2366 0.2404479 0.002673886
+1       TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -619.4284 0.2284455 0.001360280
+2*      TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE     -606.1000 0.2250066 0.006284306
+3       TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE     -602.3400 0.2224089 0.004457458
+4       TRUE  TRUE  TRUE  TRUE FALSE  TRUE FALSE FALSE FALSE     -601.2205 0.2237246 0.009099812
+5       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE     -599.4130 0.2225900 0.003980770
+6       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE     -599.1201 0.2256151 0.007170071
+7       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE     -599.1080 0.2241996 0.002444311
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -599.0998 0.2253820 0.005827332
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V7215 V7552 V7553 V7563 V8526 V8527 logLikelihood        CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -647.0913 0.2420126 0.001064603
+1       TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -623.2301 0.2330183 0.008253694
+2*      TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE     -614.9464 0.2283740 0.007218752
+3       TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE     -608.1446 0.2267927 0.005597168
+4       TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE     -605.3325 0.2257583 0.006622807
+5       TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE     -603.8048 0.2244960 0.003216179
+6       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE  TRUE     -602.8918 0.2254391 0.007701109
+7       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE     -601.9873 0.2262762 0.005322117
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -601.3932 0.2236865 0.005378795
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V7215 V7552 V7553 V7563 V8526 V8527 logLikelihood        CV         sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -1290.436 0.2412084 0.0018032774
+1       TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE     -1242.778 0.2293166 0.0019661421
+2       TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE     -1221.541 0.2250418 0.0027650069
+3*      TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE FALSE FALSE     -1211.281 0.2227782 0.0016038351
+4       TRUE  TRUE  TRUE  TRUE FALSE FALSE FALSE  TRUE FALSE     -1208.935 0.2226362 0.0008183724
+5       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE     -1207.435 0.2234090 0.0031893357
+6       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE     -1204.524 0.2225020 0.0012221277
+7       TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE  TRUE     -1204.126 0.2219567 0.0027685912
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -1203.881 0.2226572 0.0011787635
+[1] "comb sig"
+
+Call:
+NULL
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.780  -1.295   0.815   0.973   1.982  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.73286    0.22643  -7.653 1.96e-14 ***
+V7202        1.31091    0.21468   6.106 1.02e-09 ***
+V7206        0.69445    0.11062   6.278 3.44e-10 ***
+V7215        0.42982    0.09865   4.357 1.32e-05 ***
+V7552        0.08616    0.12299   0.701  0.48358    
+V7553       -0.51034    0.19917  -2.562  0.01040 *  
+V7563        0.56568    0.19013   2.975  0.00293 ** 
+V8526        0.24233    0.17743   1.366  0.17200    
+V8527        0.14326    0.16506   0.868  0.38541    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2580.9  on 1911  degrees of freedom
+Residual deviance: 2407.8  on 1903  degrees of freedom
+AIC: 2425.8
+
+Number of Fisher Scoring iterations: 4
+
+[1] "test 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.756  -1.243   0.832   1.016   1.760  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.26474    0.19694  -6.422 1.35e-10 ***
+V7202        0.91385    0.18317   4.989 6.07e-07 ***
+V7206        0.54916    0.11176   4.914 8.95e-07 ***
+V7215        0.52908    0.09638   5.489 4.03e-08 ***
+V7552       -0.04505    0.12125  -0.372   0.7102    
+V7553       -0.13063    0.18883  -0.692   0.4891    
+V7563        0.19863    0.18187   1.092   0.2748    
+V8526        0.37052    0.17461   2.122   0.0338 *  
+V8527        0.20278    0.16071   1.262   0.2070    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2598.1  on 1911  degrees of freedom
+Residual deviance: 2467.5  on 1903  degrees of freedom
+AIC: 2485.5
+
+Number of Fisher Scoring iterations: 4
+
+[1] "population"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-5.1984  -0.1080  -0.0839  -0.0839   3.5543  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -5.80899    0.15924 -36.479  < 2e-16 ***
+V7202        0.66743    0.15968   4.180 2.92e-05 ***
+V7206       -0.50556    0.08294  -6.095 1.09e-09 ***
+V8526        2.66728    0.16462  16.203  < 2e-16 ***
+V8528        5.06212    0.11188  45.245  < 2e-16 ***
+V8531        4.13532    0.15696  26.346  < 2e-16 ***
+V8502        1.14251    0.09339  12.234  < 2e-16 ***
+V8505        1.25526    0.07836  16.018  < 2e-16 ***
+V8565        4.39092    0.11295  38.877  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 31740.6  on 72093  degrees of freedom
+Residual deviance:  6462.9  on 72085  degrees of freedom
+AIC: 6480.9
+
+Number of Fisher Scoring iterations: 8
+
+[1] "sig 1"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-4.5461  -0.0608  -0.0535  -0.0535   2.7828  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -6.30790    2.00852  -3.141  0.00169 ** 
+V7202        0.01528    1.85826   0.008  0.99344    
+V7206       -0.25730    1.02921  -0.250  0.80259    
+V8526        2.78744    1.76035   1.583  0.11332    
+V8528        5.59145    1.23673   4.521 6.15e-06 ***
+V8531        3.76106    1.61499   2.329  0.01987 *  
+V8502        2.22992    0.92268   2.417  0.01566 *  
+V8505        2.44166    1.00932   2.419  0.01556 *  
+V8565        4.74360    1.55530   3.050  0.00229 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 383.75  on 720  degrees of freedom
+Residual deviance:  48.95  on 712  degrees of freedom
+AIC: 66.95
+
+Number of Fisher Scoring iterations: 9
+
+[1] "sig 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.0950  -0.0724  -0.0595  -0.0595   3.4482  
+
+Coefficients:
+             Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   -8.7643     2.2225  -3.943 8.03e-05 ***
+V7202          4.9429     2.2265   2.220 0.026419 *  
+V7206         -2.5148     1.1230  -2.239 0.025130 *  
+V8526          1.6548     1.6264   1.017 0.308923    
+V8528          6.3640     1.5930   3.995 6.47e-05 ***
+V8531         18.6258  2055.4748   0.009 0.992770    
+V8502          0.3388     1.2847   0.264 0.791980    
+V8505          0.3937     1.0536   0.374 0.708677    
+V8565          5.5377     1.5470   3.580 0.000344 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 255.740  on 720  degrees of freedom
+Residual deviance:  59.042  on 712  degrees of freedom
+AIC: 77.042
+
+Number of Fisher Scoring iterations: 18
+
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V8526 V8528 V8531 V8502 V8505 V8565 logLikelihood          CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE    -191.87472 0.070442840 0.016692940
+1*      TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE     -48.26207 0.012456234 0.004014540
+2       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE     -35.25233 0.010145619 0.004986614
+3       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE     -31.51595 0.009185831 0.004472423
+4       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE     -28.65418 0.010014837 0.006521838
+5       TRUE FALSE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE     -25.84700 0.012377267 0.002570491
+6       TRUE FALSE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -24.50567 0.012411488 0.001923142
+7       TRUE FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -24.47492 0.010739083 0.001343577
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -24.47488 0.015203721 0.004251056
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V8526 V8528 V8531 V8502 V8505 V8565 logLikelihood         CV        sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE    -127.87001 0.04156998 0.010850091
+1       TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE     -65.47231 0.02018423 0.007209112
+2*      TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE     -40.91505 0.01239618 0.003959925
+3       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE     -36.11720 0.01354346 0.004685222
+4       TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE     -33.76403 0.01478185 0.006432957
+5       TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE FALSE  TRUE     -30.13687 0.01353808 0.006388102
+6       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE     -29.66789 0.01639522 0.003101882
+7       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE     -29.55419 0.01661497 0.009324806
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -29.52085 0.01840886 0.005754369
+Morgan-Tatar search since family is non-gaussian.
+   Intercept V7202 V7206 V8526 V8528 V8531 V8502 V8505 V8565 logLikelihood          CV         sdCV
+0       TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE    -323.09055 0.055530441 0.0039169544
+1       TRUE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE    -115.51224 0.015713751 0.0040284122
+2*      TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE FALSE     -77.93277 0.010378588 0.0003566309
+3       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE FALSE  TRUE     -69.02028 0.009959619 0.0007766734
+4       TRUE FALSE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE     -66.40794 0.010435258 0.0018085608
+5       TRUE  TRUE FALSE FALSE  TRUE  TRUE FALSE  TRUE  TRUE     -64.34911 0.010279140 0.0043962629
+6       TRUE  TRUE  TRUE FALSE  TRUE  TRUE FALSE  TRUE  TRUE     -62.38425 0.011037429 0.0029992411
+7       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE FALSE  TRUE  TRUE     -60.70903 0.012132665 0.0042120103
+8       TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE     -59.30924 0.010242713 0.0036988095
+[1] "comb sig"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-4.6295  -0.1315  -0.0719  -0.0719   3.0840  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -7.0158     1.3108  -5.352 8.69e-08 ***
+V7202         2.2690     1.2979   1.748  0.08043 .  
+V7206        -1.2096     0.6315  -1.916  0.05543 .  
+V8526         2.2458     1.2087   1.858  0.06316 .  
+V8528         5.8156     0.9629   6.040 1.54e-09 ***
+V8531         4.4108     1.4330   3.078  0.00208 ** 
+V8502         1.2287     0.6913   1.777  0.07550 .  
+V8505         1.3613     0.6164   2.209  0.02721 *  
+V8565         4.2003     0.9673   4.342 1.41e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 646.18  on 1441  degrees of freedom
+Residual deviance: 118.62  on 1433  degrees of freedom
+AIC: 136.62
+
+Number of Fisher Scoring iterations: 8
+
+[1] "test 2"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-3.3575  -0.1267  -0.0538  -0.0538   3.2311  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -4.2024     0.7111  -5.910 3.42e-09 ***
+V7202        -0.6184     0.8283  -0.747   0.4553    
+V7206        -1.7164     0.7034  -2.440   0.0147 *  
+V8526        -0.1785     0.9173  -0.195   0.8457    
+V8528         6.8340     0.9294   7.353 1.94e-13 ***
+V8531         2.6881     1.1172   2.406   0.0161 *  
+V8502         1.1448     0.6719   1.704   0.0884 .  
+V8505         1.3225     0.6057   2.183   0.0290 *  
+V8565         5.5145     0.9500   5.805 6.45e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 673.58  on 1441  degrees of freedom
+Residual deviance: 121.54  on 1433  degrees of freedom
+AIC: 139.54
+
+Number of Fisher Scoring iterations: 8
+
+There were 50 or more warnings (use warnings() to see the first 50)
