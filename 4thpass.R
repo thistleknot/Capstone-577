@@ -4,7 +4,7 @@
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   
-  set.seed(seedbase)
+  #set.seed(seedbase)
   #setup holdout
   
   #static holdout
@@ -48,7 +48,6 @@
 #PCA Analysis, scratch space post analysis, currently need to do classification matrix.  would recommend doing it on samples?  
 #Also derive population stuff here
 #no need for randomized sets (unless validating, but as long as what is produced is significant each time shown, then the experiment is a success)
-
 
 #due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
 #What I might need to do is remove na's from newDF

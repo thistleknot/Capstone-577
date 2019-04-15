@@ -1188,3 +1188,8 @@ Citations
 	
 	Measures of central tendency (Median)
 	
+	Resampling / simulation methods: monte carlo, bootstrapping, jackknifing, cross-validation, randomization tests, and permutation tests
+	
+	https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
+	
+	
