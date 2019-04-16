@@ -22,7 +22,7 @@ library("R.utils")
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
-widthDiviser = 1
+widthDiviser = 2
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -110,8 +110,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="/home/rstudio/577/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -675,8 +675,9 @@ for(lister in 1:1)
   
   #spacer
   finalListReduced <- c()
-  finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[2]])[,1]))
+  finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,3]))
   print(c("3: ", finalListReduced))
+  hist((data.frame(table(finalList)))[,2])
   
   
   
