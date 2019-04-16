@@ -476,7 +476,7 @@ for(lister in 1:3)
         lPsycheIndex <- list[,4] == 9
         
         if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-        if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+        if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
         
         y <- c()
         yname <- c()
