@@ -391,12 +391,14 @@ for(lister in 1:1)
   
   if (widthDiviser == 1) end = (start+1)
   if (!(widthDiviser == 1)) end = (start+(widthDiviser-1))
+  #seeder=start
   for (seeder in start:end)
   {
     
     seedbase=seeder
     print(paste("seed",seedbase))
     
+    #holdoutReset=1    
     for (holdoutReset in 1:widthDiviser)
     {
       set.seed(seedbase)
@@ -437,6 +439,7 @@ for(lister in 1:1)
       if (widthDiviser == 1) resample = 2
       if ((!widthDiviser == 1)) resample = widthDiviser
       
+      #resample=1      
       for (resample in 1:widthDiviser)
       {
         base = resample
@@ -478,7 +481,7 @@ for(lister in 1:1)
         y <- c()
         yname <- c()
         #y iterator's
-        #iterator=2
+        #iterator=1
         
         for (iterator in 1:sum(yIndex))
         {
@@ -549,10 +552,14 @@ for(lister in 1:1)
             #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
             source(paste0(sourceDir,"/resampleMC.R"))
             
+            merged <- c()
+            holderOfData <- c()
+            merged <- rbind(data.train,data.test)
+            
             #subcategory specific
             
-            testCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                                 error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+            tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(merged))), 
+                                error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(merged)))
             
             #https://www.r-bloggers.com/careful-with-trycatch/
             
@@ -570,12 +577,6 @@ for(lister in 1:1)
             if(length(datalist1)==1)
             {
               namesTV <- rbind(namesTV,datalist1)
-            }
-            
-            #if(length(datalist2)>1)
-            #for (i in 1:length(datalist2))
-            {
-              #namesH <- rbind(namesH,datalist2[i])
             }
             
             #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
@@ -604,11 +605,12 @@ for(lister in 1:1)
             #rmse.test <- sqrt(mse.test)
             #rmse.test
             
-            #end of category iterator  
+            #end of category iterator
           }
           #print("category pass")  
           #Taggregated <- c()
           Hfiltered <- c()
+          extract <- c()
           
           #data.trainAggregate <- c()
           #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
@@ -621,19 +623,24 @@ for(lister in 1:1)
           #Taggregated <- sub_returnCVNames(data.trainAggregate)
           print(c("1: ", namesTV))
           
-          data.testAggregate <- c()
-          data.testAggregate <- NewDF.holdout[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-          data.testAggregate[data.testAggregate == 0] <- NA
-          temp <- data.testAggregate[] %>% filter_all(all_vars(!is.na(.)))
-          data.testAggregate <- c()
-          data.testAggregate <- temp
-          data.testAggregate[data.testAggregate == -1] <- 0
-          #print(table(is.na(data.testAggregate)))
+          names <- c(yname,namesTV)
+          #resample before drawing from data.test
+          source(paste0(sourceDir,"/resampleMC.R"))
           
-          testCase <- tryCatch((Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))), 
-                               error=function(e) Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate)))
+          merged <- c()
+          holderOfData <- c()
+          merged <- rbind(data.train,data.test)
+          holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
           
-          print(c("2: ", Hfiltered))
+          if ( widthDiviser == 1 )  testCase <- tryCatch((Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))), 
+                                                         error=function(e) Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")))
+          
+          if (!(widthDiviser == 1 )) testCase <- tryCatch((Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))), 
+                                                          error=function(e) suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")))
+          
+          extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+          
+          print(c("2: ", extract))
           
           #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
@@ -642,20 +649,19 @@ for(lister in 1:1)
           
           #going to use table to tabulate final results
           
-          print(c("2.a: ", finalList))
           #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
           #p5[p5$id %in% current, ]
           
           #end of yPass 
           
-          if(length(Hfiltered)>1)
-            for (i in 1:length(Hfiltered))
+          if(length(extract)>1)
+            for (i in 1:length(extract))
             {
-              finalList <- rbind(finalList,Hfiltered[i])
+              finalList <- rbind(finalList,extract[i])
             }
-          if(length(Hfiltered)==1)
+          if(length(extract)==1)
           {
-            finalList <- rbind(finalList,Hfiltered)
+            finalList <- rbind(finalList,extract)
           }          
           
           print(c("2a: ", table(finalList)))
@@ -673,13 +679,14 @@ for(lister in 1:1)
     #end seed
   }
   
+  
   #spacer
   finalListReduced <- c()
-  finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,3]))
+  tabled <- table(finalList)
+  print(tabled)
+  finalListReduced <- c(as.character(row.names(data.frame(tabled[tabled >= quantile(tabled)[4]]))))
   print(c("3: ", finalListReduced))
   hist((data.frame(table(finalList)))[,2])
-  
-  
   
   #validate against population    
   #population
