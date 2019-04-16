@@ -638,7 +638,7 @@ for(lister in 1:1)
           if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
           # #3 finalList
-          if((iterator!=1)) finalList <- Hfiltered[Hfiltered %in% finalList]
+          if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
           
           #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
           #p5[p5$id %in% current, ]
