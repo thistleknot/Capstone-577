@@ -110,8 +110,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -474,7 +474,7 @@ for(lister in 1:1)
         
         if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
         if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-       
+        
         y <- c()
         yname <- c()
         #y iterator's
@@ -635,15 +635,30 @@ for(lister in 1:1)
           
           print(c("2: ", Hfiltered))
           
-          if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+          #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
           # #3 finalList
-          if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
+          #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
           
+          #going to use table to tabulate final results
+          
+          print(c("2.a: ", finalList))
           #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
           #p5[p5$id %in% current, ]
           
           #end of yPass 
+          
+          if(length(Hfiltered)>1)
+            for (i in 1:length(Hfiltered))
+            {
+              finalList <- rbind(finalList,Hfiltered[i])
+            }
+          if(length(Hfiltered)==1)
+          {
+            finalList <- rbind(finalList,Hfiltered)
+          }          
+          
+          print(c("2a: ", table(finalList)))
         }
         
         #end of resample MC pass
@@ -659,25 +674,25 @@ for(lister in 1:1)
   }
   
   #spacer
-  print(c("3: ", finalList))
+  print(c("3: ", table(finalList)))
   
   #validate against population    
   #population
   
-  filtered <- c()
-  filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-  filtered[filtered == 0] <- NA
-  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-  filtered <- temp
-  filtered[filtered == -1] <- 0    
-  trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-  testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+  #filtered <- c()
+  #filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+  #filtered[filtered == 0] <- NA
+  #temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+  #filtered <- temp
+  #filtered[filtered == -1] <- 0    
+  #trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+  #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
   
-  print("population")
-  print(summary(trainModel$finalModel))
+  #print("population")
+  #print(summary(trainModel$finalModel))
   
-  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
-
+  #write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
+  
   #end of lister
 }
 
