@@ -1,5 +1,5 @@
 {
-  widthDiviser = 2
+  widthDiviser = 1
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
@@ -63,6 +63,7 @@ for (postProcess in 1:length(files))
   print("population")
   print(summary(trainModel$finalModel))
   
+  finalList <- colnames(PostDF)
   #reseed
   source(paste0(sourceDir,"/reseedPost.R"))
   source(paste0(sourceDir,"/resampleMCpost.R"))
