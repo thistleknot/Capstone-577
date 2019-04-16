@@ -681,9 +681,9 @@ for(lister in 1:3)
   
   #spacer
   finalListReduced <- c()
-  tabled <- table(finalList)
+  tabled <- table(finalList[,,drop=FALSE])
   print(tabled)
-  finalListReduced <- c(as.character(row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))))
+  finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
   print(c("3: ", finalListReduced))
   hist((data.frame(table(finalList)))[,2])
   
