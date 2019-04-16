@@ -674,26 +674,30 @@ for(lister in 1:1)
   }
   
   #spacer
-  print(c("3: ", table(finalList)))
+  finalListReduced <- c()
+  finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[2]])[,1]))
+  print(c("3: ", finalListReduced))
+  
+  
   
   #validate against population    
   #population
   
-  #filtered <- c()
-  #filtered <- NewDF[,as.character(c(yname,finalList)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-  #filtered[filtered == 0] <- NA
-  #temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-  #filtered <- temp
-  #filtered[filtered == -1] <- 0    
-  #trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-  #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+  filtered <- c()
+  filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+  filtered[filtered == 0] <- NA
+  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+  filtered <- temp
+  filtered[filtered == -1] <- 0    
+  trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+  testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
   
-  #print("population")
-  #print(summary(trainModel$finalModel))
+  print("population")
+  print(summary(trainModel$finalModel))
   
-  #write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
+  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
   
   #end of lister
 }
 
-source(paste0(sourceDir,"4thpassR"))
+source(paste0(sourceDir,"4thpass.R"))
