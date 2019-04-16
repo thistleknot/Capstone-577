@@ -57,7 +57,7 @@ for (postProcess in 1:length(files))
 { 
   
   #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned.
-  PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1]
+  PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
   
   trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
   print("population")
