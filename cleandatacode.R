@@ -550,16 +550,13 @@ for(lister in 1:1)
             #don't re-use for csv's... csv's... are already cleaned
             #repurpose instead
             #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
-            source(paste0(sourceDir,"/resampleMC.R"))
-            
-            merged <- c()
-            holderOfData <- c()
-            merged <- rbind(data.train,data.test)
             
             #subcategory specific
+            #just point to resample script and use data.train
+            source(paste0(sourceDir,"resampleMC.R"))
             
-            tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(merged))), 
-                                error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(merged)))
+            tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                                error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
             
             #https://www.r-bloggers.com/careful-with-trycatch/
             
@@ -623,14 +620,16 @@ for(lister in 1:1)
           #Taggregated <- sub_returnCVNames(data.trainAggregate)
           print(c("1: ", namesTV))
           
-          names <- c(yname,namesTV)
+          newList <- c()
+          newList <- c(yname,namesTV)
           #resample before drawing from data.test
-          source(paste0(sourceDir,"/resampleMC.R"))
           
-          merged <- c()
+          #just point to resample script and use data.train, isn't technically resampled except when
+          source(paste0(sourceDir,"resampleMC.R"))
+          
           holderOfData <- c()
-          merged <- rbind(data.train,data.test)
-          holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
+          
+          holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
           
           if ( widthDiviser == 1 )  testCase <- tryCatch((Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))), 
                                                          error=function(e) Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")))
