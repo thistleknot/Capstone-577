@@ -1192,4 +1192,8 @@ Citations
 	
 	https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
 	
+	Median confidence interval
+	
+	https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
+	
 	

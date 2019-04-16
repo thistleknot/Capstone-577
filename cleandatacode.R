@@ -141,7 +141,7 @@ data <- d_combined
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #lister=1
-for(lister in 1:3)
+for(lister in 1:1)
 {
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
@@ -260,53 +260,108 @@ for(lister in 1:3)
   NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
   NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
   
+  #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
+  #95% confidence
   #7: B+
+  #95% conf confirmed
   V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+  centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
+  lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
+  upper = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 + width
+  sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
+  sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
+  
   NewDF[V7221_Index,"V7221"] <- 1
   V7221_Index <- NewDF[,"V7221"] > 1
   NewDF[V7221_Index,"V7221"] <- 0
   
   #College graduate
-  #5: for college grad father
+  #5: for college grad father, 5% conf confirmed
   V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
+  centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7215"][NewDF[,"V7215"]>0])))/2)
+  lower = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 - width
+  upper = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 + width
+  sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[lower]
+  sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[upper]
+  
   NewDF[V7215_Index,"V7215"] <- 1
   V7215_Index <- NewDF[,"V7215"] > 1
   NewDF[V7215_Index,"V7215"] <- 0
   
   #4: 3-5 Hours Internet
   #4 #hours for computer use for internet leisure
+  #95 conf confirmed
   
   V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
+  centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7551"][NewDF[,"V7551"]>0])))/2)
+  lower = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 - width
+  upper = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 + width
+  sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[lower]
+  sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[upper]
+  
   unique(NewDF[,"V7551"])
   NewDF[V7551_Index,"V7551"] <- 1
   V7551_Index <- NewDF[,"V7551"] > 1
   NewDF[V7551_Index,"V7551"] <- 0
   
   #5: 6-9 Hours Facebook
+  # 95% conf confirmed
   V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
+  centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
+  lower = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 - width
+  upper = (length(NewDF[,"V7551"][NewDF[,"V7552"]>0]))/2 + width
+  sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[lower]
+  sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[upper]
+  
   NewDF[V7552_Index,"V7552"] <- 1
   V7552_Index <- NewDF[,"V7552"] > 1
   NewDF[V7552_Index,"V7552"] <- 0
   
   #4 3-5 Hours Gaming
+  # 95% conf confirmed
   V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
+  centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7553"][NewDF[,"V7553"]>0])))/2)
+  lower = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 - width
+  upper = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 + width
+  sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[lower]
+  sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[upper]
+  
   NewDF[V7553_Index,"V7553"] <- 1
   V7553_Index <- NewDF[,"V7553"] > 1
   NewDF[V7553_Index,"V7553"] <- 0
   
   #4 3-5 Hours Texting
+  # 95% conf confirmed
   V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
+  centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7562"][NewDF[,"V7562"]>0])))/2)
+  lower = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 - width
+  upper = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 + width
+  sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[lower]
+  sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[upper]
+  
   NewDF[V7562_Index,"V7562"] <- 1
   V7562_Index <- NewDF[,"V7562"] > 1
   NewDF[V7562_Index,"V7562"] <- 0
   
   #2: <1 Hour talking on cell phone
+  # 95% conf confirmed
   V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+  centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
+  lower = (length(NewDF[,"V7562"][NewDF[,"V7563"]>0]))/2 - width
+  upper = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 + width
+  sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[lower]
+  sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[upper]
+  
   NewDF[V7563_Index,"V7563"] <- 1
   V7563_Index <- NewDF[,"V7563"] > 1
   NewDF[V7563_Index,"V7563"] <- 0
-  
-  #NewDF[convert3Index] >= 4
   
   NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(0), verbose = FALSE)
   NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(0), verbose = FALSE)
@@ -578,10 +633,12 @@ for(lister in 1:3)
           testCase <- tryCatch((Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate))), 
                                error=function(e) Hfiltered <- suppressWarnings(sub_returnCVNames(data.testAggregate)))
           
-          #conjoined <- Taggregated[Taggregated %in% Haggregated]
           print(c("2: ", Hfiltered))
           
           if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+          
+          # #3 finalList
+          if((iterator!=1)) finalList <- Hfiltered[Hfiltered %in% finalList]
           
           #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
           #p5[p5$id %in% current, ]
@@ -589,8 +646,7 @@ for(lister in 1:3)
           #end of yPass 
         }
         
-        if(iterator!=1) (colnames(data) %in% as.character(list[,1]))
-        
+        #end of resample MC pass
       }
       #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
       #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
