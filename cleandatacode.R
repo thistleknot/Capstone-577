@@ -278,7 +278,7 @@ for(lister in 1:3)
   NewDF[V7221_Index,"V7221"] <- 0
   
   #College graduate
-  #5: for college grad father, 5% conf confirmed
+  #5: for college grad father, 95% conf confirmed
   V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
   centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
   width = round(1.96*sqrt((length(NewDF[,"V7215"][NewDF[,"V7215"]>0])))/2)
@@ -291,9 +291,8 @@ for(lister in 1:3)
   V7215_Index <- NewDF[,"V7215"] > 1
   NewDF[V7215_Index,"V7215"] <- 0
   
-  #4: 3-5 Hours Internet
-  #4 #hours for computer use for internet leisure
-  #95 conf confirmed
+  #4: 3-5 Hours Internet #95% conf confirmed
+  #4 #hours for computer use for internet leisure 
   
   V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
   centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
@@ -308,8 +307,7 @@ for(lister in 1:3)
   V7551_Index <- NewDF[,"V7551"] > 1
   NewDF[V7551_Index,"V7551"] <- 0
   
-  #5: 6-9 Hours Facebook
-  # 95% conf confirmed
+  #5: 6-9 Hours Facebook # 95% conf confirmed
   V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
   centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
   width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
@@ -322,8 +320,7 @@ for(lister in 1:3)
   V7552_Index <- NewDF[,"V7552"] > 1
   NewDF[V7552_Index,"V7552"] <- 0
   
-  #4 3-5 Hours Gaming
-  # 95% conf confirmed
+  #4 3-5 Hours Gaming # 95% conf confirmed
   V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
   centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
   width = round(1.96*sqrt((length(NewDF[,"V7553"][NewDF[,"V7553"]>0])))/2)
@@ -336,8 +333,7 @@ for(lister in 1:3)
   V7553_Index <- NewDF[,"V7553"] > 1
   NewDF[V7553_Index,"V7553"] <- 0
   
-  #4 3-5 Hours Texting
-  # 95% conf confirmed
+  #4 3-5 Hours Texting # 95% conf confirmed
   V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
   centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
   width = round(1.96*sqrt((length(NewDF[,"V7562"][NewDF[,"V7562"]>0])))/2)
@@ -350,8 +346,7 @@ for(lister in 1:3)
   V7562_Index <- NewDF[,"V7562"] > 1
   NewDF[V7562_Index,"V7562"] <- 0
   
-  #2: <1 Hour talking on cell phone
-  # 95% conf confirmed
+  #2: <1 Hour talking on cell phone # 95% conf confirmed
   V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
   centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
   width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
