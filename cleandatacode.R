@@ -510,9 +510,13 @@ for(lister in 1:3)
           #aggregated after categories loop
           namesTV <- c()
           namesH <- c()
-          
-          print(paste("holdoutReset: ",holdoutReset,"resample: ",resample))
-          
+          numRunsold <- c()
+          numRunsold = numRuns
+          numRuns <- c()
+          numRuns = numRunsold + 1
+
+          print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
+
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
           
@@ -647,12 +651,6 @@ for(lister in 1:3)
           extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
           
           print(c("2: ", extract))
-          
-          print(paste("loop: ",numRuns))
-          numRunsold <- c()
-          numRunsold = numRuns
-          numRuns <- c()
-          numRuns = numRunsold + 1
           
           #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
