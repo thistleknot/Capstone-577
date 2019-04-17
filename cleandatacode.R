@@ -404,8 +404,10 @@ for (seeder in start:end)
   seedbase=seeder
   print(paste("seed",seedbase))
 
+  holdoutResetEnd  <- c()
+  
   if (widthDiviser == 1) holdoutResetEnd = 2
-  if ( !(widthDiviser == 1) holdoutResetEnd = widthDiviser
+  if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
   
   #holdoutReset=2   
   for (holdoutReset in 1:holdoutResetEnd)
