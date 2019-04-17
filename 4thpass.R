@@ -22,22 +22,7 @@
   
   #% of training resamples from static nonholdout
   preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
-  
-  #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
-  holdoutSet <- c()
-  holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-  
-  NewDF.holdoutSet <- c()
-  NewDF.holdoutSet <- NewDF[holdoutSet,]
-  
-  #static for monte carlo training 
-  preNonHoldoutSet <- c()
-  preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
-  
-  NewDF.preNonHoldoutSet <- c()
-  NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
-  
-  #monte carlo resample from static sets
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
   
   if (widthDiviser == 1) resample = 2
   if ((!widthDiviser == 1)) resample = widthDiviser
@@ -53,6 +38,7 @@
 #What I might need to do is remove na's from newDF
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.names=TRUE, recursive=FALSE)
 
+#postProcess=1
 for (postProcess in 1:length(files))
 { 
   
