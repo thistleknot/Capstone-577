@@ -709,50 +709,51 @@ for(lister in 1:3)
         #end of holdoutReset 
       }
       
-      #end seed
+      #end holdoutReset
     }
     
-    
-    #spacer
-    finalListReduced <- c()
-    tabled <- table(finalList[,,drop=FALSE])
-    print(tabled)
-    #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
-    #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
-    
-    if (widthDiviser==1)
-    {
-      if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > 1]))
-      if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > 1])[,1]))
-    }
-    if (!widthDiviser==1)
-    {
-    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
-    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > CVRuns_pct_threshold])[,1]))
-    }
-    
-    print(c("3: ", finalListReduced))
-    hist((data.frame(table(finalList)))[,2])
-    
-    #validate against population    
-    #population
-    
-    filtered <- c()
-    filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == 0] <- NA
-    temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-    filtered <- temp
-    filtered[filtered == -1] <- 0    
-    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
-    
-    print("population")
-    print(summary(trainModel$finalModel))
-    
-    write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
     
     #end of seeder
   }
+  
+  #spacer
+  finalListReduced <- c()
+  tabled <- table(finalList[,,drop=FALSE])
+  print(tabled)
+  #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
+  #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
+  
+  if (widthDiviser==1)
+  {
+    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > 1]))
+    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > 1])[,1]))
+  }
+  if (!widthDiviser==1)
+  {
+    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
+    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > CVRuns_pct_threshold])[,1]))
+  }
+  
+  print(c("3: ", finalListReduced))
+  hist((data.frame(table(finalList)))[,2])
+  
+  #validate against population    
+  #population
+  
+  filtered <- c()
+  filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+  filtered[filtered == 0] <- NA
+  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+  filtered <- temp
+  filtered[filtered == -1] <- 0    
+  trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+  testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+  
+  print("population")
+  print(summary(trainModel$finalModel))
+  
+  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
+  
   
 #end of lister
 }
