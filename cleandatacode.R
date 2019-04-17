@@ -478,14 +478,17 @@ for(lister in 1:3)
         
         yIndex <- list[,4] == 0
         lGeographyIndex <- list[,4] == 1
-        lGenderIndex <- list[,4] == 2
-        lGPAIndex <- list[,4] == 3
-        lViolenceIndex <- list[,4] == 4
-        lFather1Index <- list[,4] == 5
-        lFather2Index <- list[,4] == 6
-        lHabitsIndex <- list[,4] == 7
-        lHealthIndex <- list[,4] == 8
-        lPsycheIndex <- list[,4] == 9
+        
+        lGenderGPAViolenceFatherIndex <- list[,4 == 2]
+        #lGenderIndex <- list[,4] == 2
+        #lGPAIndex <- list[,4] == 3
+        #lViolenceIndex <- list[,4] == 4
+        #lFather1Index <- list[,4] == 5
+        #lFather2Index <- list[,4] == 6
+        
+        lHabitsIndex <- list[,4] == 3
+        lHealthIndex <- list[,4] == 4
+        lPsycheIndex <- list[,4] == 5
         
         if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
         if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
@@ -541,7 +544,7 @@ for(lister in 1:3)
             
             #categories 
             #val=3
-            for (val in 2:9)
+            for (val in 2:5)
             {
               #used in category, rolled into names
               datalist1 <- c()
@@ -549,14 +552,14 @@ for(lister in 1:3)
               
               #end up with no records due to na's, and so any variables.  Inverse relationship.
               colList <- c()
-              if (val == 2) colList <- list[lGenderIndex,]
-              if (val == 3) colList <- list[lGPAIndex,]
-              if (val == 4) colList <- list[lViolenceIndex,]
-              if (val == 5) colList <- list[lFather1Index,]
-              if (val == 6) colList <- list[lFather2Index,]
-              if (val == 7) colList <- list[lHabitsIndex,]
-              if (val == 8) colList <- list[lHealthIndex,]
-              if (val == 9) colList <- list[lPsycheIndex,]
+              if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
+              #if (val == 3) colList <- list[lGPAIndex,]
+              #if (val == 4) colList <- list[lViolenceIndex,]
+              #if (val == 5) colList <- list[lFather1Index,]
+              #if (val == 6) colList <- list[lFather2Index,]
+              if (val == 3) colList <- list[lHabitsIndex,]
+              if (val == 4) colList <- list[lHealthIndex,]
+              if (val == 5) colList <- list[lPsycheIndex,]
               
               if (is.null(nrow(data.frame(alty)))) break
               
@@ -585,15 +588,8 @@ for(lister in 1:3)
               #just point to resample script and use data.train
               source(paste0(sourceDir,"resampleMC.R"))
               
-              if(!length(newList)==2)
-              {
               tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                   error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
-              }
-              if(length(newList)==2)
-              {
-                dataList1 <- newList[-1]
-              }
               
               #https://www.r-bloggers.com/careful-with-trycatch/
               
