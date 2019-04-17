@@ -479,7 +479,7 @@ for(lister in 1:3)
         yIndex <- list[,4] == 0
         lGeographyIndex <- list[,4] == 1
         
-        lGenderGPAViolenceFatherIndex <- list[,4 == 2]
+        lGenderGPAViolenceFatherIndex <- list[,4] == 2
         #lGenderIndex <- list[,4] == 2
         #lGPAIndex <- list[,4] == 3
         #lViolenceIndex <- list[,4] == 4
