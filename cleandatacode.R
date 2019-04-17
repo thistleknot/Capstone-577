@@ -445,12 +445,9 @@ for(lister in 1:3)
       NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
       
       #monte carlo resample from static sets
-      
-      if (widthDiviser == 1) endResample = 2
-      if ((widthDiviser > 1)) endResample = widthDiviser
-      
+      #if widthDiviser = 1, keep as 1
       #resample=1      
-      for (resample in 1:endResample)
+      for (resample in 1:widthDiviser)
       {
         #base = resample
         #print is inside inner loop
