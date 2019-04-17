@@ -414,6 +414,14 @@ V7118 #X PSYD/LIFETIME
 
 
 Percent formula  
+	The ^3 is for reseed, holdout reset, remonte carlo.
+	
+		Normally, one only needs to do one seed, therefore reducing to ^2	
+		
+	The +3x is for post evaluation and is used for evaluating the model and if the experiement holds (i.e. always significant population terms), then this part can be viewed as not counted towards the overall cost.
+	
+	Therefore widthDiviser of 5+ can be accomodated for.  With a max of 10, for ^2 with a 10x10 = 100%, which would result in 100 passes and would obviously monte carlo simulate 100%, but not quite converge.
+	
   (x^3)+(3x)
   only the mc set is what costs anything (pre non holdout size) , not the resampling from this set (i.e. pretrain)
   
