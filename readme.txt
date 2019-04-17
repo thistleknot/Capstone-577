@@ -275,9 +275,52 @@ Category Flags
 		using numRuns >= 50% as bar for inclusion of cv results
 		Combing categories of single factors into their own group
 		removed a resampling that was redundent ensuring proper holdout was being performed
+		
+		V7118 and dependent var V8565, in one model it's almost .05 significant, in another it's like .8.  difference being widthSize, perfect example of when a var is significant in one model but not another.  Most likely due to the info is already included in other vars and would be a prime candidate for PCA
 			
 		WidthSize 1
-			7221
+			V7221
+
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-1.3885  -1.2187   0.9801   1.1366   1.3197  
+
+				Coefficients:
+							 Estimate Std. Error z value Pr(>|z|)    
+				(Intercept)  0.096696   0.005807  16.653   <2e-16 ***
+				V8502       -0.286123   0.017054 -16.778   <2e-16 ***
+				V8512        0.386916   0.010777  35.901   <2e-16 ***
+				V8565       -0.139007   0.015414  -9.019   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 251507  on 182337  degrees of freedom
+				Residual deviance: 249857  on 182334  degrees of freedom
+				AIC: 249865
+
+			V8517
+
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-2.6590  -0.1585  -0.1585  -0.1585   2.9610  
+
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -4.37123    0.02676 -163.32   <2e-16 ***
+				V8514        2.32668    0.03265   71.27   <2e-16 ***
+				V8565        5.55016    0.06025   92.11   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 61417  on 137832  degrees of freedom
+				Residual deviance: 34637  on 137830  degrees of freedom
+				AIC: 34643
+
+			V7118
 
 				Deviance Residuals: 
 				   Min      1Q  Median      3Q     Max  
@@ -301,57 +344,53 @@ Category Flags
 				Residual deviance: 14725  on 11033  degrees of freedom
 				AIC: 14739
 
+				Number of Fisher Scoring iterations: 4	
 
-			V8517
+		WidthSize 3
+			V7221
 
 				Deviance Residuals: 
-					Min       1Q   Median       3Q      Max  
-				-1.3885  -1.2187   0.9801   1.1366   1.3197  
+				   Min      1Q  Median      3Q     Max  
+				-1.3720  -1.2151   0.9945   1.1401   1.3119  
 
 				Coefficients:
 							 Estimate Std. Error z value Pr(>|z|)    
-				(Intercept)  0.096696   0.005807  16.653   <2e-16 ***
-				V8502       -0.286123   0.017054 -16.778   <2e-16 ***
-				V8512        0.386916   0.010777  35.901   <2e-16 ***
-				V8565       -0.139007   0.015414  -9.019   <2e-16 ***
+				(Intercept)  0.088317   0.005733   15.40   <2e-16 ***
+				V8509       -0.399054   0.018380  -21.71   <2e-16 ***
+				V8512        0.358407   0.010374   34.55   <2e-16 ***
 				---
 				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 				(Dispersion parameter for binomial family taken to be 1)
 
 					Null deviance: 251507  on 182337  degrees of freedom
-				Residual deviance: 249857  on 182334  degrees of freedom
-				AIC: 249865
+				Residual deviance: 249901  on 182335  degrees of freedom
+				AIC: 249907
 
-				Number of Fisher Scoring iterations: 4
 
-			V7118
+			V8517
+
 
 				Deviance Residuals: 
 					Min       1Q   Median       3Q      Max  
-				-2.6590  -0.1585  -0.1585  -0.1585   2.9610  
+				-2.1882  -0.2539  -0.2539  -0.2539   2.6271  
 
 				Coefficients:
 							Estimate Std. Error z value Pr(>|z|)    
-				(Intercept) -4.37123    0.02676 -163.32   <2e-16 ***
-				V8514        2.32668    0.03265   71.27   <2e-16 ***
-				V8565        5.55016    0.06025   92.11   <2e-16 ***
+				(Intercept) -3.41872    0.01561  -219.0   <2e-16 ***
+				V8565        5.71713    0.05576   102.5   <2e-16 ***
 				---
 				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 				(Dispersion parameter for binomial family taken to be 1)
 
 					Null deviance: 61417  on 137832  degrees of freedom
-				Residual deviance: 34637  on 137830  degrees of freedom
-				AIC: 34643
+				Residual deviance: 40161  on 137831  degrees of freedom
+				AIC: 40165
 
-				Number of Fisher Scoring iterations: 7		
+				Number of Fisher Scoring iterations: 6
 
-		WidthSize 3
-			7221
-
-				Call:
-				NULL
+			V7118
 
 				Deviance Residuals: 
 				   Min      1Q  Median      3Q     Max  
@@ -376,50 +415,6 @@ Category Flags
 
 				Number of Fisher Scoring iterations: 4
 
-
-			V8517
-
-
-				Deviance Residuals: 
-					Min       1Q   Median       3Q      Max  
-				-1.3720  -1.2151   0.9945   1.1401   1.3119  
-
-				Coefficients:
-							 Estimate Std. Error z value Pr(>|z|)    
-				(Intercept)  0.088317   0.005733   15.40   <2e-16 ***
-				V8509       -0.399054   0.018380  -21.71   <2e-16 ***
-				V8512        0.358407   0.010374   34.55   <2e-16 ***
-				---
-				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-				(Dispersion parameter for binomial family taken to be 1)
-
-					Null deviance: 251507  on 182337  degrees of freedom
-				Residual deviance: 249901  on 182335  degrees of freedom
-				AIC: 249907
-
-				Number of Fisher Scoring iterations: 4
-
-			V7118
-
-				Deviance Residuals: 
-					Min       1Q   Median       3Q      Max  
-				-2.1882  -0.2539  -0.2539  -0.2539   2.6271  
-
-				Coefficients:
-							Estimate Std. Error z value Pr(>|z|)    
-				(Intercept) -3.41872    0.01561  -219.0   <2e-16 ***
-				V8565        5.71713    0.05576   102.5   <2e-16 ***
-				---
-				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-				(Dispersion parameter for binomial family taken to be 1)
-
-					Null deviance: 61417  on 137832  degrees of freedom
-				Residual deviance: 40161  on 137831  degrees of freedom
-				AIC: 40165
-
-				Number of Fisher Scoring iterations: 6
 						
 	
 V7221 R HS GRADE/D=1
