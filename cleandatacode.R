@@ -401,8 +401,8 @@ if ( (widthDiviser > 2) ) end = start
 for (seeder in start:end)
 {
   
-  seedbase=seeder
-  print(paste("seed",seedbase))
+  #seedbase=seeder
+  print(paste("seed: ",seeder))
 
   holdoutResetEnd  <- c()
   
@@ -512,6 +512,11 @@ for (seeder in start:end)
         if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
         {
           print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+          
+        }
+        
+        if(resample==1 && holdoutReset==1 && seeder==start)
+        {
           numRuns = 1
         }
         
