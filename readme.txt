@@ -116,6 +116,7 @@ Category Flags
 		GPA (3) (always excluded from substances cv results)
 			Midpoint is B+
 			V7221,2,"R HS GRADE/D=1",0	
+			Median: #7: B+ 95% conf interval confirmed
 
 		Violence (4) (always excluded from substances cv results)
 			V8517,1,"FRQ GANG FIGHT",0
@@ -125,13 +126,23 @@ Category Flags
 
 		Father2 (6  (always excluded from substances cv results), Median is 5, college graduate
 			V7215,2,"FATHR EDUC LEVEL",0
+			#5: for college grad father, 95% conf confirmed
 					
 		Habits (7) (always excluded from substances cv results)
 			V7551,2,"#HR/W INTERNET S",0
+			#4: 3-5 Hours Internet #95% conf confirmed
+			
 			V7552,2,"DALY WEB FACEBK",0
+			#5: 6-9 Hours Facebook # 95% conf confirmed
+			
 			V7553,2,"#HR GAMING",0
+			#4 3-5 Hours Gaming # 95% conf confirmed
+			
 			V7562,2,"#HR TEXT",0 
+			#4 3-5 Hours Texting # 95% conf confirmed
+			
 			V7563,2,"#HR TALK CELL",0
+			#2: <1 Hour talking on cell phone # 95% conf confirmed
 
 		Health (8) 
 			V8526,3,"OFTN EAT BRKFST",0
