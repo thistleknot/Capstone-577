@@ -412,7 +412,7 @@ for (seeder in start:end)
   #holdoutReset=2   
   for (holdoutReset in 1:holdoutResetEnd)
   {
-    set.seed(seedbase)
+    set.seed(seeder)
     #setup holdout
     
     #static holdout
