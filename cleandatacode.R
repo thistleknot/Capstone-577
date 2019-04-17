@@ -403,9 +403,12 @@ for (seeder in start:end)
   
   seedbase=seeder
   print(paste("seed",seedbase))
+
+  if (widthDiviser == 1) holdoutResetEnd = 2
+  if ( !(widthDiviser == 1) holdoutResetEnd = widthDiviser
   
   #holdoutReset=2   
-  for (holdoutReset in 1:widthDiviser)
+  for (holdoutReset in 1:holdoutResetEnd)
   {
     set.seed(seedbase)
     #setup holdout
@@ -700,12 +703,21 @@ for (seeder in start:end)
   
   #spacer
   finalListReduced <- c()
-  tabled <- table(finalList[,,drop=FALSE]/numRuns)
+  tabled <- table(finalList[,,drop=FALSE])
   print(tabled)
   #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
   #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
+  
+  if (widthDiviser==1)
+  {
+    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > 1]))
+    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > 1])[,1]))
+  }
+  if (!widthDiviser==1)
+  {
   if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
   if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > CVRuns_pct_threshold])[,1]))
+  }
   
   print(c("3: ", finalListReduced))
   hist((data.frame(table(finalList)))[,2])
