@@ -23,6 +23,7 @@
   #% of training resamples from static nonholdout
   preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
   sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  #sourceDir="/home/rstudio/577/Capstone-577/"
   
   if (widthDiviser == 1) resample = 2
   if ((!widthDiviser == 1)) resample = widthDiviser
