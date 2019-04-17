@@ -453,7 +453,7 @@ for (seeder in start:end)
     #resample=1      
     for (resample in 1:endResample)
     {
-      base = resample
+      #base = resample
       #print is inside inner loop
       
       ##before reseed
@@ -539,7 +539,7 @@ for (seeder in start:end)
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
           
           #categories 
-          #val=7
+          #val=3
           for (val in 2:9)
           {
             #used in category, rolled into names
@@ -584,8 +584,15 @@ for (seeder in start:end)
             #just point to resample script and use data.train
             source(paste0(sourceDir,"resampleMC.R"))
             
+            if(!length(newList)==2)
+            {
             tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                 error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+            }
+            if(length(newList)==2)
+            {
+              dataList1 <- newList[-1]
+            }
             
             #https://www.r-bloggers.com/careful-with-trycatch/
             
