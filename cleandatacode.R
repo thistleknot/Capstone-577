@@ -143,7 +143,7 @@ data <- d_combined
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #lister=1
-for(lister in 2:3)
+for(lister in 1:3)
 {
     numRuns = 1
   #7221 gpa
@@ -522,7 +522,6 @@ for(lister in 2:3)
             numRuns = 1
           }
           
-          {
             if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
             {
               numRunsold <- c()
@@ -696,7 +695,9 @@ for(lister in 2:3)
             }          
             
             print(c("2a: ", table(finalList)))
-          }
+            
+            #end of holdout analysis
+          
           
           #end of resample MC pass 
         }
