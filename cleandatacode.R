@@ -24,6 +24,7 @@ library("R.utils")
 
 #this needs to be set in 4thpass as well
 widthDiviser = 1
+CVRuns_pct_threshold = .14
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -144,6 +145,7 @@ suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FAL
 #lister=1
 for(lister in 1:3)
 {
+  numRuns = 1
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
   
@@ -385,8 +387,17 @@ for(lister in 1:3)
   
   #after lister, before holdoutReset
   
+  # oddly this matches the % of a 2% run 
+  # this ensures 1=4 runs
+  # 2=8
+  # 3=9
+  # 4=16 
+  # 5=25
+  # 10=100
+  
   if (widthDiviser == 1) end = (start+1)
-  if (!(widthDiviser == 1)) end = (start+(widthDiviser-1))
+  if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
+  if ( (widthDiviser > 2) ) end = start
   #seeder=start
   for (seeder in start:end)
   {
@@ -394,7 +405,7 @@ for(lister in 1:3)
     seedbase=seeder
     print(paste("seed",seedbase))
     
-    #holdoutReset=1    
+    #holdoutReset=2   
     for (holdoutReset in 1:widthDiviser)
     {
       set.seed(seedbase)
@@ -432,11 +443,11 @@ for(lister in 1:3)
       
       #monte carlo resample from static sets
       
-      if (widthDiviser == 1) resample = 2
-      if ((!widthDiviser == 1)) resample = widthDiviser
-      
+      if (widthDiviser == 1) endResample = 2
+      if ((widthDiviser > 1)) endResample = widthDiviser
+
       #resample=1      
-      for (resample in 1:widthDiviser)
+      for (resample in 1:endResample)
       {
         base = resample
         #print is inside inner loop
@@ -500,7 +511,7 @@ for(lister in 1:3)
           namesTV <- c()
           namesH <- c()
           
-          print(paste("holdoutReset: ",holdoutReset,"resample: ",base))
+          print(paste("holdoutReset: ",holdoutReset,"resample: ",resample))
           
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
@@ -637,6 +648,12 @@ for(lister in 1:3)
           
           print(c("2: ", extract))
           
+          print(paste("loop: ",numRuns))
+          numRunsold <- c()
+          numRunsold = numRuns
+          numRuns <- c()
+          numRuns = numRunsold + 1
+          
           #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
           # #3 finalList
@@ -662,7 +679,7 @@ for(lister in 1:3)
           print(c("2a: ", table(finalList)))
         }
         
-        #end of resample MC pass
+        #end of resample MC pass 
       }
       #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
       #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
@@ -677,10 +694,12 @@ for(lister in 1:3)
   
   #spacer
   finalListReduced <- c()
-  tabled <- table(finalList[,,drop=FALSE])
+  tabled <- table(finalList[,,drop=FALSE]/numRuns)
   print(tabled)
-  if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
-  if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
+  #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
+  #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
+  if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
+  if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > CVRuns_pct_threshold])[,1]))
   
   print(c("3: ", finalListReduced))
   hist((data.frame(table(finalList)))[,2])
