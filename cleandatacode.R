@@ -658,7 +658,8 @@ for(lister in 1:3)
             #resample before drawing from data.test
             
             #just point to resample script and use data.train, isn't technically resampled except when
-            source(paste0(sourceDir,"resampleMC.R"))
+            #I don't need to resample here because I'm using holdout... data.test
+            #source(paste0(sourceDir,"resampleMC.R"))
             
             holderOfData <- c()
             
