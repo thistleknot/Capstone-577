@@ -24,7 +24,7 @@ library("R.utils")
 
 #this needs to be set in 4thpass as well
 widthDiviser = 1
-CVRuns_pct_threshold = .14
+CVRuns_pct_threshold = .50
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -143,7 +143,7 @@ data <- d_combined
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #lister=1
-for(lister in 1:3)
+for(lister in 3:3)
 {
     numRuns = 1
   #7221 gpa
@@ -408,7 +408,7 @@ for(lister in 1:3)
     if (widthDiviser == 1) holdoutResetEnd = 2
     if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
     
-    #holdoutReset=2   
+    #holdoutReset=1   
     for (holdoutReset in 1:holdoutResetEnd)
     {
       set.seed(seeder)
@@ -518,183 +518,185 @@ for(lister in 1:3)
           {
             numRuns = 1
           }
+      
+          if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
+          {
+            numRunsold <- c()
+            numRunsold = numRuns
+            numRuns <- c()
+            numRuns = numRunsold + 1
+          }
           
-            if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
+          #aggregated after categories loop
+          namesTV <- c()
+          namesH <- c()
+          
+          print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
+          
+          #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
+          #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
+          
+          #categories 
+          #val=3
+          for (val in 2:5)
+          {
+            #used in category, rolled into names
+            datalist1 <- c()
+            datalist2 <- c()
+            
+            #end up with no records due to na's, and so any variables.  Inverse relationship.
+            colList <- c()
+            if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
+            #if (val == 3) colList <- list[lGPAIndex,]
+            #if (val == 4) colList <- list[lViolenceIndex,]
+            #if (val == 5) colList <- list[lFather1Index,]
+            #if (val == 6) colList <- list[lFather2Index,]
+            if (val == 3) colList <- list[lHabitsIndex,]
+            if (val == 4) colList <- list[lHealthIndex,]
+            if (val == 5) colList <- list[lPsycheIndex,]
+            
+            if (is.null(nrow(data.frame(alty)))) break
+            
+            #colList <- rbind(list[yIndex,],colList)
+            
+            colList <- rbind(y,colList)
+            
+            #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+            #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+            colListNames <- c()
+            colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+            
+            newList <- c()        
+            newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+            
+            #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+            #droplevels(newList)
+            #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+            
+            #needs to be inside category when newList is generated
+            #don't re-use for csv's... csv's... are already cleaned
+            #repurpose instead
+            #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+            
+            #subcategory specific
+            #just point to resample script and use data.train
+            source(paste0(sourceDir,"resampleMC.R"))
+            
+            tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                                error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+            
+            #https://www.r-bloggers.com/careful-with-trycatch/
+            
+            #print(table(is.na(data.test)))
+            #datalist2 <- sub_returnCVNames(data.test)
+            
+            #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
+            #print(c(datalist1))
+            #print(length(datalist1))
+            if(length(datalist1)>1)
+              for (i in 1:length(datalist1))
+              {
+                namesTV <- rbind(namesTV,datalist1[i])
+              }
+            if(length(datalist1)==1)
             {
-              numRunsold <- c()
-              numRunsold = numRuns
-              numRuns <- c()
-              numRuns = numRunsold + 1
+              namesTV <- rbind(namesTV,datalist1)
             }
             
-            #aggregated after categories loop
-            namesTV <- c()
-            namesH <- c()
+            #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
+            #https://rdrr.io/cran/bestglm/man/bestglm.html
+            #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
+            #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
+            #https://rdrr.io/cran/bestglm/man/bestglm-package.html
             
-            print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
+            #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
             
-            #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
-            #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
+            #summary(step.model.test) 
             
-            #categories 
-            #val=3
-            for (val in 2:5)
-            {
-              #used in category, rolled into names
-              datalist1 <- c()
-              datalist2 <- c()
-              
-              #end up with no records due to na's, and so any variables.  Inverse relationship.
-              colList <- c()
-              if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
-              #if (val == 3) colList <- list[lGPAIndex,]
-              #if (val == 4) colList <- list[lViolenceIndex,]
-              #if (val == 5) colList <- list[lFather1Index,]
-              #if (val == 6) colList <- list[lFather2Index,]
-              if (val == 3) colList <- list[lHabitsIndex,]
-              if (val == 4) colList <- list[lHealthIndex,]
-              if (val == 5) colList <- list[lPsycheIndex,]
-              
-              if (is.null(nrow(data.frame(alty)))) break
-              
-              #colList <- rbind(list[yIndex,],colList)
-              
-              colList <- rbind(y,colList)
-              
-              #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-              #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-              colListNames <- c()
-              colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-              
-              newList <- c()        
-              newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-              
-              #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-              #droplevels(newList)
-              #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-              
-              #needs to be inside category when newList is generated
-              #don't re-use for csv's... csv's... are already cleaned
-              #repurpose instead
-              #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
-              
-              #subcategory specific
-              #just point to resample script and use data.train
-              source(paste0(sourceDir,"resampleMC.R"))
-              
-              tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                                  error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
-              
-              #https://www.r-bloggers.com/careful-with-trycatch/
-              
-              #print(table(is.na(data.test)))
-              #datalist2 <- sub_returnCVNames(data.test)
-              
-              #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
-              #print(c(datalist1))
-              #print(length(datalist1))
-              if(length(datalist1)>1)
-                for (i in 1:length(datalist1))
-                {
-                  namesTV <- rbind(namesTV,datalist1[i])
-                }
-              if(length(datalist1)==1)
-              {
-                namesTV <- rbind(namesTV,datalist1)
-              }
-              
-              #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-              #https://rdrr.io/cran/bestglm/man/bestglm.html
-              #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
-              #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
-              #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-              
-              #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
-              
-              #summary(step.model.test) 
-              
-              #Calculating MSE for training data
-              #mse.train<- mean(residuals(step.model.train)^2)
-              #mse.train
-              
-              #Calculating RMSE for training data
-              #rmse.train <- sqrt(mse.train)
-              #rmse.train
-              
-              #Calculating MSE for testing data
-              #mse.test <- mean(residuals(step.model.test)^2)
-              #mse.test
-              
-              #Calculating RMSE for testing data
-              #rmse.test <- sqrt(mse.test)
-              #rmse.test
-              
-              #end of category iterator
-            }
-            #print("category pass")  
-            #Taggregated <- c()
-            Hfiltered <- c()
-            extract <- c()
+            #Calculating MSE for training data
+            #mse.train<- mean(residuals(step.model.train)^2)
+            #mse.train
             
-            #data.trainAggregate <- c()
-            #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-            #data.trainAggregate[data.trainAggregate == 0] <- NA
-            #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
-            #data.trainAggregate[data.trainAggregate == -1] <- 0
-            #print(table(is.na(data.trainAggregate)))
+            #Calculating RMSE for training data
+            #rmse.train <- sqrt(mse.train)
+            #rmse.train
             
-            #pass to test/holdout partition to filter and refine on another pass
-            #Taggregated <- sub_returnCVNames(data.trainAggregate)
-            print(c("1: ", namesTV))
+            #Calculating MSE for testing data
+            #mse.test <- mean(residuals(step.model.test)^2)
+            #mse.test
             
-            newList <- c()
-            newList <- c(yname,namesTV)
-            #resample before drawing from data.test
+            #Calculating RMSE for testing data
+            #rmse.test <- sqrt(mse.test)
+            #rmse.test
             
-            #just point to resample script and use data.train, isn't technically resampled except when
-            #I don't need to resample here because I'm using holdout... data.test
-            #source(paste0(sourceDir,"resampleMC.R"))
-            
-            holderOfData <- c()
-            
-            holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
-            
-            if ( widthDiviser == 1 )  testCase <- tryCatch((Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))), 
-                                                           error=function(e) Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")))
-            
-            if (!(widthDiviser == 1 )) testCase <- tryCatch((Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))), 
-                                                            error=function(e) suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")))
-            
-            extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
-            
-            print(c("2: ", extract))
-            
-            #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
-            
-            # #3 finalList
-            #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
-            
-            #going to use table to tabulate final results
-            
-            #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
-            #p5[p5$id %in% current, ]
-            
-            #end of yPass 
-            
-            if(length(extract)>1)
-              for (i in 1:length(extract))
-              {
-                finalList <- rbind(finalList,extract[i])
-              }
-            if(length(extract)==1)
-            {
-              finalList <- rbind(finalList,extract)
-            }          
-            
-            print(c("2a: ", table(finalList)))
-            
-            #end of holdout analysis
+            #end of category iterator
+          }
+          #print("category pass")  
+          #Taggregated <- c()
+          Hfiltered <- c()
+          extract <- c()
           
+          #data.trainAggregate <- c()
+          #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+          #data.trainAggregate[data.trainAggregate == 0] <- NA
+          #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
+          #data.trainAggregate[data.trainAggregate == -1] <- 0
+          #print(table(is.na(data.trainAggregate)))
+          
+          #pass to test/holdout partition to filter and refine on another pass
+          #Taggregated <- sub_returnCVNames(data.trainAggregate)
+          print(c("1: ", namesTV))
+          
+          newList <- c()
+          newList <- c(yname,namesTV)
+          #resample before drawing from data.test
+          
+          #just point to resample script and use data.train, isn't technically resampled except when
+          #I don't need to resample here because I'm using holdout... data.test
+          #source(paste0(sourceDir,"resampleMC.R"))
+          
+          holderOfData <- c()
+          
+          holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
+          
+          Hfiltered <- c() 
+
+          while((length(extract)==0))
+          {
+          if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+          if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+
+          extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+          }
+          
+          print(c("2: ", extract))
+          
+          #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+          
+          # #3 finalList
+          #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
+          
+          #going to use table to tabulate final results
+          
+          #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
+          #p5[p5$id %in% current, ]
+          
+          #end of yPass 
+          
+          if(length(extract)>1)
+            for (i in 1:length(extract))
+            {
+              finalList <- rbind(finalList,extract[i])
+            }
+          if(length(extract)==1)
+          {
+            finalList <- rbind(finalList,extract)
+          }          
+          
+          print(c("2a: ", table(finalList)))
+          
+          #end of holdout analysis
+        
           
           #end of resample MC pass 
         }
@@ -726,8 +728,8 @@ for(lister in 1:3)
   }
   if (!widthDiviser==1)
   {
-    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
-    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > CVRuns_pct_threshold])[,1]))
+    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= CVRuns_pct_threshold]))
+    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= CVRuns_pct_threshold])[,1]))
   }
   
   print(c("3: ", finalListReduced))
