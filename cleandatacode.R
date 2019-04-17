@@ -510,12 +510,12 @@ for(lister in 1:3)
           #aggregated after categories loop
           namesTV <- c()
           namesH <- c()
+
+          print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
           numRunsold <- c()
           numRunsold = numRuns
           numRuns <- c()
           numRuns = numRunsold + 1
-
-          print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
 
           #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
           #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
