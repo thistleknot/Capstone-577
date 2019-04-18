@@ -414,7 +414,7 @@ for(lister in 1:3)
     if (widthDiviser == 1) holdoutResetEnd = 2
     if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
     
-    #holdoutReset=1   
+    #holdoutReset=2   
     for (holdoutReset in 1:holdoutResetEnd)
     {
       #setup holdout
@@ -451,7 +451,7 @@ for(lister in 1:3)
       
       #monte carlo resample from static sets
       #if widthDiviser = 1, keep as 1
-      #resample=1      
+      #resample=2      
       for (resample in 1:widthDiviser)
       {
         #base = resample

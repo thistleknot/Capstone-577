@@ -297,10 +297,37 @@ Category Flags
 	Mmilestone 8.2
 		
 	Milestone 9
-		100 loops finalList
+		100 loops
+		
 		V7221
 			V7501 V8502 V8505 V8509 V8512 V8514 
 			 0.01  0.07  0.06  0.17  0.52  0.15 
+			[1] "3: "   "V8509" "V8512" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				Min       1Q   Median       3Q      Max  
+			-1.3735  -1.2133   0.9933   1.1420   1.3162  
+
+			Coefficients:
+						 Estimate Std. Error z value Pr(>|z|)    
+			(Intercept)  0.083950   0.005907  14.212  < 2e-16 ***
+			V8509       -0.404448   0.018460 -21.909  < 2e-16 ***
+			V8512        0.310113   0.018851  16.451  < 2e-16 ***
+			V8514        0.055853   0.018207   3.068  0.00216 ** 
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 251507  on 182337  degrees of freedom
+			Residual deviance: 249891  on 182334  degrees of freedom
+			AIC: 249899
+
+			Number of Fisher Scoring iterations: 4
 
 		V8517
 		
@@ -309,6 +336,7 @@ Category Flags
 			V7501 V7507 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
 			0.09  0.09  0.12  0.04  0.11  0.04  0.04  0.04  0.03
 			
+			didn't grab formula
 	
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
@@ -323,6 +351,8 @@ V7118 #X PSYD/LIFETIME
 
 
 Percent formula  
+	To get more dispersion, increase holdoutreset loop to say 100 and set resample loop max to 1.  This will be somewhat expensive but will force a reshuffle of the dataset each pass.  As is a CV of 10 simulates this effectively enough without being as expensive.
+	
 	The ^3 is for reseed, holdout reset, remonte carlo.
 	
 		Normally, one only needs to do one seed, therefore reducing to ^2	
