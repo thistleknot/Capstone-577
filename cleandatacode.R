@@ -23,7 +23,7 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 1
+widthDiviser = 3
 CVRuns_pct_threshold = .50
 
 sub_returnCVNames <- function(data_sent){
@@ -145,7 +145,7 @@ suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FAL
 #lister=1
 for(lister in 1:3)
 {
-    numRuns = 1
+  numRuns = 1
   #7221 gpa
   if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
   
@@ -402,7 +402,7 @@ for(lister in 1:3)
     
     #seedbase=seeder
     print(paste("seed: ",seeder))
-  
+    
     holdoutResetEnd  <- c()
     
     if (widthDiviser == 1) holdoutResetEnd = 2
@@ -518,7 +518,7 @@ for(lister in 1:3)
           {
             numRuns = 1
           }
-      
+          
           if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
           {
             numRunsold <- c()
@@ -660,13 +660,13 @@ for(lister in 1:3)
           holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
           
           Hfiltered <- c() 
-
+          
           while((length(extract)==0))
           {
-          if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-          if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-
-          extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+            if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+            if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+            
+            extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
           }
           
           print(c("2: ", extract))
@@ -693,10 +693,10 @@ for(lister in 1:3)
             finalList <- rbind(finalList,extract)
           }          
           
-          print(c("2a: ", table(finalList)))
+          print(c("2a: ", table(finalList)/numRuns))
           
           #end of holdout analysis
-        
+          
           
           #end of resample MC pass 
         }
@@ -716,20 +716,22 @@ for(lister in 1:3)
   
   #spacer
   finalListReduced <- c()
-  tabled <- table(finalList[,,drop=FALSE])
+  tabled <- table(finalList[,,drop=FALSE])/numRuns
   print(tabled)
+  table(finalList)
   #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
   #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
   
-  if (widthDiviser==1)
+  #if (widthDiviser==1)
   {
-    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > 1]))
-    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) > 1])[,1]))
+    #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= 1/numRuns]))
+    #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= 1/numRuns])[,1]))
   }
-  if (!widthDiviser==1)
+  #if (!widthDiviser==1)
   {
-    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= CVRuns_pct_threshold]))
-    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= CVRuns_pct_threshold])[,1]))
+    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
+    #this is not tabled, which is based on table(finalList), hence I do the /numRuns, as tabled already has that done.
+    if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[ table(finalList)/numRuns > CVRuns_pct_threshold])[,1]))
   }
   
   print(c("3: ", finalListReduced))
@@ -753,7 +755,7 @@ for(lister in 1:3)
   write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
   
   
-#end of lister
+  #end of lister
 }
 
 source(paste0(sourceDir,"4thpass.R"))
