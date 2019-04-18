@@ -401,6 +401,7 @@ for(lister in 1:3)
   for (seeder in start:end)
   {
     
+    set.seed(seeder)
     #seedbase=seeder
     print(paste("seed: ",seeder))
     
@@ -412,7 +413,6 @@ for(lister in 1:3)
     #holdoutReset=1   
     for (holdoutReset in 1:holdoutResetEnd)
     {
-      set.seed(seeder)
       #setup holdout
       
       #static holdout
