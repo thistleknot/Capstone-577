@@ -282,10 +282,10 @@ Category Flags
 
 	Milestone 8.1
 	
-		Implemented correct >= 50%
+		Implemented correct >= 25% as V8517 would not hit this threshold (33% across 4 variables)
 		
-		Seed size 1
-	
+		widthSize 1
+		
 		[1] "seed:  5"
 		[1] "Y: V7221"
 			[1] "loop:  1 holdoutReset:  1 resample:  1"
@@ -446,6 +446,43 @@ Category Flags
 			AIC: 14739
 
 			Number of Fisher Scoring iterations: 4
+
+			There were 50 or more warnings (use warnings() to see the first 50)
+			> 
+			> source(paste0(sourceDir,"4thpass.R"))
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+			   Min      1Q  Median      3Q     Max  
+			-1.914  -1.000  -1.000   1.366   1.368  
+
+			Coefficients:
+						Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.43235    0.02367 -18.265  < 2e-16 ***
+			V7501        1.09073    0.09993  10.914  < 2e-16 ***
+			V8502        0.62403    0.07778   8.023 1.03e-15 ***
+			V8505        0.22701    0.05014   4.528 5.96e-06 ***
+			V8509        0.54849    0.08927   6.144 8.04e-10 ***
+			V8536        0.68912    0.15571   4.426 9.62e-06 ***
+			V8565       -0.00637    0.07085  -0.090    0.928    
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 15198  on 11039  degrees of freedom
+			Residual deviance: 14725  on 11033  degrees of freedom
+			AIC: 14739
+
+			Number of Fisher Scoring iterations: 4
+			
+		widthSize 3
+		
+		
+		
 	
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
