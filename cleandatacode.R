@@ -662,13 +662,14 @@ for(lister in 1:3)
           
           Hfiltered <- c() 
           
-          while((length(extract)==0))
-          {
-            if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-            if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-            
-            extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
-          }
+          Hfiltered <- c() 
+          
+          if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+          if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+          
+          extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+          
+          if (length(extract)==0) extract <- c()
           
           print(c("2: ", extract))
           
