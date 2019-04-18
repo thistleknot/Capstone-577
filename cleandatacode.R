@@ -23,7 +23,7 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 1
+widthDiviser = 2
 CVRuns_pct_threshold = .25
 
 sub_returnCVNames <- function(data_sent){
