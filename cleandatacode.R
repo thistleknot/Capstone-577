@@ -23,9 +23,13 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 2
-CVRuns_pct_threshold = .25
-#CVRuns_pct_threshold = 1/widthDiviser
+widthDiviser = 10
+#CVRuns_pct_threshold = .25
+#has to appear in half the samples of 1 width?
+#dangerously overfits
+#should be more than 1/widthDviser
+#CVRuns_pct_threshold = (1/widthDiviser)2
+CVRuns_pct_threshold = 1/widthDiviser
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -731,7 +735,7 @@ for(lister in 1:3)
     #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= 1/numRuns])[,1]))
   }
   #if (!widthDiviser==1)
-  if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= CVRuns_pct_threshold]))
+  if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
   #this is not tabled, which is based on table(finalList), hence I do the /numRuns, as tabled already has that done.
   
   if(!length(tabled)==1) 
@@ -742,7 +746,7 @@ for(lister in 1:3)
     }
     if(!(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0))
     {
-      finalListReduced <- c(as.character(data.frame(table(finalList)[ table(finalList)/numRuns >= CVRuns_pct_threshold])[,1]))
+      finalListReduced <- c(as.character(data.frame(table(finalList)[ table(finalList)/numRuns > CVRuns_pct_threshold])[,1]))
     }
   }
   
