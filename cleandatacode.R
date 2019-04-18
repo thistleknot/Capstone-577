@@ -18,6 +18,10 @@ library(compare)
 library(dplyr)
 library("R.utils")
 
+
+medianDirection = "greaterEqual"
+#medianDirection = "greater"
+
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
@@ -274,7 +278,8 @@ for(width in c(10,7,5,3))
     #95% confidence
     #7: B+
     #95% conf confirmed
-    V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+    if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+    if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
     centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
     lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
@@ -288,7 +293,8 @@ for(width in c(10,7,5,3))
     
     #College graduate
     #5: for college grad father, 95% conf confirmed
-    V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
+    if (medianDirection=="greaterEqual") V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
+    if (medianDirection=="greater") V7215_Index <- NewDF[,"V7215"] > median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
     centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7215"][NewDF[,"V7215"]>0])))/2)
     lower = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 - width
@@ -303,7 +309,8 @@ for(width in c(10,7,5,3))
     #4: 3-5 Hours Internet #95% conf confirmed
     #4 #hours for computer use for internet leisure 
     
-    V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
+    if (medianDirection=="greaterEqual") V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
+    if (medianDirection=="greater") V7551_Index <- NewDF[,"V7551"] > median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
     centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7551"][NewDF[,"V7551"]>0])))/2)
     lower = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 - width
@@ -317,7 +324,8 @@ for(width in c(10,7,5,3))
     NewDF[V7551_Index,"V7551"] <- 0
     
     #5: 6-9 Hours Facebook # 95% conf confirmed
-    V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
+    if (medianDirection=="greaterEqual") V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
+    if (medianDirection=="greater") V7552_Index <- NewDF[,"V7552"] > median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
     centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
     lower = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 - width
@@ -330,7 +338,8 @@ for(width in c(10,7,5,3))
     NewDF[V7552_Index,"V7552"] <- 0
     
     #4 3-5 Hours Gaming # 95% conf confirmed
-    V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
+    if (medianDirection=="greaterEqual") V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
+    if (medianDirection=="greater") V7553_Index <- NewDF[,"V7553"] > median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
     centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7553"][NewDF[,"V7553"]>0])))/2)
     lower = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 - width
@@ -343,7 +352,8 @@ for(width in c(10,7,5,3))
     NewDF[V7553_Index,"V7553"] <- 0
     
     #4 3-5 Hours Texting # 95% conf confirmed
-    V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
+    if (medianDirection=="greaterEqual") V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
+    if (medianDirection=="greater") V7562_Index <- NewDF[,"V7562"] > median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
     centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7562"][NewDF[,"V7562"]>0])))/2)
     lower = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 - width
@@ -356,7 +366,8 @@ for(width in c(10,7,5,3))
     NewDF[V7562_Index,"V7562"] <- 0
     
     #2: <1 Hour talking on cell phone # 95% conf confirmed
-    V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+    if (medianDirection=="greaterEqual") V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+    if (medianDirection=="greater") V7563_Index <- NewDF[,"V7563"] > median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
     centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
     width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
     lower = (length(NewDF[,"V7562"][NewDF[,"V7563"]>0]))/2 - width
@@ -371,7 +382,8 @@ for(width in c(10,7,5,3))
     NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(0), verbose = FALSE)
     NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(0), verbose = FALSE)
     NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
+    if (medianDirection=="greater") NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(0), verbose = FALSE)
+    if (medianDirection=="greaterEqual") NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
     NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
     NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
     
@@ -785,5 +797,6 @@ for(width in c(10,7,5,3))
     #end of lister
   }
   #end width
+  readline(prompt="Press [enter] to continue")
 }
 source(paste0(sourceDir,"4thpass.R"))
