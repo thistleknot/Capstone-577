@@ -23,7 +23,7 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 7
+widthDiviser = 5
 #CVRuns_pct_threshold = .25
 #has to appear in half the samples of 1 width?
 #dangerously overfits
@@ -118,7 +118,7 @@ sub_returnCVNamesExclMin <- function(data_sent){
 pw <- {"Read1234"}
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -650,7 +650,7 @@ for(lister in 1:3)
           
           #pass to test/holdout partition to filter and refine on another pass
           #Taggregated <- sub_returnCVNames(data.trainAggregate)
-          print(c("1: ", namesTV))
+          #print(c("1: ", namesTV))
           
           newList <- c()
           newList <- c(yname,namesTV)
@@ -676,7 +676,7 @@ for(lister in 1:3)
           #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
           if (length(extract)==0) extract <- c()
           
-          print(c("2: ", extract))
+          #print(c("2: ", extract))
           
           #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
           
@@ -740,13 +740,13 @@ for(lister in 1:3)
   
   if(!length(tabled)==1) 
   {
-    if(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0)      
+    if(sum(tabled > CVRuns_pct_threshold)==0)      
     {
       finalListReduced <- c
     }
-    if(!(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0))
+    if(!(sum(tabled > CVRuns_pct_threshold)==0))
     {
-      finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
+      finalListReduced <- as.character(row.names(data.frame(tabled[tabled > CVRuns_pct_threshold])[,,drop=FALSE]))
     }
   }
   

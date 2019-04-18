@@ -296,6 +296,19 @@ Category Flags
 		
 	Mmilestone 8.2
 		
+	Milestone 9
+		100 loops finalList
+		V7221
+			V7501 V8502 V8505 V8509 V8512 V8514 
+			 0.01  0.07  0.06  0.17  0.52  0.15 
+
+		V8517
+		
+			 
+		V7118
+			V7501 V7507 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
+			0.09  0.09  0.12  0.04  0.11  0.04  0.04  0.04  0.03
+			
 	
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
