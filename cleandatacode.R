@@ -23,8 +23,8 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 3
-CVRuns_pct_threshold = .50
+widthDiviser = 1
+CVRuns_pct_threshold = .25
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -113,7 +113,7 @@ sub_returnCVNamesExclMin <- function(data_sent){
 pw <- {"Read1234"}
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 

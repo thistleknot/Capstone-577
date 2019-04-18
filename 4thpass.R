@@ -1,5 +1,5 @@
 {
-  widthDiviser = 2
+  widthDiviser = 1
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
