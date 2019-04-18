@@ -669,6 +669,7 @@ for(lister in 1:3)
           
           extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
           
+          #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
           if (length(extract)==0) extract <- c()
           
           print(c("2: ", extract))
