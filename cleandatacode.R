@@ -746,7 +746,7 @@ for(lister in 1:3)
     }
     if(!(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0))
     {
-      finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[ table(finalList)/numRuns > CVRuns_pct_threshold],drop=FALSE))))
+      finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
     }
   }
   
