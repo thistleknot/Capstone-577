@@ -296,7 +296,7 @@ Category Flags
 		
 	Mmilestone 8.2
 		
-	Milestone 9
+	Milestone 9 4a67f5a
 		10 widthSize (100 loops)
 		
 			V7221
@@ -541,7 +541,6 @@ V8517 Gang Fight
 	
 V7118 #X PSYD/LIFETIME
 	V7202 R'S SEX
-
 
 Percent formula  
 	To get more dispersion, increase holdoutreset loop to say 100 and set resample loop max to 1.  This will be somewhat expensive but will force a reshuffle of the dataset each pass.  As is a CV of 10 simulates this effectively enough without being as expensive.
