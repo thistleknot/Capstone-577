@@ -23,7 +23,7 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #this needs to be set in 4thpass as well
-widthDiviser = 5
+widthDiviser = 3
 #CVRuns_pct_threshold = .25
 #has to appear in half the samples of 1 width?
 #dangerously overfits
@@ -740,13 +740,20 @@ for(lister in 1:3)
   
   if(!length(tabled)==1) 
   {
-    if(sum(tabled > CVRuns_pct_threshold)==0)      
+    if(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0)      
     {
       finalListReduced <- c
     }
-    if(!(sum(tabled > CVRuns_pct_threshold)==0))
+    if(!(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0))
     {
-      finalListReduced <- as.character(row.names(data.frame(tabled[tabled > CVRuns_pct_threshold])[,,drop=FALSE]))
+      if(!length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
+      {
+        finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
+      }
+      if(length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
+      {
+        finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold]))))
+      }
     }
   }
   

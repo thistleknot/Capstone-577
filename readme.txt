@@ -353,6 +353,12 @@ V7118 #X PSYD/LIFETIME
 Percent formula  
 	To get more dispersion, increase holdoutreset loop to say 100 and set resample loop max to 1.  This will be somewhat expensive but will force a reshuffle of the dataset each pass.  As is a CV of 10 simulates this effectively enough without being as expensive.
 	
+	Imagine the holdout is you shuffle the cards (~reseed & holdout sample) and then 
+		take a set of cards away from a deck (macro: holdoutset & nonholdoutset)
+		and resample is you take a subsample from this set (micro: pretrain=data.train & holdout=data.text)
+		
+		Due to this sampling, variations occur during 2a tablization within each holdoutSet's iteration
+	
 	The ^3 is for reseed, holdout reset, remonte carlo.
 	
 		Normally, one only needs to do one seed, therefore reducing to ^2	
