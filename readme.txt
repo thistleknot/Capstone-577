@@ -297,87 +297,240 @@ Category Flags
 	Mmilestone 8.2
 		
 	Milestone 9
-		100 loops
+		10 widthSize (100 loops)
 		
-		V7221
-			V7501 V8502 V8505 V8509 V8512 V8514 
-			 0.01  0.07  0.06  0.17  0.52  0.15 
-			[1] "3: "   "V8509" "V8512" "V8514"
-			[1] "population"
+			V7221
+				V7501 V8502 V8505 V8509 V8512 V8514 
+				 0.01  0.07  0.06  0.17  0.52  0.15 
+				[1] "3: "   "V8509" "V8512" "V8514"
+				[1] "population"
 
-			Call:
-			NULL
+				Call:
+				NULL
 
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-1.3735  -1.2133   0.9933   1.1420   1.3162  
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-1.3735  -1.2133   0.9933   1.1420   1.3162  
 
-			Coefficients:
-						 Estimate Std. Error z value Pr(>|z|)    
-			(Intercept)  0.083950   0.005907  14.212  < 2e-16 ***
-			V8509       -0.404448   0.018460 -21.909  < 2e-16 ***
-			V8512        0.310113   0.018851  16.451  < 2e-16 ***
-			V8514        0.055853   0.018207   3.068  0.00216 ** 
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+				Coefficients:
+							 Estimate Std. Error z value Pr(>|z|)    
+				(Intercept)  0.083950   0.005907  14.212  < 2e-16 ***
+				V8509       -0.404448   0.018460 -21.909  < 2e-16 ***
+				V8512        0.310113   0.018851  16.451  < 2e-16 ***
+				V8514        0.055853   0.018207   3.068  0.00216 ** 
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-			(Dispersion parameter for binomial family taken to be 1)
+				(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 251507  on 182337  degrees of freedom
-			Residual deviance: 249891  on 182334  degrees of freedom
-			AIC: 249899
+					Null deviance: 251507  on 182337  degrees of freedom
+				Residual deviance: 249891  on 182334  degrees of freedom
+				AIC: 249899
 
-			Number of Fisher Scoring iterations: 4
+				Number of Fisher Scoring iterations: 4
 
-		V8517
-			V8505 V8512 V8514 V8565 
-			 0.06  0.03  0.08  1.00 		
-			 
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-2.1882  -0.2539  -0.2539  -0.2539   2.6271  
+			V8517
+				V8505 V8512 V8514 V8565 
+				 0.06  0.03  0.08  1.00 		
+				 
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-2.1882  -0.2539  -0.2539  -0.2539   2.6271  
 
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -3.41872    0.01561  -219.0   <2e-16 ***
-			V8565        5.71713    0.05576   102.5   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -3.41872    0.01561  -219.0   <2e-16 ***
+				V8565        5.71713    0.05576   102.5   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-			(Dispersion parameter for binomial family taken to be 1)
+				(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 61417  on 137832  degrees of freedom
-			Residual deviance: 40161  on 137831  degrees of freedom
-			AIC: 40165
+					Null deviance: 61417  on 137832  degrees of freedom
+				Residual deviance: 40161  on 137831  degrees of freedom
+				AIC: 40165
 
-			Number of Fisher Scoring iterations: 6			 
-			 
-		V7118
-			V7501 V7507 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
-			0.09  0.09  0.12  0.04  0.11  0.04  0.04  0.04  0.03
+				Number of Fisher Scoring iterations: 6			 
+				 
+			V7118
+				V7501 V7507 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
+				0.09  0.09  0.12  0.04  0.11  0.04  0.04  0.04  0.03
+				
+				Deviance Residuals: 
+				   Min      1Q  Median      3Q     Max  
+				-1.582  -1.041  -1.041   1.320   1.320  
+
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.32997    0.02072 -15.928  < 2e-16 ***
+				V8502        0.64238    0.07572   8.484  < 2e-16 ***
+				V8509        0.60099    0.08724   6.889 5.63e-12 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 15198  on 11039  degrees of freedom
+				Residual deviance: 14884  on 11037  degrees of freedom
+				AIC: 14890
+
+				Number of Fisher Scoring iterations: 4			
+				
+				didn't grab formula
+
+			5 (25 loops)
+
+				V7221
+					V8502 V8509 V8512 V8514 
+					 0.12  0.08  0.48  0.04 
+					[1] "3: "   "V8512"
+					[1] "population"
+
+					Call:
+					NULL
+
+					Deviance Residuals: 
+					   Min      1Q  Median      3Q     Max  
+					-1.356  -1.204   1.009   1.151   1.151  
+
+					Coefficients:
+								Estimate Std. Error z value Pr(>|z|)    
+					(Intercept) 0.063335   0.005614   11.28   <2e-16 ***
+					V8512       0.346367   0.010341   33.49   <2e-16 ***
+					---
+					Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+					(Dispersion parameter for binomial family taken to be 1)
+
+						Null deviance: 251507  on 182337  degrees of freedom
+					Residual deviance: 250374  on 182336  degrees of freedom
+					AIC: 250378
+
+					Number of Fisher Scoring iterations: 4
+
+				Y8517
+					V7501 V8502 V8505 V8509 V8512 V8514 
+					 0.01  0.07  0.06  0.17  0.52  0.15 
+					[1] "3: "   "V8509" "V8512" "V8514"
+					[1] "population"
+
+					Call:
+					NULL
+
+					Deviance Residuals: 
+						Min       1Q   Median       3Q      Max  
+					-1.3735  -1.2133   0.9933   1.1420   1.3162  
+
+					Coefficients:
+								 Estimate Std. Error z value Pr(>|z|)    
+					(Intercept)  0.083950   0.005907  14.212  < 2e-16 ***
+					V8509       -0.404448   0.018460 -21.909  < 2e-16 ***
+					V8512        0.310113   0.018851  16.451  < 2e-16 ***
+					V8514        0.055853   0.018207   3.068  0.00216 ** 
+					---
+					Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+					(Dispersion parameter for binomial family taken to be 1)
+
+						Null deviance: 251507  on 182337  degrees of freedom
+					Residual deviance: 249891  on 182334  degrees of freedom
+					AIC: 249899
+
+					Number of Fisher Scoring iterations: 4
+					
+				V7118
+					V7501 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
+					 0.24  0.12  0.04  0.16  0.04  0.08  0.08  0.20 
+					[1] "3: "   "V7501"
+					[1] "population"
+
+					Call:
+					NULL
+
+					Deviance Residuals: 
+					   Min      1Q  Median      3Q     Max  
+					-1.467  -1.079  -1.079   1.279   1.279  
+
+					Coefficients:
+								Estimate Std. Error z value Pr(>|z|)    
+					(Intercept) -0.23499    0.01959  -12.00   <2e-16 ***
+					V7501        0.89338    0.09905    9.02   <2e-16 ***
+					---
+					Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+					(Dispersion parameter for binomial family taken to be 1)
+
+						Null deviance: 15198  on 11039  degrees of freedom
+					Residual deviance: 15111  on 11038  degrees of freedom
+					AIC: 15115
+
+					Number of Fisher Scoring iterations: 4
+					
+			3 (9 loops)
+				V7221
+						V8509     V8512 
+					0.3333333 0.5555556 
+					[1] "3: "   "V8512"
+					[1] "population"
+
+					Call:
+					NULL
+
+					Deviance Residuals: 
+					   Min      1Q  Median      3Q     Max  
+					-1.356  -1.204   1.009   1.151   1.151  
+
+					Coefficients:
+								Estimate Std. Error z value Pr(>|z|)    
+					(Intercept) 0.063335   0.005614   11.28   <2e-16 ***
+					V8512       0.346367   0.010341   33.49   <2e-16 ***
+					---
+					Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+					(Dispersion parameter for binomial family taken to be 1)
+
+						Null deviance: 251507  on 182337  degrees of freedom
+					Residual deviance: 250374  on 182336  degrees of freedom
+					AIC: 250378
+
+					Number of Fisher Scoring iterations: 4
+					
+				V8517
+				
+						V8509     V8512 
+					0.3333333 0.5555556 
+					[1] "3: "   "V8512"
+					[1] "population"
+
+					Call:
+					NULL
+
+					Deviance Residuals: 
+					   Min      1Q  Median      3Q     Max  
+					-1.356  -1.204   1.009   1.151   1.151  
+
+					Coefficients:
+								Estimate Std. Error z value Pr(>|z|)    
+					(Intercept) 0.063335   0.005614   11.28   <2e-16 ***
+					V8512       0.346367   0.010341   33.49   <2e-16 ***
+					---
+					Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+					(Dispersion parameter for binomial family taken to be 1)
+
+						Null deviance: 251507  on 182337  degrees of freedom
+					Residual deviance: 250374  on 182336  degrees of freedom
+					AIC: 250378
+
+					Number of Fisher Scoring iterations: 4	
+					
+				V7118
+				
+					V7501     V7507     V8502     V8512     V8536     V8565 
+				0.2222222 0.2222222 0.3333333 0.2222222 0.1111111 0.1111111 
+				[[1]]
+				[1] "3: "
 			
-			Deviance Residuals: 
-			   Min      1Q  Median      3Q     Max  
-			-1.582  -1.041  -1.041   1.320   1.320  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.32997    0.02072 -15.928  < 2e-16 ***
-			V8502        0.64238    0.07572   8.484  < 2e-16 ***
-			V8509        0.60099    0.08724   6.889 5.63e-12 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 15198  on 11039  degrees of freedom
-			Residual deviance: 14884  on 11037  degrees of freedom
-			AIC: 14890
-
-			Number of Fisher Scoring iterations: 4			
-			
-			didn't grab formula
-	
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER
