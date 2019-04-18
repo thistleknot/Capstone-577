@@ -330,11 +330,51 @@ Category Flags
 			Number of Fisher Scoring iterations: 4
 
 		V8517
-		
+			V8505 V8512 V8514 V8565 
+			 0.06  0.03  0.08  1.00 		
+			 
+			Deviance Residuals: 
+				Min       1Q   Median       3Q      Max  
+			-2.1882  -0.2539  -0.2539  -0.2539   2.6271  
+
+			Coefficients:
+						Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -3.41872    0.01561  -219.0   <2e-16 ***
+			V8565        5.71713    0.05576   102.5   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 61417  on 137832  degrees of freedom
+			Residual deviance: 40161  on 137831  degrees of freedom
+			AIC: 40165
+
+			Number of Fisher Scoring iterations: 6			 
 			 
 		V7118
 			V7501 V7507 V8502 V8505 V8509 V8512 V8514 V8536 V8565 
 			0.09  0.09  0.12  0.04  0.11  0.04  0.04  0.04  0.03
+			
+			Deviance Residuals: 
+			   Min      1Q  Median      3Q     Max  
+			-1.582  -1.041  -1.041   1.320   1.320  
+
+			Coefficients:
+						Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.32997    0.02072 -15.928  < 2e-16 ***
+			V8502        0.64238    0.07572   8.484  < 2e-16 ***
+			V8509        0.60099    0.08724   6.889 5.63e-12 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 15198  on 11039  degrees of freedom
+			Residual deviance: 14884  on 11037  degrees of freedom
+			AIC: 14890
+
+			Number of Fisher Scoring iterations: 4			
 			
 			didn't grab formula
 	
