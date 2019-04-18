@@ -25,6 +25,7 @@ library("R.utils")
 #this needs to be set in 4thpass as well
 widthDiviser = 2
 CVRuns_pct_threshold = .25
+#CVRuns_pct_threshold = 1/widthDiviser
 
 sub_returnCVNames <- function(data_sent){
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
