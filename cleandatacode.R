@@ -109,8 +109,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="/home/rstudio/577/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -139,8 +139,8 @@ data <- d_combined
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-
-for (medianDirection in c("greaterEqual","greater"))
+#for (medianDirection in c("greaterEqual","greater"))
+for (medianDirection in c("greaterEqual"))
 {
   
   #will error on 3 for V7118
@@ -150,7 +150,7 @@ for (medianDirection in c("greaterEqual","greater"))
     
     #so if 3, has to exist in > 1.5 subsamples
     
-    CVRuns_pct_threshold = 1/widthDiviser/2
+    CVRuns_pct_threshold = 1/widthDiviser
     #this needs to be set in 4thpass as well
     
     #CVRuns_pct_threshold = .25
@@ -761,19 +761,19 @@ for (medianDirection in c("greaterEqual","greater"))
       
       if(!length(tabled)==1) 
       {
-        if(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0)      
+        if(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0)      
         {
           finalListReduced <- c
         }
-        if(!(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0))
+        if(!(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0))
         {
-          if(!length(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])==1)
+          if(!length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
           {
-            finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])))
+            finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
           }
-          if(length(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])==1)
+          if(length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
           {
-            finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold]))))
+            finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold]))))
           }
         }
       }
@@ -801,7 +801,7 @@ for (medianDirection in c("greaterEqual","greater"))
       #end of lister
     }
     #end width
-    readline(prompt="Press [enter] to continue")
+    #readline(prompt="Press [enter] to continue")
   }
   
   #end medianDirection  
