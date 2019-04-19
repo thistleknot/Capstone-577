@@ -109,8 +109,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -144,9 +144,10 @@ for (medianDirection in c("greaterEqual"))
 {
   
   #will error on 3 for V7118
-  for(width in c(10,7,5,3))
+  for(widthLoop in c(10,7,5,3))
   {
-    widthDiviser = width
+    widthDiviser = widthLoop
+    print(paste0("widthLoopSize: ",widthLoop))
     
     #so if 3, has to exist in > 1.5 subsamples
     
@@ -436,6 +437,7 @@ for (medianDirection in c("greaterEqual"))
         #holdoutReset=2   
         for (holdoutReset in 1:holdoutResetEnd)
         {
+          print(paste0("holdoutReset: ",holdoutReset))
           #setup holdout
           
           #static holdout
@@ -806,5 +808,3 @@ for (medianDirection in c("greaterEqual"))
   
   #end medianDirection  
 }
-
-source(paste0(sourceDir,"4thpass.R"))
