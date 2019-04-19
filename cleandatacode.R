@@ -604,7 +604,7 @@ for (medianDirection in c("greaterEqual","greater"))
                 
                 #subcategory specific
                 #just point to resample script and use data.train
-                source(paste0(sourceDir,"resampleMC.R"))
+                source(paste0(sourceDir,"resampleMCdatatrain.R"))
                 
                 tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                     error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
@@ -678,7 +678,7 @@ for (medianDirection in c("greaterEqual","greater"))
               #just point to resample script and use data.train, isn't technically resampled except when
               #I don't need to resample here because I'm using holdout... data.test
               #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
-              source(paste0(sourceDir,"resampleMC.R"))
+              source(paste0(sourceDir,"resampleMCdatatest.R"))
               
               holderOfData <- c()
               
