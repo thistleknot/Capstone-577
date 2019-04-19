@@ -19,9 +19,6 @@ library(dplyr)
 library("R.utils")
 
 
-medianDirection = "greaterEqual"
-#medianDirection = "greater"
-
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
@@ -112,8 +109,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -142,660 +139,672 @@ data <- d_combined
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-#will error on 3 for V7118
-for(width in c(10,7,5,3))
+
+for (medianDirection in c("greaterEqual","greater"))
 {
-  widthDiviser = width
-  CVRuns_pct_threshold = 1/widthDiviser
-  #this needs to be set in 4thpass as well
   
-  #CVRuns_pct_threshold = .25
-  #has to appear in half the samples of 1 width?
-  #dangerously overfits
-  #should be more than 1/widthDviser
-  #CVRuns_pct_threshold = (1/widthDiviser)2
-  
-  #lister=1
-  for(lister in 1:3)
+  #will error on 3 for V7118
+  for(width in c(10,7,5,3))
   {
-    numRuns = 1
-    #7221 gpa
-    if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+    widthDiviser = width
     
-    #8517 gang
-    if (lister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+    #so if 3, has to exist in > 1.5 subsamples
     
-    #7118 (psychadelics)
-    if (lister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
+    CVRuns_pct_threshold = 1/widthDiviser/2
+    #this needs to be set in 4thpass as well
     
-    # dim(data)
-    # check missing with for loop
-    # The below code gives the number of missing values for each variables
+    #CVRuns_pct_threshold = .25
+    #has to appear in half the samples of 1 width?
+    #dangerously overfits
+    #should be more than 1/widthDviser
+    #CVRuns_pct_threshold = (1/widthDiviser)2
     
-    #expensive, descriptive only
-    #for (ii in 1:ncol(data)) {
-    #  print( colnames(data)[ii] )
-    #  print( table(is.na(data[,ii])) )
-    #}
-    ## select the columns with no 
-    
-    #drops columns with na values
-    cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
-    # if A or B is not specified, all rows or columns will be retained
-    
-    #expensive, descriptive function only
-    #table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
-    #Since there are no missing values we export the data
-    #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
-    
-    colnames(data)
-    
-    #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
-    
-    #load from filterlist.txt
-    col.num <- which(colnames(data) %in% as.character(list[,1]))
-    #col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
-    
-    # loads the PostgreSQL driver
-    #pg <- dbDriver("PostgreSQL")
-    # creates a connection to the postgres database
-    # note that "con" will be used later in each connection to the database
-    #conn = dbConnect(drv=pg
-    #             ,user="postgres"
-    #              ,password="Read1234"
-    #               ,host="localhost"
-    #                ,port=5432
-    #                 ,dbname="analyticplatform"
-    #)
-    
-    #dbExistsTable(conn, "temp_table_data")
-    
-    NewDF <- data[,(c(col.num))]
-    
-    #V7589 empty
-    
-    #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
-    #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
-    #shell.exec("\\\\network\\path\\file.bat")
-    #db_drop_table(conn, "temp_table_data", force = TRUE)
-    
-    #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
-    #dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
-    
-    #https://www.r-bloggers.com/getting-started-with-postgresql-in-r/
-    #df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
-    
-    #identical(NewDF, df_postgres)
-    
-    #v508 was dropped or v8528
-    
-    #boxplot(NewDF)
-    #summary(NewDF)
-    #View(na_count(NewDF))
-    
-    #table(is.na(NewDF))
-    #write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
-    
-    #colnames(NewDF)
-    
-    summary(NewDF)
-    nrow(NewDF)
-    
-    #list[,2]
-    
-    NewDF <- data[,(c(col.num))]
-    
-    length(colnames(NewDF))
-    
-    #transformations
-    #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
-    #index <- df$b == 0
-    #df$est[index] <- (df$a[index] - 5)/2.533 
-    convert1Index <- list[,2] == 1
-    convert2Index <- list[,2] == 2
-    convert3Index <- list[,2] == 3
-    #list[,1][convert1Index]
-    
-    #male to female
-    
-    NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
-    
-    #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
-    #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
-    
-    NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
-    
-    #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
-    #95% confidence
-    #7: B+
-    #95% conf confirmed
-    if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
-    if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
-    centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
-    lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
-    upper = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 + width
-    sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
-    sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
-    
-    NewDF[V7221_Index,"V7221"] <- 1
-    V7221_Index <- NewDF[,"V7221"] > 1
-    NewDF[V7221_Index,"V7221"] <- 0
-    
-    #College graduate
-    #5: for college grad father, 95% conf confirmed
-    if (medianDirection=="greaterEqual") V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
-    if (medianDirection=="greater") V7215_Index <- NewDF[,"V7215"] > median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
-    centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7215"][NewDF[,"V7215"]>0])))/2)
-    lower = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 - width
-    upper = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 + width
-    sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[lower]
-    sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[upper]
-    
-    NewDF[V7215_Index,"V7215"] <- 1
-    V7215_Index <- NewDF[,"V7215"] > 1
-    NewDF[V7215_Index,"V7215"] <- 0
-    
-    #4: 3-5 Hours Internet #95% conf confirmed
-    #4 #hours for computer use for internet leisure 
-    
-    if (medianDirection=="greaterEqual") V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
-    if (medianDirection=="greater") V7551_Index <- NewDF[,"V7551"] > median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
-    centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7551"][NewDF[,"V7551"]>0])))/2)
-    lower = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 - width
-    upper = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 + width
-    sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[lower]
-    sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[upper]
-    
-    unique(NewDF[,"V7551"])
-    NewDF[V7551_Index,"V7551"] <- 1
-    V7551_Index <- NewDF[,"V7551"] > 1
-    NewDF[V7551_Index,"V7551"] <- 0
-    
-    #5: 6-9 Hours Facebook # 95% conf confirmed
-    if (medianDirection=="greaterEqual") V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
-    if (medianDirection=="greater") V7552_Index <- NewDF[,"V7552"] > median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
-    centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
-    lower = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 - width
-    upper = (length(NewDF[,"V7551"][NewDF[,"V7552"]>0]))/2 + width
-    sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[lower]
-    sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[upper]
-    
-    NewDF[V7552_Index,"V7552"] <- 1
-    V7552_Index <- NewDF[,"V7552"] > 1
-    NewDF[V7552_Index,"V7552"] <- 0
-    
-    #4 3-5 Hours Gaming # 95% conf confirmed
-    if (medianDirection=="greaterEqual") V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
-    if (medianDirection=="greater") V7553_Index <- NewDF[,"V7553"] > median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
-    centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7553"][NewDF[,"V7553"]>0])))/2)
-    lower = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 - width
-    upper = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 + width
-    sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[lower]
-    sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[upper]
-    
-    NewDF[V7553_Index,"V7553"] <- 1
-    V7553_Index <- NewDF[,"V7553"] > 1
-    NewDF[V7553_Index,"V7553"] <- 0
-    
-    #4 3-5 Hours Texting # 95% conf confirmed
-    if (medianDirection=="greaterEqual") V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
-    if (medianDirection=="greater") V7562_Index <- NewDF[,"V7562"] > median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
-    centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7562"][NewDF[,"V7562"]>0])))/2)
-    lower = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 - width
-    upper = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 + width
-    sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[lower]
-    sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[upper]
-    
-    NewDF[V7562_Index,"V7562"] <- 1
-    V7562_Index <- NewDF[,"V7562"] > 1
-    NewDF[V7562_Index,"V7562"] <- 0
-    
-    #2: <1 Hour talking on cell phone # 95% conf confirmed
-    if (medianDirection=="greaterEqual") V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
-    if (medianDirection=="greater") V7563_Index <- NewDF[,"V7563"] > median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
-    centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
-    width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
-    lower = (length(NewDF[,"V7562"][NewDF[,"V7563"]>0]))/2 - width
-    upper = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 + width
-    sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[lower]
-    sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[upper]
-    
-    NewDF[V7563_Index,"V7563"] <- 1
-    V7563_Index <- NewDF[,"V7563"] > 1
-    NewDF[V7563_Index,"V7563"] <- 0
-    
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(0), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
-    NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
-    
-    #https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
-    #kills the analysis
-    NewDF[NewDF == -1] <- -2
-    NewDF[NewDF == 0] <- -1
-    NewDF[NewDF == -2] <- 0
-    
-    #0 = na
-    #-1 = negative
-    #1 = positve
-    
-    start=5
-    
-    #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
-    
-    #resets each new file
-    finalList <- c()
-    
-    #after lister, before holdoutReset
-    
-    # oddly this matches the % of a 2% run 
-    # this ensures 1=4 runs
-    # 2=8
-    # 3=9
-    # 4=16 
-    # 5=25
-    # 10=100
-    
-    if (widthDiviser == 1) end = (start+1)
-    if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
-    if ( (widthDiviser > 2) ) end = start
-    #seeder=start
-    for (seeder in start:end)
+    #lister=1
+    for(lister in 1:3)
     {
+      numRuns = 1
+      #7221 gpa
+      if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
       
-      set.seed(seeder)
-      #seedbase=seeder
-      print(paste("seed: ",seeder))
+      #8517 gang
+      if (lister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
       
-      holdoutResetEnd  <- c()
+      #7118 (psychadelics)
+      if (lister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
       
-      if (widthDiviser == 1) holdoutResetEnd = 2
-      if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
+      # dim(data)
+      # check missing with for loop
+      # The below code gives the number of missing values for each variables
       
-      #holdoutReset=2   
-      for (holdoutReset in 1:holdoutResetEnd)
+      #expensive, descriptive only
+      #for (ii in 1:ncol(data)) {
+      #  print( colnames(data)[ii] )
+      #  print( table(is.na(data[,ii])) )
+      #}
+      ## select the columns with no 
+      
+      #drops columns with na values
+      cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
+      # if A or B is not specified, all rows or columns will be retained
+      
+      #expensive, descriptive function only
+      #table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
+      #Since there are no missing values we export the data
+      #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
+      
+      colnames(data)
+      
+      #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
+      
+      #load from filterlist.txt
+      col.num <- which(colnames(data) %in% as.character(list[,1]))
+      #col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
+      
+      # loads the PostgreSQL driver
+      #pg <- dbDriver("PostgreSQL")
+      # creates a connection to the postgres database
+      # note that "con" will be used later in each connection to the database
+      #conn = dbConnect(drv=pg
+      #             ,user="postgres"
+      #              ,password="Read1234"
+      #               ,host="localhost"
+      #                ,port=5432
+      #                 ,dbname="analyticplatform"
+      #)
+      
+      #dbExistsTable(conn, "temp_table_data")
+      
+      NewDF <- data[,(c(col.num))]
+      
+      #V7589 empty
+      
+      #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
+      #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
+      #shell.exec("\\\\network\\path\\file.bat")
+      #db_drop_table(conn, "temp_table_data", force = TRUE)
+      
+      #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
+      #dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
+      
+      #https://www.r-bloggers.com/getting-started-with-postgresql-in-r/
+      #df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
+      
+      #identical(NewDF, df_postgres)
+      
+      #v508 was dropped or v8528
+      
+      #boxplot(NewDF)
+      #summary(NewDF)
+      #View(na_count(NewDF))
+      
+      #table(is.na(NewDF))
+      #write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
+      
+      #colnames(NewDF)
+      
+      summary(NewDF)
+      nrow(NewDF)
+      
+      #list[,2]
+      
+      NewDF <- data[,(c(col.num))]
+      
+      length(colnames(NewDF))
+      
+      #transformations
+      #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
+      #index <- df$b == 0
+      #df$est[index] <- (df$a[index] - 5)/2.533 
+      convert1Index <- list[,2] == 1
+      convert2Index <- list[,2] == 2
+      convert3Index <- list[,2] == 3
+      #list[,1][convert1Index]
+      
+      #male to female
+      
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
+      
+      #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
+      #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
+      
+      NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
+      
+      #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
+      #95% confidence
+      #7: B+
+      #95% conf confirmed
+      if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+      if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+      centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
+      lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
+      upper = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 + width
+      sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
+      sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
+      
+      NewDF[V7221_Index,"V7221"] <- 1
+      V7221_Index <- NewDF[,"V7221"] > 1
+      NewDF[V7221_Index,"V7221"] <- 0
+      
+      #College graduate
+      #5: for college grad father, 95% conf confirmed
+      if (medianDirection=="greaterEqual") V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
+      if (medianDirection=="greater") V7215_Index <- NewDF[,"V7215"] > median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
+      centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7215"][NewDF[,"V7215"]>0])))/2)
+      lower = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 - width
+      upper = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2 + width
+      sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[lower]
+      sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[upper]
+      
+      NewDF[V7215_Index,"V7215"] <- 1
+      V7215_Index <- NewDF[,"V7215"] > 1
+      NewDF[V7215_Index,"V7215"] <- 0
+      
+      #4: 3-5 Hours Internet #95% conf confirmed
+      #4 #hours for computer use for internet leisure 
+      
+      if (medianDirection=="greaterEqual") V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
+      if (medianDirection=="greater") V7551_Index <- NewDF[,"V7551"] > median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
+      centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7551"][NewDF[,"V7551"]>0])))/2)
+      lower = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 - width
+      upper = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2 + width
+      sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[lower]
+      sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[upper]
+      
+      unique(NewDF[,"V7551"])
+      NewDF[V7551_Index,"V7551"] <- 1
+      V7551_Index <- NewDF[,"V7551"] > 1
+      NewDF[V7551_Index,"V7551"] <- 0
+      
+      #5: 6-9 Hours Facebook # 95% conf confirmed
+      if (medianDirection=="greaterEqual") V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
+      if (medianDirection=="greater") V7552_Index <- NewDF[,"V7552"] > median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
+      centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
+      lower = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 - width
+      upper = (length(NewDF[,"V7551"][NewDF[,"V7552"]>0]))/2 + width
+      sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[lower]
+      sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[upper]
+      
+      NewDF[V7552_Index,"V7552"] <- 1
+      V7552_Index <- NewDF[,"V7552"] > 1
+      NewDF[V7552_Index,"V7552"] <- 0
+      
+      #4 3-5 Hours Gaming # 95% conf confirmed
+      if (medianDirection=="greaterEqual") V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
+      if (medianDirection=="greater") V7553_Index <- NewDF[,"V7553"] > median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
+      centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7553"][NewDF[,"V7553"]>0])))/2)
+      lower = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 - width
+      upper = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2 + width
+      sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[lower]
+      sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[upper]
+      
+      NewDF[V7553_Index,"V7553"] <- 1
+      V7553_Index <- NewDF[,"V7553"] > 1
+      NewDF[V7553_Index,"V7553"] <- 0
+      
+      #4 3-5 Hours Texting # 95% conf confirmed
+      if (medianDirection=="greaterEqual") V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
+      if (medianDirection=="greater") V7562_Index <- NewDF[,"V7562"] > median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
+      centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7562"][NewDF[,"V7562"]>0])))/2)
+      lower = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 - width
+      upper = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2 + width
+      sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[lower]
+      sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[upper]
+      
+      NewDF[V7562_Index,"V7562"] <- 1
+      V7562_Index <- NewDF[,"V7562"] > 1
+      NewDF[V7562_Index,"V7562"] <- 0
+      
+      #2: <1 Hour talking on cell phone # 95% conf confirmed
+      if (medianDirection=="greaterEqual") V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+      if (medianDirection=="greater") V7563_Index <- NewDF[,"V7563"] > median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+      centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
+      width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
+      lower = (length(NewDF[,"V7562"][NewDF[,"V7563"]>0]))/2 - width
+      upper = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 + width
+      sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[lower]
+      sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[upper]
+      
+      NewDF[V7563_Index,"V7563"] <- 1
+      V7563_Index <- NewDF[,"V7563"] > 1
+      NewDF[V7563_Index,"V7563"] <- 0
+      
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
+      
+      #https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
+      #kills the analysis
+      NewDF[NewDF == -1] <- -2
+      NewDF[NewDF == 0] <- -1
+      NewDF[NewDF == -2] <- 0
+      
+      #0 = na
+      #-1 = negative
+      #1 = positve
+      
+      start=5
+      
+      #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
+      
+      #resets each new file
+      finalList <- c()
+      
+      #after lister, before holdoutReset
+      
+      # oddly this matches the % of a 2% run 
+      # this ensures 1=4 runs
+      # 2=8
+      # 3=9
+      # 4=16 
+      # 5=25
+      # 10=100
+      
+      if (widthDiviser == 1) end = (start+1)
+      if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
+      if ( (widthDiviser > 2) ) end = start
+      #seeder=start
+      for (seeder in start:end)
       {
-        #setup holdout
         
-        #static holdout
-        holdoutSetSize = widthDiviser/100
-        #holdoutSetSize = 1.25/100
+        set.seed(seeder)
+        #seedbase=seeder
+        print(paste("seed: ",seeder))
         
-        underOverSampleFactor=1
+        holdoutResetEnd  <- c()
         
-        #% to resample from resampled static hold out set
-        holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
+        if (widthDiviser == 1) holdoutResetEnd = 2
+        if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
-        #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
-        #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-        preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-        
-        #% of training resamples from static nonholdout
-        preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
-        
-        #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
-        holdoutSet <- c()
-        holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-        
-        NewDF.holdoutSet <- c()
-        NewDF.holdoutSet <- NewDF[holdoutSet,]
-        
-        #static for monte carlo training 
-        preNonHoldoutSet <- c()
-        preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
-        
-        NewDF.preNonHoldoutSet <- c()
-        NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
-        
-        #monte carlo resample from static sets
-        #if widthDiviser = 1, keep as 1
-        #resample=2      
-        for (resample in 1:widthDiviser)
+        #holdoutReset=2   
+        for (holdoutReset in 1:holdoutResetEnd)
         {
-          #base = resample
-          #print is inside inner loop
+          #setup holdout
           
-          ##before reseed
-          #https://adv-r.hadley.nz/subsetting.html
+          #static holdout
+          holdoutSetSize = widthDiviser/100
+          #holdoutSetSize = 1.25/100
           
-          #monte carlo resample from pre separated holdout (this means new holdout each subsample)
-          holdout <- c()
-          holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+          underOverSampleFactor=1
           
-          NewDF.holdout <- c()
-          NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+          #% to resample from resampled static hold out set
+          holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
           
-          #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
-          #monte carlo resamples from a static holdout
-          #used for resampling monte carlo training set from non holdout partitions!
-          preTrain <- c()
-          preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+          #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
+          #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
-          NewDF.preTrain <- c()
-          NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+          #% of training resamples from static nonholdout
+          preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
           
-          yIndex <- list[,4] == 0
-          lGeographyIndex <- list[,4] == 1
+          #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
+          holdoutSet <- c()
+          holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
           
-          lGenderGPAViolenceFatherIndex <- list[,4] == 2
-          #lGenderIndex <- list[,4] == 2
-          #lGPAIndex <- list[,4] == 3
-          #lViolenceIndex <- list[,4] == 4
-          #lFather1Index <- list[,4] == 5
-          #lFather2Index <- list[,4] == 6
+          NewDF.holdoutSet <- c()
+          NewDF.holdoutSet <- NewDF[holdoutSet,]
           
-          lHabitsIndex <- list[,4] == 3
-          lHealthIndex <- list[,4] == 4
-          lPsycheIndex <- list[,4] == 5
+          #static for monte carlo training 
+          preNonHoldoutSet <- c()
+          preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
           
-          if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-          if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
+          NewDF.preNonHoldoutSet <- c()
+          NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
           
-          y <- c()
-          yname <- c()
-          #y iterator's
-          #iterator=1
-          
-          for (iterator in 1:sum(yIndex))
+          #monte carlo resample from static sets
+          #if widthDiviser = 1, keep as 1
+          #resample=2      
+          for (resample in 1:widthDiviser)
           {
+            #base = resample
+            #print is inside inner loop
             
-            #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
-            yname <- c()
-            yname <- as.character(list[yIndex,][iterator,][,1])
+            ##before reseed
+            #https://adv-r.hadley.nz/subsetting.html
+            
+            #monte carlo resample from pre separated holdout (this means new holdout each subsample)
+            holdout <- c()
+            holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
+            
+            NewDF.holdout <- c()
+            NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+            
+            #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
+            #monte carlo resamples from a static holdout
+            #used for resampling monte carlo training set from non holdout partitions!
+            preTrain <- c()
+            preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
+            
+            NewDF.preTrain <- c()
+            NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+            
+            yIndex <- list[,4] == 0
+            lGeographyIndex <- list[,4] == 1
+            
+            lGenderGPAViolenceFatherIndex <- list[,4] == 2
+            #lGenderIndex <- list[,4] == 2
+            #lGPAIndex <- list[,4] == 3
+            #lViolenceIndex <- list[,4] == 4
+            #lFather1Index <- list[,4] == 5
+            #lFather2Index <- list[,4] == 6
+            
+            lHabitsIndex <- list[,4] == 3
+            lHealthIndex <- list[,4] == 4
+            lPsycheIndex <- list[,4] == 5
+            
+            if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+            if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
             
             y <- c()
-            y <- list[yIndex,][iterator,]
+            yname <- c()
+            #y iterator's
+            #iterator=1
             
-            alty <- c()
-            alty <- list[yIndex,][-iterator,]
-            #y
-            #yname <- as.character(list[yIndex,][iterator,][,1])
-            #rather than move to end of file
-            if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
+            for (iterator in 1:sum(yIndex))
             {
-              print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
               
-            }
-            
-            if(resample==1 && holdoutReset==1 && seeder==start)
-            {
-              numRuns = 1
-            }
-            
-            if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
-            {
-              numRunsold <- c()
-              numRunsold = numRuns
-              numRuns <- c()
-              numRuns = numRunsold + 1
-            }
-            
-            #aggregated after categories loop
-            namesTV <- c()
-            namesH <- c()
-            
-            print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
-            
-            #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
-            #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
-            
-            #categories 
-            #val=3
-            for (val in 2:5)
-            {
-              #used in category, rolled into names
-              datalist1 <- c()
-              datalist2 <- c()
+              #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
+              yname <- c()
+              yname <- as.character(list[yIndex,][iterator,][,1])
               
-              #end up with no records due to na's, and so any variables.  Inverse relationship.
-              colList <- c()
-              if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
-              #if (val == 3) colList <- list[lGPAIndex,]
-              #if (val == 4) colList <- list[lViolenceIndex,]
-              #if (val == 5) colList <- list[lFather1Index,]
-              #if (val == 6) colList <- list[lFather2Index,]
-              if (val == 3) colList <- list[lHabitsIndex,]
-              if (val == 4) colList <- list[lHealthIndex,]
-              if (val == 5) colList <- list[lPsycheIndex,]
+              y <- c()
+              y <- list[yIndex,][iterator,]
               
-              if (is.null(nrow(data.frame(alty)))) break
+              alty <- c()
+              alty <- list[yIndex,][-iterator,]
+              #y
+              #yname <- as.character(list[yIndex,][iterator,][,1])
+              #rather than move to end of file
+              if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
+              {
+                print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+                
+              }
               
-              #colList <- rbind(list[yIndex,],colList)
+              if(resample==1 && holdoutReset==1 && seeder==start)
+              {
+                numRuns = 1
+              }
               
-              colList <- rbind(y,colList)
+              if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
+              {
+                numRunsold <- c()
+                numRunsold = numRuns
+                numRuns <- c()
+                numRuns = numRunsold + 1
+              }
               
-              #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-              #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-              colListNames <- c()
-              colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+              #aggregated after categories loop
+              namesTV <- c()
+              namesH <- c()
               
-              newList <- c()        
-              newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+              #print(paste("loop: ", numRuns, "holdoutReset: ",holdoutReset,"resample: ",resample))
               
-              #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-              #droplevels(newList)
-              #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+              #doesn't resample unless I [re-]sample (function) an index... unsure if CV has an internal index.  I'm sure it is random each pass.
+              #My assumption is the first CV is always a specific seed.  My hope is to have different seeds.
               
-              #needs to be inside category when newList is generated
-              #don't re-use for csv's... csv's... are already cleaned
-              #repurpose instead
-              #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+              #categories 
+              #val=3
+              for (val in 2:5)
+              {
+                #used in category, rolled into names
+                datalist1 <- c()
+                datalist2 <- c()
+                
+                #end up with no records due to na's, and so any variables.  Inverse relationship.
+                colList <- c()
+                if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
+                #if (val == 3) colList <- list[lGPAIndex,]
+                #if (val == 4) colList <- list[lViolenceIndex,]
+                #if (val == 5) colList <- list[lFather1Index,]
+                #if (val == 6) colList <- list[lFather2Index,]
+                if (val == 3) colList <- list[lHabitsIndex,]
+                if (val == 4) colList <- list[lHealthIndex,]
+                if (val == 5) colList <- list[lPsycheIndex,]
+                
+                if (is.null(nrow(data.frame(alty)))) break
+                
+                #colList <- rbind(list[yIndex,],colList)
+                
+                colList <- rbind(y,colList)
+                
+                #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+                #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
+                colListNames <- c()
+                colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
+                
+                newList <- c()        
+                newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+                
+                #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+                #droplevels(newList)
+                #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+                
+                #needs to be inside category when newList is generated
+                #don't re-use for csv's... csv's... are already cleaned
+                #repurpose instead
+                #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+                
+                #subcategory specific
+                #just point to resample script and use data.train
+                source(paste0(sourceDir,"resampleMC.R"))
+                
+                tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                                    error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+                
+                #https://www.r-bloggers.com/careful-with-trycatch/
+                
+                #print(table(is.na(data.test)))
+                #datalist2 <- sub_returnCVNames(data.test)
+                
+                #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
+                #print(c(datalist1))
+                #print(length(datalist1))
+                if(length(datalist1)>1)
+                  for (i in 1:length(datalist1))
+                  {
+                    namesTV <- rbind(namesTV,datalist1[i])
+                  }
+                if(length(datalist1)==1)
+                {
+                  namesTV <- rbind(namesTV,datalist1)
+                }
+                
+                #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
+                #https://rdrr.io/cran/bestglm/man/bestglm.html
+                #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
+                #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
+                #https://rdrr.io/cran/bestglm/man/bestglm-package.html
+                
+                #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
+                
+                #summary(step.model.test) 
+                
+                #Calculating MSE for training data
+                #mse.train<- mean(residuals(step.model.train)^2)
+                #mse.train
+                
+                #Calculating RMSE for training data
+                #rmse.train <- sqrt(mse.train)
+                #rmse.train
+                
+                #Calculating MSE for testing data
+                #mse.test <- mean(residuals(step.model.test)^2)
+                #mse.test
+                
+                #Calculating RMSE for testing data
+                #rmse.test <- sqrt(mse.test)
+                #rmse.test
+                
+                #end of category iterator
+              }
+              #print("category pass")  
+              #Taggregated <- c()
+              Hfiltered <- c()
+              extract <- c()
               
-              #subcategory specific
-              #just point to resample script and use data.train
+              #data.trainAggregate <- c()
+              #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+              #data.trainAggregate[data.trainAggregate == 0] <- NA
+              #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
+              #data.trainAggregate[data.trainAggregate == -1] <- 0
+              #print(table(is.na(data.trainAggregate)))
+              
+              #pass to test/holdout partition to filter and refine on another pass
+              #Taggregated <- sub_returnCVNames(data.trainAggregate)
+              #print(c("1: ", namesTV))
+              
+              newList <- c()
+              newList <- c(yname,namesTV)
+              #resample before drawing from data.test
+              
+              #just point to resample script and use data.train, isn't technically resampled except when
+              #I don't need to resample here because I'm using holdout... data.test
+              #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
               source(paste0(sourceDir,"resampleMC.R"))
               
-              tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                                  error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+              holderOfData <- c()
               
-              #https://www.r-bloggers.com/careful-with-trycatch/
+              holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
               
-              #print(table(is.na(data.test)))
-              #datalist2 <- sub_returnCVNames(data.test)
+              Hfiltered <- c() 
               
-              #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
-              #print(c(datalist1))
-              #print(length(datalist1))
-              if(length(datalist1)>1)
-                for (i in 1:length(datalist1))
+              Hfiltered <- c() 
+              
+              if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+              if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+              
+              extract <- c()
+              extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+              
+              #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
+              if (length(extract)==0) extract <- c()
+              
+              #print(c("2: ", extract))
+              
+              #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+              
+              # #3 finalList
+              #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
+              
+              #going to use table to tabulate final results
+              
+              #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
+              #p5[p5$id %in% current, ]
+              
+              #end of yPass 
+              
+              if(length(extract)>1)
+                for (i in 1:length(extract))
                 {
-                  namesTV <- rbind(namesTV,datalist1[i])
+                  finalList <- rbind(finalList,extract[i])
                 }
-              if(length(datalist1)==1)
+              if(length(extract)==1)
               {
-                namesTV <- rbind(namesTV,datalist1)
-              }
+                finalList <- rbind(finalList,extract)
+              }          
               
-              #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-              #https://rdrr.io/cran/bestglm/man/bestglm.html
-              #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
-              #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
-              #https://rdrr.io/cran/bestglm/man/bestglm-package.html
+              #print(c("2a: ", table(finalList)/numRuns))
               
-              #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
+              #end of holdout analysis
               
-              #summary(step.model.test) 
               
-              #Calculating MSE for training data
-              #mse.train<- mean(residuals(step.model.train)^2)
-              #mse.train
-              
-              #Calculating RMSE for training data
-              #rmse.train <- sqrt(mse.train)
-              #rmse.train
-              
-              #Calculating MSE for testing data
-              #mse.test <- mean(residuals(step.model.test)^2)
-              #mse.test
-              
-              #Calculating RMSE for testing data
-              #rmse.test <- sqrt(mse.test)
-              #rmse.test
-              
-              #end of category iterator
+              #end of resample MC pass 
             }
-            #print("category pass")  
-            #Taggregated <- c()
-            Hfiltered <- c()
-            extract <- c()
+            #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
+            #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
+            #end outermost loop
             
-            #data.trainAggregate <- c()
-            #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-            #data.trainAggregate[data.trainAggregate == 0] <- NA
-            #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
-            #data.trainAggregate[data.trainAggregate == -1] <- 0
-            #print(table(is.na(data.trainAggregate)))
-            
-            #pass to test/holdout partition to filter and refine on another pass
-            #Taggregated <- sub_returnCVNames(data.trainAggregate)
-            #print(c("1: ", namesTV))
-            
-            newList <- c()
-            newList <- c(yname,namesTV)
-            #resample before drawing from data.test
-            
-            #just point to resample script and use data.train, isn't technically resampled except when
-            #I don't need to resample here because I'm using holdout... data.test
-            #source(paste0(sourceDir,"resampleMC.R"))
-            
-            holderOfData <- c()
-            
-            holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
-            
-            Hfiltered <- c() 
-            
-            Hfiltered <- c() 
-            
-            if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-            if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-            
-            extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
-            
-            #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
-            if (length(extract)==0) extract <- c()
-            
-            #print(c("2: ", extract))
-            
-            #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
-            
-            # #3 finalList
-            #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
-            
-            #going to use table to tabulate final results
-            
-            #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
-            #p5[p5$id %in% current, ]
-            
-            #end of yPass 
-            
-            if(length(extract)>1)
-              for (i in 1:length(extract))
-              {
-                finalList <- rbind(finalList,extract[i])
-              }
-            if(length(extract)==1)
-            {
-              finalList <- rbind(finalList,extract)
-            }          
-            
-            print(c("2a: ", table(finalList)/numRuns))
-            
-            #end of holdout analysis
-            
-            
-            #end of resample MC pass 
+            #end of holdoutReset 
           }
-          #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
-          #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
-          #end outermost loop
           
-          #end of holdoutReset 
+          #end holdoutReset
         }
         
-        #end holdoutReset
+        
+        #end of seeder
       }
       
+      #spacer
+      finalListReduced <- c()
+      tabled <- table(finalList[,,drop=FALSE])/numRuns
+      print(tabled)
+      table(finalList)
+      #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
+      #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
       
-      #end of seeder
-    }
-    
-    #spacer
-    finalListReduced <- c()
-    tabled <- table(finalList[,,drop=FALSE])/numRuns
-    print(tabled)
-    table(finalList)
-    #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
-    #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
-    
-    #if (widthDiviser==1)
-    {
-      #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= 1/numRuns]))
-      #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= 1/numRuns])[,1]))
-    }
-    #if (!widthDiviser==1)
-    if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
-    #this is not tabled, which is based on table(finalList), hence I do the /numRuns, as tabled already has that done.
-    
-    if(!length(tabled)==1) 
-    {
-      if(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0)      
+      #if (widthDiviser==1)
       {
-        finalListReduced <- c
+        #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= 1/numRuns]))
+        #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= 1/numRuns])[,1]))
       }
-      if(!(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0))
+      #if (!widthDiviser==1)
+      if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
+      #this is not tabled, which is based on table(finalList), hence I do the /numRuns, as tabled already has that done.
+      
+      if(!length(tabled)==1) 
       {
-        if(!length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
+        if(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0)      
         {
-          finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
+          finalListReduced <- c
         }
-        if(length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
+        if(!(sum(table(finalList)/numRuns >= CVRuns_pct_threshold)==0))
         {
-          finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold]))))
+          if(!length(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])==1)
+          {
+            finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])))
+          }
+          if(length(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold])==1)
+          {
+            finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns >= CVRuns_pct_threshold]))))
+          }
         }
       }
+      
+      print(c("3: ", finalListReduced))
+      hist((data.frame(table(finalList)))[,2])
+      
+      #validate against population    
+      #population
+      
+      filtered <- c()
+      filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+      filtered[filtered == 0] <- NA
+      temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+      filtered <- temp
+      filtered[filtered == -1] <- 0    
+      trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+      testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+      
+      print("population")
+      print(summary(trainModel$finalModel))
+      
+      write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))  
+      
+      #end of lister
     }
-    
-    print(c("3: ", finalListReduced))
-    hist((data.frame(table(finalList)))[,2])
-    
-    #validate against population    
-    #population
-    
-    filtered <- c()
-    filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-    filtered[filtered == 0] <- NA
-    temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-    filtered <- temp
-    filtered[filtered == -1] <- 0    
-    trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-    testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
-    
-    print("population")
-    print(summary(trainModel$finalModel))
-    
-    write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",widthDiviser,"-","filtered.csv")))  
-    
-    
-    #end of lister
+    #end width
+    readline(prompt="Press [enter] to continue")
   }
-  #end width
-  readline(prompt="Press [enter] to continue")
+  
+  #end medianDirection  
 }
+
 source(paste0(sourceDir,"4thpass.R"))
