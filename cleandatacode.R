@@ -109,8 +109,8 @@ sub_returnCVNamesExclMin <- function(data_sent){
 
 pw <- {"Read1234"}
 
-sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="/home/rstudio/577/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -256,12 +256,17 @@ for (medianDirection in c("greaterEqual"))
       #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
       #index <- df$b == 0
       #df$est[index] <- (df$a[index] - 5)/2.533 
+      #conversion profile
+      #anything 2+ = positive
       convert1Index <- list[,2] == 1
+      #median (no profile applied)
       convert2Index <- list[,2] == 2
+      #4 = mostly
       convert3Index <- list[,2] == 3
       #list[,1][convert1Index]
       
       #male to female
+      #View(list[,1][convert2Index])
       
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)

@@ -1,7 +1,7 @@
 Input
 	filterlist.txt (github)
 		columns
-		factor id, description, conversion profile, category flag
+		factor id, conversion profile, description, category flag
 
 	Prerequisites
 		PostgreSQL-10.4-1-win64-bigsql
