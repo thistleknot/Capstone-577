@@ -723,7 +723,7 @@ for (medianDirection in c("greaterEqual"))
                 finalList <- rbind(finalList,extract)
               }          
               
-              #print(c("2a: ", table(finalList)/numRuns))
+              print(c("2a: ", round(table(finalList)/numRuns,3)))
               
               #end of holdout analysis
               
@@ -734,6 +734,8 @@ for (medianDirection in c("greaterEqual"))
             #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
             #end outermost loop
             
+            #would be a good place if one desired to see it iterate only every so often
+            #print(c("2a: ", round(table(finalList)/numRuns,3)))
             #end of holdoutReset 
           }
           
@@ -808,3 +810,5 @@ for (medianDirection in c("greaterEqual"))
   
   #end medianDirection  
 }
+
+source(paste0(sourceDir,"4thpass.R"))
