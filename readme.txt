@@ -47,6 +47,9 @@ Steps
 	NewDF.holdout
 	Holdout is always same static regardless of monte carlo resample.
 	
+	Semiotic Grid construction (confusion Matrix)
+		binary classifier terms
+	
 	Vars
 		widthDivisor
 			Sets
@@ -769,11 +772,98 @@ Citations
 	
 	Resampling / simulation methods: monte carlo, bootstrapping, jackknifing, cross-validation, randomization tests, and permutation tests
 	
-	https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
+		https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
 	
 	Median confidence interval
 	
-	https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
+		https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
+	
+	Why more predictor terms are necessary for full models as well as nested f tests and large n's
+		https://stats.stackexchange.com/questions/77245/comparing-nested-binary-logistic-regression-models-when-n-is-large
+	
+		uses lrm package
+		
+		"here is an extensive literature on why one should prefer full models to restricted/parsimonious models. My understanding are few reasons to prefer the parsimonious model. However, larger models may not be feasible for many clinical applications."
+		
+	Data Mining for Busines Analytics
+
+		Classification Matrix
+			p 118
+				Find propensity, derive new classification matrix at propensity that gives best class of interest rate (i.e. 1).
+		
+		ROC
+			p 120-121			
+		
+		Lift charts
+			p 125-126			
+		
+				case can be assigned to the class with the highest probability.  In many cases, a single class is of special interest, so we will focus on that particular lcass and compare the propensity of belonging to that class to ac utoff value set by the analyst.... If hte probability of belonging to the lcass of interest is above the cutoff, the case is assigned to that class.
+
+				i.e. if holdout/test value is above a preset threshold (based on prior model result propensity threshold set to achieve optimal class specification) assign 1, else 0.		
+			
+		Decile charts
+			p 127			
+			
+		Oversampling (nice to have)
+			p 127-134		
+	
+	Applied Regression Modelling
+		104-109
+			nested model tests (anova) similar to t-tests. basically testing if there is a need to include the coefficient term
+			we don't need to do this
+	
+		p 150
+			natural log for response (using a quantitative example)
+			
+		p 206
+			check collinearity
+			cross validation kind of takes care of this
+			if any pair of x's correlation is greater than the highest predictor and y, then it is too highly correlated, drop one var.
+		
+		Page 268-273 binary logistic regression
+			
+			p 270
+				logit (y) to get probability
+				
+				increase in 1 (binary classifier) means that logit will increase by coefficient size, odds will be multiplied by exp(coefficient).
+				Odds ratio
+				
+			nested (anaysis of variance).
+				Is variance reduced?
+				nested compares rss
+				nested model test for GLM's compares the values of an analogous quantity
+					the residual deviance, for two nested models.
+					The resulting test is then called an "Analysis of deviance test or sometimes called a "likelihood ratio" test.
+					
+					this is the chi-squared value using a df equal to the # of factors being removed.
+					Derive residual deviance for each model
+					
+					All this is reported in R while outputting the glm model as "Residual deviance"
+					https://www.theanalysisfactor.com/r-glm-model-fit/
+					
+					https://iainpardoe.com/arm2e/spss/
+					Computer help #8
+					
+						"To find a percentile (critical value) for a chi-squared distribution, select Transform > Compute Variable. Type a name (with no spaces) in the Target Variable box (e.g., "cvchisq"). Then type IDF.CHISQ(p, df) into the Numeric Expression box. Here p is the lower-tail area (i.e., one minus the significance level) and df is the degrees of freedom. For example, IDF.CHISQ(0.95, 2) returns the 95th percentile of the chi-squared distribution with 2 degrees of freedom (5.991)."
+					
+				Since models are 0's and 1's, can do a factorial grid of propensities and map them accordingly from highest to lowest and get demographics?
+				
+				There would literally be this many combinations based on # of factors, the biggest algorithm I have is 5 factors, so that is 16 distinct probabilities.
+				1,2,4,8,16,32
+		
+	Predictor Plots
+		141, 258, 266
+			could map one class with different effects of other vars
+		Would have to map logit propensity changes for changes of each variable assuming other variables were held constant.
+		Normally assumes the mean for other variables...  I suppose in this case, the median? Should really have all propensities mapped.
+			graphics: 224-228
+		
+	Odds calculation wikipedia
+		https://en.wikipedia.org/wiki/Logistic_regression
+		
+		One additional hour of study is estimated to increase log-odds of passing by 1.5046, so multiplying odds of passing by {\displaystyle \exp(1.5046)\approx 4.5.} {\displaystyle \exp(1.5046)\approx 4.5.} The form with the x-intercept (2.71) shows that this estimates even odds (log-odds 0, odds 1, probability 1/2) for a student who studies 2.71 hours.
+	
+	
 	
 Appendix
 	
