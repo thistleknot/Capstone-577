@@ -121,10 +121,12 @@ d_2015 <- read.csv(paste0(sourceDir,"36407-0001-Data.csv"), header=TRUE, sep=","
 d_2016 <- read.csv(paste0(sourceDir,"36799-0001-Data.csv"), header=TRUE, sep=",")
 d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=",")
 
+d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
+
 for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 {
   print(paste("interest:",interests))
-  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017"))
+  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017","d_combined"))
   {
     print(paste("year:",year))
     
@@ -142,13 +144,13 @@ for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
     print(paste("median:",median(df[df>0])))
     print(paste("upper:",sort(((df[df>0])))[upper]))
     
+    print(table(df[(df>0)])/sum(count(df[df>0])))
+    
     #https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
     writeLines("\n")
   } 
   writeLines("\n")
 }
-
-d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
 na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
