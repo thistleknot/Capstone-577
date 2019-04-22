@@ -129,6 +129,7 @@ for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
   for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017","d_combined"))
   {
     print(paste("year:",year))
+    print(paste("count:",sum (count(df[df>0]))))
     
     #https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
     df <- (get(year)[,interests])
@@ -144,7 +145,7 @@ for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
     print(paste("median:",median(df[df>0])))
     print(paste("upper:",sort(((df[df>0])))[upper]))
     
-    print(round(table ( df[(df>0)] ) / sum (count(df[df>0])) ,2))
+    print(round(table ( df[(df>0)] ) / sum (count(df[df>0])) ,4))
     
     #https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
     writeLines("\n")
