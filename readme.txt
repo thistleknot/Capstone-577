@@ -310,6 +310,8 @@ Category Flags
 		
 	Milestone 10
 		Implemented widthSize iterations as well as ability to filter by >= or > median
+		
+		>= Median
 		10
 			
 				
@@ -672,6 +674,188 @@ Category Flags
 					AIC: 6595.4
 
 					Number of Fisher Scoring iterations: 4
+					
+	> Median
+		[1] "Y: V7221"
+		
+			V7563 V8514 
+			 1.00  0.72 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				Min       1Q   Median       3Q      Max  
+			-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+
+			Coefficients:
+						 Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+			V7563       -0.011012   0.013561  -0.812    0.417    
+			V8514        0.223779   0.010709  20.896   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 242609  on 182337  degrees of freedom
+			Residual deviance: 242101  on 182335  degrees of freedom
+			AIC: 242107
+
+			Number of Fisher Scoring iterations: 4
+
+
+		V8517
+			V7563 V8514 
+			 1.00  0.71 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				 Min        1Q    Median        3Q       Max  
+			-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
+
+			Coefficients:
+						 Estimate Std. Error  z value Pr(>|z|)    
+			(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
+			V7563       -16.09008   59.83971   -0.269    0.788    
+			V8514         2.11546    0.02574   82.174   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 61417  on 137832  degrees of freedom
+			Residual deviance: 49321  on 137830  degrees of freedom
+			AIC: 49327
+
+			Number of Fisher Scoring iterations: 18
+
+		V7118
+			
+			V7563 V8514 
+			 1.00  0.65 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+			   Min      1Q  Median      3Q     Max  
+			-1.395  -0.976  -0.976   1.157   1.393  
+
+			Coefficients:
+						Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
+			V7563        0.99286    0.05470   18.15   <2e-16 ***
+			V8514        0.54243    0.04645   11.68   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 15198  on 11039  degrees of freedom
+			Residual deviance: 14804  on 11037  degrees of freedom
+			AIC: 14810
+
+			Number of Fisher Scoring iterations: 4
+			
+	7
+		[1] "Y: V7221"	
+		   V7563    V8514 
+			1.000000 0.755102 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				Min       1Q   Median       3Q      Max  
+			-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+
+			Coefficients:
+						 Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+			V7563       -0.011012   0.013561  -0.812    0.417    
+			V8514        0.223779   0.010709  20.896   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 242609  on 182337  degrees of freedom
+			Residual deviance: 242101  on 182335  degrees of freedom
+			AIC: 242107
+
+			Number of Fisher Scoring iterations: 4
+
+		V8517
+				
+			V7563     V8514 
+			1.0000000 0.6734694 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				 Min        1Q    Median        3Q       Max  
+			-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
+
+			Coefficients:
+						 Estimate Std. Error  z value Pr(>|z|)    
+			(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
+			V7563       -16.09008   59.83971   -0.269    0.788    
+			V8514         2.11546    0.02574   82.174   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 61417  on 137832  degrees of freedom
+			Residual deviance: 49321  on 137830  degrees of freedom
+			AIC: 49327
+
+			Number of Fisher Scoring iterations: 18
+
+		V7118		
+			V7563     V8514 
+			1.0000000 0.7346939 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+			   Min      1Q  Median      3Q     Max  
+			-1.395  -0.976  -0.976   1.157   1.393  
+
+			Coefficients:
+						Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
+			V7563        0.99286    0.05470   18.15   <2e-16 ***
+			V8514        0.54243    0.04645   11.68   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 15198  on 11039  degrees of freedom
+			Residual deviance: 14804  on 11037  degrees of freedom
+			AIC: 14810
+
+			Number of Fisher Scoring iterations: 4
+			
+					
 			
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
@@ -785,6 +969,8 @@ Citations
 		
 		"here is an extensive literature on why one should prefer full models to restricted/parsimonious models. My understanding are few reasons to prefer the parsimonious model. However, larger models may not be feasible for many clinical applications."
 		
+	Durbin Watson test
+	
 	Data Mining for Busines Analytics
 
 		Classification Matrix
@@ -792,7 +978,9 @@ Citations
 				Find propensity, derive new classification matrix at propensity that gives best class of interest rate (i.e. 1).
 		
 		ROC
-			p 120-121			
+			p 115, 120-121			
+				goal is a model with a high sensitivity
+				
 		
 		Lift charts
 			p 125-126			
