@@ -1625,6 +1625,12 @@ Citations
 	
 	Measures of central tendency (Median)
 	
+	CI's 
+		https://www.apastyle.org/manual/related/cumming-and-finch.pdf
+		
+		https://towardsdatascience.com/why-overlapping-confidence-intervals-mean-nothing-about-statistical-significance-48360559900a
+			all our median's are 0 difference, so according to this, our populations are the same (maybe we should test for this with a t-test or anova?)
+	
 	Resampling / simulation methods: monte carlo, bootstrapping, jackknifing, cross-validation, randomization tests, and permutation tests
 	
 		https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
