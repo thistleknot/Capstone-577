@@ -121,6 +121,33 @@ d_2015 <- read.csv(paste0(sourceDir,"36407-0001-Data.csv"), header=TRUE, sep=","
 d_2016 <- read.csv(paste0(sourceDir,"36799-0001-Data.csv"), header=TRUE, sep=",")
 d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=",")
 
+for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
+{
+  print(paste("interest:",interests))
+  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017"))
+  {
+    print(paste("year:",year))
+    
+    #https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
+    df <- (get(year)[,interests])
+    
+    centerpoint = (length(df[df>0]))/2
+    
+    #print(centerpoint)
+    width = round(1.96*sqrt((length(df[df>0])))/2)
+    
+    lower = (length(df[df>0]))/2 - width
+    upper = (length(df[df>0]))/2 + width
+    print(paste("lower:", sort(((df[df>0])))[lower]))
+    print(paste("median:",median(df[df>0])))
+    print(paste("upper:",sort(((df[df>0])))[upper]))
+    
+    #https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
+    writeLines("\n")
+  } 
+  writeLines("\n")
+}
+
 d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
 na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
@@ -140,10 +167,12 @@ data <- d_combined
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #for (medianDirection in c("greaterEqual","greater"))
+#medianDirection = "greaterEqual"
 for (medianDirection in c("greaterEqual"))
 {
   
   #will error on 3 for V7118
+  #widthLoop=1
   for(widthLoop in c(10,7,5,3))
   {
     widthDiviser = widthLoop
@@ -280,9 +309,10 @@ for (medianDirection in c("greaterEqual"))
       
       #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
       #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
-      
+      #View(NewDF["V7202"])
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
+      #View(NewDF["V7202"])
       
       #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
       #95% confidence
@@ -401,7 +431,7 @@ for (medianDirection in c("greaterEqual"))
       NewDF[NewDF == -1] <- -2
       NewDF[NewDF == 0] <- -1
       NewDF[NewDF == -2] <- 0
-      
+      #View(NewDF["V7202"])
       #0 = na
       #-1 = negative
       #1 = positve
@@ -728,7 +758,7 @@ for (medianDirection in c("greaterEqual"))
                 finalList <- rbind(finalList,extract)
               }          
               
-              print(c("2a: ", round(table(finalList)/numRuns,3)))
+              print(c("2a: ", round(table(finalList)/numRuns,2)))
               
               #end of holdout analysis
               

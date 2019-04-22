@@ -166,6 +166,309 @@ Category Flags
 			V7507,3,"OFT WSH MOR FRND",0
 			V8565,3,"I AM OFTEN BORED",0
 
+	Median assumptions
+	
+		Code to check medians
+
+
+			for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
+			{
+			  print(paste("interest:",interests))
+			  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017"))
+			  {
+				print(paste("year:",year))
+				
+				#https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
+				df <- (get(year)[,interests])
+				
+				centerpoint = (length(df[df>0]))/2
+				
+				#print(centerpoint)
+				width = round(1.96*sqrt((length(df[df>0])))/2)
+				
+				lower = (length(df[df>0]))/2 - width
+				upper = (length(df[df>0]))/2 + width
+				print(paste("lower:", sort(((df[df>0])))[lower]))
+				print(paste("median:",median(df[df>0])))
+				print(paste("upper:",sort(((df[df>0])))[upper]))
+				
+				#https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
+				writeLines("\n")
+			  } 
+			  writeLines("\n")
+			}
+	
+	
+		[1] "interest: V7221"
+		[1] "year: d_2012"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 7"
+		[1] "median: 7"
+		[1] "upper: 7"
+
+
+
+
+		[1] "interest: V7215"
+		[1] "year: d_2012"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+
+
+		[1] "interest: V7551"
+		[1] "year: d_2012"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+
+
+		[1] "interest: V7552"
+		[1] "year: d_2012"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 5"
+		[1] "median: 5"
+		[1] "upper: 5"
+
+
+
+
+		[1] "interest: V7553"
+		[1] "year: d_2012"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+
+
+		[1] "interest: V7562"
+		[1] "year: d_2012"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 4"
+		[1] "median: 4"
+		[1] "upper: 4"
+
+
+
+
+		[1] "interest: V7563"
+		[1] "year: d_2012"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 3"
+
+
+		[1] "year: d_2013"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 3"
+
+
+		[1] "year: d_2014"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 2"
+
+
+		[1] "year: d_2015"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 2"
+
+
+		[1] "year: d_2016"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 2"
+
+
+		[1] "year: d_2017"
+		[1] "lower: 2"
+		[1] "median: 2"
+		[1] "upper: 2"
+	
 
 
 	Milestone 1
@@ -676,130 +979,307 @@ Category Flags
 					Number of Fisher Scoring iterations: 4
 					
 	> Median
-		[1] "Y: V7221"
-		
-			V7563 V8514 
-			 1.00  0.72 
-			[1] "3: "   "V7563" "V8514"
-			[1] "population"
-
-			Call:
-			NULL
-
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-1.0399  -0.9521  -0.9521   1.3214   1.4258  
-
-			Coefficients:
-						 Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
-			V7563       -0.011012   0.013561  -0.812    0.417    
-			V8514        0.223779   0.010709  20.896   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 242609  on 182337  degrees of freedom
-			Residual deviance: 242101  on 182335  degrees of freedom
-			AIC: 242107
-
-			Number of Fisher Scoring iterations: 4
-
-
-		V8517
-			V7563 V8514 
-			 1.00  0.71 
-			[1] "3: "   "V7563" "V8514"
-			[1] "population"
-
-			Call:
-			NULL
-
-			Deviance Residuals: 
-				 Min        1Q    Median        3Q       Max  
-			-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
-
-			Coefficients:
-						 Estimate Std. Error  z value Pr(>|z|)    
-			(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
-			V7563       -16.09008   59.83971   -0.269    0.788    
-			V8514         2.11546    0.02574   82.174   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 61417  on 137832  degrees of freedom
-			Residual deviance: 49321  on 137830  degrees of freedom
-			AIC: 49327
-
-			Number of Fisher Scoring iterations: 18
-
-		V7118
+		10
+			[1] "Y: V7221"
 			
-			V7563 V8514 
-			 1.00  0.65 
-			[1] "3: "   "V7563" "V8514"
-			[1] "population"
+				V7563 V8514 
+				 1.00  0.72 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
 
-			Call:
-			NULL
+				Call:
+				NULL
 
-			Deviance Residuals: 
-			   Min      1Q  Median      3Q     Max  
-			-1.395  -0.976  -0.976   1.157   1.393  
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-1.0399  -0.9521  -0.9521   1.3214   1.4258  
 
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
-			V7563        0.99286    0.05470   18.15   <2e-16 ***
-			V8514        0.54243    0.04645   11.68   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+				Coefficients:
+							 Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+				V7563       -0.011012   0.013561  -0.812    0.417    
+				V8514        0.223779   0.010709  20.896   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-			(Dispersion parameter for binomial family taken to be 1)
+				(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 15198  on 11039  degrees of freedom
-			Residual deviance: 14804  on 11037  degrees of freedom
-			AIC: 14810
+					Null deviance: 242609  on 182337  degrees of freedom
+				Residual deviance: 242101  on 182335  degrees of freedom
+				AIC: 242107
 
-			Number of Fisher Scoring iterations: 4
-			
-	7
-		[1] "Y: V7221"	
-		   V7563    V8514 
-			1.000000 0.755102 
-			[1] "3: "   "V7563" "V8514"
-			[1] "population"
+				Number of Fisher Scoring iterations: 4
 
-			Call:
-			NULL
 
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+			V8517
+				V7563 V8514 
+				 1.00  0.71 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
 
-			Coefficients:
-						 Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
-			V7563       -0.011012   0.013561  -0.812    0.417    
-			V8514        0.223779   0.010709  20.896   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+				Call:
+				NULL
 
-			(Dispersion parameter for binomial family taken to be 1)
+				Deviance Residuals: 
+					 Min        1Q    Median        3Q       Max  
+				-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
 
-				Null deviance: 242609  on 182337  degrees of freedom
-			Residual deviance: 242101  on 182335  degrees of freedom
-			AIC: 242107
+				Coefficients:
+							 Estimate Std. Error  z value Pr(>|z|)    
+				(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
+				V7563       -16.09008   59.83971   -0.269    0.788    
+				V8514         2.11546    0.02574   82.174   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-			Number of Fisher Scoring iterations: 4
+				(Dispersion parameter for binomial family taken to be 1)
 
-		V8517
+					Null deviance: 61417  on 137832  degrees of freedom
+				Residual deviance: 49321  on 137830  degrees of freedom
+				AIC: 49327
+
+				Number of Fisher Scoring iterations: 18
+
+			V7118
 				
-			V7563     V8514 
-			1.0000000 0.6734694 
+				V7563 V8514 
+				 1.00  0.65 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+				   Min      1Q  Median      3Q     Max  
+				-1.395  -0.976  -0.976   1.157   1.393  
+
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
+				V7563        0.99286    0.05470   18.15   <2e-16 ***
+				V8514        0.54243    0.04645   11.68   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 15198  on 11039  degrees of freedom
+				Residual deviance: 14804  on 11037  degrees of freedom
+				AIC: 14810
+
+				Number of Fisher Scoring iterations: 4
+				
+		7
+			[1] "Y: V7221"	
+			   V7563    V8514 
+				1.000000 0.755102 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+
+				Coefficients:
+							 Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+				V7563       -0.011012   0.013561  -0.812    0.417    
+				V8514        0.223779   0.010709  20.896   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 242609  on 182337  degrees of freedom
+				Residual deviance: 242101  on 182335  degrees of freedom
+				AIC: 242107
+
+				Number of Fisher Scoring iterations: 4
+
+			V8517
+					
+				V7563     V8514 
+				1.0000000 0.6734694 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+					 Min        1Q    Median        3Q       Max  
+				-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
+
+				Coefficients:
+							 Estimate Std. Error  z value Pr(>|z|)    
+				(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
+				V7563       -16.09008   59.83971   -0.269    0.788    
+				V8514         2.11546    0.02574   82.174   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 61417  on 137832  degrees of freedom
+				Residual deviance: 49321  on 137830  degrees of freedom
+				AIC: 49327
+
+				Number of Fisher Scoring iterations: 18
+
+			V7118		
+				V7563     V8514 
+				1.0000000 0.7346939 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+				   Min      1Q  Median      3Q     Max  
+				-1.395  -0.976  -0.976   1.157   1.393  
+
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
+				V7563        0.99286    0.05470   18.15   <2e-16 ***
+				V8514        0.54243    0.04645   11.68   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 15198  on 11039  degrees of freedom
+				Residual deviance: 14804  on 11037  degrees of freedom
+				AIC: 14810
+
+				Number of Fisher Scoring iterations: 4
+				
+		5
+			[1] "Y: V7221"
+				V7563 V8514 
+				 1.00  0.56 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+					Min       1Q   Median       3Q      Max  
+				-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+
+				Coefficients:
+							 Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+				V7563       -0.011012   0.013561  -0.812    0.417    
+				V8514        0.223779   0.010709  20.896   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 242609  on 182337  degrees of freedom
+				Residual deviance: 242101  on 182335  degrees of freedom
+				AIC: 242107
+
+				Number of Fisher Scoring iterations: 4
+				
+			[1] "Y: V8517"
+				V7563 V8514 
+				 1.00  0.68 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+					 Min        1Q    Median        3Q       Max  
+				-0.67580  -0.24683  -0.24683  -0.00008   2.64819  
+
+				Coefficients:
+							 Estimate Std. Error  z value Pr(>|z|)    
+				(Intercept)  -3.47599    0.02107 -165.002   <2e-16 ***
+				V7563       -16.09008   59.83971   -0.269    0.788    
+				V8514         2.11546    0.02574   82.174   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 61417  on 137832  degrees of freedom
+				Residual deviance: 49321  on 137830  degrees of freedom
+				AIC: 49327
+
+				Number of Fisher Scoring iterations: 18
+
+			[1] "Y: V7118"
+				V7563 V8514 
+				 1.00  0.68 
+				[1] "3: "   "V7563" "V8514"
+				[1] "population"
+
+				Call:
+				NULL
+
+				Deviance Residuals: 
+				   Min      1Q  Median      3Q     Max  
+				-1.395  -0.976  -0.976   1.157   1.393  
+
+				Coefficients:
+							Estimate Std. Error z value Pr(>|z|)    
+				(Intercept) -0.49408    0.02541  -19.44   <2e-16 ***
+				V7563        0.99286    0.05470   18.15   <2e-16 ***
+				V8514        0.54243    0.04645   11.68   <2e-16 ***
+				---
+				Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+				(Dispersion parameter for binomial family taken to be 1)
+
+					Null deviance: 15198  on 11039  degrees of freedom
+				Residual deviance: 14804  on 11037  degrees of freedom
+				AIC: 14810
+
+				Number of Fisher Scoring iterations: 4
+				
+		3
+		[1] "Y: V7221"
+			V7507     V7563     V8502     V8514     V8530 
+			0.2222222 1.0000000 0.1111111 0.4444444 0.1111111 
+			[1] "3: "   "V7563" "V8514"
+			[1] "population"
+
+			Call:
+			NULL
+
+			Deviance Residuals: 
+				Min       1Q   Median       3Q      Max  
+			-1.0399  -0.9521  -0.9521   1.3214   1.4258  
+
+			Coefficients:
+						 Estimate Std. Error z value Pr(>|z|)    
+			(Intercept) -0.556153   0.007059 -78.787   <2e-16 ***
+			V7563       -0.011012   0.013561  -0.812    0.417    
+			V8514        0.223779   0.010709  20.896   <2e-16 ***
+			---
+			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+			(Dispersion parameter for binomial family taken to be 1)
+
+				Null deviance: 242609  on 182337  degrees of freedom
+			Residual deviance: 242101  on 182335  degrees of freedom
+			AIC: 242107
+
+			Number of Fisher Scoring iterations: 4
+			
+		[1] "Y: V8517"
+			V7507     V7563     V8514 
+			0.2222222 1.0000000 0.7777778 
 			[1] "3: "   "V7563" "V8514"
 			[1] "population"
 
@@ -824,11 +1304,11 @@ Category Flags
 			Residual deviance: 49321  on 137830  degrees of freedom
 			AIC: 49327
 
-			Number of Fisher Scoring iterations: 18
-
-		V7118		
-			V7563     V8514 
-			1.0000000 0.7346939 
+			Number of Fisher Scoring iterations: 18	
+			
+		[1] "Y: V7118"
+			V7507     V7563     V8514 
+			0.1111111 1.0000000 0.6666667 
 			[1] "3: "   "V7563" "V8514"
 			[1] "population"
 
@@ -1033,6 +1513,12 @@ Citations
 					Computer help #8
 					
 						"To find a percentile (critical value) for a chi-squared distribution, select Transform > Compute Variable. Type a name (with no spaces) in the Target Variable box (e.g., "cvchisq"). Then type IDF.CHISQ(p, df) into the Numeric Expression box. Here p is the lower-tail area (i.e., one minus the significance level) and df is the degrees of freedom. For example, IDF.CHISQ(0.95, 2) returns the 95th percentile of the chi-squared distribution with 2 degrees of freedom (5.991)."
+						
+						Chapter 6 of Dr Zerom's 526 class text on "Time Series Forecasting with Regressive Models" p 19
+							CHIINV(sig,df)
+							
+							Related to Ljung-Box statistic apparently via Chi Squared distribution
+							i.e. statistic is Chi-Squared distributed with the delta in k as the degrees of freedom
 					
 				Since models are 0's and 1's, can do a factorial grid of propensities and map them accordingly from highest to lowest and get demographics?
 				
