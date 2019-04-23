@@ -102,11 +102,18 @@ for (postProcess in 1:length(files))
   #data.frame(ytest)
   rmse(ytest[,1], yhat)
   
-  total_predictions = nrow(PostDF[,1])
-  correct_predictions = sum(yhat.test == data.test[,1])
+  #Calculating MSE for training data
+  #mse.train<- mean(residuals(step.model.train)^2)
+  #mse.train
+  
+  #Calculating MSE for testing data
+  #mse.test <- mean(residuals(step.model.test)^2)
+  #mse.test
+  
+  total_predictions = nrow(data.frame(yhat))
+  correct_predictions = sum(yhat == ytest)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
-  
   
   #https://machinelearningmastery.com/confusion-matrix-machine-learning/
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix

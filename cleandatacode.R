@@ -667,32 +667,6 @@ for (medianDirection in c("greaterEqual"))
                   namesTV <- rbind(namesTV,datalist1)
                 }
                 
-                #modified code: https://rdrr.io/cran/bestglm/src/R/bestglm.R to ignore p <15
-                #https://rdrr.io/cran/bestglm/man/bestglm.html
-                #http://ropatics.com/machine-learning/ml_-_Logistic_regression.html
-                #https://rstudio-pubs-static.s3.amazonaws.com/2897_9220b21cfc0c43a396ff9abf122bb351.html
-                #https://rdrr.io/cran/bestglm/man/bestglm-package.html
-                
-                #if(length(names)>0) for(h in 1:length(names)) {cv.names[k,names[h]]=names[h]}
-                
-                #summary(step.model.test) 
-                
-                #Calculating MSE for training data
-                #mse.train<- mean(residuals(step.model.train)^2)
-                #mse.train
-                
-                #Calculating RMSE for training data
-                #rmse.train <- sqrt(mse.train)
-                #rmse.train
-                
-                #Calculating MSE for testing data
-                #mse.test <- mean(residuals(step.model.test)^2)
-                #mse.test
-                
-                #Calculating RMSE for testing data
-                #rmse.test <- sqrt(mse.test)
-                #rmse.test
-                
                 #end of category iterator
               }
               #print("category pass")  
@@ -700,15 +674,6 @@ for (medianDirection in c("greaterEqual"))
               Hfiltered <- c()
               extract <- c()
               
-              #data.trainAggregate <- c()
-              #data.trainAggregate <- NewDF.preTrain[,as.character(c(yname,namesTV)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-              #data.trainAggregate[data.trainAggregate == 0] <- NA
-              #data.trainAggregate <- data.trainAggregate %>% filter_all(all_vars(!is.na(.)))
-              #data.trainAggregate[data.trainAggregate == -1] <- 0
-              #print(table(is.na(data.trainAggregate)))
-              
-              #pass to test/holdout partition to filter and refine on another pass
-              #Taggregated <- sub_returnCVNames(data.trainAggregate)
               #print(c("1: ", namesTV))
               
               newList <- c()
