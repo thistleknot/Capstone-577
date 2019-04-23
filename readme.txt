@@ -1626,10 +1626,16 @@ Citations
 	Measures of central tendency (Median)
 	
 	CI's 
+		all these assume different center's... yet... I'm using a median... I should be using mean and testing if the mean is different (to test if population is statistically different)
+		
 		https://www.apastyle.org/manual/related/cumming-and-finch.pdf
 		
 		https://towardsdatascience.com/why-overlapping-confidence-intervals-mean-nothing-about-statistical-significance-48360559900a
 			all our median's are 0 difference, so according to this, our populations are the same (maybe we should test for this with a t-test or anova?)
+	
+		https://www.cscu.cornell.edu/news/statnews/stnews73.pdf
+		
+		https://blog.minitab.com/blog/real-world-quality-improvement/common-statistical-mistakes-you-should-avoid
 	
 	Resampling / simulation methods: monte carlo, bootstrapping, jackknifing, cross-validation, randomization tests, and permutation tests
 	
