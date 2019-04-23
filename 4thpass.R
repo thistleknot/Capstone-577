@@ -2,6 +2,7 @@ library(ModelMetrics)
 library("ROCR")
 library("caret")
 library(corrplot)
+library(bestglm)
 {
   widthDiviser = 3
   
@@ -26,8 +27,8 @@ library(corrplot)
   
   #% of training resamples from static nonholdout
   preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
-  #sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-  sourceDir="/home/rstudio/577/Capstone-577/"
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  #sourceDir="/home/rstudio/577/Capstone-577/"
   
   if (widthDiviser == 1) resample = 2
   if ((!widthDiviser == 1)) resample = widthDiviser
@@ -73,11 +74,13 @@ for (postProcess in 1:length(files))
   ytest = data.test[,1]
   rmse(ytest, yhat)
   
+  #this is manually converting them
   #test classification using best linear model
-  yhat.test = rep(0, length(data.test))
+  yhat.test = rep(0, nrow(data.test))
   yhat.test[yhat > 0] = 1
+  yhat.test[yhat < 0] = 0
   
-  total_predictions = length(data.test)
+  total_predictions = nrow(data.test)
   correct_predictions = sum(yhat.test == data.test)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
@@ -91,6 +94,14 @@ for (postProcess in 1:length(files))
   plot(roc.perf)
   abline(a=0, b= 1)
   
+  
+  #https://machinelearningmastery.com/confusion-matrix-machine-learning/
+  #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
+  #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
+  #https://rdrr.io/cran/caret/man/confusionMatrix.html
+  results <- confusionMatrix(data=as.factor(yhat.test), reference=as.factor(data.test[,1]))
+  
+  print(results)
   pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
   
   #includes proportion of variance
