@@ -4,7 +4,7 @@ library("caret")
 library(corrplot)
 library(bestglm)
 {
-  widthDiviser = 10
+  widthDiviser = 2
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
@@ -71,22 +71,13 @@ for (postProcess in 1:length(files))
   x.test=data.test[,-1]
   y=data.train[,1]
   
-  yhat = predict(trainModel$finalModel, x)
-  yhat.test = predict(trainModel$finalModel, x.test)
-  ytest = data.test[,1]
-  rmse(ytest, yhat)
+  yhat = predict(trainModel$finalModel, PostDF[,-1])
+  ytest = PostDF[,1,drop=FALSE]
+  #yhat.test = predict(trainModel$finalModel, x.test)
+  #ytest = data.test[,1]
   
-  #this is manually converting them
-  #test classification using best linear model
-  yhat.test = rep(0, nrow(data.test))
-  yhat.test[yhat > 0] = 1
-  yhat.test[yhat < 0] = 0
   
-  total_predictions = nrow(data.test)
-  correct_predictions = sum(yhat.test == data.test[,1])
-  classification_accuracy = correct_predictions / total_predictions
-  error_rate = (1 - (correct_predictions / total_predictions))
-  
+  #needs to be continuous
   #https://arulvelkumar.wordpress.com/2017/09/03/prediction-function-in-r-number-of-cross-validation-runs-must-be-equal-for-predictions-and-labels/
   #https://hopstat.wordpress.com/2014/12/19/a-small-introduction-to-the-rocr-package/
   #pred <- prediction(ROCR.simple$predictions,ROCR.simple$labels)
@@ -100,6 +91,22 @@ for (postProcess in 1:length(files))
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
   plot(roc.perf)
   abline(a=0, b= 1)
+  
+  #this is manually converting them
+  #test classification using best linear model
+  yhat = rep(0, nrow(data.test))
+  yhat[yhat > 0] = 1
+  yhat[yhat < 0] = 0
+  
+  #typeof(ytest)
+  #data.frame(ytest)
+  rmse(ytest[,1], yhat)
+  
+  total_predictions = nrow(PostDF[,1])
+  correct_predictions = sum(yhat.test == data.test[,1])
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  
   
   #https://machinelearningmastery.com/confusion-matrix-machine-learning/
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
