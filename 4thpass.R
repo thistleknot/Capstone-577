@@ -1,5 +1,9 @@
+library(ModelMetrics)
+library("ROCR")
+library("caret")
+library(corrplot)
 {
-  widthDiviser = 10
+  widthDiviser = 3
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
@@ -22,8 +26,8 @@
   
   #% of training resamples from static nonholdout
   preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
-  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-  #sourceDir="/home/rstudio/577/Capstone-577/"
+  #sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  sourceDir="/home/rstudio/577/Capstone-577/"
   
   if (widthDiviser == 1) resample = 2
   if ((!widthDiviser == 1)) resample = widthDiviser
@@ -64,6 +68,28 @@ for (postProcess in 1:length(files))
   
   x=data.train[,-1]
   y=data.train[,1]
+  
+  yhat = predict(trainModel$finalModel, x)
+  ytest = data.test[,1]
+  rmse(ytest, yhat)
+  
+  #test classification using best linear model
+  yhat.test = rep(0, length(data.test))
+  yhat.test[yhat > 0] = 1
+  
+  total_predictions = length(data.test)
+  correct_predictions = sum(yhat.test == data.test)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  
+  #https://arulvelkumar.wordpress.com/2017/09/03/prediction-function-in-r-number-of-cross-validation-runs-must-be-equal-for-predictions-and-labels/
+  #https://hopstat.wordpress.com/2014/12/19/a-small-introduction-to-the-rocr-package/
+  #pred <- prediction(ROCR.simple$predictions,ROCR.simple$labels)
+  #labels = classification (i.e. true value)
+  pred <- prediction(yhat,ytest)
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  plot(roc.perf)
+  abline(a=0, b= 1)
   
   pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
   
@@ -124,12 +150,12 @@ for (postProcess in 1:length(files))
   holderOfData <- c()
   holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
   A <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-
+  
   B <- c()
   holderOfData <- c()
   holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
   B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-    
+  
   print("sig 1")
   print(A$Subsets)
   print(summary(trainModel))

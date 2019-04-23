@@ -1,3 +1,4 @@
+library(dplyr)
 data.train <- c()
 data.train <- PostDF.preTrain[,as.character(c(finalList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
 
