@@ -1662,7 +1662,10 @@ Citations
 		
 		ROC
 			p 115, 120-121			
+				#https://hopstat.wordpress.com/2014/12/19/a-small-introduction-to-the-rocr-package/
 				goal is a model with a high sensitivity
+				
+				which plots the false positive rate (FPR) on the x-axis and the true positive rate (TPR) on the y-axis:
 				
 		
 		Lift charts
