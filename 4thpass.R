@@ -3,6 +3,7 @@ library("ROCR")
 library("caret")
 library(corrplot)
 library(bestglm)
+library(outliers)
 {
   widthDiviser = 2
   
@@ -48,8 +49,68 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.nam
 for (postProcess in 1:length(files))
 { 
   
-  #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned.
+  #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned. (i.e. the export of my cleandatacode.R cleans na's)
   PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
+  
+  x <- PostDF[,-1, drop=FALSE]
+  
+  y <- data.frame(PostDF[,1, drop=FALSE])[,1]
+  
+  
+  
+  #includes proportion of variance
+  summary(prcomp(x, center=TRUE, scale=TRUE))
+  te <- summary(prcomp(x, center=TRUE, scale=TRUE))$importance
+  #pc plot
+  plot(te[3,1:ncol(te)])
+  
+  #correlation plot of sample
+  corrplot(cor(cbind(x,prcomp(x, center=TRUE, scale=TRUE)$x)))
+  
+  #include data in new model for inclusion in a linear model
+  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
+  
+  #suppressMessages(pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))]))
+  
+  #predict using pca, just re-applying to training data.
+  
+  #applied PCA to holdout
+  
+  #does this make it linear?
+  pc <- prcomp(x, center=TRUE, scale=TRUE)
+  pred <- predict(pc,x)
+  #plot(data.frame(y,drop=FALSE),pred)
+  pcaPred <- lm(cbind(data.frame(y),pred))
+  
+  #yhatPCA = predict(pcaPred, x)
+  #colnames(y)<-"y"
+  tempy <- data.frame(y)
+  colnames(tempy)<-"y"
+  #tempy
+  
+  #http://www.milanor.net/blog/performing-principal-components-regression-pcr-in-r/
+  pcr_model <- pcr(y~., data = cbind(tempy,x), scale = TRUE, validation = "CV")
+  summary(pcr_model)
+  pcr_pred <- predict(pcr_model, x)
+  hist(pcr_pred)
+  table(y)
+  table(pcr_pred)
+  
+  
+  pred <- prediction(data.frame(pcr_pred)[,1],y)
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  plot(roc.perf)
+  abline(a=0, b= 1)  
+ 
+  #predict(pcaPred,)
+  
+  #predict(pcaPred,filteredv7133holdout[-1])
+  
+  #summary(pcaPred)
+  hist(abs(pcaPred$residuals))
+  
+  #summary(pcaModel)
+  #summary(pcaPred)
   
   trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
   print("population")
@@ -60,22 +121,22 @@ for (postProcess in 1:length(files))
   source(paste0(sourceDir,"/reseedPost.R"))
   source(paste0(sourceDir,"/resampleMCpost.R"))
   
-  res <- cor(data.train)
+  #res <- cor(data.train)
+  res <- cor(PostDF)
   corrplot(res)
   
   x= c()
   y= c()
   #yname <- c()
   
-  x=data.train[,-1]
-  x.test=data.test[,-1]
-  y=data.train[,1]
+  #x=data.train[,-1]
+  #x.test=data.test[,-1]
+  #y=data.train[,1]
   
-  yhat = predict(trainModel$finalModel, PostDF[,-1])
-  ytest = PostDF[,1,drop=FALSE]
+  yhat = predict(trainModel$finalModel, PostDF[,-1,drop=FALSE])
+  ytest = PostDF[,1,drop=FALSE][,1]
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
-  
   
   #needs to be continuous
   #https://arulvelkumar.wordpress.com/2017/09/03/prediction-function-in-r-number-of-cross-validation-runs-must-be-equal-for-predictions-and-labels/
@@ -87,20 +148,21 @@ for (postProcess in 1:length(files))
   plot(roc.perf)
   abline(a=0, b= 1)
   
-  pred <- prediction(yhat.test,data.test[,1])
-  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
-  plot(roc.perf)
-  abline(a=0, b= 1)
+  #pred <- prediction(yhat.test,data.test[,1])
+  #roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  #plot(roc.perf)
+  #abline(a=0, b= 1)
   
   #this is manually converting them
   #test classification using best linear model
-  yhat = rep(0, nrow(data.test))
-  yhat[yhat > 0] = 1
-  yhat[yhat < 0] = 0
+  yhat.transformed = rep(0, nrow(PostDF))
+  yhat.transformed[yhat > 0] = 1
+  yhat.transformed[yhat < 0] = 0
+  sum(yhat.transformed)
   
   #typeof(ytest)
   #data.frame(ytest)
-  rmse(ytest[,1], yhat)
+  rmse(ytest, yhat.transformed)
   
   #Calculating MSE for training data
   #mse.train<- mean(residuals(step.model.train)^2)
@@ -110,8 +172,8 @@ for (postProcess in 1:length(files))
   #mse.test <- mean(residuals(step.model.test)^2)
   #mse.test
   
-  total_predictions = nrow(data.frame(yhat))
-  correct_predictions = sum(yhat == ytest)
+  total_predictions = nrow(data.frame(yhat.transformed))
+  correct_predictions = sum(yhat.transformed == ytest)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   
@@ -119,133 +181,9 @@ for (postProcess in 1:length(files))
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
   #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
   #https://rdrr.io/cran/caret/man/confusionMatrix.html
-  results <- confusionMatrix(data=as.factor(yhat.test), reference=as.factor(data.test[,1]))
+  
+  results <- confusionMatrix(data=as.factor(yhat.transformed), reference=as.factor(ytest))
   print(results)
-  pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
   
-  #includes proportion of variance
-  summary(prcomp(data.train[,-1], center=TRUE, scale=TRUE))
-  te <- summary(prcomp(data.train[,-1], center=TRUE, scale=TRUE))$importance
-  #pc plot
-  plot(te[3,1:ncol(te)])
-  
-  #correlation plot of sample
-  corrplot(cor(cbind(data.train[,1],prcomp(data.train[,-1], center=TRUE, scale=TRUE)$x)))
-  
-  #include data in new model for inclusion in a linear model
-  #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
-  
-  suppressMessages(pcaModel<- glm(y~pc$x[,1:length(data.frame(pc$x))]))
-  
-  #predict using pca, just re-applying to training data.
-  
-  #applied PCA to holdout
-  
-  x <- data.test[,-1, drop=FALSE]
-  
-  y <- data.frame(data.test[,1, drop=FALSE])
-  
-  #does this make it linear?
-  pred <- predict(pc,x)
-  #plot(data.frame(y,drop=FALSE),pred)
-  pcaPred <- lm(cbind(y,pred))
-  
-  #predict(pcaPred,)
-  
-  #predict(pcaPred,filteredv7133holdout[-1])
-  
-  #summary(pcaPred)
-  hist(abs(pcaPred$residuals))
-  
-  summary(pcaModel)
-  #summary(pcaPred)
-  
-  regularTrainModel <- suppressMessages(glm(data.train))
-  regularTestModel <- suppressMessages(glm(data.test))
-  
-  # Define training control
-  
-  #http://www.sthda.com/english/articles/38-regression-model-validation/157-cross-validation-essentials-in-r/#k-fold-cross-validation
-  #yname <- colnames(data.train[,1,drop=FALSE])
-  #nrow(y)
-  x=data.train[,-1,drop=FALSE]
-  y=(data.train[,1,drop=FALSE])
-  
-  #View(data.train[,1])
-  #will this work, train on train partition, and validate on a test partition?  Probably a bad idea, because I'm going to predict using test...
-  trainModel <- suppressMessages(train(data.train[-1], as.factor(data.train[,1]),method = "glm",trControl = train.control))
-  testModel <- suppressMessages(train(data.test[-1], as.factor(data.test[,1]), method = "glm",trControl = train.control))
-  
-  A <- c()
-  holderOfData <- c()
-  holderOfData <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-  A <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  
-  B <- c()
-  holderOfData <- c()
-  holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  
-  print("sig 1")
-  print(A$Subsets)
-  print(summary(trainModel))
-  
-  print("sig 2")
-  print(summary(testModel))
-  print(B$Subsets)
-  
-  holderOfData.train <- cbind(data.frame(data.train[,-1 , drop = FALSE]),data.frame(data.train[,1 , drop = FALSE]))
-  holderOfData.test <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
-  
-  if (widthDiviser==1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  if (widthDiviser!=1)  A <- bestglm(Xy = holderOfData.train, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  print (A$Subsets)
-  if (widthDiviser==1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  if (widthDiviser!=1)  B <- bestglm(Xy = holderOfData.test, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  print(B$Subsets)
-  
-  merged <- c()
-  holderOfData <- c()
-  merged <- rbind(data.train,data.test)
-  holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
-  
-  B <- c()
-  B <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  print(B$Subsets)
-  
-  trainModel <- c()
-  trainModel <- suppressMessages( train(merged[, -1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control) )
-  print("test 1")
-  print(summary(trainModel$finalModel))
-  print(B$Subsets)
-  print("comb sig")
-  print(summary(trainModel))
-  #I swear I was doing predicitons before with better accuracy
-  
-  #reseed
-  source(paste0(sourceDir,"/reseedPost.R"))
-  source(paste0(sourceDir,"/resampleMCpost.R"))
-  
-  merged <- c()
-  holderOfData <- c()
-  merged <- rbind(data.train,data.test)
-  holderOfData <- cbind(data.frame(merged[,-1 , drop = FALSE]),data.frame(merged[,1 , drop = FALSE]))
-  
-  B <- c()
-  B <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")
-  
-  testModel <- c()
-  testModelPred <- c()
-  testModel <- suppressMessages(train(merged[,-1, drop = FALSE], as.factor(merged[,1]),method = "glm",trControl = train.control))
-  
-  #using newly acquired merged data, and prior trained model, derive predictions
-  trainModelPred <- round(predict.glm(trainModel$finalModel, merged))
-  print("test 2")
-  print(B$Subsets)
-  print(summary(testModel$finalModel))
-  hist(abs(trainModelPred-merged[,1]))
-  
-  #http://www.r-tutor.com/elementary-statistics/logistic-regression/estimated-logistic-regression-equation
-  #https://www.theanalysisfactor.com/r-tutorial-glm1/
 }
 
