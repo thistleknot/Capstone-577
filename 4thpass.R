@@ -4,7 +4,7 @@ library("caret")
 library(corrplot)
 library(bestglm)
 {
-  widthDiviser = 3
+  widthDiviser = 10
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
   if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
@@ -44,7 +44,7 @@ library(bestglm)
 #What I might need to do is remove na's from newDF
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.names=TRUE, recursive=FALSE)
 
-#postProcess=1
+#postProcess=21
 for (postProcess in 1:length(files))
 { 
   
@@ -68,9 +68,11 @@ for (postProcess in 1:length(files))
   #yname <- c()
   
   x=data.train[,-1]
+  x.test=data.test[,-1]
   y=data.train[,1]
   
   yhat = predict(trainModel$finalModel, x)
+  yhat.test = predict(trainModel$finalModel, x.test)
   ytest = data.test[,1]
   rmse(ytest, yhat)
   
@@ -81,7 +83,7 @@ for (postProcess in 1:length(files))
   yhat.test[yhat < 0] = 0
   
   total_predictions = nrow(data.test)
-  correct_predictions = sum(yhat.test == data.test)
+  correct_predictions = sum(yhat.test == data.test[,1])
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   
@@ -94,13 +96,16 @@ for (postProcess in 1:length(files))
   plot(roc.perf)
   abline(a=0, b= 1)
   
+  pred <- prediction(yhat.test,data.test[,1])
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  plot(roc.perf)
+  abline(a=0, b= 1)
   
   #https://machinelearningmastery.com/confusion-matrix-machine-learning/
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
   #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
   #https://rdrr.io/cran/caret/man/confusionMatrix.html
   results <- confusionMatrix(data=as.factor(yhat.test), reference=as.factor(data.test[,1]))
-  
   print(results)
   pc <- prcomp(data.train[,-1], center=TRUE, scale=TRUE)
   
