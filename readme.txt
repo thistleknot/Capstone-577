@@ -1682,7 +1682,12 @@ Citations
 			p 127			
 			
 		Oversampling (nice to have)
-			p 127-134		
+			p 127-134	
+			http://r-statistics.co/Logistic-Regression-With-R.html
+	
+	Assessment
+		https://datascienceplus.com/perform-logistic-regression-in-r/
+		While no exact equivalent to the R2 of linear regression exists, the McFadden R2 index can be used to assess the model fit.
 	
 	Applied Regression Modelling
 		104-109
@@ -1695,9 +1700,23 @@ Citations
 		p 206
 			check collinearity
 			cross validation kind of takes care of this
-			if any pair of x's correlation is greater than the highest predictor and y, then it is too highly correlated, drop one var.
-		
+			"if any of the (absolute) correlations between each pair of predictors is greater than the highest (absolute) correlation between Y and each of the predictors."
+			
 		Page 268-273 binary logistic regression
+		
+			p 269
+				Model Assumptions
+				https://www.statisticssolutions.com/assumptions-of-logistic-regression/
+				
+				First, binary logistic regression requires the dependent variable to be binary and ordinal logistic regression requires the dependent variable to be ordinal.
+
+				Second, logistic regression requires the observations to be independent of each other.  In other words, the observations should not come from repeated measurements or matched data.
+
+				Third, logistic regression requires there to be little or no multicollinearity among the independent variables.  This means that the independent variables should not be too highly correlated with each other.
+
+				Fourth, logistic regression assumes linearity of independent variables and log odds.  although this analysis does not require the dependent and independent variables to be related linearly, it requires that the independent variables are linearly related to the log odds.
+
+				Finally, logistic regression typically requires a large sample size.  A general guideline is that you need at minimum of 10 cases with the least frequent outcome for each independent variable in your model. For example, if you have 5 independent variables and the expected probability of your least frequent outcome is .10, then you would need a minimum sample size of 500 (10*5 / .10).
 			
 			p 270
 				logit (y) to get probability
@@ -1746,7 +1765,8 @@ Citations
 		
 		One additional hour of study is estimated to increase log-odds of passing by 1.5046, so multiplying odds of passing by {\displaystyle \exp(1.5046)\approx 4.5.} {\displaystyle \exp(1.5046)\approx 4.5.} The form with the x-intercept (2.71) shows that this estimates even odds (log-odds 0, odds 1, probability 1/2) for a student who studies 2.71 hours.
 	
-	
+	Oversampling
+		Due to bias in class, we did not oversample.  However, we did not build models based on oversampling.  We derived terms from CV models that worked best in randomized datasets.  The system would improve with equalized models, but arguably not by much because we did not use a model based approach.
 	
 Appendix
 	

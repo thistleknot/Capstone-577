@@ -65,9 +65,56 @@ for (postProcess in 1:length(files))
   #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned. (i.e. the export of my cleandatacode.R cleans na's)
   PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
   
-  x <- PostDF[,-1, drop=FALSE]
+  
+  df <- PostDF[,-1, drop=FALSE]
+  colnames(df) <- colnames(PostDF[,-1,drop=FALSE])
   
   y <- data.frame(PostDF[,1, drop=FALSE])[,1]
+  
+  #https://stackoverflow.com/questions/5233308/is-there-a-r-function-that-applies-a-function-to-each-pair-of-columns
+  #pairwise correlations
+  #df <- x
+  n <- ncol(df)
+  
+  corpij <- function(i,j,data) {cor.test(data[,i],data[,j])$p.value}
+  corp <- Vectorize(corpij, vectorize.args=list("i","j"))
+  correlationPairs <- outer(1:n,1:n,corp,data=df)
+  
+  #test for collinearity
+  #"if any of the (absolute) correlations between each pair of predictors is greater than the highest (absolute) correlation between Y and each of the predictors."
+  for(featureList in 1:n)
+  {
+    #featureList matches the correlationPairs column name with c columnname and is also used in the response (it's the central unitary term that holds the concept together)
+    #vars relation with response
+    #was considering a pairwise with this
+    response <- cor(cbind(df[,featureList],y))[2,1]
+    #keep response
+    
+    print(paste(colnames(df[featureList]),featureList,abs(response)))
+    print(data.frame(correlationPairs[,featureList][(abs(correlationPairs[,featureList]) >= abs(response))]))
+    
+    
+  }
+  
+  tempy <- data.frame(y)
+  colnames(tempy)<-"y"
+  vifModel <- glm(y~.,data=cbind(tempy,df),family=binomial(link="logit"))
+  vifResults <- (car::vif(vifModel))
+  
+  print(drop)
+  drop <- c(as.character(vifResults[vifResults >= 5]))
+  
+  #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
+  #df[ , -which(names(df) %in% c("z","u"))]
+  #df[ , -which(names(df) %in% c("z","u"))]
+  x <- df[ , -which(names(df) %in% drop)]
+  
+  trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
+  
+  #any column
+  #https://stackoverflow.com/questions/46285484/if-any-column-in-a-row-meets-condition-than-mutate-column
+  #df$c[apply(df == 7, 1, any)] <- 100
+
   
   #includes proportion of variance
   summary(prcomp(x, center=TRUE, scale=TRUE))
@@ -99,8 +146,7 @@ for (postProcess in 1:length(files))
   
   #yhatPCA = predict(pcaPred, x)
   #colnames(y)<-"y"
-  tempy <- data.frame(y)
-  colnames(tempy)<-"y"
+  
   #tempy
   
   
@@ -138,8 +184,7 @@ for (postProcess in 1:length(files))
   #summary(pcaPred)
   
   #trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
-  trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
-  print(vif(trainModel))
+
   
   #http://r-statistics.co/Logistic-Regression-With-R.html
   
@@ -176,8 +221,6 @@ for (postProcess in 1:length(files))
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
   
-  
-  
   #needs to be continuous
   #https://arulvelkumar.wordpress.com/2017/09/03/prediction-function-in-r-number-of-cross-validation-runs-must-be-equal-for-predictions-and-labels/
   #https://hopstat.wordpress.com/2014/12/19/a-small-introduction-to-the-rocr-package/
@@ -197,13 +240,6 @@ for (postProcess in 1:length(files))
   
   ytest <- data.frame(ytest)
   colnames(ytest) <- "ytest"
-  
-  #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
-  #cm_info <- ConfusionMatrixInfo( data = cbind(yhat,ytest), predict = "yhat", 
-                                  #actual = "ytest", cutoff = .5 )
-  
-  #print(cm_info$data[order(cm_info$data$predict),])
-  #cm_info$plot
   
   #https://www.r-bloggers.com/r-sorting-a-data-frame-by-the-contents-of-a-column/
   
@@ -269,6 +305,14 @@ for (postProcess in 1:length(files))
   print(optCutOff_center)
   print(optCutOff_spec)
   #sum(yhat.transformed)
+  ytemp<-c()
+  ytemp = data.frame(yhat.transformed_center)[,,drop=FALSE]
+  colnames(ytemp)<-"yhat"
+  #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
+  cm_info <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
+  
+  #print(cm_info$data[order(cm_info$data$predict),])
+  cm_info$plot
   
   #typeof(ytest)
   #data.frame(ytest)
