@@ -136,7 +136,8 @@ for (postProcess in 1:length(files))
   corrplot(cor(cbind(x,prcomp(x, center=TRUE, scale=TRUE)$x)))
   
   #http://rfaqs.com/mctest-r-package-detection-collinearity-among-regressors
-  omcdiag(x, y, Inter=FALSE)
+  
+  if(length(colnames(x))!=1) omcdiag(x, y, Inter=FALSE)
   
   
   #include data in new model for inclusion in a linear model
