@@ -227,8 +227,7 @@ for (postProcess in 1:length(files))
   #summary(trainModel)
   #table(yhat)
   ytest = PostDF[,1,drop=FALSE][,1]
-  hist(yhat)
-  hist(ytest)
+  
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
   
@@ -312,6 +311,12 @@ for (postProcess in 1:length(files))
   yhat.transformed_spec[round(yhat,4) < optCutOff_spec] = 0
   misClassError(yhat.transformed_spec, ytest, threshold = optCutOff_spec)
 
+  hist(yhat.transformed_sens)
+  hist(yhat.transformed_center)
+  hist(yhat.transformed_spec)
+  hist(ytest[,1])
+  
+  
   print(optCutOff_sens)
   print(optCutOff_center)
   print(optCutOff_spec)
