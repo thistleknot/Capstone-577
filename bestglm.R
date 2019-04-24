@@ -109,14 +109,14 @@ bestglm <-
     #Only do this test if:
     #   1) X contains at least one column corresponding to a quantitative variable
     #   2) IncludeInterceptQ (intercept is included already)
-    if (!all(FactorsQ)&& IncludeInterceptQ){
-      X2<-X[,!FactorsQ,drop=FALSE] #removing factor variables
-      p2<-ncol(X2)
-      Column1Test<-apply(X2-matrix(rep(1,n*p2),ncol=p2), MARGIN=2, 
-                         function(x) 0==sum(abs(x), na.rm=TRUE))
-      if (any(Column1Test))
-        stop("Column of 1's can't be used! Intercept always included.")
-    }
+    #if (!all(FactorsQ)&& IncludeInterceptQ){
+    #  X2<-X[,!FactorsQ,drop=FALSE] #removing factor variables
+    #  p2<-ncol(X2)
+    #  Column1Test<-apply(X2-matrix(rep(1,n*p2),ncol=p2), MARGIN=2, 
+    #                     function(x) 0==sum(abs(x), na.rm=TRUE))
+    #  if (any(Column1Test))
+    #    stop("Column of 1's can't be used! Intercept always included.")
+    #}
     #null deviance and df
     if (glmQ)
       if (IncludeInterceptQ)
