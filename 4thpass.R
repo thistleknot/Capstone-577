@@ -4,6 +4,13 @@ library("caret")
 library(corrplot)
 library(bestglm)
 library(outliers)
+library(factoextra)
+library(Rfast)
+#install.packages("cutpointr")
+library(cutpointr)
+#library(ggthemr)
+#library(lsplsGlm)
+
 {
   widthDiviser = 2
   
@@ -29,6 +36,8 @@ library(outliers)
   #% of training resamples from static nonholdout
   preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
   sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  source(paste0(sourceDir,"glm.pcr.R"))
+  source(paste0(sourceDir,"unbalanced_functions.R"))
   #sourceDir="/home/rstudio/577/Capstone-577/"
   
   if (widthDiviser == 1) resample = 2
@@ -56,15 +65,13 @@ for (postProcess in 1:length(files))
   
   y <- data.frame(PostDF[,1, drop=FALSE])[,1]
   
-  
-  
   #includes proportion of variance
   summary(prcomp(x, center=TRUE, scale=TRUE))
   te <- summary(prcomp(x, center=TRUE, scale=TRUE))$importance
   #pc plot
   plot(te[3,1:ncol(te)])
   
-  #correlation plot of sample
+  #correlation plot of sample along with pca
   corrplot(cor(cbind(x,prcomp(x, center=TRUE, scale=TRUE)$x)))
   
   #include data in new model for inclusion in a linear model
@@ -77,10 +84,10 @@ for (postProcess in 1:length(files))
   #applied PCA to holdout
   
   #does this make it linear?
-  pc <- prcomp(x, center=TRUE, scale=TRUE)
-  pred <- predict(pc,x)
+  #pc <- prcomp(x, center=TRUE, scale=TRUE)
+  #pred <- predict(pc,x)
   #plot(data.frame(y,drop=FALSE),pred)
-  pcaPred <- lm(cbind(data.frame(y),pred))
+  #pcaPred <- lm(cbind(data.frame(y),pred))
   
   #yhatPCA = predict(pcaPred, x)
   #colnames(y)<-"y"
@@ -89,25 +96,34 @@ for (postProcess in 1:length(files))
   #tempy
   
   #http://www.milanor.net/blog/performing-principal-components-regression-pcr-in-r/
-  pcr_model <- pcr(y~., data = cbind(tempy,x), scale = TRUE, validation = "CV")
-  summary(pcr_model)
-  pcr_pred <- predict(pcr_model, x)
-  hist(pcr_pred)
-  table(y)
-  table(pcr_pred)
+  #https://stackoverflow.com/questions/40325165/matrix-multiplication-in-r-requires-numeric-complex-matrix-vector-arguments?rq=1
+  #requires Rfast
+  #pcr_model <- pcr(y~., data = cbind(tempy,x), scale = TRUE, validation = "CV")
   
+  #pcr_model <- glm.pcr(y, x, k=ncol(PostDF[,-1]),xnew = NULL)
   
-  pred <- prediction(data.frame(pcr_pred)[,1],y)
-  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
-  plot(roc.perf)
-  abline(a=0, b= 1)  
+  #pcr_model <- glm.pcr(y~., data = cbind(tempy,x), scale = TRUE)
+  
+  #summary(pcr_model)
+  
+  #pcr_model <- fit.lspcr.glm(Y=Y, x, cbind(x,y), ncol(PostDF), folds = widthSize, proportion = 0.9)
+  
+  #pcr_pred <- predict.glm(pcr_model, x)
+  #hist(pcr_pred)
+  #table(y)
+  #table(pcr_pred)
+  
+  #pred <- prediction(data.frame(pcr_pred)[,1],y)
+  #roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  #plot(roc.perf)
+  #abline(a=0, b= 1)  
  
   #predict(pcaPred,)
   
   #predict(pcaPred,filteredv7133holdout[-1])
   
   #summary(pcaPred)
-  hist(abs(pcaPred$residuals))
+  #hist(abs(pcaPred$residuals))
   
   #summary(pcaModel)
   #summary(pcaPred)
@@ -134,7 +150,11 @@ for (postProcess in 1:length(files))
   #y=data.train[,1]
   
   yhat = predict(trainModel$finalModel, PostDF[,-1,drop=FALSE])
+  summary(trainModel)
+  #table(yhat)
   ytest = PostDF[,1,drop=FALSE][,1]
+  hist(yhat)
+  hist(ytest)
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
   
@@ -148,6 +168,55 @@ for (postProcess in 1:length(files))
   plot(roc.perf)
   abline(a=0, b= 1)
   
+  gain <- performance(pred, "tpr", "rpp")
+  plot(gain, main = "Gain Chart")
+  #plot(yhat,ytest)
+  
+  yhat <- data.frame(yhat)
+  colnames(yhat) <- "yhat"
+  
+  ytest <- data.frame(ytest)
+  colnames(ytest) <- "ytest"
+  
+  #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
+  #cm_info <- ConfusionMatrixInfo( data = cbind(yhat,ytest), predict = "yhat", 
+                                  #actual = "ytest", cutoff = .5 )
+  
+  #print(cm_info$data[order(cm_info$data$predict),])
+  #cm_info$plot
+  
+  #https://www.r-bloggers.com/r-sorting-a-data-frame-by-the-contents-of-a-column/
+  
+  
+  #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
+  #assymetric costs?  My hope is to maximize tp and tn in two separate matrix
+  #cost_fp <- 100
+  #cost_fn <- 100
+  #I'm using cutoff instead
+  #roc_info <- ROCInfo( data = cm_info$data, predict = "predict", actual = "actual", cost.fp = cost_fp, cost.fn = cost_fn )
+  #grid.draw(roc_info$plot)
+  #table(yhat)
+  
+  #print(paste("equal cutpoint:",round(roc_info$cutoff,3)))
+  
+  #class 1
+  #Maximize sensitivity given a minimal value of specificity
+  cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
+                  method = maximize_metric, metric = sens_constrain)
+  
+  #both classes
+  cp_center <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
+                       method = maximize_metric, metric = sum_sens_spec)
+  
+  #class 0
+  #Maximize specificity given a minimal value of sensitivity
+  cp_spec <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
+                   method = maximize_metric, metric = spec_constrain)
+  
+  
+  #ggthemr("flat")
+  #cm_info$plot
+  
   #pred <- prediction(yhat.test,data.test[,1])
   #roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
   #plot(roc.perf)
@@ -155,14 +224,30 @@ for (postProcess in 1:length(files))
   
   #this is manually converting them
   #test classification using best linear model
-  yhat.transformed = rep(0, nrow(PostDF))
-  yhat.transformed[yhat > 0] = 1
-  yhat.transformed[yhat < 0] = 0
-  sum(yhat.transformed)
+  
+  #this is where an arbitary threshold is set.
+  yhat.transformed_sens = rep(0, nrow(PostDF))
+  yhat.transformed_sens[yhat >= cp_sens$optimal_cutpoint] = 1
+  yhat.transformed_sens[yhat < cp_sens$optimal_cutpoint] = 0
+
+  
+  yhat.transformed_center = rep(0, nrow(PostDF))
+  yhat.transformed_center[yhat >= cp_center$optimal_cutpoint] = 1
+  yhat.transformed_center[yhat < cp_center$optimal_cutpoint] = 0
+  
+    
+  yhat.transformed_spec = rep(0, nrow(PostDF))
+  yhat.transformed_spec[yhat >= cp_spec$optimal_cutpoint] = 1
+  yhat.transformed_spec[yhat < cp_spec$optimal_cutpoint] = 0
+
+  print(cp_sens$optimal_cutpoint)
+  print(cp_center$optimal_cutpoint)
+  print(cp_spec$optimal_cutpoint)
+  #sum(yhat.transformed)
   
   #typeof(ytest)
   #data.frame(ytest)
-  rmse(ytest, yhat.transformed)
+  #rmse(ytest, yhat.transformed)
   
   #Calculating MSE for training data
   #mse.train<- mean(residuals(step.model.train)^2)
@@ -176,14 +261,25 @@ for (postProcess in 1:length(files))
   correct_predictions = sum(yhat.transformed == ytest)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
+  print(paste("error rate:",round(error_rate,3)))
   
   #https://machinelearningmastery.com/confusion-matrix-machine-learning/
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
   #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
   #https://rdrr.io/cran/caret/man/confusionMatrix.html
   
-  results <- confusionMatrix(data=as.factor(yhat.transformed), reference=as.factor(ytest))
+  
+  #class 1
+  results <- confusionMatrix(data=as.factor(yhat.transformed_sens), reference=as.factor(ytest[,1]))
   print(results)
+  
+  results <- confusionMatrix(data=as.factor(yhat.transformed_center), reference=as.factor(ytest[,1]))
+  print(results)
+  
+  #class 0
+  results <- confusionMatrix(data=as.factor(yhat.transformed_spec), reference=as.factor(ytest[,1]))
+  print(results)
+  
   
 }
 

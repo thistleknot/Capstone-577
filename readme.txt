@@ -1619,6 +1619,9 @@ V7221: R HS GRADE/D=1
 	
 Citations
 
+	GLM and PCA
+		https://stats.stackexchange.com/questions/22665/how-to-use-principal-components-as-predictors-in-glm
+
 	http://www.et.bs.ehu.es/cran/web/packages/bestglm/vignettes/bestglm.pdf
 	
 	CV (2009?)
