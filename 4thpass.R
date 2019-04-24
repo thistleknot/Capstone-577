@@ -10,8 +10,10 @@ library(Rfast)
 library(cutpointr)
 library(InformationValue)
 library(tibble)
+library(mctest)
 #library(ggthemr)
 #library(lsplsGlm)
+library(car)
 
 {
   widthDiviser = 2
@@ -76,6 +78,10 @@ for (postProcess in 1:length(files))
   #correlation plot of sample along with pca
   corrplot(cor(cbind(x,prcomp(x, center=TRUE, scale=TRUE)$x)))
   
+  #http://rfaqs.com/mctest-r-package-detection-collinearity-among-regressors
+  omcdiag(x, y, Inter=FALSE)
+  
+  
   #include data in new model for inclusion in a linear model
   #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
   
@@ -96,6 +102,7 @@ for (postProcess in 1:length(files))
   tempy <- data.frame(y)
   colnames(tempy)<-"y"
   #tempy
+  
   
   #http://www.milanor.net/blog/performing-principal-components-regression-pcr-in-r/
   #https://stackoverflow.com/questions/40325165/matrix-multiplication-in-r-requires-numeric-complex-matrix-vector-arguments?rq=1
@@ -132,6 +139,7 @@ for (postProcess in 1:length(files))
   
   #trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
   trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
+  print(vif(trainModel))
   
   #http://r-statistics.co/Logistic-Regression-With-R.html
   
@@ -167,6 +175,8 @@ for (postProcess in 1:length(files))
   hist(ytest)
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
+  
+  
   
   #needs to be continuous
   #https://arulvelkumar.wordpress.com/2017/09/03/prediction-function-in-r-number-of-cross-validation-runs-must-be-equal-for-predictions-and-labels/
@@ -242,16 +252,18 @@ for (postProcess in 1:length(files))
   yhat.transformed_sens = rep(0, nrow(PostDF))
   yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
   yhat.transformed_sens[yhat < optCutOff_sens] = 0
-
+  misClassError(yhat.transformed_sens, ytest, threshold = optCutOff)
   
   yhat.transformed_center = rep(0, nrow(PostDF))
   yhat.transformed_center[round(yhat,4) >= round(optCutOff_center,4)] = 1
   yhat.transformed_center[round(yhat,4) < optCutOff_center] = 0
+  misClassError(yhat.transformed_center, ytest, threshold = optCutOff)
   
     
   yhat.transformed_spec = rep(0, nrow(PostDF))
   yhat.transformed_spec[round(yhat,4) >= round(optCutOff_spec,4)] = 1
   yhat.transformed_spec[round(yhat,4) < optCutOff_spec] = 0
+  misClassError(yhat.transformed_spec, ytest, threshold = optCutOff)
 
   print(optCutOff_sens)
   print(optCutOff_center)
@@ -270,8 +282,8 @@ for (postProcess in 1:length(files))
   #mse.test <- mean(residuals(step.model.test)^2)
   #mse.test
   
-  total_predictions = nrow(data.frame(yhat.transformed))
-  correct_predictions = sum(yhat.transformed == ytest)
+  total_predictions = nrow(data.frame(yhat.transformed_center))
+  correct_predictions = sum(yhat.transformed_center == ytest)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   print(paste("error rate:",round(error_rate,3)))
