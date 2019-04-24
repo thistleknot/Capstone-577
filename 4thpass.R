@@ -8,6 +8,8 @@ library(factoextra)
 library(Rfast)
 #install.packages("cutpointr")
 library(cutpointr)
+library(InformationValue)
+library(tibble)
 #library(ggthemr)
 #library(lsplsGlm)
 
@@ -128,7 +130,13 @@ for (postProcess in 1:length(files))
   #summary(pcaModel)
   #summary(pcaPred)
   
-  trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
+  #trainModel <- suppressMessages(train(PostDF[-1], as.factor(PostDF[,1]),method = "glm",trControl = train.control))
+  trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
+  
+  #http://r-statistics.co/Logistic-Regression-With-R.html
+  
+  predicted <- plogis(predict(trainModel, PostDF[,-1,drop=FALSE]))  # predicted scores
+  #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("population")
   print(summary(trainModel$finalModel))
   
@@ -149,8 +157,10 @@ for (postProcess in 1:length(files))
   #x.test=data.test[,-1]
   #y=data.train[,1]
   
-  yhat = predict(trainModel$finalModel, PostDF[,-1,drop=FALSE])
-  summary(trainModel)
+  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
+  yhat <- c()
+  yhat <- predicted
+  #summary(trainModel)
   #table(yhat)
   ytest = PostDF[,1,drop=FALSE][,1]
   hist(yhat)
@@ -201,17 +211,19 @@ for (postProcess in 1:length(files))
   
   #class 1
   #Maximize sensitivity given a minimal value of specificity
-  cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
-                  method = maximize_metric, metric = sens_constrain)
+  #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
+  
+  #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
+  optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
+  optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", yhat)
+  optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", yhat)
   
   #both classes
-  cp_center <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
-                       method = maximize_metric, metric = sum_sens_spec)
+  #cp_center <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sum_sens_spec)
   
   #class 0
   #Maximize specificity given a minimal value of sensitivity
-  cp_spec <- cutpointr(cbind(yhat,ytest), yhat, ytest, 
-                   method = maximize_metric, metric = spec_constrain)
+  #cp_spec <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = spec_constrain)
   
   
   #ggthemr("flat")
@@ -224,25 +236,26 @@ for (postProcess in 1:length(files))
   
   #this is manually converting them
   #test classification using best linear model
-  
+  print(table(yhat))
+  #View(yhat)
   #this is where an arbitary threshold is set.
   yhat.transformed_sens = rep(0, nrow(PostDF))
-  yhat.transformed_sens[yhat >= cp_sens$optimal_cutpoint] = 1
-  yhat.transformed_sens[yhat < cp_sens$optimal_cutpoint] = 0
+  yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
+  yhat.transformed_sens[yhat < optCutOff_sens] = 0
 
   
   yhat.transformed_center = rep(0, nrow(PostDF))
-  yhat.transformed_center[yhat >= cp_center$optimal_cutpoint] = 1
-  yhat.transformed_center[yhat < cp_center$optimal_cutpoint] = 0
+  yhat.transformed_center[round(yhat,4) >= round(optCutOff_center,4)] = 1
+  yhat.transformed_center[round(yhat,4) < optCutOff_center] = 0
   
     
   yhat.transformed_spec = rep(0, nrow(PostDF))
-  yhat.transformed_spec[yhat >= cp_spec$optimal_cutpoint] = 1
-  yhat.transformed_spec[yhat < cp_spec$optimal_cutpoint] = 0
+  yhat.transformed_spec[round(yhat,4) >= round(optCutOff_spec,4)] = 1
+  yhat.transformed_spec[round(yhat,4) < optCutOff_spec] = 0
 
-  print(cp_sens$optimal_cutpoint)
-  print(cp_center$optimal_cutpoint)
-  print(cp_spec$optimal_cutpoint)
+  print(optCutOff_sens)
+  print(optCutOff_center)
+  print(optCutOff_spec)
   #sum(yhat.transformed)
   
   #typeof(ytest)
@@ -268,16 +281,18 @@ for (postProcess in 1:length(files))
   #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
   #https://rdrr.io/cran/caret/man/confusionMatrix.html
   
-  
   #class 1
-  results <- confusionMatrix(data=as.factor(yhat.transformed_sens), reference=as.factor(ytest[,1]))
+  results <- c()
+  results <- confusionMatrix(yhat.transformed_sens, ytest[,1])
   print(results)
   
-  results <- confusionMatrix(data=as.factor(yhat.transformed_center), reference=as.factor(ytest[,1]))
+  results <- c()
+  results <- confusionMatrix(yhat.transformed_center, ytest[,1])
   print(results)
   
+  results <- c()
   #class 0
-  results <- confusionMatrix(data=as.factor(yhat.transformed_spec), reference=as.factor(ytest[,1]))
+  results <- confusionMatrix(yhat.transformed_spec, ytest[,1])
   print(results)
   
   
