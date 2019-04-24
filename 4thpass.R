@@ -288,18 +288,18 @@ for (postProcess in 1:length(files))
   yhat.transformed_sens = rep(0, nrow(PostDF))
   yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
   yhat.transformed_sens[yhat < optCutOff_sens] = 0
-  misClassError(yhat.transformed_sens, ytest, threshold = optCutOff)
+  misClassError(yhat.transformed_sens, ytest, threshold = optCutOff_sens)
   
   yhat.transformed_center = rep(0, nrow(PostDF))
   yhat.transformed_center[round(yhat,4) >= round(optCutOff_center,4)] = 1
   yhat.transformed_center[round(yhat,4) < optCutOff_center] = 0
-  misClassError(yhat.transformed_center, ytest, threshold = optCutOff)
+  misClassError(yhat.transformed_center, ytest, threshold = optCutOff_center)
   
     
   yhat.transformed_spec = rep(0, nrow(PostDF))
   yhat.transformed_spec[round(yhat,4) >= round(optCutOff_spec,4)] = 1
   yhat.transformed_spec[round(yhat,4) < optCutOff_spec] = 0
-  misClassError(yhat.transformed_spec, ytest, threshold = optCutOff)
+  misClassError(yhat.transformed_spec, ytest, threshold = optCutOff_spec)
 
   print(optCutOff_sens)
   print(optCutOff_center)
