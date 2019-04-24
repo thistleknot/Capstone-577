@@ -217,7 +217,7 @@ for (medianDirection in c("greaterEqual"))
       ## select the columns with no 
       
       #drops columns with na values
-      cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
+      #cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
       # if A or B is not specified, all rows or columns will be retained
       
       #expensive, descriptive function only
@@ -248,8 +248,6 @@ for (medianDirection in c("greaterEqual"))
       #dbExistsTable(conn, "temp_table_data")
       
       NewDF <- data[,(c(col.num))]
-      
-      #V7589 empty
       
       #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
       #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
@@ -300,8 +298,6 @@ for (medianDirection in c("greaterEqual"))
       #male to female
       #View(list[,1][convert2Index])
       
-      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
-      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
@@ -315,7 +311,6 @@ for (medianDirection in c("greaterEqual"))
       #View(NewDF["V7202"])
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
-      #View(NewDF["V7202"])
       
       #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
       #95% confidence
@@ -330,9 +325,10 @@ for (medianDirection in c("greaterEqual"))
       sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
       sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
       
+      #prevents records from reordering
       NewDF[V7221_Index,"V7221"] <- 1
       V7221_Index <- NewDF[,"V7221"] > 1
-      NewDF[V7221_Index,"V7221"] <- 0
+      NewDF[V7221_Index,"V7221"] <- -1
       
       #College graduate
       #5: for college grad father, 95% conf confirmed
@@ -347,7 +343,7 @@ for (medianDirection in c("greaterEqual"))
       
       NewDF[V7215_Index,"V7215"] <- 1
       V7215_Index <- NewDF[,"V7215"] > 1
-      NewDF[V7215_Index,"V7215"] <- 0
+      NewDF[V7215_Index,"V7215"] <- -1
       
       #4: 3-5 Hours Internet #95% conf confirmed
       #4 #hours for computer use for internet leisure 
@@ -364,7 +360,7 @@ for (medianDirection in c("greaterEqual"))
       unique(NewDF[,"V7551"])
       NewDF[V7551_Index,"V7551"] <- 1
       V7551_Index <- NewDF[,"V7551"] > 1
-      NewDF[V7551_Index,"V7551"] <- 0
+      NewDF[V7551_Index,"V7551"] <- -1
       
       #5: 6-9 Hours Facebook # 95% conf confirmed
       if (medianDirection=="greaterEqual") V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
@@ -378,7 +374,7 @@ for (medianDirection in c("greaterEqual"))
       
       NewDF[V7552_Index,"V7552"] <- 1
       V7552_Index <- NewDF[,"V7552"] > 1
-      NewDF[V7552_Index,"V7552"] <- 0
+      NewDF[V7552_Index,"V7552"] <- -1
       
       #4 3-5 Hours Gaming # 95% conf confirmed
       if (medianDirection=="greaterEqual") V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
@@ -392,7 +388,7 @@ for (medianDirection in c("greaterEqual"))
       
       NewDF[V7553_Index,"V7553"] <- 1
       V7553_Index <- NewDF[,"V7553"] > 1
-      NewDF[V7553_Index,"V7553"] <- 0
+      NewDF[V7553_Index,"V7553"] <- -1
       
       #4 3-5 Hours Texting # 95% conf confirmed
       if (medianDirection=="greaterEqual") V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
@@ -406,7 +402,7 @@ for (medianDirection in c("greaterEqual"))
       
       NewDF[V7562_Index,"V7562"] <- 1
       V7562_Index <- NewDF[,"V7562"] > 1
-      NewDF[V7562_Index,"V7562"] <- 0
+      NewDF[V7562_Index,"V7562"] <- -1
       
       #2: <1 Hour talking on cell phone # 95% conf confirmed
       if (medianDirection=="greaterEqual") V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
@@ -420,24 +416,39 @@ for (medianDirection in c("greaterEqual"))
       
       NewDF[V7563_Index,"V7563"] <- 1
       V7563_Index <- NewDF[,"V7563"] > 1
-      NewDF[V7563_Index,"V7563"] <- 0
+      NewDF[V7563_Index,"V7563"] <- -1
       
-      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(0), verbose = FALSE)
-      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(0), verbose = FALSE)
-      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(-1), verbose = FALSE)
+      NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
       
       #https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
       #kills the analysis
-      NewDF[NewDF == -1] <- -2
-      NewDF[NewDF == 0] <- -1
-      NewDF[NewDF == -2] <- 0
+      #if it's below 0 (-1), I convert to -2.  Why?  
+      #because i'm about to convert 0 to -1
+      #then I convert -2 back to 0 (which represents na) and 
+      #8517 has a -1 conversion
+      count(NewDF[NewDF==0])
+      
+      #7206 has 0's
+      NewDF[NewDF == 0] <- -8
+      
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
+      
+      
+      #NewDF[NewDF == -1] <- -2
+      #NewDF[NewDF == -1] <- 0
+      #NewDF[NewDF == -2] <- 0
       #View(NewDF["V7202"])
       #0 = na
       #-1 = negative
       #1 = positve
+      
+      table(NewDF[,"V7221"])
       
       start=5
       

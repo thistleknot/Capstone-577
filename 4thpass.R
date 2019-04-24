@@ -61,7 +61,7 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.nam
 #postProcess=21
 for (postProcess in 1:length(files))
 { 
-  
+  print(paste("file: ",files[postProcess]))
   #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned. (i.e. the export of my cleandatacode.R cleans na's)
   PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
   colnames(PostDF)
@@ -328,7 +328,7 @@ for (postProcess in 1:length(files))
   cm_info <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
   
   #print(cm_info$data[order(cm_info$data$predict),])
-  cm_info$plot
+  plot(cm_info$plot)
   
   #typeof(ytest)
   #data.frame(ytest)
