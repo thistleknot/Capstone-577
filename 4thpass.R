@@ -64,7 +64,7 @@ for (postProcess in 1:length(files))
   
   #NewDF assumes 0's mean NA's, this is more like a population dataframe already precleaned. (i.e. the export of my cleandatacode.R cleans na's)
   PostDF <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
-  
+  colnames(PostDF)
   
   df <- PostDF[,-1, drop=FALSE]
   colnames(df) <- colnames(PostDF[,-1,drop=FALSE])
@@ -99,15 +99,25 @@ for (postProcess in 1:length(files))
   tempy <- data.frame(y)
   colnames(tempy)<-"y"
   vifModel <- glm(y~.,data=cbind(tempy,df),family=binomial(link="logit"))
-  vifResults <- (car::vif(vifModel))
-  
-  print(drop)
-  drop <- c(as.character(vifResults[vifResults >= 5]))
+  if(length(df)!=1) 
+    {
+    vifResults <- (car::vif(vifModel))
+
+    drop<-c()
+        drop <- c(as.character(vifResults[vifResults >= 5]))
+      print(drop)
+      if (length(drop)==0) x <- df
+      if (!(length(drop)==0)) {
+        print(paste("dropping!",c(drop)))
+        x <- df[ , -which(names(df) %in% drop)]}
+    
+    }
+  if(length(df)==1) x <- df
   
   #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
   #df[ , -which(names(df) %in% c("z","u"))]
   #df[ , -which(names(df) %in% c("z","u"))]
-  x <- df[ , -which(names(df) %in% drop)]
+  
   
   trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
   
