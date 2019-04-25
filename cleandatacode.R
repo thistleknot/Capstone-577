@@ -185,6 +185,8 @@ for (medianDirection in c("greaterEqual"))
       
       length(colnames(NewDF))
       
+      #this resets each file
+      Hfiltered <- c()
       #transformations
       #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
       #index <- df$b == 0
@@ -552,7 +554,7 @@ for (medianDirection in c("greaterEqual"))
                 if(skipFlag==0)
                 {
                   skipFlag=0
-                  tryCase <- tryCatch((B <- suppressWarnings( Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
+                  tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
 
                   error=function(e) skipFlag=1 )
                   
@@ -591,12 +593,10 @@ for (medianDirection in c("greaterEqual"))
               
               #holdout
               numOfVars <- c()
-              
               uniqueNamesTV <- unique(namesTV)
               numOfVars <- length(uniqueNamesTV)
-              
               print("holdout pass")
-              Hfiltered <- c()
+              
               namesH <- c()
               if(numOfVars!=1)
               {
@@ -634,15 +634,15 @@ for (medianDirection in c("greaterEqual"))
                   if(skipFlag==0)
                   {
                     skipFlag=0
-                    tryCase <- tryCatch((B <- suppressWarnings( Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
-                                        
+                    tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
                                         error=function(e) skipFlag=1 )
                     
                     if(skipFlag!=1)
                     {
                       
                       result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
-                      print(result)
+                      colnames(result) <- "x"
+                      
                       if(length(result)!=0)
                       {
                         
@@ -650,8 +650,10 @@ for (medianDirection in c("greaterEqual"))
                         {
                           for (i in 1:nrow(result))
                           {
-                            print(c("Storing 2:",i))
-                                  
+                            #print(c("Storing 2:",i))
+                            print(result)
+                            #store <- result
+                            #print(store)
                             Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
                             
                           }
@@ -660,6 +662,9 @@ for (medianDirection in c("greaterEqual"))
                         #!=1
                         if(nrow(result)==1)
                         {
+                          print(result)
+                          #store <- result
+                          #print(store)
                           print(c("storing 1:"))
                           Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
                           
@@ -678,7 +683,6 @@ for (medianDirection in c("greaterEqual"))
                 #end != 1
                 
               }
-              Hfiltered
 
               if (numOfVars == 1)
               {
@@ -696,8 +700,7 @@ for (medianDirection in c("greaterEqual"))
                 if(skipFlag==0)
                 {
                   skipFlag=0
-                  tryCase <- tryCatch((B <- suppressWarnings( Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
-                                      
+                  tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
                                       error=function(e) skipFlag=1 )
                   
                   if(skipFlag!=1)
@@ -724,6 +727,10 @@ for (medianDirection in c("greaterEqual"))
 
               }
               
+              #finalSetPre <- (unique(Hfiltered))
+              #finalSet[which(finalSet != NA]
+              
+              #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
               
               print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
               
@@ -749,10 +756,10 @@ for (medianDirection in c("greaterEqual"))
       }
       
       #spacer
-      finalListReduced <- c()
-      tabled <- table(finalList[,,drop=FALSE])/numRuns
+      #finalListReduced <- c()
+      tabled <- table(Hfiltered[,,drop=FALSE])/numRuns
       print(tabled)
-      table(finalList)
+      #table(finalList)
       #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
       #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
       
@@ -784,8 +791,8 @@ for (medianDirection in c("greaterEqual"))
         }
       }
       
-      print(c("3: ", finalListReduced))
-      hist((data.frame(table(finalList)))[,2])
+      #print(c("3: ", finalListReduced))
+      #hist((data.frame(table(finalList)))[,2])
       
       #validate against population    
       #population
