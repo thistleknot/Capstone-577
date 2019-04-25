@@ -348,10 +348,10 @@ for (medianDirection in c("greaterEqual"))
         for (lister in 1:ncol(NewDF))
         {
           name <- colnames(NewDF)[lister]
-          print(name)
+          #print(name)
           temp <- table(NewDF[lister], useNA = "ifany")
           percent <- temp[length(temp)]/rows
-          print(percent)
+          #print(percent)
           if(percent>.75)
           {
             removedName <- c()
@@ -359,7 +359,7 @@ for (medianDirection in c("greaterEqual"))
             filterList <- rbind(filterList,removedName)
           }
         }
-        print(c(filterList))
+        #print(c(filterList))
         NewDF[is.na(NewDF)] <- 0
         
         oldDF <- c()
@@ -561,7 +561,7 @@ for (medianDirection in c("greaterEqual"))
                 #end of pairs
               }
               namesTV
-              print(c("namesTV:", namesTV))
+              #print(c("namesTV:", namesTV))
               
               #holdout
               numOfVars <- c()
@@ -621,7 +621,7 @@ for (medianDirection in c("greaterEqual"))
                       
                       result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
                       colnames(result) <- "x"
-                      print(result)
+                      #print(result)
                       
                       if(length(result)!=0)
                       {
@@ -651,7 +651,7 @@ for (medianDirection in c("greaterEqual"))
                   }
                   if(nrow(data.test)==0)
                   {
-                    print(c("no rows",colnames(holderOfData)))
+                    #print(c("no rows",colnames(holderOfData)))
                   }
                   #end of pairs
                 }
@@ -687,7 +687,7 @@ for (medianDirection in c("greaterEqual"))
                     {
                       if(length(result)==1)
                       {
-                        print(result)
+                        #print(result)
                         Hfiltered <- rbind(Hfiltered, result)
                         
                       }                        
@@ -705,8 +705,8 @@ for (medianDirection in c("greaterEqual"))
             
               
               #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
-              print(c("Hfiltered:", Hfiltered))
-              print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
+              #print(c("Hfiltered:", Hfiltered))
+              #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
               
               #end of holdout analysis
               
