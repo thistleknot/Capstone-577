@@ -578,6 +578,8 @@ for (medianDirection in c("greaterEqual"))
           for (resample in 1:widthDiviser)
           {
             #base = resample
+            source(paste0(sourceDir,"MCResampleTrain.R"))
+            source(paste0(sourceDir,"MCResampleTest.R"))
             #print is inside inner loop
             
             ##before reseed

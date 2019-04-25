@@ -1,7 +1,7 @@
-
-#monte carlo resample from pre separated holdout (this means new holdout each subsample)
-holdout <- c()
-holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
-
-NewDF.holdout <- c()
-NewDF.holdout <- NewDF.holdoutSet[holdout, ]
+data.test <- c()
+data.test <- NewDF.holdout[,as.character(c(newList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+data.test[data.test == 0] <- NA
+temp <- data.test[] %>% filter_all(all_vars(!is.na(.)))
+data.test <- c()
+data.test <- temp
+data.test[data.test == -1] <- 0
