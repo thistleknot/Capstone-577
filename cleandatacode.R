@@ -162,7 +162,7 @@ for (medianDirection in c("greaterEqual"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #lister=1
-    for(flister in 1:3)
+    for(flister in 1:1)
     {
       numRuns = 1
       #7221 gpa
@@ -519,6 +519,7 @@ for (medianDirection in c("greaterEqual"))
               
               pairs <- c()
               pairs <- pairedLists(numOfVars)
+              print(pairs)
               
               #aggregated after categories loop
               namesTV <- c()
@@ -528,28 +529,20 @@ for (medianDirection in c("greaterEqual"))
               for(runs in 1:nrow(pairs))
               {
                 print("1st pass")
-                #kind of hackey
-                #left
-                #pairs[runs,][1]
-                #right
-                #pairs[runs,][2]
-                #oldList[as.integer(pairs[runs,][1])]
-                
+
                 ypair <- newList[1]
                 xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
                 
                 newList <- c()
                 newList <- cbind(ypair,xpair)
+                print(newList)
                 
                 skipFlag=0
-                #subcategory specific
                 #just point to resample script and use data.train
                 tryCase <- c()
                
                 tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) skipFlag=1)
-                #data.train <- data.train[0]
                 holderOfData <- cbind(data.train[,xpair],data.train[ypair])
-                #holderOfData <- data.train[0]
                 #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
                 if(skipFlag==0)
                 {
@@ -598,10 +591,11 @@ for (medianDirection in c("greaterEqual"))
               print("holdout pass")
               
               namesH <- c()
-              if(numOfVars!=1)
+              if ( numOfVars != 1 )
               {
                 pairs <- c()
                 pairs <- pairedLists(numOfVars)
+                print(pairs)
                 
                 Hfiltered <- c()
                 #holdout
@@ -650,10 +644,7 @@ for (medianDirection in c("greaterEqual"))
                         {
                           for (i in 1:nrow(result))
                           {
-                            #print(c("Storing 2:",i))
-                            print(result)
-                            #store <- result
-                            #print(store)
+                            print(c("Storing 2:",i,result))
                             Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
                             
                           }
@@ -662,12 +653,8 @@ for (medianDirection in c("greaterEqual"))
                         #!=1
                         if(nrow(result)==1)
                         {
-                          print(result)
-                          #store <- result
-                          #print(store)
-                          print(c("storing 1:"))
+                          print(c("storing 1:",result))
                           Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
-                          
                         }                        
                         
                       }
@@ -684,7 +671,7 @@ for (medianDirection in c("greaterEqual"))
                 
               }
 
-              if (numOfVars == 1)
+              if ( numOfVars == 1)
               {
                 ypair <- newList[1]
                 xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
@@ -731,7 +718,7 @@ for (medianDirection in c("greaterEqual"))
               #finalSet[which(finalSet != NA]
               
               #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
-              
+              print(Hfiltered)
               print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
               
               #end of holdout analysis
