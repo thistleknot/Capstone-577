@@ -566,7 +566,7 @@ for (medianDirection in c("greaterEqual"))
           source(paste0(sourceDir,"reseedSampleTest.R"))
           
           #static for monte carlo training 
-          source(paste0(sourceDir,"reseedSampleTrain.R"))
+          source(paste0(sourceDir,"reseedTrain.R"))
           
           #monte carlo resample from static sets
           #if widthDiviser = 1, keep as 1
@@ -703,7 +703,7 @@ for (medianDirection in c("greaterEqual"))
                 
                 #subcategory specific
                 #just point to resample script and use data.train
-                source(paste0(sourceDir,"reseedSampleTrain.R"))
+                source(paste0(sourceDir,"resampleMCDatatrain.R"))
                 #I don't want it to reseed here'
                 
                 tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
