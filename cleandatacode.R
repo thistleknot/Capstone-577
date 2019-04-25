@@ -117,7 +117,7 @@ sub_returnCVNamesExclMin <- function(data_sent){
 pw <- {"Read1234"}
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Desktop/Capstone-577-32be61ca6928040350f56922bce8789ce3bfc8b0/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -196,7 +196,7 @@ for (medianDirection in c("greaterEqual"))
 {
   
   #will error on 3 for V7118
-  #widthLoop=1
+  #widthLoop=3
   for(widthLoop in c(3))
   {
     widthDiviser = widthLoop
@@ -563,19 +563,10 @@ for (medianDirection in c("greaterEqual"))
           #% of training resamples from static nonholdout
           preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
           
-          #static (outside of monte carlo/resampling, if desire resampling, simply move above set.seed(base))
-          holdoutSet <- c()
-          holdoutSet <- sample(nrow(NewDF), round(holdoutSetSize*nrow(NewDF)))
-          
-          NewDF.holdoutSet <- c()
-          NewDF.holdoutSet <- NewDF[holdoutSet,]
+          source(paste0(sourceDir,"reseedSampleTest.R"))
           
           #static for monte carlo training 
-          preNonHoldoutSet <- c()
-          preNonHoldoutSet <- sample(nrow(NewDF[-holdoutSet,]), round(preNonHoldOutSize*nrow(NewDF[-holdoutSet,])))
-          
-          NewDF.preNonHoldoutSet <- c()
-          NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
+          source(paste0(sourceDir,"reseedSampleTrain.R"))
           
           #monte carlo resample from static sets
           #if widthDiviser = 1, keep as 1
@@ -598,11 +589,8 @@ for (medianDirection in c("greaterEqual"))
             #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
             #monte carlo resamples from a static holdout
             #used for resampling monte carlo training set from non holdout partitions!
-            preTrain <- c()
-            preTrain <- sample(nrow(NewDF.preNonHoldoutSet), round(preTrainSize*nrow(NewDF.preNonHoldoutSet)))
             
-            NewDF.preTrain <- c()
-            NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,]
+            source(paste0(sourceDir,"reseedSampleTrain.R"))
             
             yIndex <- list[,4] == 0
             lGeographyIndex <- list[,4] == 1
@@ -715,8 +703,8 @@ for (medianDirection in c("greaterEqual"))
                 
                 #subcategory specific
                 #just point to resample script and use data.train
-                source(paste0(sourceDir,"resampleMCdatatrain.R"))
-                source(paste0(sourceDir,"reseedSample.R"))
+                source(paste0(sourceDir,"reseedSampleTrain.R"))
+                #I don't want it to reseed here'
                 
                 tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                     error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
@@ -755,6 +743,7 @@ for (medianDirection in c("greaterEqual"))
               #just point to resample script and use data.train, isn't technically resampled except when
               #I don't need to resample here because I'm using holdout... data.test
               #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
+              
               source(paste0(sourceDir,"resampleMCdatatest.R"))
               
               holderOfData <- c()
