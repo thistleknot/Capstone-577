@@ -518,110 +518,93 @@ for (medianDirection in c("greaterEqual"))
               
               #categories 
               #val=3
-              for (val in 2:6)
-              {
-                #used in category, rolled into names
-                datalist1 <- c()
-                datalist2 <- c()
-                
-                #end up with no records due to na's, and so any variables.  Inverse relationship.
-                colList <- c()
-                if (val == 2) colList <- list[lGenderGPAViolenceFatherIndex,]
-                #if (val == 3) colList <- list[lGPAIndex,]
-                #if (val == 4) colList <- list[lViolenceIndex,]
-                #if (val == 5) colList <- list[lFather1Index,]
-                #if (val == 6) colList <- list[lFather2Index,]
-                if (val == 3) colList <- list[lHabitsIndex1,]
-                if (val == 4) colList <- list[lHealthIndex,]
-                if (val == 5) colList <- list[lPsycheIndex1,]
-                if (val == 6) colList <- list[lPsycheIndex2,]
-                if (val == 7) colList <- list[lHabitsIndex2,]
-                
-                if (is.null(nrow(data.frame(alty)))) break
-                
-                #colList <- rbind(list[yIndex,],colList)
-                
-                colList <- rbind(y,colList)
-                
-                #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
-                #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
-                colListNames <- c()
-                colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
-                
-                newList <- c()        
-                newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-                oldList <- newList[-1]
-                #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
-                #droplevels(newList)
-                #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
-                
-                #needs to be inside category when newList is generated
-                #don't re-use for csv's... csv's... are already cleaned
-                #repurpose instead
-                #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+              colListNames <- c()
+
+              colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
+  
+              #https://stackoverflow.com/questions/17878048/merge-two-data-frames-while-keeping-the-original-row-order
+              #https://stackoverflow.com/questions/28311293/how-to-make-join-operations-in-dplyr-silent
                
-                numOfVars <- c()
-                numOfVars <- length(oldList)
+              #colListNames <- data.frame(colList[,1])
+              print(data.frame(colList[,1]))
+              
+              #colListNames <- suppressMessages(paste(join(colList,list)[,1],join(colList,list)[,3]))
                 
-                pairs <- c()
-                pairs <- pairedLists(numOfVars)
+              #end of category iterator
+              
+              newList <- c()        
+              #newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
+              newList <- c(as.character(y[,1]),as.character(colListNames[,1]))
+              oldList <- as.character(newList[-1])
+              #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
+              #droplevels(newList)
+              #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
+              
+              #needs to be inside category when newList is generated
+              #don't re-use for csv's... csv's... are already cleaned
+              #repurpose instead
+              #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+              
+              numOfVars <- c()
+              numOfVars <- length(oldList)
+              
+              pairs <- c()
+              pairs <- pairedLists(numOfVars)
+              
+              #runs=3
+              for(runs in 1:nrow(pairs))
+              {
+                #kind of hackey
+                #left
+                #pairs[runs,][1]
+                #right
+                #pairs[runs,][2]
+                oldList[as.integer(pairs[runs,][1])]
                 
-                #runs=3
-                for(runs in 1:nrow(pairs))
+                ypair <- newList[1]
+                xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+                
+                newList <- c()
+                newList <- cbind(ypair,xpair)
+                
+                skipFlag=0
+                #subcategory specific
+                #just point to resample script and use data.train
+                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) skipFlag=1)
+                
+                #I don't want it to reseed here'
+                if(tryCase!=1)
                 {
-                  #kind of hackey
-                  #left
-                  #pairs[runs,][1]
-                  #right
-                  #pairs[runs,][2]
-                  oldList[as.integer(pairs[runs,][1])]
+                  tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                                      error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
                   
-                  ypair <- newList[1]
-                  xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
                   
-                  newList <- c()
-                  newList <- cbind(ypair,xpair)
                   
-                  skipFlag=0
-                  #subcategory specific
-                  #just point to resample script and use data.train
-                  tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) skipFlag=1)
+                  #https://www.r-bloggers.com/careful-with-trycatch/
                   
-                  #I don't want it to reseed here'
-                  if(tryCase!=1)
-                  {
-                    tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                                        error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
-                    
-                    
-                    
-                    #https://www.r-bloggers.com/careful-with-trycatch/
-                    
-                    #print(table(is.na(data.test)))
-                    #datalist2 <- sub_returnCVNames(data.test)
-                    
-                    #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
-                    #print(c(datalist1))
-                    #print(length(datalist1))
-                    if(length(datalist1)>1)
-                      for (i in 1:length(datalist1))
-                      {
-                        namesTV <- rbind(namesTV,datalist1[i])
-                      }
-                    if(length(datalist1)==1)
+                  #print(table(is.na(data.test)))
+                  #datalist2 <- sub_returnCVNames(data.test)
+                  
+                  #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
+                  #print(c(datalist1))
+                  #print(length(datalist1))
+                  if(length(datalist1)>1)
+                    for (i in 1:length(datalist1))
                     {
-                      namesTV <- rbind(namesTV,datalist1)
+                      namesTV <- rbind(namesTV,datalist1[i])
                     }
-                    
-                    #end of pairs
+                  if(length(datalist1)==1)
+                  {
+                    namesTV <- rbind(namesTV,datalist1)
                   }
                   
-                  
+                  #end try case
                 }
                 
-                
-                #end of category iterator
+                #end of pairs
               }
+              
+              
               #print("category pass")  
               #Taggregated <- c()
               Hfiltered <- c()

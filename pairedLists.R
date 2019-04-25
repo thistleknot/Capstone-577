@@ -2,7 +2,7 @@
 
 pairedLists = function(n) {
   
-  n=3
+  #n=3
   length=n
   #give me from values ranging in 1:n, [that many] n unique pairs
   
