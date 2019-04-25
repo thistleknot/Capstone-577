@@ -733,52 +733,98 @@ for (medianDirection in c("greaterEqual"))
               newList <- c(yname,namesTV)
               #resample before drawing from data.test
               
-              #just point to resample script and use data.train, isn't technically resampled except when
-              #I don't need to resample here because I'm using holdout... data.test
-              #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
-              
-              source(paste0(sourceDir,"redrawTest.R"))
-              
-              holderOfData <- c()
-              
-              holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
-              
-              Hfiltered <- c() 
-              
-              Hfiltered <- c() 
-              
-              if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-              if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-              
-              extract <- c()
-              extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
-              
-              #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
-              if (length(extract)==0) extract <- c()
-              
-              #print(c("2: ", extract))
-              
-              #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
-              
-              # #3 finalList
-              #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
-              
-              #going to use table to tabulate final results
-              
-              #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
-              #p5[p5$id %in% current, ]
-              
-              #end of yPass 
-              
-              if(length(extract)>1)
-                for (i in 1:length(extract))
-                {
-                  finalList <- rbind(finalList,extract[i])
-                }
-              if(length(extract)==1)
+              for (iterator in 1:length(newList))
               {
-                finalList <- rbind(finalList,extract)
-              }          
+                
+                #merge(newList,list)
+                l1 <- data.frame(newList)
+                colnames(l1) <- "V1"
+                #merge(noquote(newList), list)
+                recreated <- suppressMessages(join(l1,list))
+
+                yIndex <- recreated[,4] == 0
+                lGeographyIndex <- recreated[,4] == 1
+                
+                lGenderGPAViolenceFatherIndex <- recreated[,4] == 2
+                lHabitsIndex <- recreated[,4] == 3
+                lHealthIndex <- recreated[,4] == 4
+                lPsycheIndex1 <- recreated[,4] == 5
+                lPsycheIndex2 <- recreated[,4] == 6
+                                
+                Hfiltered <- c() 
+                
+                #V4, skip category 0 which is 1st position, i.e. y
+                for (val in c(unique(recreated[,4])[-1]))
+                {
+                  #used in category, rolled into names
+                  datalist1 <- c()
+                  datalist2 <- c()
+                  
+                  #end up with no records due to na's, and so any variables.  Inverse relationship.
+                  colList <- c()
+                  if (val == 2) colList <- recreated[lGenderGPAViolenceFatherIndex,]
+                  if (val == 3) colList <- recreated[lHabitsIndex,]
+                  if (val == 4) colList <- recreated[lHealthIndex,]
+                  if (val == 5) colList <- recreated[lPsycheIndex1,]
+                  if (val == 6) colList <- recreated[lPsycheIndex2,]
+                  
+                  if (is.null(nrow(data.frame(alty)))) break
+                  
+                  #colList <- rbind(list[yIndex,],colList)
+                  
+                  newList <- as.character(rbind(y,colList)[,1])
+                  
+                  source(paste0(sourceDir,"redrawTest.R"))
+                  
+                  holderOfData <- c()
+                  
+                  holderOfData <- cbind(data.frame(data.test[,-1 , drop = FALSE]),data.frame(data.test[,1 , drop = FALSE]))
+                  
+                  if ( widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+                  if ( !widthDiviser == 1 )  Hfiltered <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+                  
+                  extract <- c()
+                  extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
+                  
+                  #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
+                  if (length(extract)==0) extract <- c()
+                  
+                  #print(c("2: ", extract))
+                  
+                  #if((iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered
+                  
+                  # #3 finalList
+                  #if(!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start)) finalList <- Hfiltered[Hfiltered %in% finalList]
+                  
+                  #going to use table to tabulate final results
+                  
+                  #https://stackoverflow.com/questions/34324008/in-r-select-rows-that-have-one-column-that-exists-in-another-list
+                  #p5[p5$id %in% current, ]
+                  
+                  #end of yPass 
+                  
+                  if(length(extract)>1)
+                    for (i in 1:length(extract))
+                    {
+                      finalList <- rbind(finalList,extract[i])
+                    }
+                  if(length(extract)==1)
+                  {
+                    finalList <- rbind(finalList,extract)
+                  }                            
+                  
+                }
+                #t1 <- data.frame(noquote(newList))
+                
+                #t1 %>% inner_join(list)
+                #table(data.test[newList], useNA = "ifany")
+                
+                #just point to resample script and use data.train, isn't technically resampled except when
+                #I don't need to resample here because I'm using holdout... data.test
+                #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
+                
+                
+              }
               
               print(c("2a: ", round(table(finalList)/numRuns,2)))
               
