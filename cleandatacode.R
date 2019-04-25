@@ -518,7 +518,7 @@ for (medianDirection in c("greaterEqual"))
               
               pairs <- c()
               pairs <- pairedLists(numOfVars)
-              print(pairs)
+              #print(pairs)
               
               #aggregated after categories loop
               namesTV <- c()
@@ -535,7 +535,9 @@ for (medianDirection in c("greaterEqual"))
                 newList <- c()
                 newList <- cbind(ypair,xpair)
                 
-                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
+                #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
+                #empty, just prevents an error being thrown
+                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) test = 0)
                 #print(newList)
                 
                 #skipFlag=0
@@ -549,7 +551,7 @@ for (medianDirection in c("greaterEqual"))
                   #data.train[,xpair]
                   result <- sub_returnCVNames(cbind(data.train[ypair],data.train[,xpair]))
                   
-                  if(skipFlag==0)
+                  #if(skipFlag==0)
                   {
                     namesTV <- rbind(namesTV,result)
                   }
@@ -597,7 +599,7 @@ for (medianDirection in c("greaterEqual"))
                   newList <- cbind(ypair,xpair)
                   #print(newList)
                   
-                  skipFlag=0
+                  #skipFlag=0
                   #subcategory specific
                   #just point to resample script and use data.train
                   tryCase <- c()
@@ -608,7 +610,7 @@ for (medianDirection in c("greaterEqual"))
                   #print(colnames(holderOfData))
                   #holderOfData <- data.train[0]
                   #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                  if(skipFlag==0)
+                  if(nrow(data.test)!=0)
                   {
                     skipFlag=0
                     tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
@@ -619,6 +621,7 @@ for (medianDirection in c("greaterEqual"))
                       
                       result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
                       colnames(result) <- "x"
+                      print(result)
                       
                       if(length(result)!=0)
                       {
@@ -646,7 +649,10 @@ for (medianDirection in c("greaterEqual"))
                     
                     #end try case
                   }
-                  
+                  if(nrow(data.test)==0)
+                  {
+                    print(c("no rows",colnames(holderOfData)))
+                  }
                   #end of pairs
                 }
                 
