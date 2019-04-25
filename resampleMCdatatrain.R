@@ -1,5 +1,5 @@
 data.train <- c()
-data.train <- NewDF.preTrain[,as.character(c(newList)),drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+data.train <- NewDF[,as.character(c(newList)),drop=FALSE]
 data.train[data.train == 0] <- NA
 temp <- data.train[] %>% filter_all(all_vars(!is.na(.)))
 data.train <- c()

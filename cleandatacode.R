@@ -17,6 +17,7 @@ library(bestglm)
 library(compare)
 library(dplyr)
 library("R.utils")
+library(tidyr)
 
 
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
@@ -24,7 +25,13 @@ library("R.utils")
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 sub_returnCVNames <- function(data_sent){
+  #data_sent=data.train
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  #table(NewDF[,"V7202"])
+  
+  info <- which(colSums(holderOfData)==nrow(holderOfData))
+  name <- rownames(data.frame(info))
+  if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
@@ -110,7 +117,7 @@ sub_returnCVNamesExclMin <- function(data_sent){
 pw <- {"Read1234"}
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="C:/Users/user/Desktop/Capstone-577-32be61ca6928040350f56922bce8789ce3bfc8b0/"
 source(paste0(sourceDir,"bestglm.R"))
 # Read CSV into R
 
@@ -166,6 +173,20 @@ na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 #data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
 
 data <- d_combined
+ncol(data)
+#drops columns with na values
+
+cleandata<-data[,colSums(is.na(data)) >= round(nrow(data)*.25,0)] # dat[A, B] takes the A rows and B columns; A and B are indices; 
+ncol(cleandata)
+
+colnames(cleandata)
+# if A or B is not specified, all rows or columns will be retained
+
+#expensive, descriptive function only
+#table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
+#Since there are no missing values we export the data
+#write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
+
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
@@ -176,7 +197,7 @@ for (medianDirection in c("greaterEqual"))
   
   #will error on 3 for V7118
   #widthLoop=1
-  for(widthLoop in c(10,7,5,3))
+  for(widthLoop in c(3))
   {
     widthDiviser = widthLoop
     print(paste0("widthLoopSize: ",widthLoop))
@@ -205,26 +226,6 @@ for (medianDirection in c("greaterEqual"))
       #7118 (psychadelics)
       if (lister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
       
-      # dim(data)
-      # check missing with for loop
-      # The below code gives the number of missing values for each variables
-      
-      #expensive, descriptive only
-      #for (ii in 1:ncol(data)) {
-      #  print( colnames(data)[ii] )
-      #  print( table(is.na(data[,ii])) )
-      #}
-      ## select the columns with no 
-      
-      #drops columns with na values
-      #cleandata<-data[,colSums(is.na(data)) == 0] # dat[A, B] takes the A rows and B columns; A and B are indices; 
-      # if A or B is not specified, all rows or columns will be retained
-      
-      #expensive, descriptive function only
-      #table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
-      #Since there are no missing values we export the data
-      #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
-      
       colnames(data)
       
       #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
@@ -248,6 +249,8 @@ for (medianDirection in c("greaterEqual"))
       #dbExistsTable(conn, "temp_table_data")
       
       NewDF <- data[,(c(col.num))]
+      
+      #V7589 empty
       
       #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
       #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
@@ -298,6 +301,8 @@ for (medianDirection in c("greaterEqual"))
       #male to female
       #View(list[,1][convert2Index])
       
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
+      NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
@@ -306,11 +311,12 @@ for (medianDirection in c("greaterEqual"))
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
       
-      #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
-      #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
-      #View(NewDF["V7202"])
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
+      
+      #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
+      #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
+      
       
       #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
       #95% confidence
@@ -325,7 +331,6 @@ for (medianDirection in c("greaterEqual"))
       sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
       sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
       
-      #prevents records from reordering
       NewDF[V7221_Index,"V7221"] <- 1
       V7221_Index <- NewDF[,"V7221"] > 1
       NewDF[V7221_Index,"V7221"] <- -1
@@ -425,30 +430,83 @@ for (medianDirection in c("greaterEqual"))
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
       
+      #table(NewDF[,"V7501"], useNA = "ifany")
+      #table(data[,"V7501"])
       #https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
       #kills the analysis
-      #if it's below 0 (-1), I convert to -2.  Why?  
-      #because i'm about to convert 0 to -1
-      #then I convert -2 back to 0 (which represents na) and 
-      #8517 has a -1 conversion
-      count(NewDF[NewDF==0])
+      #NewDF[NewDF == -1] <- -2
+      #NewDF[NewDF == 0] <- -1
+      #NewDF[NewDF == -2] <- 0
       
-      #7206 has 0's
       NewDF[NewDF == 0] <- -8
       
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
       
+      NewDF[NewDF == 0] <- NA
       
-      #NewDF[NewDF == -1] <- -2
-      #NewDF[NewDF == -1] <- 0
-      #NewDF[NewDF == -2] <- 0
+      #cleandata<-NewDF[,colSums(is.na(NewDF)) >= round(nrow(NewDF)*.50,0)] # dat[A, B] takes the A rows and B columns; A and B are indices;
+      
+      #remove problematic columns (>75% na's)
+      filterList <- c()
+      rows = nrow(NewDF)
+      #lister=4
+      for (lister in 1:ncol(NewDF))
+      {
+        name <- colnames(NewDF)[lister]
+        print(name)
+        temp <- table(NewDF[lister], useNA = "ifany")
+        percent <- temp[length(temp)]/rows
+        print(percent)
+        if(percent>.75)
+        {
+          removedName <- c()
+          removedName <- name
+          filterList <- rbind(filterList,removedName)
+        }
+      }
+      print(c(filterList))
+      
+      #https://stackoverflow.com/questions/18562680/replacing-nas-with-0s-in-r-dataframe
+      NewDF[is.na(NewDF)] <- 0
+      
+      
+      #NewDF[NewDF == NA] <- 0
+      
+      oldDF <- c()
+      
+      oldDF <- NewDF
+      
+      NewDF <- c()
+      #store <- 
+      #table(oldDF["V7501"], useNA = "ifany")
+      
+      #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
+      #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
+      
+      #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
+      print(filterList)
+      
+      
+      #namesToRemove <- noquote(c(as.character(filterList)))
+      
+      #oldNames <- noquote(names(oldDF))
+      
+      #which(oldNames %in% namesToRemove)
+      
+      #NewDF <- oldDF[ , -which(names(oldDF) %in% namesToRemove )]
+      
+      #http://www.datasciencemadesimple.com/drop-variables-columns-r-using-dplyr/
+      NewDF <- dplyr::select(oldDF,-c(as.character(filterList)))
+      
+      
       #View(NewDF["V7202"])
       #0 = na
       #-1 = negative
       #1 = positve
       
-      table(NewDF[,"V7221"])
+      #table(d_combined[,"V7202"])
+      #table(NewDF[,"V7202"])
       
       start=5
       
@@ -558,7 +616,8 @@ for (medianDirection in c("greaterEqual"))
             
             lHabitsIndex <- list[,4] == 3
             lHealthIndex <- list[,4] == 4
-            lPsycheIndex <- list[,4] == 5
+            lPsycheIndex1 <- list[,4] == 5
+            lPsycheIndex2 <- list[,4] == 6
             
             if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
             if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
@@ -613,7 +672,7 @@ for (medianDirection in c("greaterEqual"))
               
               #categories 
               #val=3
-              for (val in 2:5)
+              for (val in 2:6)
               {
                 #used in category, rolled into names
                 datalist1 <- c()
@@ -628,7 +687,8 @@ for (medianDirection in c("greaterEqual"))
                 #if (val == 6) colList <- list[lFather2Index,]
                 if (val == 3) colList <- list[lHabitsIndex,]
                 if (val == 4) colList <- list[lHealthIndex,]
-                if (val == 5) colList <- list[lPsycheIndex,]
+                if (val == 5) colList <- list[lPsycheIndex1,]
+                if (val == 6) colList <- list[lPsycheIndex2,]
                 
                 if (is.null(nrow(data.frame(alty)))) break
                 
@@ -656,6 +716,7 @@ for (medianDirection in c("greaterEqual"))
                 #subcategory specific
                 #just point to resample script and use data.train
                 source(paste0(sourceDir,"resampleMCdatatrain.R"))
+                source(paste0(sourceDir,"reseedSample.R"))
                 
                 tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
                                     error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))

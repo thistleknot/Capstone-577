@@ -1684,6 +1684,8 @@ Citations
 		Oversampling (nice to have)
 			p 127-134	
 			http://r-statistics.co/Logistic-Regression-With-R.html
+			
+			to deal with na's, we could have oversampled cases...
 	
 	Assessment
 		https://datascienceplus.com/perform-logistic-regression-in-r/
