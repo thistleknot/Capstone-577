@@ -72,48 +72,6 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-sub_returnCVNamesExclMin <- function(data_sent){
-  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
-  
-  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (! (widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  
-  set<-round(colSums(B$Subsets))[-1]
-  
-  if(!is.null(B$Subsets))
-  {
-    cverrs = B$Subsets[, "CV"]
-    sdCV = B$Subsets[, "sdCV"]
-    CVLo = cverrs - sdCV
-    CVHi = cverrs + sdCV
-    ymax = max(CVHi)
-    ymin = min(CVLo)
-    k = 0:(length(cverrs) - 1)
-    if(!(ymax=="Inf" || ymax=="-Inf")) plot(k, cverrs, ylim = c(ymin, ymax), type = "n", yaxt = "n")
-    points(k,cverrs,cex = 2,col="red",pch=16)
-    lines(k, cverrs, col = "red", lwd = 2)
-    axis(2, yaxp = c(0.6, 1.8, 6))
-    segments(k, CVLo, k, CVHi,col="blue", lwd = 2)
-    eps = 0.15
-    segments(k-eps, CVLo, k+eps, CVLo, col = "blue", lwd = 2)
-    segments(k-eps, CVHi, k+eps, CVHi, col = "blue", lwd = 2)
-    indMin = which.min(cverrs)
-    fmin = sdCV[indMin]
-    cutOff = fmin + cverrs[indMin]
-    abline(h = cutOff, lty = 2)
-    indMin = which.min(cverrs)
-    fmin = sdCV[indMin]
-    cutOff = fmin + cverrs[indMin]
-    min(which(cverrs < cutOff))
-  }
-  
-  left=length(set)-3
-  result <- set[1:left]
-  
-  #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
-  return(as.character(rownames(data.frame(which(result > min(result))))))
-}
-
 pw <- {"Read1234"}
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
@@ -162,16 +120,6 @@ for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 
 na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
-#View(na_count(d_combined))
-
-#summary(d_combined)
-
-#write.csv(d_combined, file = "MyData.csv")
-#data<-read.csv(paste0(sourceDir,"MyData.csv"),sep=",",quote="\"")
-
-#write.csv(d_combined,paste0(sourceDir,"combined.csv"))
-#data <- read.csv(paste0(sourceDir,"combined.csv"), header=TRUE, sep=,)
-
 data <- d_combined
 ncol(data)
 #drops columns with na values
@@ -214,72 +162,24 @@ for (medianDirection in c("greaterEqual"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #lister=1
-    for(lister in 1:3)
+    for(flister in 1:3)
     {
       numRuns = 1
       #7221 gpa
-      if (lister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+      if (flister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
       
       #8517 gang
-      if (lister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+      if (flister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
       
       #7118 (psychadelics)
-      if (lister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
+      if (flister==3) list<-read.csv(paste0(sourceDir,"reducedFilterList.txt"), header=FALSE, sep=,)
       
       colnames(data)
-      
-      #https://stackoverflow.com/questions/27556353/subset-columns-based-on-list-of-column-names-and-bring-the-column-before-it
-      
-      #load from filterlist.txt
       col.num <- which(colnames(data) %in% as.character(list[,1]))
-      #col2.num <- which(colnames(cleandata) %in% as.character("V7105D"))
-      
-      # loads the PostgreSQL driver
-      #pg <- dbDriver("PostgreSQL")
-      # creates a connection to the postgres database
-      # note that "con" will be used later in each connection to the database
-      #conn = dbConnect(drv=pg
-      #             ,user="postgres"
-      #              ,password="Read1234"
-      #               ,host="localhost"
-      #                ,port=5432
-      #                 ,dbname="analyticplatform"
-      #)
-      
-      #dbExistsTable(conn, "temp_table_data")
-      
       NewDF <- data[,(c(col.num))]
-      
-      #V7589 empty
-      
-      #https://stat.ethz.ch/R-manual/R-devel/library/base/html/system.html
-      #https://stackoverflow.com/questions/32015333/executing-a-batch-file-in-an-r-script
-      #shell.exec("\\\\network\\path\\file.bat")
-      #db_drop_table(conn, "temp_table_data", force = TRUE)
-      
-      #https://stackoverflow.com/questions/12797909/creating-temp-table-from-a-data-frame-in-r-using-rpostgresql
-      #dbWriteTable(conn, "temp_table_data", NewDF, temp.table=TRUE)
-      
-      #https://www.r-bloggers.com/getting-started-with-postgresql-in-r/
-      #df_postgres <- dbGetQuery(conn, "SELECT * from temp_table_data")
-      
-      #identical(NewDF, df_postgres)
-      
-      #v508 was dropped or v8528
-      
-      #boxplot(NewDF)
-      #summary(NewDF)
-      #View(na_count(NewDF))
-      
-      #table(is.na(NewDF))
-      #write.csv(NewDF,paste0(sourceDir,"filtered.csv"))
-      
-      #colnames(NewDF)
       
       summary(NewDF)
       nrow(NewDF)
-      
-      #list[,2]
       
       NewDF <- data[,(c(col.num))]
       
@@ -429,84 +329,57 @@ for (medianDirection in c("greaterEqual"))
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
-      
-      #table(NewDF[,"V7501"], useNA = "ifany")
-      #table(data[,"V7501"])
-      #https://stackoverflow.com/questions/11036989/replace-all-0-values-to-na
-      #kills the analysis
-      #NewDF[NewDF == -1] <- -2
-      #NewDF[NewDF == 0] <- -1
-      #NewDF[NewDF == -2] <- 0
-      
+    
       NewDF[NewDF == 0] <- -8
       
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
       
-      NewDF[NewDF == 0] <- NA
-      
-      #cleandata<-NewDF[,colSums(is.na(NewDF)) >= round(nrow(NewDF)*.50,0)] # dat[A, B] takes the A rows and B columns; A and B are indices;
-      
-      #remove problematic columns (>75% na's)
-      filterList <- c()
-      rows = nrow(NewDF)
-      #lister=4
-      for (lister in 1:ncol(NewDF))
       {
-        name <- colnames(NewDF)[lister]
-        print(name)
-        temp <- table(NewDF[lister], useNA = "ifany")
-        percent <- temp[length(temp)]/rows
-        print(percent)
-        if(percent>.75)
+        NewDF[NewDF == 0] <- NA
+        
+        #cleandata<-NewDF[,colSums(is.na(NewDF)) >= round(nrow(NewDF)*.50,0)] # dat[A, B] takes the A rows and B columns; A and B are indices;
+        
+        #remove problematic columns (>75% na's)
+        filterList <- c()
+        rows = nrow(NewDF)
+        #lister=4
+        for (lister in 1:ncol(NewDF))
         {
-          removedName <- c()
-          removedName <- name
-          filterList <- rbind(filterList,removedName)
+          name <- colnames(NewDF)[lister]
+          print(name)
+          temp <- table(NewDF[lister], useNA = "ifany")
+          percent <- temp[length(temp)]/rows
+          print(percent)
+          if(percent>.5)
+          {
+            removedName <- c()
+            removedName <- name
+            filterList <- rbind(filterList,removedName)
+          }
         }
+        print(c(filterList))
+        NewDF[is.na(NewDF)] <- 0
+        
+        oldDF <- c()
+        
+        oldDF <- NewDF
+        
+        NewDF <- c()
+        #store <- 
+        #table(oldDF["V7501"], useNA = "ifany")
+        
+        #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
+        #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
+        
+        #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
+        
       }
-      print(c(filterList))
       
       #https://stackoverflow.com/questions/18562680/replacing-nas-with-0s-in-r-dataframe
-      NewDF[is.na(NewDF)] <- 0
-      
-      
-      #NewDF[NewDF == NA] <- 0
-      
-      oldDF <- c()
-      
-      oldDF <- NewDF
-      
-      NewDF <- c()
-      #store <- 
-      #table(oldDF["V7501"], useNA = "ifany")
-      
-      #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
-      #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
-      
-      #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
-      print(filterList)
-      
-      
-      #namesToRemove <- noquote(c(as.character(filterList)))
-      
-      #oldNames <- noquote(names(oldDF))
-      
-      #which(oldNames %in% namesToRemove)
-      
-      #NewDF <- oldDF[ , -which(names(oldDF) %in% namesToRemove )]
-      
+ 
       #http://www.datasciencemadesimple.com/drop-variables-columns-r-using-dplyr/
       NewDF <- dplyr::select(oldDF,-c(as.character(filterList)))
-      
-      
-      #View(NewDF["V7202"])
-      #0 = na
-      #-1 = negative
-      #1 = positve
-      
-      #table(d_combined[,"V7202"])
-      #table(NewDF[,"V7202"])
       
       start=5
       
@@ -514,17 +387,7 @@ for (medianDirection in c("greaterEqual"))
       
       #resets each new file
       finalList <- c()
-      
-      #after lister, before holdoutReset
-      
-      # oddly this matches the % of a 2% run 
-      # this ensures 1=4 runs
-      # 2=8
-      # 3=9
-      # 4=16 
-      # 5=25
-      # 10=100
-      
+ 
       if (widthDiviser == 1) end = (start+1)
       if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
       if ( (widthDiviser > 2) ) end = start
@@ -671,7 +534,7 @@ for (medianDirection in c("greaterEqual"))
                 if (val == 4) colList <- list[lHealthIndex,]
                 if (val == 5) colList <- list[lPsycheIndex1,]
                 if (val == 6) colList <- list[lPsycheIndex2,]
-                if (val == 6) colList <- list[lHabitsIndex2,]
+                if (val == 7) colList <- list[lHabitsIndex2,]
                 
                 if (is.null(nrow(data.frame(alty)))) break
                 
@@ -748,10 +611,11 @@ for (medianDirection in c("greaterEqual"))
                 lGeographyIndex <- recreated[,4] == 1
                 
                 lGenderGPAViolenceFatherIndex <- recreated[,4] == 2
-                lHabitsIndex <- recreated[,4] == 3
+                lHabitsIndex1 <- recreated[,4] == 3
                 lHealthIndex <- recreated[,4] == 4
                 lPsycheIndex1 <- recreated[,4] == 5
                 lPsycheIndex2 <- recreated[,4] == 6
+                lHabitsIndex2 <- recreated[,4] == 7
                                 
                 Hfiltered <- c() 
                 
@@ -829,7 +693,7 @@ for (medianDirection in c("greaterEqual"))
                 
               }
               
-              print(c("2a: ", round(table(finalList)/numRuns,2)))
+              print(c(numRuns,"2a: ", round(table(finalList)/numRuns,2)))
               
               #end of holdout analysis
               
