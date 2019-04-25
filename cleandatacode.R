@@ -77,6 +77,7 @@ pw <- {"Read1234"}
 #sourceDir="/home/rstudio/577/Capstone-577/"
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
+source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
@@ -351,7 +352,7 @@ for (medianDirection in c("greaterEqual"))
           temp <- table(NewDF[lister], useNA = "ifany")
           percent <- temp[length(temp)]/rows
           print(percent)
-          if(percent>.5)
+          if(percent>.75)
           {
             removedName <- c()
             removedName <- name
@@ -411,7 +412,7 @@ for (medianDirection in c("greaterEqual"))
           #setup holdout
           
           #static holdout
-          holdoutSetSize = widthDiviser/100
+          holdoutSetSize = widthDiviser^2/100
           #holdoutSetSize = 1.25/100
           
           underOverSampleFactor=1
@@ -421,7 +422,7 @@ for (medianDirection in c("greaterEqual"))
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          preNonHoldOutSize = (widthDiviser^2/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #% of training resamples from static nonholdout
           preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -549,7 +550,7 @@ for (medianDirection in c("greaterEqual"))
                 
                 newList <- c()        
                 newList <-  suppressMessages(as.character(join(colList,list[,c(1,3)])[,1, drop=TRUE]))
-                
+                oldList <- newList[-1]
                 #https://stat.ethz.ch/R-manual/R-devel/library/base/html/droplevels.html
                 #droplevels(newList)
                 #https://stackoverflow.com/questions/34469178/r-convert-factor-to-numeric-and-remove-levels
@@ -558,32 +559,66 @@ for (medianDirection in c("greaterEqual"))
                 #don't re-use for csv's... csv's... are already cleaned
                 #repurpose instead
                 #replaces 0 with na's (so it assumes data is already precleaned to just a NewDF level)
+               
+                numOfVars <- c()
+                numOfVars <- length(oldList)
                 
-                #subcategory specific
-                #just point to resample script and use data.train
-                source(paste0(sourceDir,"redrawTrain.R"))
-                #I don't want it to reseed here'
+                pairs <- c()
+                pairs <- pairedLists(numOfVars)
                 
-                tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
-                                    error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
-                
-                #https://www.r-bloggers.com/careful-with-trycatch/
-                
-                #print(table(is.na(data.test)))
-                #datalist2 <- sub_returnCVNames(data.test)
-                
-                #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
-                #print(c(datalist1))
-                #print(length(datalist1))
-                if(length(datalist1)>1)
-                  for (i in 1:length(datalist1))
-                  {
-                    namesTV <- rbind(namesTV,datalist1[i])
-                  }
-                if(length(datalist1)==1)
+                #runs=3
+                for(runs in 1:nrow(pairs))
                 {
-                  namesTV <- rbind(namesTV,datalist1)
+                  #kind of hackey
+                  #left
+                  #pairs[runs,][1]
+                  #right
+                  #pairs[runs,][2]
+                  oldList[as.integer(pairs[runs,][1])]
+                  
+                  ypair <- newList[1]
+                  xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+                  
+                  newList <- c()
+                  newList <- cbind(ypair,xpair)
+                  
+                  skipFlag=0
+                  #subcategory specific
+                  #just point to resample script and use data.train
+                  tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) skipFlag=1)
+                  
+                  #I don't want it to reseed here'
+                  if(tryCase!=1)
+                  {
+                    tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
+                                        error=function(e) datalist1 <- suppressWarnings(sub_returnCVNames(data.train)))
+                    
+                    
+                    
+                    #https://www.r-bloggers.com/careful-with-trycatch/
+                    
+                    #print(table(is.na(data.test)))
+                    #datalist2 <- sub_returnCVNames(data.test)
+                    
+                    #only have to iterate here because the function sub_returCVNames aggregates, I'm merely aggregateing the list.
+                    #print(c(datalist1))
+                    #print(length(datalist1))
+                    if(length(datalist1)>1)
+                      for (i in 1:length(datalist1))
+                      {
+                        namesTV <- rbind(namesTV,datalist1[i])
+                      }
+                    if(length(datalist1)==1)
+                    {
+                      namesTV <- rbind(namesTV,datalist1)
+                    }
+                    
+                    #end of pairs
+                  }
+                  
+                  
                 }
+                
                 
                 #end of category iterator
               }
