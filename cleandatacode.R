@@ -135,7 +135,6 @@ colnames(cleandata)
 #Since there are no missing values we export the data
 #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
 
-
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #for (medianDirection in c("greaterEqual","greater"))
@@ -413,7 +412,7 @@ for (medianDirection in c("greaterEqual"))
           #setup holdout
           
           #static holdout
-          holdoutSetSize = widthDiviser^2/100
+          holdoutSetSize = widthDiviser/100
           #holdoutSetSize = 1.25/100
           
           underOverSampleFactor=1
@@ -423,7 +422,7 @@ for (medianDirection in c("greaterEqual"))
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          preNonHoldOutSize = (widthDiviser^2/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #% of training resamples from static nonholdout
           preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
@@ -526,7 +525,7 @@ for (medianDirection in c("greaterEqual"))
              
               #1st pass
               print("1st pass")
-              #runs=3
+              #runs=1
               for(runs in 1:nrow(pairs))
               {
 
@@ -535,49 +534,26 @@ for (medianDirection in c("greaterEqual"))
                 
                 newList <- c()
                 newList <- cbind(ypair,xpair)
+                
+                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
                 #print(newList)
                 
-                skipFlag=0
+                #skipFlag=0
                 #just point to resample script and use data.train
-                tryCase <- c()
+                #tryCase <- c()
                
-                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) skipFlag=1)
-                holderOfData <- cbind(data.train[,xpair],data.train[ypair])
-                #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                if(skipFlag==0)
+                #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
+                #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
+                if(nrow(data.train)!=0)
                 {
-                  skipFlag=0
-                  tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
-
-                  error=function(e) skipFlag=1 )
+                  #data.train[,xpair]
+                  result <- sub_returnCVNames(cbind(data.train[ypair],data.train[,xpair]))
                   
-                  if(skipFlag!=1)
+                  if(skipFlag==0)
                   {
-                    #result <- row.names(data.frame(B$BestModel[1]))[-1]
-                    result <- rownames(data.frame(B$BestModel$coefficients[]))[-1]
-                    if(length(result)>0)
-                    {
-                      #potentially could have to iterate through pairs
-                      if(length(result)==2)
-                      {
-                        #print(result)
-                        namesTV <- rbind(namesTV, result[1], result[2])
-                        
-                      }
-                      if(length(result)==1)
-                      {
-                        #print(result)
-                        namesTV <- rbind(namesTV, result)
-                        
-                      }                        
-                      
-                      #end if result > 0 flag
-                    }
-                    
-                    #end if skip flag
+                    namesTV <- rbind(namesTV,result)
                   }
-                  
-                  #end try case
+               
                 }
                 
                 #end of pairs
@@ -593,7 +569,7 @@ for (medianDirection in c("greaterEqual"))
               print(c("UnamesTV:", uniqueNamesTV))
               
               namesH <- c()
-              if ( numOfVars != 1 )
+              if ( numOfVars > 0 )
               {
                 pairs <- c()
                 pairs <- pairedLists(numOfVars)
