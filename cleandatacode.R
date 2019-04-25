@@ -71,8 +71,6 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-pw <- {"Read1234"}
-
 #sourceDir="/home/rstudio/577/Capstone-577/"
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
@@ -88,16 +86,17 @@ d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=","
 
 d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
+
 for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 {
+  #median information
   print(paste("interest:",interests))
   for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017","d_combined"))
   {
-    print(paste("year:",year))
-    print(paste("count:",sum (count(df[df>0]))))
-    
     #https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
     df <- (get(year)[,interests])
+    print(paste("year:",year))
+    print(paste("count:",sum (count(df[df>0]))))
     
     centerpoint = (length(df[df>0]))/2
     
@@ -149,6 +148,9 @@ for (medianDirection in c("greaterEqual"))
     widthDiviser = widthLoop
     print(paste0("widthLoopSize: ",widthLoop))
     
+    if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
+    
     #so if 3, has to exist in > 1.5 subsamples
     
     CVRuns_pct_threshold = 1/widthDiviser
@@ -160,7 +162,7 @@ for (medianDirection in c("greaterEqual"))
     #should be more than 1/widthDviser
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
-    #lister=1
+    #flister=1
     for(flister in 1:3)
     {
       numRuns = 1
@@ -212,12 +214,14 @@ for (medianDirection in c("greaterEqual"))
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
       NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
       
+      #gender
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
+      #father household status
+      NewDF <- replace.value( NewDF, "V7206", from=as.integer(0), to=as.double(-1), verbose = FALSE)
       NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), verbose = FALSE)
       
       #https://stackoverflow.com/questions/24237801/calculate-mean-median-by-excluding-any-given-number
       #https://stackoverflow.com/questions/5824173/replace-a-value-in-a-data-frame-based-on-a-conditional-if-statement?rq=1
-      
       
       #https://www.ucl.ac.uk/child-health/short-courses-events/about-statistical-courses/research-methods-and-statistics/chapter-8-content-8
       #95% confidence
@@ -336,60 +340,92 @@ for (medianDirection in c("greaterEqual"))
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
       NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
       
-      {
-        NewDF[NewDF == 0] <- NA
-        
-        #cleandata<-NewDF[,colSums(is.na(NewDF)) >= round(nrow(NewDF)*.50,0)] # dat[A, B] takes the A rows and B columns; A and B are indices;
-        
-        #remove problematic columns (>75% na's)
-        filterList <- c()
-        rows = nrow(NewDF)
-        #lister=4
-        for (lister in 1:ncol(NewDF))
+        #NewDF <- oldDF
+        #shows # of na's
         {
-          name <- colnames(NewDF)[lister]
-          #print(name)
-          temp <- table(NewDF[lister], useNA = "ifany")
-          percent <- temp[length(temp)]/rows
-          #print(percent)
-          if(percent>.75)
+          #NewDF[NewDF == 0] <- NA
+          
+          #cleandata<-NewDF[,colSums(is.na(NewDF)) >= round(nrow(NewDF)*.50,0)] # dat[A, B] takes the A rows and B columns; A and B are indices;
+          
+          #remove problematic columns (>75% na's)
+          filterList <- c()
+          rows = nrow(NewDF)
+          #lister=4
+          #skip 1st
+          for (lister in 2:ncol(NewDF))
           {
-            removedName <- c()
-            removedName <- name
-            filterList <- rbind(filterList,removedName)
+            name <-c()
+            name <- colnames(NewDF[lister])
+            #NewDF[lister][NewDF[lister]==0]
+            
+            percent <- count(NewDF[lister][NewDF[lister]==0])/rows
+            
+            #temp <- table(NewDF[lister], useNA = "ifany")
+            #percent <- temp[length(temp)]/rows
+            print(c(name,round(percent$freq,3)))
+            if(!length(percent$x)==0)
+            {
+              if(percent>.75)
+              {
+                removedName <- c()
+                removedName <- name
+                filterList <- rbind(filterList,removedName)
+              }
+            }
+            #NewDF[is.na(NewDF)] <- 0
           }
+        
+          #print(c(filterList))
+          
+          oldDF <- c()
+          
+          oldDF <- NewDF
+          
+          NewDF <- c()
+          #store <- 
+          #table(oldDF["V7501"], useNA = "ifany")
+          
+          #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
+          #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
+          
+          #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
+        
+          #end na's 
         }
-        #print(c(filterList))
-        NewDF[is.na(NewDF)] <- 0
-        
-        oldDF <- c()
-        
-        oldDF <- NewDF
-        
-        NewDF <- c()
-        #store <- 
-        #table(oldDF["V7501"], useNA = "ifany")
-        
-        #https://stackoverflow.com/questions/5234117/how-to-drop-columns-by-name-in-a-data-frame
-        #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
-        
-        #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
-        
-      }
       
       #https://stackoverflow.com/questions/18562680/replacing-nas-with-0s-in-r-dataframe
  
       #http://www.datasciencemadesimple.com/drop-variables-columns-r-using-dplyr/
+      #deselect filtered, 7501 and 7507 were removed as being over 75% na's after this was ran.
       NewDF <- dplyr::select(oldDF,-c(as.character(filterList)))
       
-      start=5
+      ##before reseed
+      #https://adv-r.hadley.nz/subsetting.html
       
-      #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
+      yIndex <- list[,4] == 0
+      lGeographyIndex <- list[,4] == 1
       
+      lGenderGPAViolenceFatherIndex <- list[,4] == 2
+      #lGenderIndex <- list[,4] == 2
+      #lGPAIndex <- list[,4] == 3
+      #lViolenceIndex <- list[,4] == 4
+      #lFather1Index <- list[,4] == 5
+      #lFather2Index <- list[,4] == 6
+      
+      lHabitsIndex1 <- list[,4] == 3
+      lHealthIndex <- list[,4] == 4
+      lPsycheIndex1 <- list[,4] == 5
+      lPsycheIndex2 <- list[,4] == 6
+      lHabitsIndex2 <- list[,4] == 7
+      
+      colListNames <- c()
+      colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
+  
       #resets each new file
       finalList <- c()
  
-      if (widthDiviser == 1) end = (start+1)
+      start = 5
+      if ( widthDiviser == 1) end = (start+1)
       if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
       if ( (widthDiviser > 2) ) end = start
       #seeder=start
@@ -446,33 +482,15 @@ for (medianDirection in c("greaterEqual"))
             source(paste0(sourceDir,"MCResampleTest.R"))
             #print is inside inner loop
             
-            ##before reseed
-            #https://adv-r.hadley.nz/subsetting.html
-            
-            yIndex <- list[,4] == 0
-            lGeographyIndex <- list[,4] == 1
-            
-            lGenderGPAViolenceFatherIndex <- list[,4] == 2
-            #lGenderIndex <- list[,4] == 2
-            #lGPAIndex <- list[,4] == 3
-            #lViolenceIndex <- list[,4] == 4
-            #lFather1Index <- list[,4] == 5
-            #lFather2Index <- list[,4] == 6
-            
-            lHabitsIndex1 <- list[,4] == 3
-            lHealthIndex <- list[,4] == 4
-            lPsycheIndex1 <- list[,4] == 5
-            lPsycheIndex2 <- list[,4] == 6
-            lHabitsIndex2 <- list[,4] == 7
-            
-            if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-            if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
-            
             y <- c()
             yname <- c()
             #y iterator's
-            #iterator=1
+            #iterator=1      
             
+            start=5
+            
+            #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
+                        
             for (iterator in 1:sum(yIndex))
             {
               
@@ -507,9 +525,6 @@ for (medianDirection in c("greaterEqual"))
                 numRuns = numRunsold + 1
               }
 
-              colListNames <- c()
-              colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
-  
               newList <- c()        
               newList <- c(as.character(y[,1]),as.character(colListNames[,1]))
               oldList <- as.character(newList[-1])
