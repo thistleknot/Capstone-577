@@ -162,7 +162,7 @@ for (medianDirection in c("greaterEqual"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #lister=1
-    for(flister in 1:1)
+    for(flister in 1:3)
     {
       numRuns = 1
       #7221 gpa
@@ -525,17 +525,17 @@ for (medianDirection in c("greaterEqual"))
               namesTV <- c()
              
               #1st pass
+              print("1st pass")
               #runs=3
               for(runs in 1:nrow(pairs))
               {
-                print("1st pass")
 
                 ypair <- newList[1]
                 xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
                 
                 newList <- c()
                 newList <- cbind(ypair,xpair)
-                print(newList)
+                #print(newList)
                 
                 skipFlag=0
                 #just point to resample script and use data.train
@@ -560,13 +560,13 @@ for (medianDirection in c("greaterEqual"))
                       #potentially could have to iterate through pairs
                       if(length(result)==2)
                       {
-                        print(result)
+                        #print(result)
                         namesTV <- rbind(namesTV, result[1], result[2])
                         
                       }
                       if(length(result)==1)
                       {
-                        print(result)
+                        #print(result)
                         namesTV <- rbind(namesTV, result)
                         
                       }                        
@@ -597,14 +597,16 @@ for (medianDirection in c("greaterEqual"))
               {
                 pairs <- c()
                 pairs <- pairedLists(numOfVars)
-                print(pairs)
+                #print(pairs)
                 
-                Hfiltered <- c()
+                #resets each file
+                #Hfiltered
+                
                 #holdout
                 #runs=1
                 for(runs in 1:nrow(pairs))
                 {
-                  print(c("run:",runs))
+                  #print(c("run:",runs))
                   #kind of hackey
                   #left
                   #pairs[runs,][1]
@@ -617,7 +619,7 @@ for (medianDirection in c("greaterEqual"))
                   
                   newList <- c()
                   newList <- cbind(ypair,xpair)
-                  print(newList)
+                  #print(newList)
                   
                   skipFlag=0
                   #subcategory specific
@@ -627,7 +629,7 @@ for (medianDirection in c("greaterEqual"))
                   tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
                   #data.train <- data.train[0]
                   holderOfData <- cbind(data.test[,xpair],data.test[ypair])
-                  print(colnames(holderOfData))
+                  #print(colnames(holderOfData))
                   #holderOfData <- data.train[0]
                   #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
                   if(skipFlag==0)
@@ -649,7 +651,7 @@ for (medianDirection in c("greaterEqual"))
                         {
                           for (i in 1:nrow(result))
                           {
-                            print(c("Storing 2:",i,result))
+                            #print(c("Storing 2:",i,result))
                             Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
                             
                           }
@@ -658,7 +660,7 @@ for (medianDirection in c("greaterEqual"))
                         #!=1
                         if(nrow(result)==1)
                         {
-                          print(c("storing 1:",result))
+                          #print(c("storing 1:",result))
                           Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
                         }                        
                         
@@ -787,19 +789,19 @@ for (medianDirection in c("greaterEqual"))
       #validate against population    
       #population
       
-      filtered <- c()
-      filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-      filtered[filtered == 0] <- NA
-      temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-      filtered <- temp
-      filtered[filtered == -1] <- 0    
-      trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-      testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
+      #filtered <- c()
+      #filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
+      #filtered[filtered == 0] <- NA
+      #temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+      #filtered <- temp
+      #filtered[filtered == -1] <- 0    
+      #trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
+      #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
       
-      print("population")
-      print(summary(trainModel$finalModel))
+      #print("population")
+      #print(summary(trainModel$finalModel))
       
-      write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))  
+      #write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))  
       
       #end of lister
     }
