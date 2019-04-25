@@ -520,8 +520,7 @@ for (medianDirection in c("greaterEqual"))
               
               #aggregated after categories loop
               namesTV <- c()
-              namesH <- c()
-              
+             
               #1st pass
               #runs=3
               for(runs in 1:nrow(pairs))
@@ -597,6 +596,8 @@ for (medianDirection in c("greaterEqual"))
               numOfVars <- length(uniqueNamesTV)
               
               print("holdout pass")
+              Hfiltered <- c()
+              namesH <- c()
               if(numOfVars!=1)
               {
                 pairs <- c()
@@ -640,24 +641,29 @@ for (medianDirection in c("greaterEqual"))
                     if(skipFlag!=1)
                     {
                       
-                      result <- rownames(data.frame(B$BestModel$coefficients[]))[-1]
-                      
+                      result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
+                      print(result)
                       if(length(result)!=0)
                       {
-                        print(result)
-                        if(length(result)!=1)
+                        
+                        if(nrow(result)!=1)
                         {
-                          for (i in 1:length(result))
+                          for (i in 1:nrow(result))
                           {
-                            Hfiltered <- rbind(Hfiltered, result[i])
+                            print(c("Storing 2:",i))
+                                  
+                            Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
                             
                           }
-                          #!=1
-                          if(length(result)==1)  
-                          {
-                            Hfiltered <- rbind(Hfiltered, result)
-                          }
                         }
+                        
+                        #!=1
+                        if(nrow(result)==1)
+                        {
+                          print(c("storing 1:"))
+                          Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
+                          
+                        }                        
                         
                       }
                       #end if skip flag
@@ -671,13 +677,13 @@ for (medianDirection in c("greaterEqual"))
                 
                 #end != 1
                 
-                
               }
+              Hfiltered
 
               if (numOfVars == 1)
               {
                 ypair <- newList[1]
-                xpair <- cbind(namesTV[as.integer(pairs[runs,][1])],namesTV[as.integer(pairs[runs,][2])])
+                xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
                 
                 tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
                 
@@ -694,24 +700,16 @@ for (medianDirection in c("greaterEqual"))
                                       
                                       error=function(e) skipFlag=1 )
                   
-                  
                   if(skipFlag!=1)
                   {
                     #result <- row.names(data.frame(B$BestModel[1]))[-1]
                     result <- rownames(data.frame(B$BestModel$coefficients[]))[-1]
                     if(length(result)>0)
                     {
-                      #potentially could have to iterate through pairs
-                      if(length(result)==2)
-                      {
-                        print(result)
-                        namesH <- rbind(namesH, result[1], result[2])
-                        
-                      }
                       if(length(result)==1)
                       {
                         print(result)
-                        namesH <- rbind(namesH, result)
+                        Hfiltered <- rbind(Hfiltered, result)
                         
                       }                        
                       
@@ -723,12 +721,9 @@ for (medianDirection in c("greaterEqual"))
                   
                   #end try case
                 }
-                
-                
-                
-                
+
               }
-              namesH
+              
               
               print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
               
