@@ -584,6 +584,8 @@ for (medianDirection in c("greaterEqual"))
               }
               namesTV
               
+              print(c("namesTV:", Hfiltered))
+              
               #holdout
               numOfVars <- c()
               uniqueNamesTV <- unique(namesTV)
@@ -713,12 +715,10 @@ for (medianDirection in c("greaterEqual"))
                 }
 
               }
-              
-              #finalSetPre <- (unique(Hfiltered))
-              #finalSet[which(finalSet != NA]
+            
               
               #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
-              print(Hfiltered)
+              print(c("Hfiltered:", Hfiltered))
               print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
               
               #end of holdout analysis
