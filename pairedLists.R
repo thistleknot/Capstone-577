@@ -16,13 +16,13 @@ pairedLists = function(n) {
   for(i in 1:length(pool1))
   {
     currentNumber <- pool1[i]
-    print(currentNumber)
+    #print(currentNumber)
     a <-currentNumber
     b <-pool2
 
     #https://www.biostars.org/p/180451/
     available <- b[!(b %in% a)]
-    print(available)
+    #print(available)
     picked <- available[1]
     #pool2 <- c()
     pool2 <- b[!(b %in% picked)]
