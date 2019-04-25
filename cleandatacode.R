@@ -583,14 +583,14 @@ for (medianDirection in c("greaterEqual"))
                 #end of pairs
               }
               namesTV
-              
-              print(c("namesTV:", Hfiltered))
+              print(c("namesTV:", namesTV))
               
               #holdout
               numOfVars <- c()
               uniqueNamesTV <- unique(namesTV)
               numOfVars <- length(uniqueNamesTV)
               print("holdout pass")
+              print(c("UnamesTV:", uniqueNamesTV))
               
               namesH <- c()
               if ( numOfVars != 1 )
@@ -601,9 +601,10 @@ for (medianDirection in c("greaterEqual"))
                 
                 Hfiltered <- c()
                 #holdout
-                #runs=3
+                #runs=1
                 for(runs in 1:nrow(pairs))
                 {
+                  print(c("run:",runs))
                   #kind of hackey
                   #left
                   #pairs[runs,][1]
@@ -612,10 +613,11 @@ for (medianDirection in c("greaterEqual"))
                   #oldList[as.integer(pairs[runs,][1])]
                   
                   ypair <- newList[1]
-                  xpair <- cbind(namesTV[as.integer(pairs[runs,][1])],namesTV[as.integer(pairs[runs,][2])])
+                  xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
                   
                   newList <- c()
                   newList <- cbind(ypair,xpair)
+                  print(newList)
                   
                   skipFlag=0
                   #subcategory specific
@@ -625,6 +627,7 @@ for (medianDirection in c("greaterEqual"))
                   tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
                   #data.train <- data.train[0]
                   holderOfData <- cbind(data.test[,xpair],data.test[ypair])
+                  print(colnames(holderOfData))
                   #holderOfData <- data.train[0]
                   #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
                   if(skipFlag==0)
