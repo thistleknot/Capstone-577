@@ -731,15 +731,15 @@ for (medianDirection in c("greaterEqual"))
               
               #print(c("1: ", namesTV))
               
-              newList <- c()
-              newList <- c(yname,namesTV)
+              tvList <- c()
+              tvList <- c(yname,namesTV)
               #resample before drawing from data.test
               
-              for (iterator in 1:length(newList))
+              for (iterator in 1:length(tvList))
               {
                 
                 #merge(newList,list)
-                l1 <- data.frame(newList)
+                l1 <- data.frame(tvList)
                 colnames(l1) <- "V1"
                 #merge(noquote(newList), list)
                 recreated <- suppressMessages(join(l1,list))
@@ -771,11 +771,10 @@ for (medianDirection in c("greaterEqual"))
                   if (val == 6) colList <- recreated[lPsycheIndex2,]
                   if (val == 7) colList <- recreated[lHabitsIndex2,]
                   
-                  
                   if (is.null(nrow(data.frame(alty)))) break
                   
                   #colList <- rbind(list[yIndex,],colList)
-                  
+                  newList <- c()
                   newList <- as.character(rbind(y,colList)[,1])
                   
                   source(paste0(sourceDir,"redrawTest.R"))
@@ -791,7 +790,6 @@ for (medianDirection in c("greaterEqual"))
                   extract <- row.names(data.frame(Hfiltered$BestModel[1]))[-1]
                   
                   #if errors, which I've seen with no resulting variables and throw no error... then I report nothing, tabulate nothing.  Simply a missed iteration, but numRuns will increase.
-                  if (length(extract)==0) extract <- c()
                   
                   #print(c("2: ", extract))
                   
@@ -815,7 +813,8 @@ for (medianDirection in c("greaterEqual"))
                   if(length(extract)==1)
                   {
                     finalList <- rbind(finalList,extract)
-                  }                            
+                  }
+                  if (length(extract)==0) extract <- c()
                   
                 }
                 #t1 <- data.frame(noquote(newList))
