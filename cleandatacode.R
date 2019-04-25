@@ -595,10 +595,11 @@ for (medianDirection in c("greaterEqual"))
             #lFather1Index <- list[,4] == 5
             #lFather2Index <- list[,4] == 6
             
-            lHabitsIndex <- list[,4] == 3
+            lHabitsIndex1 <- list[,4] == 3
             lHealthIndex <- list[,4] == 4
             lPsycheIndex1 <- list[,4] == 5
             lPsycheIndex2 <- list[,4] == 6
+            lHabitsIndex2 <- list[,4] == 7
             
             if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
             if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
@@ -666,10 +667,11 @@ for (medianDirection in c("greaterEqual"))
                 #if (val == 4) colList <- list[lViolenceIndex,]
                 #if (val == 5) colList <- list[lFather1Index,]
                 #if (val == 6) colList <- list[lFather2Index,]
-                if (val == 3) colList <- list[lHabitsIndex,]
+                if (val == 3) colList <- list[lHabitsIndex1,]
                 if (val == 4) colList <- list[lHealthIndex,]
                 if (val == 5) colList <- list[lPsycheIndex1,]
                 if (val == 6) colList <- list[lPsycheIndex2,]
+                if (val == 6) colList <- list[lHabitsIndex2,]
                 
                 if (is.null(nrow(data.frame(alty)))) break
                 
@@ -763,10 +765,12 @@ for (medianDirection in c("greaterEqual"))
                   #end up with no records due to na's, and so any variables.  Inverse relationship.
                   colList <- c()
                   if (val == 2) colList <- recreated[lGenderGPAViolenceFatherIndex,]
-                  if (val == 3) colList <- recreated[lHabitsIndex,]
+                  if (val == 3) colList <- recreated[lHabitsIndex1,]
                   if (val == 4) colList <- recreated[lHealthIndex,]
                   if (val == 5) colList <- recreated[lPsycheIndex1,]
                   if (val == 6) colList <- recreated[lPsycheIndex2,]
+                  if (val == 7) colList <- recreated[lHabitsIndex2,]
+                  
                   
                   if (is.null(nrow(data.frame(alty)))) break
                   

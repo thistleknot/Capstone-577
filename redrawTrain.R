@@ -1,4 +1,3 @@
-
 data.train <- c()
 data.train <- NewDF.preTrain[,as.character(c(newList)),drop=FALSE]
 data.train[data.train == 0] <- NA
