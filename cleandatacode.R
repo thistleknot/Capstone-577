@@ -563,7 +563,11 @@ for (medianDirection in c("greaterEqual"))
           #% of training resamples from static nonholdout
           preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
           
-          source(paste0(sourceDir,"reseedSampleTest.R"))
+          #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
+          #monte carlo resamples from a static holdout
+          #used for resampling monte carlo training set from non holdout partitions!
+          
+          source(paste0(sourceDir,"reseedTest.R"))
           
           #static for monte carlo training 
           source(paste0(sourceDir,"reseedTrain.R"))
@@ -578,19 +582,6 @@ for (medianDirection in c("greaterEqual"))
             
             ##before reseed
             #https://adv-r.hadley.nz/subsetting.html
-            
-            #monte carlo resample from pre separated holdout (this means new holdout each subsample)
-            holdout <- c()
-            holdout <- sample(nrow(NewDF.holdoutSet), round(holdoutSize*nrow(NewDF.holdoutSet)))
-            
-            NewDF.holdout <- c()
-            NewDF.holdout <- NewDF.holdoutSet[holdout, ]
-            
-            #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
-            #monte carlo resamples from a static holdout
-            #used for resampling monte carlo training set from non holdout partitions!
-            
-            source(paste0(sourceDir,"reseedSampleTrain.R"))
             
             yIndex <- list[,4] == 0
             lGeographyIndex <- list[,4] == 1
@@ -703,7 +694,7 @@ for (medianDirection in c("greaterEqual"))
                 
                 #subcategory specific
                 #just point to resample script and use data.train
-                source(paste0(sourceDir,"resampleMCDatatrain.R"))
+                source(paste0(sourceDir,"redrawTrain.R"))
                 #I don't want it to reseed here'
                 
                 tryCase <- tryCatch((datalist1 <- suppressWarnings(sub_returnCVNames(data.train))), 
@@ -744,7 +735,7 @@ for (medianDirection in c("greaterEqual"))
               #I don't need to resample here because I'm using holdout... data.test
               #I do need to resmaple, because I have a newList... this doesn't generate new samples, merely draws
               
-              source(paste0(sourceDir,"resampleMCdatatest.R"))
+              source(paste0(sourceDir,"redrawTest.R"))
               
               holderOfData <- c()
               
