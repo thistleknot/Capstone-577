@@ -451,7 +451,7 @@ for (medianDirection in c("greaterEqual"))
           preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #% of training resamples from static nonholdout
-          preTrainSize = widthDiviser # <1 = (never fully iterates over subsample)
+          preTrainSize = 1/widthDiviser # <1 = (never fully iterates over subsample)
           
           #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
           #monte carlo resamples from a static holdout
