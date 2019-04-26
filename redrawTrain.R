@@ -1,3 +1,5 @@
+set <- c()
+setIndex <- c()
 set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
 setIndex <- eval(parse(text=paste("combined.preTrain.",pairedname, sep = "")))
 #set <- NewDF[,newList]
@@ -8,7 +10,7 @@ setIndex <- eval(parse(text=paste("combined.preTrain.",pairedname, sep = "")))
 #set[set == -1] <- 0
 
 totalRows <- nrow(set)
-setIndex2 <- unique(round(setIndex/precisionSize*totalRows,0))
+#setIndex2 <- unique(round(setIndex/precisionSize*totalRows,0))
 
 data.train <- c()
 data.train <- set[setIndex,]

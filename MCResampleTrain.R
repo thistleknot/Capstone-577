@@ -1,4 +1,5 @@
-#set <- c()
+set <- c()
+setIndex <- c()
 #setIndex <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
 setIndex <- eval(parse(text=paste("combined.preNonHoldoutSet.",pairedname, sep = "")))
 

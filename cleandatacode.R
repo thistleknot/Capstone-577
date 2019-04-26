@@ -515,13 +515,13 @@ for (medianDirection in c("greaterEqual"))
             for(runs in 1:nrow(pairs))
             {
               ypair <- newList[1]
-              xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              xpair <- c(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
               #newList <- c()
               #newList <- cbind(ypair,xpair)
               #print(newList)
               pairedname <- c()
               #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
-              pairedname <- capture.output(cat(cbind(ypair,xpair), sep = ""))  
+              pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))  
               print(pairedname)
               
               #combinedOutside <- NewDF[,as.character(c(newList)),drop=FALSE] 
@@ -533,7 +533,7 @@ for (medianDirection in c("greaterEqual"))
               #resample draws new partitions from new randomize columns.  This randomization is independent of the columns randomization.
               
               #check to see if list has records
-              combinedOutside <- NewDF[,as.character(c(cbind(ypair,xpair))),drop=FALSE] 
+              combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
@@ -541,7 +541,7 @@ for (medianDirection in c("greaterEqual"))
                 #at this juncture because it's confirmed rows are not 0
                 source(paste0(sourceDir,"reseedBoth.R"))
                 pairedname_List <- rbind(pairedname,pairedname_List)
-                pairsForLater <- rbind(c(cbind(ypair,xpair)),pairsForLater)
+                pairsForLater <- rbind(c(ypair,xpair),pairsForLater)
                 
               }
               
@@ -559,20 +559,25 @@ for (medianDirection in c("greaterEqual"))
               #checking in here because I need access to pairedNames...
               #don't reset the index PairsForLater here...
               #pairsForLater <- c()
+              pairedName <- c()
               pairedname <- pairedname_List[runs1]
               
               #pairsForLater is created at the same time as pairedname_List, so they are paired.  I can assume they index the same.
+              ypair <- c()
               ypair <- pairsForLater[runs1,][1]
               #ypair <- newList[1]
-              #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              #xpair <- c(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              xpair <- c()
               xpair <- pairsForLater[runs1,][-1]
               #newList <- c()
-              #use cbind(ypair,xpair) for inside loops 
-              #newList <- cbind(ypair,xpair)               
+              #use c(ypair,xpair) for inside loops 
+              #newList <- c(ypair,xpair)               
             
               #check if list is empty  
-              combinedOutside <- NewDF[,as.character(cbind(ypair,xpair)),drop=FALSE] 
+              combinedOutside <- c()
+              combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
+              temp <- c()
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
@@ -584,23 +589,31 @@ for (medianDirection in c("greaterEqual"))
              
             }
                         
-            #iterates over lists
+            #iterates over lists and generates namesTV
+            
+            #aggregated after categories loop
+            namesTV <- c()
+            
             #generates dynamics sets of records
             #runs2=1
             for(runs2 in 1:nrow(pairedname_List))
             {
              
               #checking in here because I need access to pairedNames...
-              
-              ypair <- pairsForLater[1,][1]
+              pairedname <- c()
+              pairedname <- pairedname_List[runs2]
+              ypair <- c()
+              ypair <- pairsForLater[runs2,][1]
               #ypair <- newList[1]
-              #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
-              xpair <- pairsForLater[1,][-1]
+              #xpair <- c(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              xpair <- c()
+              xpair <- pairsForLater[runs2,][-1]
               #newList <- c()
-              #newList <- cbind(ypair,xpair)               
-              
-              combinedOutside <- NewDF[,as.character(cbind(ypair,xpair)),drop=FALSE] 
+              #newList <- c(ypair,xpair)               
+              combinedOutside <- c()
+              combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
+              temp <- c()
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
@@ -627,53 +640,25 @@ for (medianDirection in c("greaterEqual"))
                 #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
                 #print(c("Hfiltered:", Hfiltered))
                 #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
-                
-                #aggregated after categories loop
-                namesTV <- c()
-                
+ 
                 #1st pass
                 print("single pair pass")
                 #runs=1
                 #for(runs in 1:nrow(pairs))
+      
+                if(nrow(data.train)!=0)
                 {
+                  #data.train[,xpair]
+                  result <- sub_returnCVNames((data.train))
                   
-                  #ypair <- newList[1]
-                  #xpair <- newList[-1]
-                  
-                  #newList <- c()
-                  #newList <- cbind(ypair,xpair)
-                  
-                  #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
-                  #empty, just prevents an error being thrown
-                  
-                  #source(paste0(sourceDir,"redrawTrain.R"))
-                  
-                  #set <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
-                  #print(newList)
-                  
-                  #skipFlag=0
-                  #just point to resample script and use data.train
-                  #tryCase <- c()
-                  #newList
-                  #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
-                  #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                  
-                  #if check for nrow's of data.train is redundant now that the data is cleaned in reseedBoth.R
-                  if(nrow(data.train)!=0)
+                  #if(skipFlag==0)
                   {
-                    #data.train[,xpair]
-                    result <- sub_returnCVNames(cbind(data.train))
-                    
-                    #if(skipFlag==0)
-                    {
-                      namesTV <- rbind(namesTV,result)
-                    }
-                    
+                    namesTV <- rbind(namesTV,result)
                   }
                   
-                  #end of pairs
                 }
                 
+              #end if nrow != 0
               }
               
               if(nrow(temp)==0)
@@ -709,10 +694,10 @@ for (medianDirection in c("greaterEqual"))
                 print("holdout")
                 
                 ypair <- newList[1]
-                xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
+                xpair <- c(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
                 
                 newList <- c()
-                newList <- cbind(ypair,xpair)
+                newList <- c(ypair,xpair)
                 #print(newList)
                 
                 #skipFlag=0
@@ -779,7 +764,7 @@ for (medianDirection in c("greaterEqual"))
             if ( numOfVars == 1)
             {
               ypair <- newList[1]
-              xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
+              xpair <- c(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
               
               tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
               

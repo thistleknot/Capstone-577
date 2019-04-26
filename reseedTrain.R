@@ -22,5 +22,5 @@ preNonHoldoutSet <- sample(available, round(preNonHoldOutSize*length(available))
 #this is the total data, I need to deselect the -holdoutSet
 #where does this holdoutSet value derive from? reseedTest.  Questionable if this file sees it (encapsulation)
 #But if it doesn't, it should throw an error on a fresh run.
-assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), set[preNonHoldoutSet,])
-#assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), preNonHoldoutSet) 
+#assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), set[preNonHoldoutSet,])
+assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), preNonHoldoutSet) 
