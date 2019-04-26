@@ -444,7 +444,7 @@ for (medianDirection in c("greaterEqual"))
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
-          holdoutSize = widthDiviser #(of set) #(never fully iterates over subsample)
+          holdoutSize = 1/widthDiviser #(of set) #(never fully iterates over subsample)
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
