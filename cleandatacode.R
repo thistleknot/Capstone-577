@@ -28,6 +28,36 @@ library(stringr)
 #max precision is # of records
 #precisionSize=182338*4
 
+#the way I have this setup, it only returns one var
+sub_returnCV <- function(data_sent){
+  #data_sent=data.train
+  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  #table(NewDF[,"V7202"])
+  
+  #info <- which(colSums(holderOfData)==nrow(holderOfData))
+  #name <- rownames(data.frame(info))
+  #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
+  
+  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  
+  result <- c()
+  #return all coefficients
+  result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
+  
+  set<-round(colSums(B$Subsets))[-1]
+  
+  if(!is.null(result)) result <- NA
+  
+  #if(nrow(result)==2)
+  #{
+    #result <- 
+  #}
+  #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
+  return(result)
+}
+
+
 sub_returnCVNames <- function(data_sent){
   #data_sent=data.train
   holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -672,22 +702,14 @@ for (medianDirection in c("greaterEqual"))
                 
                 #runs=1
                 #for(runs in 1:nrow(pairs))
-      
-                #redundant check now!
-                #if(nrow(data.train)!=0)
-                {
-                  #data.train[,xpair]
-                  #may not always return a result?  Always a split though.
-                  result <- sub_returnCVNames((data.train))
-                  
-                  #if(skipFlag==0)
-                  {
-                    #always will append something
-                    namesTV <- rbind(namesTV,result)
-                  }
-                  
-                }
+   
+                result <- sub_returnCVNames(data.train)
                 
+                for (i in 1:length(result))
+                {
+                  namesTV <- rbind(namesTV,result[i])
+                }
+                 
               #end if nrow != 0
               }
               
@@ -733,39 +755,25 @@ for (medianDirection in c("greaterEqual"))
                 
                 holderOfData <- c()
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
+                
+                result <- sub_returnCV(data.test)
+                
                 #redundant check now!
                 #if(nrow(data.train)!=0)
               
                 #data.train[,xpair]
-                #result <- sub_returnCVNames((data.test))
-                #summary(holderOfData)
+                result <- sub_returnCVNames((data.test))
                 
-                #some bug thrown on bestglmm.R @ 510 requires me to do data.frame.  If I rerun holderOfData it works... so go figure.
-                #lm(y ~ ., data = data.frame(Xy[, c(bestset[, -1], FALSE), drop = FALSE], 
-                #y = y), ...) at bestglm.R#510
-                
-                b <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
-                #tryCatch(b <- bestglm(Xy = cbind(data.test[-1],data.test[1]), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser)),
-                         #error = function(c) {
-                           #holderOfData <- c()
-                           #holderOfData <- cbind(data.test[-1],data.test[1])
-                           #b <- bestglm(Xy = cbind(data.test[-1],data.test[1]), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
-                           #}
-                       
-                #)
-                result <- data.frame(as.character(rownames(data.frame(b$BestModel$coefficients[]))[-1]))
-              
-                #if(skipFlag==0)
+                for (i in 1:length(result))
+                {
+                  namesH <- rbind(namesH,result)
+                }                
               
                 if(as.character(result)=="integer(0)")
                 {
                   namesH <- rbind(namesH,NA)  
                 }
-                if(as.character(result)!="integer(0)")
-                {
-                  namesH <- rbind(namesH,result)  
-                }
-                
+
                 #end if nrow != 0
               }
               
