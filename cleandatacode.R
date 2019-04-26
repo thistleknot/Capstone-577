@@ -818,7 +818,8 @@ for (medianDirection in c("greaterEqual"))
             tabulatedCrossValidated <- rbind(tabulatedCrossValidated,crossValidated)
             
             print_tabled <-c()
-            print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
+            #due to the chance of no results on both sides two passes from na's, /4
+            print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/4,3)
             print(print_tabled)
             #end if nrow !=0            
             
