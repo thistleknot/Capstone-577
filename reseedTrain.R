@@ -1,14 +1,14 @@
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index
-set <- c()
-set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
+#set <- c()
+#set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
 
-preNonHoldoutSet <- c()
+#preNonHoldoutSet <- c()
 #these are new #'s
 #set[-holdoutSet,]
 #View(id(set[-holdoutSet,]))
 
-set[-holdoutSet,]
-range <- 1:nrow(set)
+#set[-holdoutSet,]
+range <- 1:precisionSize
 
 available <- range[-c(holdoutSet)]
 #length(available)

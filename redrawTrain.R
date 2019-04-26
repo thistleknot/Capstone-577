@@ -1,5 +1,14 @@
 set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
 setIndex <- eval(parse(text=paste("combined.preTrain.",pairedname, sep = "")))
+#set <- NewDF[,newList]
+#set[set == 0] <- NA
+#temp <- set[] %>% filter_all(all_vars(!is.na(.)))
+#set <- c()
+#set <- temp
+#set[set == -1] <- 0
+
+totalRows <- nrow(set)
+setIndex2 <- unique(round(setIndex/precisionSize*totalRows,0))
 
 data.train <- c()
 data.train <- set[setIndex,]
