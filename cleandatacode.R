@@ -554,6 +554,7 @@ for (medianDirection in c("greaterEqual"))
             #runs1=1
             #iterate through list of names and set seeds
             
+            #initiate outer dataset and inner index loops
             for(runs1 in 1:nrow(pairedname_List))
             {
               #checking in here because I need access to pairedNames...
@@ -581,6 +582,10 @@ for (medianDirection in c("greaterEqual"))
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
+                #since I'm working with index's now, 
+                #I think I can move reseed out of the inner most loop, 
+                #yes, outside in an initiator loop that has it's own nrow check
+                source(paste0(sourceDir,"reseedBoth.R"))
                 source(paste0(sourceDir,"reseedTest.R"))
                 source(paste0(sourceDir,"reseedTrain.R"))
                 source(paste0(sourceDir,"MCResampleTest.R"))
@@ -594,11 +599,10 @@ for (medianDirection in c("greaterEqual"))
             #aggregated after categories loop
             namesTV <- c()
             
-            #generates dynamics sets of records
+            #generates dynamics sets of records, working with initiated arrays and combined dataset from above loop.
             #runs2=1
             for(runs2 in 1:nrow(pairedname_List))
             {
-             
               #checking in here because I need access to pairedNames...
               pairedname <- c()
               pairedname <- pairedname_List[runs2]
@@ -633,9 +637,6 @@ for (medianDirection in c("greaterEqual"))
                 #otherwise this would go above seed.  Which means it's going to be expensive, but I'm not testing every combination.
                 #I'm using simulation to do the combinations, but I am ensuring I test every value twice (hopefully)
                 #this means I need to put the rest of the MC loops inside here...
-                source(paste0(sourceDir,"reseedBoth.R"))
-                source(paste0(sourceDir,"reseedTest.R"))
-                source(paste0(sourceDir,"reseedTrain.R"))
                 
                 #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
                 #print(c("Hfiltered:", Hfiltered))

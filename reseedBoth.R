@@ -1,4 +1,4 @@
-combined <- NewDF[,as.character(c(c(cbind(ypair,xpair)))),drop=FALSE] 
+combined <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
 combined[combined == 0] <- NA
 temp <- combined[] %>% filter_all(all_vars(!is.na(.)))
 combined <- c()
