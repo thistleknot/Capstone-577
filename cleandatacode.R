@@ -590,6 +590,8 @@ for (medianDirection in c("greaterEqual"))
                 #since I'm working with index's now, 
                 #I think I can move reseed out of the inner most loop, 
                 #yes, outside in an initiator loop that has it's own nrow check
+                #these are deendent upon pariedName variable
+                #which means don't do anything above this
                 source(paste0(sourceDir,"reseedBoth.R"))
                 source(paste0(sourceDir,"reseedTest.R"))
                 source(paste0(sourceDir,"reseedTrain.R"))
@@ -729,17 +731,30 @@ for (medianDirection in c("greaterEqual"))
                 #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
                 pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))
                 
+                
+                holderOfData <- c()
+                holderOfData <- cbind(data.test[-1],data.test[1])
                 #redundant check now!
                 #if(nrow(data.train)!=0)
                 {
                   #data.train[,xpair]
-                  result <- sub_returnCVNames((data.test))
-                  #bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser)
-                  #result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
+                  #result <- sub_returnCVNames((data.test))
+                  
+                  b <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
+                  result <- data.frame(as.character(rownames(data.frame(b$BestModel$coefficients[]))[-1]))
                   
                   #if(skipFlag==0)
                   {
-                    namesH <- rbind(namesH,result)
+                    if(as.character(result)=="integer(0)")
+                    {
+                      namesH <- rbind(namesH,NA)  
+                    }
+                    if(as.character(result)!="integer(0)")
+                    {
+                      namesH <- rbind(namesH,result)  
+                    }
+                    
+                    View(result)
                   }
                   
                 }
@@ -787,7 +802,8 @@ for (medianDirection in c("greaterEqual"))
             #would be a good place if one desired to see it iterate only every so often
             tabulatedCrossValidated <- rbind(tabulatedCrossValidated,crossValidated)
             
-            print_tabled <- round(table(tabulatedCrossValidated)/numRuns/2,3)
+            print_tabled <-c()
+            print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
             print(print_tabled)
             #end if nrow !=0            
             
@@ -802,6 +818,7 @@ for (medianDirection in c("greaterEqual"))
       }
       
       #end of lister
+      print(c("final: ",print_tabled))
     }
     #end width
     #readline(prompt="Press [enter] to continue")
