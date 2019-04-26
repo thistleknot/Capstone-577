@@ -1,22 +1,23 @@
+ones <- c()
+zeros <- c()
 set <- c()
+set.ones <- c()
+set.zeros <- c()
 setIndex <- c()
-set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
-setIndex <- eval(parse(text=paste("combined.preTrain.",pairedname, sep = "")))
-#set <- NewDF[,newList]
-#set[set == 0] <- NA
-#temp <- set[] %>% filter_all(all_vars(!is.na(.)))
-#set <- c()
-#set <- temp
-#set[set == -1] <- 0
+setIndex.ones <- c()
+setIndex.zeros <- c()
+data.train <- c()
 
-totalRows <- nrow(set)
-#setIndex2 <- unique(round(setIndex/precisionSize*totalRows,0))
+#set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
+set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
+set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
+
+#setIndex <- eval(parse(text=paste("combined.holdout.",pairedname, sep = "")))
+setIndex.ones <- eval(parse(text=paste("combined.holdout.ones.",pairedname, sep = "")))
+setIndex.zeros <- eval(parse(text=paste("combined.holdout.zeros.",pairedname, sep = "")))
+
+ones <- set.ones[setIndex.ones,]
+zeros <- set.zeros[setIndex.zeros,]
 
 data.train <- c()
-data.train <- set[setIndex,]
-#data.train[data.train == 0] <- NA
-#temp <- data.train[] %>% filter_all(all_vars(!is.na(.)))
-#data.train <- c()
-#data.train <- temp
-#does conversion is done at the reseedBoth level.
-#data.train[data.train == -1] <- 0
+data.train <- rbind(ones,zeros)

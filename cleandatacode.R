@@ -545,7 +545,7 @@ for (medianDirection in c("greaterEqual"))
                 
               }
               
-              if(nrow(temp)==0) print(c("null:",newList))
+              if(nrow(temp)==0) print(c("null:",c(ypair,xpair)))
             }
             #pairedname_List
             #base = resample
@@ -627,7 +627,9 @@ for (medianDirection in c("greaterEqual"))
               xpair <- c()
               xpair <- pairsForLater[runs2,][-1]
               #newList <- c()
-              #newList <- c(ypair,xpair)               
+              #newList <- c(ypair,xpair)
+              #this quickly checks NewDF for the combination pair,
+              #this assumes all other transformations have been done to NewDF to leave it in the same state that reseedBoth.R recieves it in.
               combinedOutside <- c()
               combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
@@ -636,8 +638,8 @@ for (medianDirection in c("greaterEqual"))
               if(nrow(temp)!=0)
               {
                 source(paste0(sourceDir,"redrawTrain.R"))
-                source(paste0(sourceDir,"redrawTest.R"))
-                
+                #source(paste0(sourceDir,"redrawTest.R"))
+
                 #could use d_combined and do conversion of -9 and -8 to na
                 #would still have to do median after loading files, less payoff by doing that at this juncture
                 # noticed V7562 and V8531 result in no records together when dropping na's... go figure
@@ -663,7 +665,8 @@ for (medianDirection in c("greaterEqual"))
                 #runs=1
                 #for(runs in 1:nrow(pairs))
       
-                if(nrow(data.train)!=0)
+                #redundant check now!
+                #if(nrow(data.train)!=0)
                 {
                   #data.train[,xpair]
                   result <- sub_returnCVNames((data.train))
@@ -681,7 +684,6 @@ for (medianDirection in c("greaterEqual"))
               if(nrow(temp)==0)
               {
                 print(c("exclude",c(newList)))
-                
               }
               
               #end reseed-pairs (used for memory structures)

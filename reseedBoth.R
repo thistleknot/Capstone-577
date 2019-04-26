@@ -11,5 +11,4 @@ combined.ones <- combined[which(combined[,1,drop=FALSE] == 1), ]  # all 1's
 combined.zeros <- combined[which(combined[,1,drop=FALSE] == 0), ]  # all 0's
 assign(paste("combined.",pairedname, sep = ""), combined)
 assign(paste("combined.ones.",pairedname, sep = ""), combined.ones) 
-#colnames(combined)
 assign(paste("combined.zeros.",pairedname, sep = ""), combined.zeros) 

@@ -1,26 +1,40 @@
-#don't call resampleMC.R from within this, you don't have the nameList yet, this is only index
+#to be ran after reseedBoth.R
 set <- c()
-set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
-set.input_ones <- c()
-set.input_zeroes <- c()
-#set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
-#set.input_ones <- eval(parse(text=paste("combined.input_ones.",pairedname, sep = "")))[-holdoutSet.input_ones,]
-#set.input_zeroes <- eval(parse(text=paste("combined.input_zeroes.",pairedname, sep = "")))[-holdoutSet.input_zeroes,]
+set.ones <- c()
+set.zeros <- c()
 
-preNonHoldoutSet <- c()
-#these are new #'s
-#set[-holdoutSet,]
-#View(id(set[-holdoutSet,]))
+set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
+set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
+set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
+
+#set.holdoutSet <- c()
+set.holdoutSet.ones <- c()
+set.holdoutSet.zeros <- c()
+#index's
+set.holdoutSet.ones <- eval(parse(text=paste("combined.holdoutSet.ones.",pairedname, sep = "")))
+set.holdoutSet.zeros <- eval(parse(text=paste("combined.holdoutSet.zeros.",pairedname, sep = "")))
+
+set.prenonholdout.ones <- c()
+set.prenonholdout.zeros <- c()
+#set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
 
 #don't use range <- 1:nrow(set), because if you do, you don't pass the original index
 #set[-holdoutSet,]
-range <- 1:nrow(set)
+rangeOnes <- c()
+rangeZeros <- c()
+rangeOnes <- 1:nrow(set.ones)
+rangeZeros <- 1:nrow(set.zeros)
 
-available <- range[-c(holdoutSet)]
-#length(available)
-#length(holdoutSet)
-#nrow(set)
-preNonHoldoutSet <- sample(available, round(preNonHoldOutSize*length(available)))
+#index's
+availableset.prenonholdout.ones <- c()
+availableset.prenonholdout.zeros <- c()
+availableset.prenonholdout.ones <- rangeOnes[-c(set.holdoutSet.ones)]
+availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.zeros)]
+
+preNonHoldoutSet.ones <- c()
+preNonHoldoutSet.zeros <- c()
+preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
+preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.zeros)))
 
 #NewDF.preNonHoldoutSet <- c()
 #NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
@@ -28,4 +42,5 @@ preNonHoldoutSet <- sample(available, round(preNonHoldOutSize*length(available))
 #where does this holdoutSet value derive from? reseedTest.  Questionable if this file sees it (encapsulation)
 #But if it doesn't, it should throw an error on a fresh run.
 #assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), set[preNonHoldoutSet,])
-assign(paste("combined.preNonHoldoutSet.",pairedname, sep = ""), preNonHoldoutSet) 
+assign(paste("combined.preNonHoldoutSet.ones.",pairedname, sep = ""), preNonHoldoutSet.ones)
+assign(paste("combined.preNonHoldoutSet.zeros.",pairedname, sep = ""), preNonHoldoutSet.zeros) 

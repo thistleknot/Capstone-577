@@ -1,5 +1,5 @@
 ones <- c()
-zeros <-
+zeros <- c()
 set <- c()
 set.ones <- c()
 set.zeros <- c()
