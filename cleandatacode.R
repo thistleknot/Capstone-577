@@ -731,32 +731,39 @@ for (medianDirection in c("greaterEqual"))
                 #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
                 pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))
                 
-                
                 holderOfData <- c()
-                holderOfData <- cbind(data.test[-1],data.test[1])
+                holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 #redundant check now!
                 #if(nrow(data.train)!=0)
+              
+                #data.train[,xpair]
+                #result <- sub_returnCVNames((data.test))
+                #summary(holderOfData)
+                
+                #some bug thrown on bestglmm.R @ 510 requires me to do data.frame.  If I rerun holderOfData it works... so go figure.
+                #lm(y ~ ., data = data.frame(Xy[, c(bestset[, -1], FALSE), drop = FALSE], 
+                #y = y), ...) at bestglm.R#510
+                
+                b <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
+                #tryCatch(b <- bestglm(Xy = cbind(data.test[-1],data.test[1]), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser)),
+                         #error = function(c) {
+                           #holderOfData <- c()
+                           #holderOfData <- cbind(data.test[-1],data.test[1])
+                           #b <- bestglm(Xy = cbind(data.test[-1],data.test[1]), IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
+                           #}
+                       
+                #)
+                result <- data.frame(as.character(rownames(data.frame(b$BestModel$coefficients[]))[-1]))
+              
+                #if(skipFlag==0)
+              
+                if(as.character(result)=="integer(0)")
                 {
-                  #data.train[,xpair]
-                  #result <- sub_returnCVNames((data.test))
-                  
-                  b <- bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser))
-                  result <- data.frame(as.character(rownames(data.frame(b$BestModel$coefficients[]))[-1]))
-                  
-                  #if(skipFlag==0)
-                  {
-                    if(as.character(result)=="integer(0)")
-                    {
-                      namesH <- rbind(namesH,NA)  
-                    }
-                    if(as.character(result)!="integer(0)")
-                    {
-                      namesH <- rbind(namesH,result)  
-                    }
-                    
-                    View(result)
-                  }
-                  
+                  namesH <- rbind(namesH,NA)  
+                }
+                if(as.character(result)!="integer(0)")
+                {
+                  namesH <- rbind(namesH,result)  
                 }
                 
                 #end if nrow != 0
