@@ -18,6 +18,7 @@ library(compare)
 library(dplyr)
 library("R.utils")
 library(tidyr)
+library(stringr)
 
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
@@ -467,10 +468,69 @@ for (medianDirection in c("greaterEqual"))
           #monte carlo resamples from a static holdout
           #used for resampling monte carlo training set from non holdout partitions!
           
-          source(paste0(sourceDir,"reseedTest.R"))
+          #y and iterator info
+          iterator = sum(yIndex)
           
-          #static for monte carlo training 
-          source(paste0(sourceDir,"reseedTrain.R"))
+          #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
+          yname <- c()
+          yname <- as.character(list[yIndex,][iterator,][,1])
+          
+          y <- c()
+          y <- list[yIndex,][iterator,]
+          
+          alty <- c()
+          alty <- list[yIndex,][-iterator,]
+          #y
+          #yname <- as.character(list[yIndex,][iterator,][,1])          
+          
+          newList <- c()        
+          newList <- c(as.character(y[,1]),as.character(colListNames[,1]))
+          oldList <- as.character(newList[-1])
+          numOfVars <- c()
+          numOfVars <- length(oldList)
+          
+          pairs <- c()
+          pairs <- pairedLists(numOfVars)
+          #print(pairs)
+          
+          for(runs in 1:nrow(pairs))
+          {
+              
+            ypair <- newList[1]
+            xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+            newList <- c()
+            newList <- cbind(ypair,xpair)               
+            
+            combined <- NewDF[,as.character(c(newList)),drop=FALSE] 
+            combined[combined == 0] <- NA
+            temp <- combined[] %>% filter_all(all_vars(!is.na(.)))
+            if(nrow(temp)!=0)
+            {
+              
+              #could use d_combined and do conversion of -9 and -8 to na
+              #would still have to do median after loading files, less payoff by doing that at this juncture
+              # noticed V7562 and V8531 result in no records together when dropping na's... go figure
+
+              pairedname <- c()
+              #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
+              pairedname <- capture.output(cat(newList, sep = ""))
+              
+              #pairedname <- stringr::str_trim(prename)
+              #print(pairedname)
+              
+              suppressMessages(source(paste0(sourceDir,"reseedBoth.R")))
+              #source(paste0(sourceDir,"reseedTest.R"))
+              #source(paste0(sourceDir,"reseedTrain.R"))
+            }
+            if(nrow(temp)==0)
+            {
+              print(c("exclude",c(newList)))
+              
+            }
+            
+            #static for monte carlo training 
+            #end pairs reseed
+          }
           
           #monte carlo resample from static sets
           #if widthDiviser = 1, keep as 1
@@ -481,214 +541,116 @@ for (medianDirection in c("greaterEqual"))
             source(paste0(sourceDir,"MCResampleTrain.R"))
             source(paste0(sourceDir,"MCResampleTest.R"))
             #print is inside inner loop
+        
+            #rather than move to end of file
+            if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
+            {
+              print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+              
+            }
             
-            y <- c()
-            yname <- c()
-            #y iterator's
-            #iterator=1      
+            if(resample==1 && holdoutReset==1 && seeder==start)
+            {
+              numRuns = 1
+            }
             
-            start=5
+            if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
+            {
+              numRunsold <- c()
+              numRunsold = numRuns
+              numRuns <- c()
+              numRuns = numRunsold + 1
+            }
             
-            #sets holdout resampling, monte carlo subset resampling, CV Passes, K Folds
-                        
-            for (iterator in 1:sum(yIndex))
+            
+            #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
+            #print(c("Hfiltered:", Hfiltered))
+            #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
+            
+                
+            #aggregated after categories loop
+            namesTV <- c()
+            
+            #1st pass
+            print("1st pass")
+            #runs=1
+            for(runs in 1:nrow(pairs))
             {
               
-              #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
-              yname <- c()
-              yname <- as.character(list[yIndex,][iterator,][,1])
+              ypair <- newList[1]
+              xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
               
-              y <- c()
-              y <- list[yIndex,][iterator,]
+              newList <- c()
+              newList <- cbind(ypair,xpair)
               
-              alty <- c()
-              alty <- list[yIndex,][-iterator,]
-              #y
-              #yname <- as.character(list[yIndex,][iterator,][,1])
-              #rather than move to end of file
-              if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
+              #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
+              #empty, just prevents an error being thrown
+              tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) test = 0)
+              #print(newList)
+              
+              #skipFlag=0
+              #just point to resample script and use data.train
+              #tryCase <- c()
+              
+              #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
+              #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
+              if(nrow(data.train)!=0)
               {
-                print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+                #data.train[,xpair]
+                result <- sub_returnCVNames(cbind(data.train[ypair],data.train[,xpair]))
+                
+                #if(skipFlag==0)
+                {
+                  namesTV <- rbind(namesTV,result)
+                }
                 
               }
               
-              if(resample==1 && holdoutReset==1 && seeder==start)
-              {
-                numRuns = 1
-              }
-              
-              if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
-              {
-                numRunsold <- c()
-                numRunsold = numRuns
-                numRuns <- c()
-                numRuns = numRunsold + 1
-              }
-
-              newList <- c()        
-              newList <- c(as.character(y[,1]),as.character(colListNames[,1]))
-              oldList <- as.character(newList[-1])
-              numOfVars <- c()
-              numOfVars <- length(oldList)
-              
+              #end of pairs
+            }
+            namesTV
+            #print(c("namesTV:", namesTV))
+            
+            #holdout
+            numOfVars <- c()
+            uniqueNamesTV <- unique(namesTV)
+            numOfVars <- length(uniqueNamesTV)
+            print("holdout pass")
+            print(c("UnamesTV:", uniqueNamesTV))
+            
+            if ( numOfVars > 0 )
+            {
               pairs <- c()
               pairs <- pairedLists(numOfVars)
               #print(pairs)
               
-              #aggregated after categories loop
-              namesTV <- c()
-             
-              #1st pass
-              print("1st pass")
+              #Hfiltered resets each file
+              
+              #holdout
               #runs=1
               for(runs in 1:nrow(pairs))
               {
-
-                ypair <- newList[1]
-                xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+                print("holdout")
                 
-                newList <- c()
-                newList <- cbind(ypair,xpair)
-                
-                #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
-                #empty, just prevents an error being thrown
-                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) test = 0)
-                #print(newList)
-                
-                #skipFlag=0
-                #just point to resample script and use data.train
-                #tryCase <- c()
-               
-                #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
-                #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                if(nrow(data.train)!=0)
-                {
-                  #data.train[,xpair]
-                  result <- sub_returnCVNames(cbind(data.train[ypair],data.train[,xpair]))
-                  
-                  #if(skipFlag==0)
-                  {
-                    namesTV <- rbind(namesTV,result)
-                  }
-               
-                }
-                
-                #end of pairs
-              }
-              namesTV
-              #print(c("namesTV:", namesTV))
-              
-              #holdout
-              numOfVars <- c()
-              uniqueNamesTV <- unique(namesTV)
-              numOfVars <- length(uniqueNamesTV)
-              print("holdout pass")
-              print(c("UnamesTV:", uniqueNamesTV))
-              
-              namesH <- c()
-              if ( numOfVars > 0 )
-              {
-                pairs <- c()
-                pairs <- pairedLists(numOfVars)
-                #print(pairs)
-                
-                #resets each file
-                #Hfiltered
-                
-                #holdout
-                #runs=1
-                for(runs in 1:nrow(pairs))
-                {
-                  #print(c("run:",runs))
-                  #kind of hackey
-                  #left
-                  #pairs[runs,][1]
-                  #right
-                  #pairs[runs,][2]
-                  #oldList[as.integer(pairs[runs,][1])]
-                  
-                  ypair <- newList[1]
-                  xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
-                  
-                  newList <- c()
-                  newList <- cbind(ypair,xpair)
-                  #print(newList)
-                  
-                  #skipFlag=0
-                  #subcategory specific
-                  #just point to resample script and use data.train
-                  tryCase <- c()
-                  
-                  tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
-                  #data.train <- data.train[0]
-                  holderOfData <- cbind(data.test[,xpair],data.test[ypair])
-                  #print(colnames(holderOfData))
-                  #holderOfData <- data.train[0]
-                  #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                  if(nrow(data.test)!=0)
-                  {
-                    skipFlag=0
-                    tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
-                                        error=function(e) skipFlag=1 )
-                    
-                    if(skipFlag!=1)
-                    {
-                      
-                      result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
-                      colnames(result) <- "x"
-                      #print(result)
-                      
-                      if(length(result)!=0)
-                      {
-                        
-                        if(nrow(result)!=1)
-                        {
-                          for (i in 1:nrow(result))
-                          {
-                            #print(c("Storing 2:",i,result))
-                            Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
-                            
-                          }
-                        }
-                        
-                        #!=1
-                        if(nrow(result)==1)
-                        {
-                          #print(c("storing 1:",result))
-                          Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
-                        }                        
-                        
-                      }
-                      #end if skip flag
-                    }
-                    
-                    #end try case
-                  }
-                  if(nrow(data.test)==0)
-                  {
-                    #print(c("no rows",colnames(holderOfData)))
-                  }
-                  #end of pairs
-                }
-                
-                #end != 1
-                
-              }
-
-              if ( numOfVars == 1)
-              {
                 ypair <- newList[1]
                 xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
                 
-                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
+                newList <- c()
+                newList <- cbind(ypair,xpair)
+                #print(newList)
                 
+                #skipFlag=0
+                #subcategory specific
+                #just point to resample script and use data.train
+                tryCase <- c()
+                
+                tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
                 #data.train <- data.train[0]
                 holderOfData <- cbind(data.test[,xpair],data.test[ypair])
+                #print(colnames(holderOfData))
                 #holderOfData <- data.train[0]
                 #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
-                
-                
-                if(skipFlag==0)
+                if(nrow(data.test)!=0)
                 {
                   skipFlag=0
                   tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
@@ -696,45 +658,99 @@ for (medianDirection in c("greaterEqual"))
                   
                   if(skipFlag!=1)
                   {
-                    #result <- row.names(data.frame(B$BestModel[1]))[-1]
-                    result <- rownames(data.frame(B$BestModel$coefficients[]))[-1]
-                    if(length(result)>0)
+                    
+                    result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
+                    colnames(result) <- "x"
+                    #print(result)
+                    
+                    if(length(result)!=0)
                     {
-                      if(length(result)==1)
+                      
+                      if(nrow(result)!=1)
                       {
-                        #print(result)
-                        Hfiltered <- rbind(Hfiltered, result)
-                        
+                        for (i in 1:nrow(result))
+                        {
+                          #print(c("Storing 2:",i,result))
+                          Hfiltered <- rbind(Hfiltered, as.character(result[i,]))
+                          
+                        }
+                      }
+                      
+                      #!=1
+                      if(nrow(result)==1)
+                      {
+                        #print(c("storing 1:",result))
+                        Hfiltered <- rbind(Hfiltered, as.character(result[1,]))
                       }                        
                       
-                      #end if result > 0 flag
                     }
-                    
                     #end if skip flag
                   }
                   
                   #end try case
                 }
-
+                if(nrow(data.test)==0)
+                {
+                  #print(c("no rows",colnames(holderOfData)))
+                }
+                #end holdout
               }
-            
               
-              #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
-              #print(c("Hfiltered:", Hfiltered))
-              #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
+              #end != 1
               
-              #end of holdout analysis
-              
-              
-              #end of resample MC pass 
             }
+            
+            if ( numOfVars == 1)
+            {
+              ypair <- newList[1]
+              xpair <- cbind(uniqueNamesTV[as.integer(pairs[runs,][1])],uniqueNamesTV[as.integer(pairs[runs,][2])])
+              
+              tryCase <- tryCatch(source(paste0(sourceDir,"redrawTest.R")), error=function(e) skipFlag=1)
+              
+              #data.train <- data.train[0]
+              holderOfData <- cbind(data.test[,xpair],data.test[ypair])
+              #holderOfData <- data.train[0]
+              #skip if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
+              
+              
+              if(skipFlag==0)
+              {
+                skipFlag=0
+                tryCase <- tryCatch((B <- suppressWarnings( B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive")) )), 
+                                    error=function(e) skipFlag=1 )
+                
+                if(skipFlag!=1)
+                {
+                  #result <- row.names(data.frame(B$BestModel[1]))[-1]
+                  result <- rownames(data.frame(B$BestModel$coefficients[]))[-1]
+                  if(length(result)>0)
+                  {
+                    if(length(result)==1)
+                    {
+                      #print(result)
+                      Hfiltered <- rbind(Hfiltered, result)
+                      
+                    }                        
+                    
+                    #end if result > 0 flag
+                  }
+                  
+                  #end if skip flag
+                }
+                
+                #end try case
+              }
+              
+            }
+            
             #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
             #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
             #end outermost loop
             
             #would be a good place if one desired to see it iterate only every so often
             #print(c("2a: ", round(table(finalList)/numRuns,3)))
-            #end of holdoutReset 
+            
+            #end of MC
           }
           
           #end holdoutReset
