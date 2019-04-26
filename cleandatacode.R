@@ -471,6 +471,7 @@ for (medianDirection in c("greaterEqual"))
           #y
           #yname <- as.character(list[yIndex,][iterator,][,1])          
           
+          #only place this is assigned
           newList <- c()        
           newList <- c(as.character(y[,1]),as.character(colListNames[,1]))
           oldList <- as.character(newList[-1])
@@ -482,6 +483,9 @@ for (medianDirection in c("greaterEqual"))
           #if widthDiviser = 1, keep as 1
           #resample=2   
           #generates dynamic lists
+          #run through training
+          #run through testing
+          #tabulate common terms
           for (resample in 1:widthDiviser)
           {
             #rather than move to end of file
@@ -610,6 +614,7 @@ for (medianDirection in c("greaterEqual"))
             #without virtual index's, I can't story original index's because the index's are based on these dynamic columns from these pairedlists based on the names
             #passed to pairedLists (well, based on the indexs from pairedList thrown at oldList)
 
+            print("single pair passes")
             #aggregated after categories loop
             namesTV <- c()
             
@@ -661,7 +666,7 @@ for (medianDirection in c("greaterEqual"))
                 #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
  
                 #1st pass
-                print("single pair pass")
+                
                 #runs=1
                 #for(runs in 1:nrow(pairs))
       
@@ -669,10 +674,12 @@ for (medianDirection in c("greaterEqual"))
                 #if(nrow(data.train)!=0)
                 {
                   #data.train[,xpair]
+                  #may not always return a result?  Always a split though.
                   result <- sub_returnCVNames((data.train))
                   
                   #if(skipFlag==0)
                   {
+                    #always will append something
                     namesTV <- rbind(namesTV,result)
                   }
                   
@@ -683,7 +690,7 @@ for (medianDirection in c("greaterEqual"))
               
               if(nrow(temp)==0)
               {
-                print(c("exclude",c(newList)))
+                print(c("exclude",c(ypair,xpair)))
               }
               
               #end reseed-pairs (used for memory structures)
@@ -691,6 +698,64 @@ for (medianDirection in c("greaterEqual"))
             namesTV
             print(c("namesTV:", namesTV))
             
+            #holdout
+            namesH <- c()
+            print("holdout pass")
+            
+            #generates dynamics sets of records, working with initiated arrays and combined dataset from above loop.
+            #runs2=1
+            for(runs3 in 1:nrow(pairedname_List))
+            {
+              #checking in here because I need access to pairedNames...
+              pairedname <- c()
+              pairedname <- pairedname_List[runs3]
+              ypair <- c()
+              ypair <- pairsForLater[runs3,][1]
+              xpair <- c()
+              xpair <- pairsForLater[runs3,][-1]
+              #assumes nothing about 0/1 split
+              combinedOutside <- c()
+              combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
+              combinedOutside[combinedOutside == 0] <- NA
+              temp <- c()
+              temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
+              if(nrow(temp)!=0)
+              {
+                #source(paste0(sourceDir,"redrawTrain.R"))
+                source(paste0(sourceDir,"redrawTest.R"))
+                
+                pairedname <- c()
+                #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
+                pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))
+                
+                #redundant check now!
+                #if(nrow(data.train)!=0)
+                {
+                  #data.train[,xpair]
+                  result <- sub_returnCVNames((data.test))
+                  
+                  #if(skipFlag==0)
+                  {
+                    namesH <- rbind(namesH,result)
+                  }
+                  
+                }
+                
+                #end if nrow != 0
+              }
+              
+              if(nrow(temp)==0)
+              {
+                print(c("exclude",c(ypair,xpair)))
+              }
+              
+              #end reseed-pairs (used for memory structures)
+            }
+            #namesTV
+            print(c("namesH:", namesH))            
+            
+            nrow(namesH)
+            nrow(namesTV)
             
             #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
             #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
@@ -745,7 +810,7 @@ for (medianDirection in c("greaterEqual"))
           }
         }
       }
-      
+      namesTV[namesTV %in% namesH]
       #print(c("3: ", finalListReduced))
       #hist((data.frame(table(finalList)))[,2])
       
