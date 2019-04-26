@@ -13,6 +13,9 @@ holdoutSet <- sample(nrow(set), round(holdoutSetSize*nrow(set)))
 
 #combined.holdoutSet <- c()
 #combined.holdoutSet <- set[holdoutSet,]
-assign(paste("combined.holdoutSet.",pairedname, sep = ""), set[holdoutSet,]) 
-
+#holdoutSet
+#assign(paste("combined.holdoutSet.",pairedname, sep = ""), set[holdoutSet,]) 
+assign(paste("combined.holdoutSet.",pairedname, sep = ""), holdoutSet) 
+nrow(set)
+length(holdoutSet)
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index

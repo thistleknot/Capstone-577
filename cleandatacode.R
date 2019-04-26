@@ -87,7 +87,6 @@ d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=","
 
 d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
-
 for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 {
   #median information
@@ -141,7 +140,6 @@ suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FAL
 #medianDirection = "greaterEqual"
 for (medianDirection in c("greaterEqual"))
 {
-  
   #will error on 3 for V7118
   #widthLoop=3
   for(widthLoop in c(3))
@@ -479,9 +477,10 @@ for (medianDirection in c("greaterEqual"))
           pairs <- pairedLists(numOfVars)
           #print(pairs)
           
+          #iterates over randomized paired matches
+          #runs=1
           for(runs in 1:nrow(pairs))
           {
-              
             ypair <- newList[1]
             xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
             newList <- c()
@@ -492,7 +491,6 @@ for (medianDirection in c("greaterEqual"))
             temp <- combined[] %>% filter_all(all_vars(!is.na(.)))
             if(nrow(temp)!=0)
             {
-              
               #could use d_combined and do conversion of -9 and -8 to na
               #would still have to do median after loading files, less payoff by doing that at this juncture
               # noticed V7562 and V8531 result in no records together when dropping na's... go figure
@@ -515,7 +513,7 @@ for (medianDirection in c("greaterEqual"))
               #static for monte carlo training 
               #monte carlo resample from static sets
               #if widthDiviser = 1, keep as 1
-              #resample=2      
+              #resample=2   
               for (resample in 1:widthDiviser)
               {
                 #base = resample
@@ -555,18 +553,21 @@ for (medianDirection in c("greaterEqual"))
                 #1st pass
                 print("1st pass")
                 #runs=1
-                for(runs in 1:nrow(pairs))
+                #for(runs in 1:nrow(pairs))
                 {
                   
-                  ypair <- newList[1]
-                  xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+                  #ypair <- newList[1]
+                  #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
                   
-                  newList <- c()
-                  newList <- cbind(ypair,xpair)
+                  #newList <- c()
+                  #newList <- cbind(ypair,xpair)
                   
                   #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
                   #empty, just prevents an error being thrown
-                  tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) test = 0)
+                  
+                  source(paste0(sourceDir,"redrawTrain.R"))
+                         
+                  #set <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
                   #print(newList)
                   
                   #skipFlag=0
@@ -575,6 +576,8 @@ for (medianDirection in c("greaterEqual"))
                   
                   #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
                   #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
+                  
+                  #if check for nrow's of data.train is redundant now that the data is cleaned in reseedBoth.R
                   if(nrow(data.train)!=0)
                   {
                     #data.train[,xpair]
