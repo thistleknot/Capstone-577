@@ -88,6 +88,11 @@ Hypothesis
 		the pattern of similar na %'s has me wondering if some years are missing data... 
 		I only check medians on certain factors... 
 		
+			>             print(c("min one:",minone))
+			[1] "min one:"         "0.05733856903114"
+			>             print(c("min zero:",minzero))
+			[1] "min zero:"        "0.05733856903114"
+		
 			[1] "V7101"
 
 					-1          0          1 
