@@ -5,17 +5,14 @@ holdoutSet <- c()
 
 #could use d_combined and do conversion of -9 and -8 to na
 # noticed V7562 and V8531 result in no records together when dropping na's... go figure
+#https://stackoverflow.com/questions/5510966/create-a-variable-name-with-paste-in-r
 
-combined <- NewDF[,as.character(c(newList)),drop=FALSE] 
-combined[combined == 0] <- NA
-temp <- combined[] %>% filter_all(all_vars(!is.na(.)))
-combined <- c()
-combined <- temp
-combined[combined == -1] <- 0
+set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
 
-holdoutSet <- sample(nrow(combined), round(holdoutSetSize*nrow(combined)))
+holdoutSet <- sample(nrow(set), round(holdoutSetSize*nrow(set)))
 
-combined.holdoutSet <- c()
-combined.holdoutSet <- NewDF[holdoutSet,]
+#combined.holdoutSet <- c()
+#combined.holdoutSet <- set[holdoutSet,]
+assign(paste("combined.holdoutSet.",pairedname, sep = ""), set[holdoutSet,]) 
 
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index

@@ -357,23 +357,9 @@ for (medianDirection in c("greaterEqual"))
           {
             name <-c()
             name <- colnames(NewDF[lister])
-            #NewDF[lister][NewDF[lister]==0]
-            
-            percent <- count(NewDF[lister][NewDF[lister]==0])/rows
-            
-            #temp <- table(NewDF[lister], useNA = "ifany")
-            #percent <- temp[length(temp)]/rows
-            print(c(name,round(percent$freq,3)))
-            if(!length(percent$x)==0)
-            {
-              if(percent>.75)
-              {
-                removedName <- c()
-                removedName <- name
-                filterList <- rbind(filterList,removedName)
-              }
-            }
-            #NewDF[is.na(NewDF)] <- 0
+            print(name)
+            percentTable <- table(NewDF[lister])/rows
+            print(percentTable)
           }
         
           #print(c(filterList))
@@ -432,7 +418,6 @@ for (medianDirection in c("greaterEqual"))
       #seeder=start
       for (seeder in start:end)
       {
-        
         set.seed(seeder)
         #seedbase=seeder
         print(paste("seed: ",seeder))
@@ -519,8 +504,8 @@ for (medianDirection in c("greaterEqual"))
               #print(pairedname)
               
               suppressMessages(source(paste0(sourceDir,"reseedBoth.R")))
-              #source(paste0(sourceDir,"reseedTest.R"))
-              #source(paste0(sourceDir,"reseedTrain.R"))
+              source(paste0(sourceDir,"reseedTest.R"))
+              source(paste0(sourceDir,"reseedTrain.R"))
             }
             if(nrow(temp)==0)
             {

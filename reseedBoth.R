@@ -5,9 +5,4 @@ combined <- c()
 combined <- temp
 combined[combined == -1] <- 0
 #print(pairedname)
-assign(paste("data",pairedname, sep = ""), combined) 
-#assign(paste(pairdatasetname),combined)
-
-#assign(paste(pairdatasetname),5)
-
-#ls()
+assign(paste("combined.",pairedname, sep = ""), combined) 
