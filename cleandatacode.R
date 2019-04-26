@@ -25,7 +25,8 @@ library(stringr)
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
 
 #used for resample r scripts to round/up down to sample sizes
-precisionSize=100000000
+#max precision is # of records
+#precisionSize=182338*4
 
 sub_returnCVNames <- function(data_sent){
   #data_sent=data.train
@@ -483,23 +484,44 @@ for (medianDirection in c("greaterEqual"))
           #generates dynamic lists
           for (resample in 1:widthDiviser)
           {
+            #rather than move to end of file
+            if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
+            {
+              print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+              
+            }
+            
+            if(resample==1 && holdoutReset==1 && seeder==start)
+            {
+              numRuns = 1
+            }
+            
+            if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
+            {
+              numRunsold <- c()
+              numRunsold = numRuns
+              numRuns <- c()
+              numRuns = numRunsold + 1
+            }
+            
             pairs <- c()
             #this randomization is controlled by the resample iterator 
             #Hence necessary to have more than one resample iterator
             pairs <- pairedLists(numOfVars)
             
             pairedname_List <- c()
+            pairsForLater <- c()
             #generate list of names 1st
             for(runs in 1:nrow(pairs))
             {
               ypair <- newList[1]
               xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
-              newList <- c()
-              newList <- cbind(ypair,xpair)
+              #newList <- c()
+              #newList <- cbind(ypair,xpair)
               #print(newList)
               pairedname <- c()
               #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
-              pairedname <- capture.output(cat(newList, sep = ""))  
+              pairedname <- capture.output(cat(cbind(ypair,xpair), sep = ""))  
               print(pairedname)
               
               #combinedOutside <- NewDF[,as.character(c(newList)),drop=FALSE] 
@@ -511,13 +533,16 @@ for (medianDirection in c("greaterEqual"))
               #resample draws new partitions from new randomize columns.  This randomization is independent of the columns randomization.
               
               #check to see if list has records
-              combinedOutside <- NewDF[,as.character(c(newList)),drop=FALSE] 
+              combinedOutside <- NewDF[,as.character(c(cbind(ypair,xpair))),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
+                #at this juncture because it's confirmed rows are not 0
                 source(paste0(sourceDir,"reseedBoth.R"))
                 pairedname_List <- rbind(pairedname,pairedname_List)
+                pairsForLater <- rbind(c(cbind(ypair,xpair)),pairsForLater)
+                
               }
               
               if(nrow(temp)==0) print(c("null:",newList))
@@ -527,42 +552,66 @@ for (medianDirection in c("greaterEqual"))
             #print is inside inner loop
 
             #runs1=1
-            #iterate through names and set seeds
+            #iterate through list of names and set seeds
+            
             for(runs1 in 1:nrow(pairedname_List))
             {
-              pairedname <- c()
+              #checking in here because I need access to pairedNames...
+              #don't reset the index PairsForLater here...
+              #pairsForLater <- c()
               pairedname <- pairedname_List[runs1]
-              source(paste0(sourceDir,"reseedTest.R"))
-              source(paste0(sourceDir,"reseedTrain.R"))
-              source(paste0(sourceDir,"MCResampleTest.R"))
-              source(paste0(sourceDir,"MCResampleTrain.R"))
+              
+              #pairsForLater is created at the same time as pairedname_List, so they are paired.  I can assume they index the same.
+              ypair <- pairsForLater[runs1,][1]
+              #ypair <- newList[1]
+              #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              xpair <- pairsForLater[runs1,][-1]
+              #newList <- c()
+              #use cbind(ypair,xpair) for inside loops 
+              #newList <- cbind(ypair,xpair)               
+            
+              #check if list is empty  
+              combinedOutside <- NewDF[,as.character(cbind(ypair,xpair)),drop=FALSE] 
+              combinedOutside[combinedOutside == 0] <- NA
+              temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
+              if(nrow(temp)!=0)
+              {
+                source(paste0(sourceDir,"reseedTest.R"))
+                source(paste0(sourceDir,"reseedTrain.R"))
+                source(paste0(sourceDir,"MCResampleTest.R"))
+                source(paste0(sourceDir,"MCResampleTrain.R"))
+              }
+             
             }
                         
             #iterates over lists
             #generates dynamics sets of records
-            #runs=1
-            for(runs in 1:nrow(pairs))
+            #runs2=1
+            for(runs2 in 1:nrow(pairedname_List))
             {
-              
+             
               #checking in here because I need access to pairedNames...
               
+              ypair <- pairsForLater[1,][1]
               #ypair <- newList[1]
               #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+              xpair <- pairsForLater[1,][-1]
               #newList <- c()
               #newList <- cbind(ypair,xpair)               
               
-              combinedOutside <- NewDF[,as.character(c(newList)),drop=FALSE] 
-              combined[combinedOutside == 0] <- NA
+              combinedOutside <- NewDF[,as.character(cbind(ypair,xpair)),drop=FALSE] 
+              combinedOutside[combinedOutside == 0] <- NA
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
+                source(paste0(sourceDir,"redrawTrain.R"))
                 #could use d_combined and do conversion of -9 and -8 to na
                 #would still have to do median after loading files, less payoff by doing that at this juncture
                 # noticed V7562 and V8531 result in no records together when dropping na's... go figure
                 
                 pairedname <- c()
                 #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
-                pairedname <- capture.output(cat(newList, sep = ""))
+                pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))
                 
                 #pairedname <- stringr::str_trim(prename)
                 #print(pairedname)
@@ -589,7 +638,7 @@ for (medianDirection in c("greaterEqual"))
                 {
                   
                   #ypair <- newList[1]
-                  #xpair <- cbind(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
+                  #xpair <- newList[-1]
                   
                   #newList <- c()
                   #newList <- cbind(ypair,xpair)
@@ -597,7 +646,7 @@ for (medianDirection in c("greaterEqual"))
                   #tryCase <- tryCatch(source(paste0(sourceDir,"redrawTrain.R")), error=function(e) print("no rows"))
                   #empty, just prevents an error being thrown
                   
-                  source(paste0(sourceDir,"redrawTrain.R"))
+                  #source(paste0(sourceDir,"redrawTrain.R"))
                   
                   #set <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
                   #print(newList)
@@ -605,7 +654,7 @@ for (medianDirection in c("greaterEqual"))
                   #skipFlag=0
                   #just point to resample script and use data.train
                   #tryCase <- c()
-                  
+                  #newList
                   #holderOfData <- cbind(data.train[,xpair],data.train[ypair])
                   #no need for skip flag if it doesn't work (i.e. dataset didn't converge = no pattern observable to tabulate)
                   
@@ -613,7 +662,7 @@ for (medianDirection in c("greaterEqual"))
                   if(nrow(data.train)!=0)
                   {
                     #data.train[,xpair]
-                    result <- sub_returnCVNames(cbind(data.train[ypair],data.train[,xpair]))
+                    result <- sub_returnCVNames(cbind(data.train))
                     
                     #if(skipFlag==0)
                     {
@@ -637,27 +686,6 @@ for (medianDirection in c("greaterEqual"))
             }
             namesTV
             print(c("namesTV:", namesTV))
-            
-            
-            #rather than move to end of file
-            if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
-            {
-              print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
-              
-            }
-            
-            if(resample==1 && holdoutReset==1 && seeder==start)
-            {
-              numRuns = 1
-            }
-            
-            if (!(iterator==1 && resample==1 && holdoutReset==1 && seeder==start))
-            {
-              numRunsold <- c()
-              numRunsold = numRuns
-              numRuns <- c()
-              numRuns = numRunsold + 1
-            }
             
             #holdout
             numOfVars <- c()
