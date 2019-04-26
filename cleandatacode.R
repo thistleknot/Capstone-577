@@ -593,7 +593,7 @@ for (medianDirection in c("greaterEqual"))
               }
              
             }
-                        
+
             #iterates over lists and generates namesTV
             #question is when do I want it reset?  Each file?  I want the holdoutnames to be reset each holdout
             #but namesTV is a lower level holdout cached/filtered set of names
@@ -609,7 +609,7 @@ for (medianDirection in c("greaterEqual"))
             #at sample time which are based on the holdout... so to get a new true holdout... I figured I'd rely on monte carlo to gen a new partition.
             #without virtual index's, I can't story original index's because the index's are based on these dynamic columns from these pairedlists based on the names
             #passed to pairedLists (well, based on the indexs from pairedList thrown at oldList)
-            
+
             #aggregated after categories loop
             namesTV <- c()
             
@@ -636,6 +636,8 @@ for (medianDirection in c("greaterEqual"))
               if(nrow(temp)!=0)
               {
                 source(paste0(sourceDir,"redrawTrain.R"))
+                source(paste0(sourceDir,"redrawTest.R"))
+                
                 #could use d_combined and do conversion of -9 and -8 to na
                 #would still have to do median after loading files, less payoff by doing that at this juncture
                 # noticed V7562 and V8531 result in no records together when dropping na's... go figure

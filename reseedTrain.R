@@ -1,6 +1,11 @@
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index
 set <- c()
 set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
+set.input_ones <- c()
+set.input_zeroes <- c()
+#set <- eval(parse(text=paste("combined.",pairedname, sep = "")))[-holdoutSet,]
+#set.input_ones <- eval(parse(text=paste("combined.input_ones.",pairedname, sep = "")))[-holdoutSet.input_ones,]
+#set.input_zeroes <- eval(parse(text=paste("combined.input_zeroes.",pairedname, sep = "")))[-holdoutSet.input_zeroes,]
 
 preNonHoldoutSet <- c()
 #these are new #'s

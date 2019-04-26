@@ -1,23 +1,27 @@
-set c- c()
+ones <- c()
+zeros <-
+set <- c()
+set.ones <- c()
+set.zeros <- c()
 setIndex <- c()
-
-set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
-setIndex <- eval(parse(text=paste("combined.holdout.",pairedname, sep = "")))
-#set <- NewDF[,newList]
-
-#set[set == 0] <- NA
-#temp <- set[] %>% filter_all(all_vars(!is.na(.)))
-#set <- c()
-#set <- temp
-#set[set == -1] <- 0
-
-#totalRows <- nrow(set)
-#setIndex2 <- unique(round(setIndex/precisionSize*totalRows,0))
-
-#length(setIndex)
-
+setIndex.ones <- c()
+setIndex.zeros <- c()
 data.test <- c()
-data.test <- set[setIndex,]
+
+#set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
+set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
+set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
+
+#setIndex <- eval(parse(text=paste("combined.holdout.",pairedname, sep = "")))
+setIndex.ones <- eval(parse(text=paste("combined.holdout.ones.",pairedname, sep = "")))
+setIndex.zeros <- eval(parse(text=paste("combined.holdout.zeros.",pairedname, sep = "")))
+
+ones <- set.ones[setIndex.ones,]
+zeros <- set.zeros[setIndex.zeros,]
+
+#data.test <- set[setIndex,]
+data.test <- rbind(ones,zeros)
+#summary(data.test)
 #data.test[data.test == 0] <- NA
 #temp <- data.test[] %>% filter_all(all_vars(!is.na(.)))
 #data.test <- c()
