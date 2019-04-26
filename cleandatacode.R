@@ -182,6 +182,9 @@ for (medianDirection in c("greaterEqual"))
       col.num <- which(colnames(data) %in% as.character(list[,1]))
       NewDF <- data[,(c(col.num))]
       
+      #reset each file
+      tabulatedCrossValidated <- c()
+      
       summary(NewDF)
       nrow(NewDF)
       
@@ -440,17 +443,15 @@ for (medianDirection in c("greaterEqual"))
           holdoutSetSize = widthDiviser/100
           #holdoutSetSize = 1.25/100
           
-          underOverSampleFactor=1
-          
           #% to resample from resampled static hold out set
-          holdoutSize = underOverSampleFactor/widthDiviser #(of set) #(never fully iterates over subsample)
+          holdoutSize = widthDiviser #(of set) #(never fully iterates over subsample)
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #% of training resamples from static nonholdout
-          preTrainSize = underOverSampleFactor/widthDiviser # <1 = (never fully iterates over subsample)
+          preTrainSize = widthDiviser # <1 = (never fully iterates over subsample)
           
           #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
           #monte carlo resamples from a static holdout
@@ -526,7 +527,7 @@ for (medianDirection in c("greaterEqual"))
               pairedname <- c()
               #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
               pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))  
-              print(pairedname)
+              #print(pairedname)
               
               #combinedOutside <- NewDF[,as.character(c(newList)),drop=FALSE] 
               #combined[combinedOutside == 0] <- NA
@@ -733,6 +734,8 @@ for (medianDirection in c("greaterEqual"))
                 {
                   #data.train[,xpair]
                   result <- sub_returnCVNames((data.test))
+                  #bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser)
+                  #result <- data.frame(as.character(rownames(data.frame(B$BestModel$coefficients[]))[-1]))
                   
                   #if(skipFlag==0)
                   {
@@ -752,18 +755,40 @@ for (medianDirection in c("greaterEqual"))
               #end reseed-pairs (used for memory structures)
             }
             #namesTV
-            print(c("namesH:", namesH))            
+            print(c("namesH:", namesH))  
+            print(c("common:",namesTV[namesTV %in% namesH]))
             
-            nrow(namesH)
-            nrow(namesTV)
+            #compare two lists/tests
+            #nrow(namesH)
+            #nrow(namesTV)
+            crossValidated <- c()
+            if(nrow(namesTV)==nrow(namesH))
+            {
+              for(counter in 1:nrow(namesTV))
+              {
+                if(namesTV[counter]==namesH[counter])
+                {
+                  crossValidated <- rbind (crossValidated,namesTV[counter])
+                }
+                if(namesTV[counter]!=namesH[counter])
+                {
+                  crossValidated <- rbind (crossValidated,NA)
+                }
+              }
+              #end crossValidated loop
+            }
+            #crossValidated
+            print(c(length(crossValidated),"/",nrow(pairedname_List),":",crossValidated))
             
             #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
             #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
             #end outermost loop
             
             #would be a good place if one desired to see it iterate only every so often
-            #print(c("2a: ", round(table(finalList)/numRuns,3)))
+            tabulatedCrossValidated <- rbind(tabulatedCrossValidated,crossValidated)
             
+            print_tabled <- round(table(tabulatedCrossValidated)/numRuns/2,3)
+            print(print_tabled)
             #end if nrow !=0            
             
             #end of MC
@@ -773,63 +798,8 @@ for (medianDirection in c("greaterEqual"))
         
         
         #end of seeder
+        
       }
-      
-      #spacer
-      #finalListReduced <- c()
-      tabled <- table(Hfiltered[,,drop=FALSE])/numRuns
-      print(tabled)
-      #table(finalList)
-      #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= quantile(tabled)[3]]))
-      #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= quantile(table(finalList))[3]])[,1]))
-      
-      #if (widthDiviser==1)
-      {
-        #if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled >= 1/numRuns]))
-        #if(!length(tabled)==1) finalListReduced <- c(as.character(data.frame(table(finalList)[table(finalList) >= 1/numRuns])[,1]))
-      }
-      #if (!widthDiviser==1)
-      if(length(tabled)==1) finalListReduced <- row.names(data.frame(tabled[tabled > CVRuns_pct_threshold]))
-      #this is not tabled, which is based on table(finalList), hence I do the /numRuns, as tabled already has that done.
-      
-      if(!length(tabled)==1) 
-      {
-        if(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0)      
-        {
-          finalListReduced <- c
-        }
-        if(!(sum(table(finalList)/numRuns > CVRuns_pct_threshold)==0))
-        {
-          if(!length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
-          {
-            finalListReduced <- c(as.character(row.names(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])))
-          }
-          if(length(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold])==1)
-          {
-            finalListReduced <- c(as.character(row.names(data.frame(table(finalList)[table(finalList)/numRuns > CVRuns_pct_threshold]))))
-          }
-        }
-      }
-      namesTV[namesTV %in% namesH]
-      #print(c("3: ", finalListReduced))
-      #hist((data.frame(table(finalList)))[,2])
-      
-      #validate against population    
-      #population
-      
-      #filtered <- c()
-      #filtered <- NewDF[,as.character(c(yname,finalListReduced)), drop=FALSE] %>% filter_all(all_vars(!is.na(.)))
-      #filtered[filtered == 0] <- NA
-      #temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-      #filtered <- temp
-      #filtered[filtered == -1] <- 0    
-      #trainModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]),method = "glm",trControl = train.control))
-      #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
-      
-      #print("population")
-      #print(summary(trainModel$finalModel))
-      
-      #write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))  
       
       #end of lister
     }
@@ -840,4 +810,4 @@ for (medianDirection in c("greaterEqual"))
   #end medianDirection  
 }
 
-source(paste0(sourceDir,"4thpass.R"))
+#source(paste0(sourceDir,"4thpass.R"))
