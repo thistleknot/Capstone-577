@@ -206,7 +206,7 @@ for (medianDirection in c("greaterEqual","greater"))
       #data manipulation (x's) is handled in resample loop
       numRuns = 1
       #7221 gpa
-      if (flister==1) list<-read.csv(paste0(sourceDir,"altList.txt"), header=FALSE, sep=,)
+      if (flister==1) list<-read.csv(paste0(sourceDir,"gpaList.txt"), header=FALSE, sep=,)
       
       #8517 gang
       if (flister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
