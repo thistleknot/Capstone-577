@@ -84,13 +84,17 @@ Hypothesis
 	NA's
 	Records
 		182338 
-
+		[1] "min one:" "0.014"   
+		[1] "min zero:" "0.043"
+		
+		Min Class: 2552.732 records
+		*.03 = 76 records for holdoutSet of which 1/widthSize is taken (1/3) which is 25
+		just barely the min required with bias balanced classes?
+		
 		the pattern of similar na %'s has me wondering if some years are missing data... 
 		I only check medians on certain factors... 
 
-		"min one:" "0.043"   
-		[1] "min zero:" "0.043" 
-				
+		[1] "V7118"
 				-1          0          1 
 		0.93945310 0.03325143 0.02729546 
 		[1] "V7221"
@@ -182,6 +186,9 @@ Hypothesis
 				-1          0          1 
 		0.09931556 0.71407496 0.18660948 
 		[1] "V8531"
+
+			   -1         0         1 
+		0.1502978 0.7142998 0.1354024 
 
 				
 Category Flags
