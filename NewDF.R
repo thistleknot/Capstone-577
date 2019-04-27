@@ -22,25 +22,29 @@ NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), ver
 #95% confidence
 #7: B+
 #95% conf confirmed
-V7221_Index <- c()
-if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
-if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
-centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
-width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
-lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
-upper = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 + width
-sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
-sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
-
-NewDF[V7221_Index,"V7221"] <- 21
-V7221_Index <- c()
-V7221_IndexNotAbove <- NewDF[,"V7221"] != 21
-V7221_IndexNotAboveNotZero <- c()
-V7221_IndexNotAboveNotZero <- NewDF[V7221_IndexNotAbove,"V7221"] != 0
-NewDF[V7221_IndexNotAbove,"V7221"][V7221_IndexNotAboveNotZero] <- -1
-tempIndex <- c()
-tempIndex <- NewDF["V7221"]==21
-NewDF[tempIndex,"V7221"] <- 1
+#if flister==1(gpa)
+{
+  if(flister==1)
+  V7221_Index <- c()
+  if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+  if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
+  centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
+  width = round(1.96*sqrt((length(NewDF[,"V7221"][NewDF[,"V7221"]>0])))/2)
+  lower = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 - width
+  upper = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2 + width
+  sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
+  sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
+  
+  NewDF[V7221_Index,"V7221"] <- 21
+  V7221_Index <- c()
+  V7221_IndexNotAbove <- NewDF[,"V7221"] != 21
+  V7221_IndexNotAboveNotZero <- c()
+  V7221_IndexNotAboveNotZero <- NewDF[V7221_IndexNotAbove,"V7221"] != 0
+  NewDF[V7221_IndexNotAbove,"V7221"][V7221_IndexNotAboveNotZero] <- -1
+  tempIndex <- c()
+  tempIndex <- NewDF["V7221"]==21
+  NewDF[tempIndex,"V7221"] <- 1
+}
 
 #College graduate
 #5: for college grad father, 95% conf confirmed
@@ -207,7 +211,7 @@ NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.doubl
     name <- colnames(NewDF[lister])
     print(name)
     percentTable <- table(NewDF[lister])/rows
-    print(percentTable)
+    if (flister==1) print(percentTable))
     rowsL <- c()
     rowsL <- rownames(percentTable)
     leftrow <- c()
