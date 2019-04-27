@@ -908,7 +908,7 @@
               
               #end of MC
             }
-            print(c("tabulatedCrossValidated: ",print_tabled))
+            print(c("tabCV: ",print_tabled))
             #end holdoutReset
           }
           
