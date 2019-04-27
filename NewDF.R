@@ -23,8 +23,8 @@ NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), ver
 #7: B+
 #95% conf confirmed
 #if flister==1(gpa)
+if(flister==1)
 {
-  if(flister==1)
   V7221_Index <- c()
   if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
   if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
