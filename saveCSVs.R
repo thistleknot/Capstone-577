@@ -1,6 +1,6 @@
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
-threshold=.5
+threshold=.33
 for (postProcess in 1:length(files))
 { 
   print_tabled <- c()
@@ -20,7 +20,7 @@ for (postProcess in 1:length(files))
   
   #what a pain
   #hist(tabulatedCrossValidated)
-  keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq >= (CVRuns_pct_threshold)])
+  keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (threshold)])
   print(c("keep: > ",threshold,length(keepers),keepers))
   
   filtered <- c()
