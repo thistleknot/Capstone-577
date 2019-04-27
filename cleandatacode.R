@@ -57,7 +57,6 @@
     return(result)
   }
   
-  
   sub_returnCVNames <- function(data_sent){
     #data_sent=data.train
     holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
@@ -157,6 +156,7 @@
   ncol(data)
   #drops columns with na values
   
+  #not actually used, was used initially
   cleandata<-data[,colSums(is.na(data)) >= round(nrow(data)*.25,0)] # dat[A, B] takes the A rows and B columns; A and B are indices; 
   ncol(cleandata)
   
@@ -176,7 +176,8 @@
   {
     #will error on 3 for V7118
     #widthLoop=3
-    for(widthLoop in c(10,7,5,3))
+    for(widthLoop in c(3))
+    #for(widthLoop in c(10,7,5,3))
     {
       widthDiviser = widthLoop
       print(paste0("widthLoopSize: ",widthLoop))
@@ -186,7 +187,7 @@
       
       #so if 3, has to exist in > 1.5 subsamples
       #hard coded
-      #CVRuns_pct_threshold = 1/widthDiviser
+      CVRuns_pct_threshold = .25
       #this needs to be set in 4thpass as well
       
       #CVRuns_pct_threshold = .25
@@ -216,6 +217,7 @@
         
         #reset each file
         tabulatedCrossValidated <- c()
+        nullpairs <- c()
         
         summary(NewDF)
         nrow(NewDF)
@@ -265,6 +267,7 @@
         #95% confidence
         #7: B+
         #95% conf confirmed
+        V7221_Index <- c()
         if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
         if (medianDirection=="greater") V7221_Index <- NewDF[,"V7221"] > median(NewDF[,"V7221"][NewDF[,"V7221"]>0])
         centerpoint = (length(NewDF[,"V7221"][NewDF[,"V7221"]>0]))/2
@@ -274,12 +277,19 @@
         sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[lower]
         sort(((NewDF[,"V7221"][NewDF[,"V7221"]>0])))[upper]
         
-        NewDF[V7221_Index,"V7221"] <- 1
-        V7221_Index <- NewDF[,"V7221"] > 1
-        NewDF[V7221_Index,"V7221"] <- -1
+        NewDF[V7221_Index,"V7221"] <- 21
+        V7221_Index <- c()
+        V7221_IndexNotAbove <- NewDF[,"V7221"] != 21
+        V7221_IndexNotAboveNotZero <- c()
+        V7221_IndexNotAboveNotZero <- NewDF[V7221_IndexNotAbove,"V7221"] != 0
+        NewDF[V7221_IndexNotAbove,"V7221"][V7221_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7221"]==21
+        NewDF[tempIndex,"V7221"] <- 1
         
         #College graduate
         #5: for college grad father, 95% conf confirmed
+        V7215_Index <- c()
         if (medianDirection=="greaterEqual") V7215_Index <- NewDF[,"V7215"] >= median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
         if (medianDirection=="greater") V7215_Index <- NewDF[,"V7215"] > median(NewDF[,"V7215"][NewDF[,"V7215"]>0])
         centerpoint = (length(NewDF[,"V7215"][NewDF[,"V7215"]>0]))/2
@@ -289,13 +299,20 @@
         sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[lower]
         sort(((NewDF[,"V7215"][NewDF[,"V7215"]>0])))[upper]
         
-        NewDF[V7215_Index,"V7215"] <- 1
-        V7215_Index <- NewDF[,"V7215"] > 1
-        NewDF[V7215_Index,"V7215"] <- -1
+        NewDF[V7215_Index,"V7215"] <- 21
+        V7215_Index <- c()
+        V7215_IndexNotAbove <- NewDF[,"V7215"] != 21
+        V7215_IndexNotAboveNotZero <- c()
+        V7215_IndexNotAboveNotZero <- NewDF[V7215_IndexNotAbove,"V7215"] != 0
+        NewDF[V7215_IndexNotAbove,"V7215"][V7215_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7215"]==21
+        NewDF[tempIndex,"V7215"] <- 1
         
         #4: 3-5 Hours Internet #95% conf confirmed
         #4 #hours for computer use for internet leisure 
         
+        V7551_Index <- c()
         if (medianDirection=="greaterEqual") V7551_Index <- NewDF[,"V7551"] >= median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
         if (medianDirection=="greater") V7551_Index <- NewDF[,"V7551"] > median(NewDF[,"V7551"][NewDF[,"V7551"]>0])
         centerpoint = (length(NewDF[,"V7551"][NewDF[,"V7551"]>0]))/2
@@ -305,26 +322,39 @@
         sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[lower]
         sort(((NewDF[,"V7551"][NewDF[,"V7551"]>0])))[upper]
         
-        unique(NewDF[,"V7551"])
-        NewDF[V7551_Index,"V7551"] <- 1
-        V7551_Index <- NewDF[,"V7551"] > 1
-        NewDF[V7551_Index,"V7551"] <- -1
+        NewDF[V7551_Index,"V7551"] <- 21
+        V7551_Index <- c()
+        V7551_IndexNotAbove <- NewDF[,"V7551"] != 21
+        V7551_IndexNotAboveNotZero <- c()
+        V7551_IndexNotAboveNotZero <- NewDF[V7551_IndexNotAbove,"V7551"] != 0
+        NewDF[V7551_IndexNotAbove,"V7551"][V7551_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7551"]==21
+        NewDF[tempIndex,"V7551"] <- 1
         
         #5: 6-9 Hours Facebook # 95% conf confirmed
+        V7552_Index <- c()
         if (medianDirection=="greaterEqual") V7552_Index <- NewDF[,"V7552"] >= median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
         if (medianDirection=="greater") V7552_Index <- NewDF[,"V7552"] > median(NewDF[,"V7552"][NewDF[,"V7552"]>0])
         centerpoint = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2
         width = round(1.96*sqrt((length(NewDF[,"V7552"][NewDF[,"V7552"]>0])))/2)
         lower = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 - width
-        upper = (length(NewDF[,"V7551"][NewDF[,"V7552"]>0]))/2 + width
+        upper = (length(NewDF[,"V7552"][NewDF[,"V7552"]>0]))/2 + width
         sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[lower]
         sort(((NewDF[,"V7552"][NewDF[,"V7552"]>0])))[upper]
         
-        NewDF[V7552_Index,"V7552"] <- 1
-        V7552_Index <- NewDF[,"V7552"] > 1
-        NewDF[V7552_Index,"V7552"] <- -1
+        NewDF[V7552_Index,"V7552"] <- 21
+        V7552_Index <- c()
+        V7552_IndexNotAbove <- NewDF[,"V7552"] != 21
+        V7552_IndexNotAboveNotZero <- c()
+        V7552_IndexNotAboveNotZero <- NewDF[V7552_IndexNotAbove,"V7552"] != 0
+        NewDF[V7552_IndexNotAbove,"V7552"][V7552_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7552"]==21
+        NewDF[tempIndex,"V7552"] <- 1
         
         #4 3-5 Hours Gaming # 95% conf confirmed
+        V7553_Index <- c()
         if (medianDirection=="greaterEqual") V7553_Index <- NewDF[,"V7553"] >= median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
         if (medianDirection=="greater") V7553_Index <- NewDF[,"V7553"] > median(NewDF[,"V7553"][NewDF[,"V7553"]>0])
         centerpoint = (length(NewDF[,"V7553"][NewDF[,"V7553"]>0]))/2
@@ -334,11 +364,18 @@
         sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[lower]
         sort(((NewDF[,"V7553"][NewDF[,"V7553"]>0])))[upper]
         
-        NewDF[V7553_Index,"V7553"] <- 1
-        V7553_Index <- NewDF[,"V7553"] > 1
-        NewDF[V7553_Index,"V7553"] <- -1
+        NewDF[V7553_Index,"V7553"] <- 21
+        V7553_Index <- c()
+        V7553_IndexNotAbove <- NewDF[,"V7553"] != 21
+        V7553_IndexNotAboveNotZero <- c()
+        V7553_IndexNotAboveNotZero <- NewDF[V7553_IndexNotAbove,"V7553"] != 0
+        NewDF[V7553_IndexNotAbove,"V7553"][V7553_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7553"]==21
+        NewDF[tempIndex,"V7553"] <- 1
         
         #4 3-5 Hours Texting # 95% conf confirmed
+        V7562_Index <- c()
         if (medianDirection=="greaterEqual") V7562_Index <- NewDF[,"V7562"] >= median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
         if (medianDirection=="greater") V7562_Index <- NewDF[,"V7562"] > median(NewDF[,"V7562"][NewDF[,"V7562"]>0])
         centerpoint = (length(NewDF[,"V7562"][NewDF[,"V7562"]>0]))/2
@@ -348,23 +385,37 @@
         sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[lower]
         sort(((NewDF[,"V7562"][NewDF[,"V7562"]>0])))[upper]
         
-        NewDF[V7562_Index,"V7562"] <- 1
-        V7562_Index <- NewDF[,"V7562"] > 1
-        NewDF[V7562_Index,"V7562"] <- -1
-        
+        NewDF[V7562_Index,"V7562"] <- 21
+        V7562_Index <- c()
+        V7562_IndexNotAbove <- NewDF[,"V7562"] != 21
+        V7562_IndexNotAboveNotZero <- c()
+        V7562_IndexNotAboveNotZero <- NewDF[V7562_IndexNotAbove,"V7562"] != 0
+        NewDF[V7562_IndexNotAbove,"V7562"][V7562_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7562"]==21
+        NewDF[tempIndex,"V7562"] <- 1
+      
         #2: <1 Hour talking on cell phone # 95% conf confirmed
+        V7563_Index <- c()
         if (medianDirection=="greaterEqual") V7563_Index <- NewDF[,"V7563"] >= median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
+        #cbind(NewDF["V7563"],V7563_Index)
         if (medianDirection=="greater") V7563_Index <- NewDF[,"V7563"] > median(NewDF[,"V7563"][NewDF[,"V7563"]>0])
         centerpoint = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2
         width = round(1.96*sqrt((length(NewDF[,"V7563"][NewDF[,"V7563"]>0])))/2)
-        lower = (length(NewDF[,"V7562"][NewDF[,"V7563"]>0]))/2 - width
+        lower = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 - width
         upper = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 + width
         sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[lower]
         sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[upper]
         
-        NewDF[V7563_Index,"V7563"] <- 1
-        V7563_Index <- NewDF[,"V7563"] > 1
-        NewDF[V7563_Index,"V7563"] <- -1
+        NewDF[V7563_Index,"V7563"] <- 21
+        V7563_Index <- c()
+        V7563_IndexNotAbove <- NewDF[,"V7563"] != 21
+        V7563_IndexNotAboveNotZero <- c()
+        V7563_IndexNotAboveNotZero <- NewDF[V7563_IndexNotAbove,"V7563"] != 0
+        NewDF[V7563_IndexNotAbove,"V7563"][V7563_IndexNotAboveNotZero] <- -1
+        tempIndex <- c()
+        tempIndex <- NewDF["V7563"]==21
+        NewDF[tempIndex,"V7563"] <- 1
         
         NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
         NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(-1), verbose = FALSE)
@@ -393,6 +444,7 @@
             minone <- c()
             minzero <- c()
             #colnames(NewDF)
+            percentTableList <- c()
             for (lister in 2:ncol(NewDF))
             {
               name <-c()
@@ -400,11 +452,26 @@
               print(name)
               percentTable <- table(NewDF[lister])/rows
               print(percentTable)
+              rowsL <- c()
+              rowsL <- rownames(percentTable)
+              leftrow <- c()
+              middlerow <- c()
+              if(length(rowsL)==3) middlerow <- rowsL[2]
+              if(length(rowsL)==2) middlerow <- NA
+              rightrow <- c()
+              leftrow <- rowsL[1]
+              rightrow <- rowsL[length(rowsL)]
+            
+              combinedRows <- c(leftrow,middlerow,rightrow)
+              #print(combinedRows)
+              
               minone <- min(minzero,percentTable[length(percentTable)])
               minzero <- min(minzero,percentTable[1])
             }
-            print(c("min one:",minone))
-            print(c("min zero:",minzero))
+            print(c("min one:",round(minone,3)))
+            print(c("min zero:",round(minzero,3)))
+            
+            write.csv(percentTableList,paste0(sourceDir,flister,"percentTableList.csv"))
           
             #print(c(filterList))
             
@@ -589,8 +656,14 @@
                   
                 }
                 
-                if(nrow(temp)==0) print(c("null:",c(ypair,xpair)))
-              }
+                if(nrow(temp)==0) 
+                  {
+                    tempholder <- c()
+                    tempholder <- c(ypair,xpair)
+                    nullpairs <- rbind(nullpairs,tempholder)
+                    #print(c("null:",c(ypair,xpair)))
+                  }
+                }
               #pairedname_List
               #base = resample
               #print is inside inner loop
@@ -656,7 +729,7 @@
               #without virtual index's, I can't story original index's because the index's are based on these dynamic columns from these pairedlists based on the names
               #passed to pairedLists (well, based on the indexs from pairedList thrown at oldList)
   
-              print("single pair passes")
+              #print("single pair passes")
               #aggregated after categories loop
               namesTV <- c()
               
@@ -730,11 +803,11 @@
                 #end reseed-pairs (used for memory structures)
               }
               namesTV
-              print(c("namesTV:", namesTV))
+              #print(c("namesTV:", namesTV))
               
               #holdout
               namesH <- c()
-              print("holdout pass")
+              #print("holdout pass")
               
               #generates dynamics sets of records, working with initiated arrays and combined dataset from above loop.
               #runs2=1
@@ -793,13 +866,9 @@
                 
                 #end reseed-pairs (used for memory structures)
               }
-              #namesTV
-              print(c("namesH:", namesH))  
-              print(c("common:",namesTV[namesTV %in% namesH]))
-              
+              namesH
+
               #compare two lists/tests
-              #nrow(namesH)
-              #nrow(namesTV)
               crossValidated <- c()
               if(nrow(namesTV)==nrow(namesH))
               {
@@ -826,7 +895,7 @@
                 #end namesTV nameH for loop
               }
               #crossValidated
-              print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
+              #print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
               
               #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
               #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
@@ -839,11 +908,12 @@
               #due to the chance of no results on both sides two passes from na's, /8
               #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
               print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
-              print(print_tabled)
+              #print(print_tabled)
               #end if nrow !=0            
               
               #end of MC
             }
+            print(c("tabulatedCrossValidated: ",print_tabled))
             #end holdoutReset
           }
           
@@ -858,8 +928,9 @@
         keepers <- c()
         
         #what a pain
-        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (.5)])
-        print(c("keepers: > ",round(1/widthDiviser,3),keepers))
+        hist(tabulatedCrossValidated)
+        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (CVRuns_pct_threshold)])
+        print(c("keepers: > ",.25,3),keepers)
         
         #validate against population    
         #population
@@ -876,7 +947,9 @@
         print("population")
         print(summary(trainModel$finalModel))
         
-        write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))  
+        write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))
+        write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
+        write.csv(unique(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
         
         #end of lister
       }
