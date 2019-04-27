@@ -86,10 +86,33 @@ Hypothesis
 		182338 
 		[1] "min one:" "0.014"   
 		[1] "min zero:" "0.043"
-		
+	
 		Min Class: 2552.732 records
 		*.03 = 76 records for holdoutSet of which 1/widthSize is taken (1/3) which is 25
 		just barely the min required with bias balanced classes?
+		
+			Based on these numbers
+			
+			min one size class is 2552
+			2552*CVRuns_pct_threshold
+				=value below
+				
+				/widthSize
+					=25 records per holdout
+					
+					/widthSize
+			
+			2552*.1
+				255
+			2552*.07
+				178
+			2552*.05
+				127
+			2552*.04
+				102
+			2552*.03
+				76
+				
 		
 		the pattern of similar na %'s has me wondering if some years are missing data... 
 		I only check medians on certain factors... 
