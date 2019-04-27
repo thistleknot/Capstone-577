@@ -170,17 +170,16 @@ colnames(cleandata)
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-#for (medianDirection in c("greaterEqual","greater"))
+for (medianDirection in c("greaterEqual","greater"))
 #medianDirection = "greaterEqual"
-for (medianDirection in c("greater"))
+#for (medianDirection in c("greaterEqual"))
 {
   #will error on 3 for V7118
-  #widthLoop=3
-  for(widthLoop in c(3))
-  #for(widthLoop in c(10,7,5,3))
+  #widthDiviser=3
+  for(widthDiviser in c(3))
+  #for(widthDiviser in c(10,7,5,3))
   {
-    widthDiviser = widthLoop
-    print(paste0("widthLoopSize: ",widthLoop))
+    print(paste0("widthDiviser: ",widthDiviser))
     
     if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
     if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
