@@ -212,7 +212,7 @@ for (medianDirection in c("greaterEqual","greater"))
       if (flister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
       
       #7118 (psychadelics)
-      if (flister==3) list<-read.csv(paste0(sourceDir,"psyDList.txt"), header=FALSE, sep=,)
+      if (flister==3) list<-read.csv(paste0(sourceDir,"psyDFilterList.txt"), header=FALSE, sep=,)
       
       colnames(data)
       col.num <- which(colnames(data) %in% as.character(list[,1]))
