@@ -161,7 +161,8 @@ lower = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 - width
 upper = (length(NewDF[,"V7563"][NewDF[,"V7563"]>0]))/2 + width
 sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[lower]
 sort(((NewDF[,"V7563"][NewDF[,"V7563"]>0])))[upper]
-NewDF[(NewDF["V7101"] == 1),"V7101"]
+
+NewDF[(NewDF["V7563"] == 1),"V7563"]
 NewDF[V7563_Index,"V7563"] <- 21
 V7563_Index <- c()
 V7563_IndexNotAbove <- NewDF[,"V7563"] != 21
