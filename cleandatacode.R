@@ -778,7 +778,7 @@
                     namesH <- rbind(namesH,result)
                   }                
                 
-                  if(as.character(result)=="integer(0)")
+                  if(is.na(result))
                   {
                     namesH <- rbind(namesH,NA)  
                   }
