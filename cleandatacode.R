@@ -925,7 +925,7 @@
         #what a pain
         #hist(tabulatedCrossValidated)
         keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (CVRuns_pct_threshold)])
-        print(c("keepers: > ",.25,3),keepers)
+        print(c("keep: > ",.25,3,keepers))
         
         #validate against population    
         #population
