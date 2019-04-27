@@ -187,7 +187,7 @@ for (medianDirection in c("greater"))
     
     #so if 3, has to exist in > 1.5 subsamples
     #hard coded
-    CVRuns_pct_threshold = .25
+    CVRuns_pct_threshold = .5
     #this needs to be set in 4thpass as well
     
     #CVRuns_pct_threshold = .25
@@ -924,7 +924,7 @@ for (medianDirection in c("greater"))
       
       #what a pain
       #hist(tabulatedCrossValidated)
-      keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (CVRuns_pct_threshold)])
+      keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq >= (CVRuns_pct_threshold)])
       print(c("keep: > ",.25,length(keepers),keepers))
       
       #validate against population    
@@ -944,7 +944,7 @@ for (medianDirection in c("greater"))
       
       write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))
       write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
-      write.csv(unique(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
+      write.csv(data.frame(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
       
       #end of lister
     }
