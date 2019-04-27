@@ -771,7 +771,7 @@
                   #if(nrow(data.train)!=0)
                 
                   #data.train[,xpair]
-                  result <- sub_returnCVNames((data.test))
+                  #result <- sub_returnCVNames((data.test))
                   
                   for (i in 1:length(result))
                   {
