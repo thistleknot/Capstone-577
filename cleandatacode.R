@@ -120,7 +120,7 @@ d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=","
 
 d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
 
-write.csv(d_combined,(paste0(sourceDir,"d_combined.csv")))
+#write.csv(d_combined,(paste0(sourceDir,"d_combined.csv")))
 
 for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 {
@@ -154,7 +154,7 @@ for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
 
 na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
 
-data <- read.csv(paste0(sourceDir,"d_combined.csv"), header=TRUE, sep=",")
+#data <- read.csv(paste0(sourceDir,"d_combined.csv"), header=TRUE, sep=",")
 
 data <- d_combined
 ncol(data)
@@ -174,14 +174,14 @@ colnames(cleandata)
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-for (medianDirection in c("greaterEqual","greater"))
 #medianDirection = "greaterEqual"
 #for (medianDirection in c("greaterEqual"))
+for (medianDirection in c("greaterEqual","greater"))
 {
   #will error on 3 for V7118
   #widthDiviser=3
   #for(widthDiviser in c(3))
-  for(widthDiviser in c(5,3))
+  for(widthDiviser in c(3))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
