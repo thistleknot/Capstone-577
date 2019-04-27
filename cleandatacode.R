@@ -219,11 +219,6 @@
         tabulatedCrossValidated <- c()
         nullpairs <- c()
         
-        summary(NewDF)
-        nrow(NewDF)
-        
-        NewDF <- data[,(c(col.num))]
-        
         length(colnames(NewDF))
         
         #this resets each file
@@ -465,7 +460,7 @@
               combinedRows <- c(leftrow,middlerow,rightrow)
               #print(combinedRows)
               
-              minone <- min(minzero,percentTable[length(percentTable)])
+              minone <- min(minone,percentTable[length(percentTable)])
               minzero <- min(minzero,percentTable[1])
             }
             print(c("min one:",round(minone,3)))
