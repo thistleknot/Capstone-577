@@ -712,7 +712,7 @@
                   #runs=1
                   #for(runs in 1:nrow(pairs))
      
-                  result <- sub_returnCV(data.train)
+                  result <- sub_returnCVNames(data.train)
                   
                   for (i in 1:length(result))
                   {
@@ -765,7 +765,7 @@
                   holderOfData <- c()
                   holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                   
-                  result <- sub_returnCV(data.test)
+                  result <- sub_returnCVNames(data.test)
                   
                   #redundant check now!
                   #if(nrow(data.train)!=0)
@@ -858,7 +858,7 @@
         keepers <- c()
         
         #what a pain
-        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (.25)])
+        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (.5)])
         print(c("keepers: > ",round(1/widthDiviser,3),keepers))
         
         #validate against population    
