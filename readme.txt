@@ -1,7 +1,10 @@
-Input
-	filterlist.txt (github)
+Input	
 		columns
 		factor id, conversion profile, description, category flag
+		
+			gangfight.txt
+			gpalist.txt
+			psyDFilterList.txt
 
 	Prerequisites
 		PostgreSQL-10.4-1-win64-bigsql
@@ -216,29 +219,27 @@ Hypothesis
 				
 Category Flags
 	Y's (0)
-		V7101,1,"EVR SMK CIG,REGL",1
-		V7104,1,"EVER DRINK",1
-		V7112,1,"#XMJ+HS/LIFETIME",1
-		V7115,1,"#X LSD/LIFETIME",1
-		V7118,1,"#X PSYD/LIFETIME",1
-		V7127,1,"#X AMPH/LIFETIME",1
-		V7097,1,"#X SED/BARB/LIFE",1
-		V7133,1,"#X TRQL/LIFETIME",1
-		V7139,1,"#X NARC/LIFETIME",1
-		V7142,1,"#X INHL/LIFETIME",1
-		V8451,1,"#X BEER/LIFETIME",1
-		V7426,1,"#X SMKLESS/EVER",1
-		V7121,1,"#X CRACK/LIFETIM",1
-		V7124,1,"#XOTH COKE/LIFE",1
-		V7164,1,"#X MDMA/LIFETIM",1
-		V7145,1,"#X STRD/LIFETIME",1
-		V7109,1,"#XDRUNK/LIFETIME",1
-		V7152,1,"#X H LIF USE NDL",1
-		V7155,1,"#X H LIF W/O NDL",1
-		V7158,1,"#X INJECTOTH/LIF",1
-		V7161,1,"#X ROHYPNOL/LIFE",1
-		V7601,1,"#X METHAMPH/LIFE",1
-		V8480,1,"#X FLVRDALC/LIFE",1	
+		V7202,0,"R'S SEX",2
+		V7206,0,"R'S HSHLD FATHER",2
+		V7215,2,"FATHR EDUC LEVEL",2
+		V7551,2,"#HR/W INTERNET S",3
+		V7552,2,"DALY WEB FACEBK",3
+		V7553,2,"#HR GAMING",3
+		V7562,2,"#HR TEXT",7
+		V7563,2,"#HR TALK CELL",7
+		V8526,3,"OFTN EAT BRKFST",4
+		V8527,3,"OFTN EAT GN VEG",4
+		V8528,3,"OFTN EAT FRUIT",4
+		V8529,3,"OFTN EXERCISE",4
+		V8530,3,"OFTN 7HRS SLEEP",4
+		V8531,3,"OFTN SLEEP <SHLD",4
+		V8502,3,"LIFE MEANINGLESS",5
+		V8505,3,"I ENJOY LIFE",5
+		V8509,3,"FUTURE HOPELESS",5
+		V8512,3,"SATISFD W MYSELF",5
+		V8514,3,"GOOD TO BE ALIVE",6
+		V8536,3,"FUTR R LIFE WRSE",6
+		V8565,3,"I AM OFTEN BORED",6	
 
 	X categories
 
@@ -1109,7 +1110,10 @@ Citations
 			p 127			
 			
 		Oversampling (nice to have)
+		
 			p 127-134	
+			BIAS
+			sampling at a greater proportion than it exists in the population
 			http://r-statistics.co/Logistic-Regression-With-R.html
 			
 			to deal with na's, we could have oversampled cases...

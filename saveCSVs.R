@@ -35,7 +35,8 @@ for (postProcess in 1:length(files))
   print("population")
   print(summary(trainModel$finalModel))
   
-  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","filtered.csv")))
+  #removed medianDirection
+  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-","-",widthDiviser,"-","filtered.csv")))
 }
 #validate against population    
 #population
