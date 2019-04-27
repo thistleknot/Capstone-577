@@ -948,6 +948,13 @@ Category Flags
 		crossValidated finds terms that were preferred between training and holdout.
 		tabulatedCrossValidated
 			
+	Milestone 13
+		segmented subfunctions to separate files
+		function to process tabulated results and create csvs aside from the main loop
+		
+		widthSize 3 output
+		removed gang, smoking, gpa, psyd from each list unless it was response
+		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER
