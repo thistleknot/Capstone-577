@@ -923,7 +923,7 @@
         keepers <- c()
         
         #what a pain
-        hist(tabulatedCrossValidated)
+        #hist(tabulatedCrossValidated)
         keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (CVRuns_pct_threshold)])
         print(c("keepers: > ",.25,3),keepers)
         
