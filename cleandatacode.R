@@ -185,8 +185,8 @@
       if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
       
       #so if 3, has to exist in > 1.5 subsamples
-      
-      CVRuns_pct_threshold = 1/widthDiviser
+      #hard coded
+      #CVRuns_pct_threshold = 1/widthDiviser
       #this needs to be set in 4thpass as well
       
       #CVRuns_pct_threshold = .25
@@ -712,7 +712,7 @@
                   #runs=1
                   #for(runs in 1:nrow(pairs))
      
-                  result <- sub_returnCVNames(data.train)
+                  result <- sub_returnCV(data.train)
                   
                   for (i in 1:length(result))
                   {
@@ -805,16 +805,25 @@
               {
                 for(counter in 1:nrow(namesTV))
                 {
-                  if(namesTV[counter]==namesH[counter])
-                  {
-                    crossValidated <- rbind (crossValidated,namesTV[counter])
-                  }
-                  if(namesTV[counter]!=namesH[counter])
+                  #if either na divert
+                  if(is.na(namesTV[counter])||is.na(namesH[counter]))
                   {
                     crossValidated <- rbind (crossValidated,NA)
                   }
+                  #IF NOT NA, DON'T DIVER
+                  if(!(is.na(namesTV[counter])||is.na(namesH[counter])))
+                  {
+                    if(namesTV[counter]==namesH[counter])
+                    {
+                      crossValidated <- rbind (crossValidated,namesTV[counter])
+                    }
+                    if(namesTV[counter]!=namesH[counter])
+                    {
+                      crossValidated <- rbind (crossValidated,NA)
+                    }
+                  }
                 }
-                #end crossValidated loop
+                #end namesTV nameH for loop
               }
               #crossValidated
               print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
@@ -849,7 +858,7 @@
         keepers <- c()
         
         #what a pain
-        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (1/widthDiviser)])
+        keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (.25)])
         print(c("keepers: > ",round(1/widthDiviser,3),keepers))
         
         #validate against population    
