@@ -46,7 +46,6 @@ library(car)
   
   if (widthDiviser == 1) resample = 2
   if ((!widthDiviser == 1)) resample = widthDiviser
-  
 }
 
 #also doing another pass after this finalList creating a finalListCV
@@ -56,7 +55,7 @@ library(car)
 
 #due to way NA's are presented, there is a deviation in the # of records truly presented... but unsure if since na's are represented evenly if this matters or not.
 #What I might need to do is remove na's from newDF
-files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*.csv", full.names=TRUE, recursive=FALSE)
+files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*filtered.csv", full.names=TRUE, recursive=FALSE)
 
 #postProcess=21
 for (postProcess in 1:length(files))

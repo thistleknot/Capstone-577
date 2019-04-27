@@ -1,4 +1,10 @@
 Input	
+
+	3%
+		x2 for holdout/training
+		=6%
+		x3=
+		18%
 		columns
 		factor id, conversion profile, description, category flag
 		

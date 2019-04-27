@@ -1,6 +1,7 @@
+library(stringr)
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
-threshold=.33
+threshold=.275
 for (postProcess in 1:length(files))
 { 
   print_tabled <- c()
@@ -36,7 +37,7 @@ for (postProcess in 1:length(files))
   print(summary(trainModel$finalModel))
   
   #removed medianDirection
-  write.csv(filtered,(paste0(sourceDir,"/output/",yname,"-","-",widthDiviser,"-","filtered.csv")))
+  write.csv(filtered,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"filtered.csv")))
 }
 #validate against population    
 #population
