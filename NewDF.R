@@ -211,7 +211,7 @@ NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.doubl
     name <- colnames(NewDF[lister])
     print(name)
     percentTable <- table(NewDF[lister])/rows
-    if (flister==1) print(percentTable))
+    if (flister==1) print(percentTable)
     rowsL <- c()
     rowsL <- rownames(percentTable)
     leftrow <- c()
