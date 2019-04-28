@@ -86,6 +86,7 @@ for (postProcess in 1:length(files))
   #training_ones <- c()
   #training_zeros <- c()
   #bootstraping with montecarlo
+  #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
   trainingData <- c()
   #i=1
   for(i in 1:10)
@@ -96,14 +97,14 @@ for (postProcess in 1:length(files))
     onesA.index <- c()
     onesB.index <- c()
     
-    onesA.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_ones)))
-    onesB.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_zeros)))
+    onesA.index <- sample(1:nrow(input_ones), round(0.025*nrow(input_ones)))
+    onesB.index <- sample(1:nrow(input_ones), round(0.025*nrow(input_zeros)))
  
     ones <- c()
     ones <- rbind(input_ones[onesA.index,],input_ones[onesB.index,])
     
-    zerosA.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_ones)))
-    zerosB.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_zeros)))
+    zerosA.index <- sample(1:nrow(input_zeros), round(0.025*nrow(input_ones)))
+    zerosB.index <- sample(1:nrow(input_zeros), round(0.025*nrow(input_zeros)))
     
     zeros <- c()
     zeros <- rbind(input_zeros[zerosA.index,],input_zeros[zerosB.index,])
@@ -116,7 +117,7 @@ for (postProcess in 1:length(files))
     
     trainingData <- rbind(trainingData,both)
   }
-  print(summary(trainingData))
+  #print(summary(trainingData))
   #print(summary(training_zeros))
   
   holderOfData <- c()
