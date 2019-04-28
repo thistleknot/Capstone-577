@@ -188,11 +188,11 @@ for (medianDirection in c("greaterEqual"))
     print(paste0("widthDiviser: ",widthDiviser))
     
     if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = widthDiviser)
+    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
     
     #so if 3, has to exist in > 1.5 subsamples
     #hard coded
-    CVRuns_pct_threshold = .5
+    #CVRuns_pct_threshold = .5
     #this needs to be set in 4thpass as well
     
     #CVRuns_pct_threshold = .25
