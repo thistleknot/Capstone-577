@@ -243,8 +243,6 @@ for (medianDirection in c("greaterEqual","greater"))
       
       #male to female
       #View(list[,1][convert2Index])
-
-      
       
       #here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
       
@@ -449,6 +447,7 @@ for (medianDirection in c("greaterEqual","greater"))
               combinedOutside[combinedOutside == 0] <- NA
               temp <- c()
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
+              summary(temp)
               if(nrow(temp)!=0)
               {
                 #since I'm working with index's now, 

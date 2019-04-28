@@ -44,7 +44,7 @@ holdout.zeros <- c(holdout.zerosA,holdout.zerosB)
 #NewDF.holdout <- set[holdout, ]
 #not holdoutset, holdout are derived FROM holdoutset, confusing because
 #I make references to dataframes as set's aside from the naming convention of holdout and holdoutSet
-assign(paste("combined.holdout.",pairedname, sep = ""), holdout) 
+#assign(paste("combined.holdout.",pairedname, sep = ""), holdout) 
 assign(paste("combined.holdout.ones.",pairedname, sep = ""), holdout.ones) 
 assign(paste("combined.holdout.zeros.",pairedname, sep = ""), holdout.zeros) 
 #length(holdout)
