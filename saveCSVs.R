@@ -106,7 +106,7 @@ for (postProcess in 1:length(files))
     zeros.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_ones)))
 
     zeros <- c()
-    zeros <- input_ones[zeros.index,]
+    zeros <- input_zeros[zeros.index,]
     
     #training_ones <- rbind(training_ones,ones[input_ones_training_rows, ])
     #training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])
@@ -116,11 +116,11 @@ for (postProcess in 1:length(files))
     
     trainingData <- rbind(trainingData,both)
   }
-  #print(summary(trainingData))
+  print(summary(trainingData))
   #print(summary(training_zeros))
   
-  holderOfData <- c()
-  summary(holderOfData)
+  #holderOfData <- c()
+  #summary(holderOfData)
   
   holderOfData <- cbind(data.frame(trainingData[,-1 , drop = FALSE]),data.frame(trainingData[,1 , drop = FALSE]))
   B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
