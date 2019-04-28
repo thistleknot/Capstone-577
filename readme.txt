@@ -8,6 +8,11 @@ Input
 		columns
 		factor id, conversion profile, description, category flag
 		
+		threshold
+			so far .5 results in none's
+			.275 to .33 seems to be the sweet spot
+			.25 results in nons
+		
 			gangfight.txt
 			gpalist.txt
 			psyDFilterList.txt
