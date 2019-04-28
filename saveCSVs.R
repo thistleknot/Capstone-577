@@ -72,41 +72,52 @@ for (postProcess in 1:length(files))
   filtered <- temp
   filtered[filtered == -1] <- 0    
   
+  input_ones <- c()
+  input_zeros <- c()
   #class balance
+  #colnames(filtered)
+  #summary(filtered[,"V7221"])
   input_ones <- filtered[which(filtered[,1] == 1), ]  # all 1's
   input_zeros <- filtered[which(filtered[,1] == 0), ]  # all 0's
   nrow(input_ones)
+  nrow(input_zeros)
 
   #MC resample  
-  training_ones <- c()
-  training_zeros <- c()
+  #training_ones <- c()
+  #training_zeros <- c()
   #bootstraping with montecarlo
-  
+  trainingData <- c()
+  #i=1
   for(i in 1:10)
   {
-    input_ones_training_rows <- c()
-    input_ones_training_rowsA <- c()
-    input_ones_training_rowsB <- c()
+    zerosA.index <- c()
+    zerosB.index <- c()
+        
+    onesA.index <- c()
+    onesB.index <- c()
     
-    input_zeros_training_rows <- c()
-    input_zeros_training_rowsA <- c()
-    input_zeros_training_rowsB <- c()
-
-    input_ones_training_rowsA <- sample(1:nrow(input_ones), 0.1*nrow(input_ones)) # 1's for training
-    input_ones_training_rowsB <- sample(1:nrow(input_ones), 0.1*nrow(input_zeros)) # 1's for training
-    input_ones_training_rows <- c(input_ones_training_rowsA,input_ones_training_rowsB)
-    summary(training_ones)
+    onesA.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_ones)))
+    onesB.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_zeros)))
+ 
+    ones <- c()
+    ones <- rbind(input_ones[onesA.index,],input_ones[onesB.index,])
     
-    input_zeros_training_rowsA <- sample(1:nrow(input_zeros), 0.1*nrow(input_ones))  # 0's for training. Pick as many 0's as 1's
-    input_zeros_training_rowsB <- sample(1:nrow(input_zeros), 0.1*nrow(input_zeros))  # 0's for training. Pick as many 0's as 1's
-    input_zeros_training_rows <- c(input_zeros_training_rowsA,input_ones_training_rowsB)
-
-    training_ones <- rbind(training_ones,input_ones[input_ones_training_rows, ])
-    training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])
-    print(summary(training_ones))
-    print(summary(training_zeros))
+    zerosA.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_ones)))
+    zerosB.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_zeros)))
+    
+    zeros <- c()
+    zeros <- rbind(input_zeros[zerosA.index,],input_zeros[zerosB.index,])
+    
+    #training_ones <- rbind(training_ones,ones[input_ones_training_rows, ])
+    #training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])
+  
+    both <- c()
+    both <- rbind(ones, zeros)   
+    
+    trainingData <- rbind(trainingData,both)
   }
-  trainingData <- rbind(training_ones, training_zeros) 
+  print(summary(trainingData))
+  #print(summary(training_zeros))
   
   holderOfData <- c()
   summary(holderOfData)
