@@ -225,9 +225,7 @@ for (medianDirection in c("greaterEqual","greater"))
       
       #length(colnames(NewDF))
       #works with data DF
-      source(paste0(sourceDir,"NewDF.R"))
-      #this resets each file
-      Hfiltered <- c()
+      
       #transformations
       #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
       #index <- df$b == 0
@@ -246,6 +244,10 @@ for (medianDirection in c("greaterEqual","greater"))
       
       #here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
       
+      source(paste0(sourceDir,"NewDF.R"))
+      #this resets each file
+      Hfiltered <- c()
+     
       ##before reseed
       #https://adv-r.hadley.nz/subsetting.html
       
