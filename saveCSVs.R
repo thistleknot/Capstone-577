@@ -89,6 +89,7 @@ for (postProcess in 1:length(files))
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
   trainingData <- c()
   #i=1
+  #this might break depending on the size of 1's or 0's, but I hope 
   for(i in 1:10)
   {
     zerosA.index <- c()
@@ -97,17 +98,15 @@ for (postProcess in 1:length(files))
     onesA.index <- c()
     onesB.index <- c()
     
-    onesA.index <- sample(1:nrow(input_ones), round(0.025*nrow(input_ones)))
-    onesB.index <- sample(1:nrow(input_ones), round(0.025*nrow(input_zeros)))
- 
+    ones.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_ones)))
+
     ones <- c()
-    ones <- rbind(input_ones[onesA.index,],input_ones[onesB.index,])
+    ones <- input_ones[ones.index,]
     
-    zerosA.index <- sample(1:nrow(input_zeros), round(0.025*nrow(input_ones)))
-    zerosB.index <- sample(1:nrow(input_zeros), round(0.025*nrow(input_zeros)))
-    
+    zeros.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_ones)))
+
     zeros <- c()
-    zeros <- rbind(input_zeros[zerosA.index,],input_zeros[zerosB.index,])
+    zeros <- input_ones[zeros.index,]
     
     #training_ones <- rbind(training_ones,ones[input_ones_training_rows, ])
     #training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])

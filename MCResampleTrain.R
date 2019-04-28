@@ -13,13 +13,9 @@ setIndex.ones <- eval(parse(text=paste("combined.preNonHoldoutSet.ones.",pairedn
 setIndex.zeros <- eval(parse(text=paste("combined.preNonHoldoutSet.zeros.",pairedname, sep = "")))
 #nrow(set.ones)
 #preTrain <- c()
-preTrain.onesA <- sample(setIndex.ones, round(preTrainSize/4*length(setIndex.ones)))
-preTrain.onesB <- sample(setIndex.ones, round(preTrainSize/4*length(setIndex.zeros)))
-preTrain.ones <- c(preTrain.onesA,preTrain.onesB)
+preTrain.ones <- sample(setIndex.ones, round(preTrainSize*length(setIndex.ones)))
 ## 0's for training. Pick as many 0's as 1's
-preTrain.zerosA <- sample(setIndex.zeros, round(preTrainSize/4*length(setIndex.ones)))
-preTrain.zerosB <- sample(setIndex.zeros, round(preTrainSize/4*length(setIndex.zeros)))
-preTrain.zeros <- c(preTrain.zerosA,preTrain.zerosB)
+preTrain.zeros <- sample(setIndex.zeros, round(preTrainSize*length(setIndex.ones)))
 #NewDF.preTrain <- c()
 #NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,,drop=FALSE]
 
