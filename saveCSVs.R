@@ -1,7 +1,7 @@
 #this assumes NewDF exists in memory, which is built from NewDF.R which is called from with cleanDataCode.R
 #which means run a minimal case of cleanDataCode.R (widthLoop to c(3) vs (10,5,7,3))
 library(stringr)
-#files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
+files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 #set.seed(100)  # for repeatability of samples
 
 #works
