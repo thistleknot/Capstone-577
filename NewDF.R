@@ -1,3 +1,4 @@
+print(paste("medianDirection:",medianDirection))
 
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
@@ -23,7 +24,8 @@ NewDF <- replace.value( NewDF, "V7202", from=as.integer(2), to=as.double(1), ver
 #7: B+
 #95% conf confirmed
 #if flister==1(gpa)
-if(flister==1)
+#NewDF is referenced by saveCSV's, so by disabling this, I prevent referencing it
+#if(flister==1)
 {
   V7221_Index <- c()
   if (medianDirection=="greaterEqual") V7221_Index <- NewDF[,"V7221"] >= median(NewDF[,"V7221"][NewDF[,"V7221"]>0])

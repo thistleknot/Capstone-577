@@ -25,6 +25,7 @@ holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
 #needs to be same size as one's
 #see http://r-statistics.co/Logistic-Regression-With-R.html
 ## 0's for training. Pick as many 0's as 1's
+#specific undersampling/oversampling
 holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.ones)))
 #length(holdout.zeros)
 #length(holdout.ones)

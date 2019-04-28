@@ -216,6 +216,8 @@ for (medianDirection in c("greaterEqual","greater"))
       
       colnames(data)
       col.num <- which(colnames(data) %in% as.character(list[,1]))
+      #need to include GPA and psyD and gangfight in all 3!
+      #done, created 8th category and excluded it specifically from analysis, meaning I don't have to rerun my #'s :)
       NewDF <- data[,(c(col.num))]
       
       #reset each file
@@ -244,6 +246,8 @@ for (medianDirection in c("greaterEqual","greater"))
 
       source(paste0(sourceDir,"NewDF.R"))
       
+      #here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
+      
       ##before reseed
       #https://adv-r.hadley.nz/subsetting.html
       
@@ -262,6 +266,7 @@ for (medianDirection in c("greaterEqual","greater"))
       lPsycheIndex1 <- list[,4] == 5
       lPsycheIndex2 <- list[,4] == 6
       lHabitsIndex2 <- list[,4] == 7
+      lExcludedIndex <- list[,4] == 8
       
       colListNames <- c()
       colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
