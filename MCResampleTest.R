@@ -1,5 +1,7 @@
 set <- c()
 setIndex <- c()
+setIndex.ones <- c()
+setIndex.zeros <- c()
 #set.ones <- c()
 #set.zeros <- c()
 
@@ -14,11 +16,15 @@ setIndex.zeros <- eval(parse(text=paste("combined.holdoutSet.zeros.",pairedname,
 #nrow(set.ones)
 #max(setIndex.ones)
 #monte carlo resample from pre separated holdout (this means new holdout each subsample)
-holdout <- c()
+#holdout <- c()
 holdout.ones <- c()
 holdout.zeros <- c()
-holdout <- sample(setIndex, round(holdoutSize*length(setIndex)))
-holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
+#holdout <- sample(setIndex, round(holdoutSize*length(setIndex)))
+holdout.onesA <- c()
+holdout.onesB <- c()
+holdout.onesA <- sample(setIndex.ones, round(holdoutSize/2*length(setIndex.ones)))
+holdout.onesB <- sample(setIndex.ones, round(holdoutSize/2*length(setIndex.zeros)))
+holdout.ones <-c(holdout.onesA,holdout.onesB)
 #nrow(set.ones)
 #View(set.ones)
 #set.ones[32124,]
@@ -26,7 +32,11 @@ holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
 #see http://r-statistics.co/Logistic-Regression-With-R.html
 ## 0's for training. Pick as many 0's as 1's
 #specific undersampling/oversampling
-holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.ones)))
+holdout.zerosA <- c()
+holdout.zerosB <- c()
+holdout.zerosA <- sample(setIndex.zeros, round(holdoutSize/2*length(setIndex.ones)))
+holdout.zerosB <- sample(setIndex.zeros, round(holdoutSize/2*length(setIndex.zeros)))
+holdout.zeros <- c(holdout.zerosA,holdout.zerosB)
 #length(holdout.zeros)
 #length(holdout.ones)
 

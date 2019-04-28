@@ -3,7 +3,7 @@ holdoutSet <- c()
 set <- c()
 set.ones <- c()
 set.zeros <- c()
-
+#summary(data[,"V8517"])
 set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
 set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
 set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
@@ -17,19 +17,22 @@ set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
 #https://stackoverflow.com/questions/5510966/create-a-variable-name-with-paste-in-r
 #nrow(set.ones)
 #have to use nrow as upper limit at reseedtest because I'm starting here and derivin an upper limit. and reseedtrain.r will use this as an index (invert)
+holdoutSet <- c()
+holdoutSet.ones<- c()
+holdoutSet.zeros <- c()
 holdoutSet <- sample(nrow(set), round(holdoutSetSize*nrow(set)))
 holdoutSet.ones <- sample(1:nrow(set.ones), holdoutSetSize*nrow(set.ones))  # 1's for training
 holdoutSet.zeros <- sample(1:nrow(set.zeros), holdoutSetSize*nrow(set.zeros))  # 0's for training. Pick as many 0's as 1's
 
 #holdoutSet <- sample(precisionSize, round(holdoutSetSize*precisionSize))
 
-combined.holdoutSet <- c()
-combined.holdoutSet <- set[holdoutSet,]
+#combined.holdoutSet <- c()
+#combined.holdoutSet <- set[holdoutSet,]
 #holdoutSet
 #assign(paste("combined.holdoutSet.",pairedname, sep = ""), set[holdoutSet,]) 
-assign(paste("combined.holdoutSet.",pairedname, sep = ""), holdoutSet)
+#assign(paste("combined.holdoutSet.",pairedname, sep = ""), holdoutSet)
 assign(paste("combined.holdoutSet.ones.",pairedname, sep = ""), holdoutSet.ones) 
 assign(paste("combined.holdoutSet.zeros.",pairedname, sep = ""), holdoutSet.zeros) 
 #nrow(set)
-length(holdoutSet)
+#length(holdoutSet)
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index

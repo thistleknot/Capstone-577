@@ -3,6 +3,8 @@
 library(stringr)
 library(dplyr)
 library(bestglm)
+#based on seeder from cleandatacode.R
+set.seed(5)
 
 #https://www.rdocumentation.org/packages/caret/versions/6.0-82/topics/trainControl
 library(caret)
@@ -82,16 +84,32 @@ for (postProcess in 1:length(files))
   for(i in 1:10)
   {
     input_ones_training_rows <- c()
+    input_ones_training_rowsA <- c()
+    input_ones_training_rowsB <- c()
+    
     input_zeros_training_rows <- c()
-    input_ones_training_rows <- sample(1:nrow(input_ones), 0.1*nrow(input_ones)) # 1's for training
-    input_zeros_training_rows <- sample(1:nrow(input_zeros), 0.1*nrow(input_ones))  # 0's for training. Pick as many 0's as 1's
+    input_zeros_training_rowsA <- c()
+    input_zeros_training_rowsB <- c()
+
+    input_ones_training_rowsA <- sample(1:nrow(input_ones), 0.1*nrow(input_ones)) # 1's for training
+    input_ones_training_rowsB <- sample(1:nrow(input_ones), 0.1*nrow(input_zeros)) # 1's for training
+    input_ones_training_rows <- c(input_ones_training_rowsA,input_ones_training_rowsB)
+    summary(training_ones)
+    
+    input_zeros_training_rowsA <- sample(1:nrow(input_zeros), 0.1*nrow(input_ones))  # 0's for training. Pick as many 0's as 1's
+    input_zeros_training_rowsB <- sample(1:nrow(input_zeros), 0.1*nrow(input_zeros))  # 0's for training. Pick as many 0's as 1's
+    input_zeros_training_rows <- c(input_zeros_training_rowsA,input_ones_training_rowsB)
 
     training_ones <- rbind(training_ones,input_ones[input_ones_training_rows, ])
     training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])
+    print(summary(training_ones))
+    print(summary(training_zeros))
   }
   trainingData <- rbind(training_ones, training_zeros) 
   
   holderOfData <- c()
+  summary(holderOfData)
+  
   holderOfData <- cbind(data.frame(trainingData[,-1 , drop = FALSE]),data.frame(trainingData[,1 , drop = FALSE]))
   B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
   

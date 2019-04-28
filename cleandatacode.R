@@ -218,14 +218,14 @@ for (medianDirection in c("greaterEqual","greater"))
       col.num <- which(colnames(data) %in% as.character(list[,1]))
       #need to include GPA and psyD and gangfight in all 3!
       #done, created 8th category and excluded it specifically from analysis, meaning I don't have to rerun my #'s :)
-      NewDF <- data[,(c(col.num))]
       
       #reset each file
       tabulatedCrossValidated <- c()
       nullpairs <- c()
       
-      length(colnames(NewDF))
-      
+      #length(colnames(NewDF))
+      #works with data DF
+      source(paste0(sourceDir,"NewDF.R"))
       #this resets each file
       Hfiltered <- c()
       #transformations
@@ -244,7 +244,7 @@ for (medianDirection in c("greaterEqual","greater"))
       #male to female
       #View(list[,1][convert2Index])
 
-      source(paste0(sourceDir,"NewDF.R"))
+      
       
       #here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
       

@@ -1,3 +1,5 @@
+NewDF <- data[,(c(col.num))]
+
 print(paste("medianDirection:",medianDirection))
 
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
