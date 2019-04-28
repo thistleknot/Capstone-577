@@ -39,7 +39,7 @@ sub_returnCV <- function(data_sent){
   #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=10, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   result <- c()
   #return all coefficients
@@ -67,7 +67,7 @@ sub_returnCVNames <- function(data_sent){
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=10, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -176,7 +176,8 @@ suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FAL
 
 #medianDirection = "greaterEqual"
 #for (medianDirection in c("greaterEqual"))
-for (medianDirection in c("greaterEqual","greater"))
+#for (medianDirection in c("greaterEqual","greater"))
+for (medianDirection in c("greaterEqual"))
 {
   #will error on 3 for V7118
   #widthDiviser=3
