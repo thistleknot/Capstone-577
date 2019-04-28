@@ -42,6 +42,11 @@ Input
 			or
 			
 			combined.csv (577 share drive)	
+			
+	Outputs
+	final.csv
+	
+	creates tabulated results for threshold filtering sequenced by common outputted terms vs ranked by propensity.
 	
 Steps
 	createdb.bat
