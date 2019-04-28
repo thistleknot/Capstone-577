@@ -16,6 +16,7 @@ threshold=.25
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+#sourceDir="/home/rstudio/577/Capstone-577/"
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
