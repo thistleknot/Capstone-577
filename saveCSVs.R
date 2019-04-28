@@ -100,6 +100,9 @@ for (postProcess in 1:length(files))
   names2 <- c()
   names2 <- row.names(data.frame(terms))
   
+  #CV Model
+  print(summary(B$BestModel))
+  
   filtered2 <- c()
   filtered2 <- NewDF[,as.character(c(yname,names2)), drop=FALSE]
   filtered2[filtered2 == 0] <- NA
@@ -111,6 +114,8 @@ for (postProcess in 1:length(files))
   #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
   
   print("population")
+  
+  #CV terms applied to population
   print(summary(trainModel$finalModel))
   
   #removed medianDirection
