@@ -209,7 +209,7 @@ NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.doubl
   minzero <- c()
   #colnames(NewDF)
   percentTableList <- c()
-  for (lister in 2:ncol(NewDF))
+  for (lister in 1:ncol(NewDF))
   {
     name <-c()
     name <- colnames(NewDF[lister])
