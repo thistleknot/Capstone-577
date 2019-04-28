@@ -1,6 +1,19 @@
 #this assumes NewDF exists in memory, which is built from NewDF.R which is called from with cleanDataCode.R
 #which means run a minimal case of cleanDataCode.R (widthLoop to c(3) vs (10,5,7,3))
 library(stringr)
+library(dplyr)
+library(bestglm)
+
+#https://www.rdocumentation.org/packages/caret/versions/6.0-82/topics/trainControl
+library(caret)
+
+#works
+threshold=.25
+#threshold=.275
+#threshold=.33
+#postProcess=1
+
+train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
@@ -17,14 +30,14 @@ for (i in 1:length(files))
   yname <- substr(temp, 0, 5)
   ynames <- rbind(ynames,yname)
 }
-#ynames
+ynames
 #set.seed(100)  # for repeatability of samples
 
 #works
 threshold=.25
 #threshold=.275
 #threshold=.33
-
+#postProcess=1
 for (postProcess in 1:length(files))
 { 
   yname <- ynames[postProcess]
@@ -89,7 +102,7 @@ for (postProcess in 1:length(files))
   
   filtered2 <- c()
   filtered2 <- NewDF[,as.character(c(yname,names2)), drop=FALSE]
-  filtered2[filtered == 0] <- NA
+  filtered2[filtered2 == 0] <- NA
   temp <- filtered2[] %>% filter_all(all_vars(!is.na(.)))
   filtered2 <- temp
   filtered2[filtered2 == -1] <- 0    
