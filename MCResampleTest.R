@@ -10,7 +10,7 @@ set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
 #set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
 #set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
 
-setIndex <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
+#setIndex <- eval(parse(text=paste("combined.holdoutSet.",pairedname, sep = "")))
 setIndex.ones <- eval(parse(text=paste("combined.holdoutSet.ones.",pairedname, sep = "")))
 setIndex.zeros <- eval(parse(text=paste("combined.holdoutSet.zeros.",pairedname, sep = "")))
 #nrow(set.ones)

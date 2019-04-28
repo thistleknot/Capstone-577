@@ -27,3 +27,4 @@ data.test <- rbind(ones,zeros)
 #data.test <- c()
 #data.test <- temp
 #data.test[data.test == -1] <- 0
+
