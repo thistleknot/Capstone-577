@@ -20,9 +20,16 @@ set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
 holdoutSet <- c()
 holdoutSet.ones<- c()
 holdoutSet.zeros <- c()
-holdoutSet <- sample(nrow(set), round(holdoutSetSize*nrow(set)))
-holdoutSet.ones <- sample(1:nrow(set.ones), holdoutSetSize*nrow(set.ones))  # 1's for training
-holdoutSet.zeros <- sample(1:nrow(set.zeros), holdoutSetSize*nrow(set.zeros))  # 0's for training. Pick as many 0's as 1's
+
+#holdoutSet <- sample(nrow(set), round(holdoutSetSize*nrow(set)))
+#this resamples
+#I see now why class balancing is limited to just instances of 1.  
+#Because it most likely is the factor of interest and generally 0's dominate non presence of factor
+#I guess we're forcing our data into an equal 50/50 split to find out characteristics that determine that binary equation
+#so the concern of undersampling 0's is kind of irrelevant.  Although the elements of the 0 population would be undersampled.
+#leading to a bias in itself.
+holdoutSet.ones <- sample(1:nrow(set.ones), round(holdoutSetSize*nrow(set.ones)))  # 1's for training
+holdoutSet.zeros <- sample(1:nrow(set.zeros), round(holdoutSetSize*nrow(set.ones)))  # 0's for training. Pick as many 0's as 1's
 
 #holdoutSet <- sample(precisionSize, round(holdoutSetSize*precisionSize))
 

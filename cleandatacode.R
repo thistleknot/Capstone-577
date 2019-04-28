@@ -181,6 +181,7 @@ for (medianDirection in c("greaterEqual","greater"))
   #will error on 3 for V7118
   #widthDiviser=3
   #for(widthDiviser in c(3))
+  #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
   for(widthDiviser in c(3))
   {
     print(paste0("widthDiviser: ",widthDiviser))
@@ -200,7 +201,7 @@ for (medianDirection in c("greaterEqual","greater"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #flister=1
-    for(flister in 1:3)
+    for(flister in 3:3)
     {
       #y is handled in holdout
       #data manipulation (x's) is handled in resample loop
@@ -689,5 +690,5 @@ for (medianDirection in c("greaterEqual","greater"))
   #end medianDirection  
 }
 #unfortunately this relies on NewDF at the moment.  Either I need to reduce NewDF to it's own file/function or write it out to a .csv
-source(paste0(sourceDir,"saveCSVs.R"))
+#source(paste0(sourceDir,"saveCSVs.R"))
 #source(paste0(sourceDir,"4thpass.R"))
