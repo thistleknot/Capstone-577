@@ -45,6 +45,8 @@ Input
 			
 	Outputs
 	final.csv
+		thresholds does lower for higher cvWidth... .33 is good across the board, but .5 will miss some and most at widthSize 10
+		V7215 is .495 in some final's and is not significant... I worry that this might either mean too small in the population, or VIF issue?  
 	
 	creates tabulated results for threshold filtering sequenced by common outputted terms vs ranked by propensity.
 	

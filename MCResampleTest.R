@@ -22,8 +22,12 @@ holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
 #nrow(set.ones)
 #View(set.ones)
 #set.ones[32124,]
-
-holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.zeros)))
+#needs to be same size as one's
+#see http://r-statistics.co/Logistic-Regression-With-R.html
+## 0's for training. Pick as many 0's as 1's
+holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.ones)))
+#length(holdout.zeros)
+#length(holdout.ones)
 
 #NewDF.holdout <- c()
 #NewDF.holdout <- set[holdout, ]

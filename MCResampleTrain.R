@@ -14,7 +14,9 @@ setIndex.zeros <- eval(parse(text=paste("combined.preNonHoldoutSet.zeros.",paire
 #nrow(set.ones)
 #preTrain <- c()
 preTrain.ones <- sample(setIndex.ones, round(preTrainSize*length(setIndex.ones)))
-preTrain.zeros <- sample(setIndex.zeros, round(preTrainSize*length(setIndex.zeros)))
+## 0's for training. Pick as many 0's as 1's
+preTrain.zeros <- sample(setIndex.zeros, round(preTrainSize*length(setIndex.ones)))
+
 #NewDF.preTrain <- c()
 #NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,,drop=FALSE]
 
