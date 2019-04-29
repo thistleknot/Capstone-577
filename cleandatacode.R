@@ -204,7 +204,7 @@ for (medianDirection in c("greaterEqual"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #flister=1
-    for(flister in 1:2)
+    for(flister in 1:3)
     {
       #y is handled in holdout
       #data manipulation (x's) is handled in resample loop
@@ -283,7 +283,7 @@ for (medianDirection in c("greaterEqual"))
       if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
       if ( (widthDiviser > 2) ) end = start
       #seeder=start
-      for (seeder in start:end)
+      for (seeder in start:start)
       {
         set.seed(seeder)
         #seedbase=seeder
@@ -296,7 +296,7 @@ for (medianDirection in c("greaterEqual"))
         if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
         #holdoutReset=2
-        for (holdoutReset in 1:25)
+        for (holdoutReset in 1:10)
         {
           print(paste0("holdoutReset: ",holdoutReset))
           #setup holdout
