@@ -297,7 +297,7 @@ for (medianDirection in c("greaterEqual"))
         if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
         #holdoutReset=2
-        for (holdoutReset in 1:10)
+        for (holdoutReset in 1:widthDiviser)
         {
           print(paste0("holdoutReset: ",holdoutReset))
           #setup holdout
