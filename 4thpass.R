@@ -16,10 +16,10 @@ library(mctest)
 library(car)
 
 {
-  widthDiviser = 2
+  widthDiviser = 3
   
   if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-  if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
+  if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 10, repeats = widthDiviser)
   
   #set.seed(seedbase)
   #setup holdout

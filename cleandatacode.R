@@ -39,7 +39,7 @@ sub_returnCV <- function(data_sent){
   #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   result <- c()
   #return all coefficients
@@ -67,7 +67,7 @@ sub_returnCVNames <- function(data_sent){
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=widthDiviser, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -172,10 +172,12 @@ colnames(cleandata)
 #Since there are no missing values we export the data
 #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
 
-suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
+#suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #medianDirection = "greaterEqual"
 #for (medianDirection in c("greaterEqual"))
+#for (medianDirection in c("greaterEqual","greater"))
+#
 #for (medianDirection in c("greaterEqual","greater"))
 for (medianDirection in c("greaterEqual"))
 {
@@ -188,7 +190,7 @@ for (medianDirection in c("greaterEqual"))
     print(paste0("widthDiviser: ",widthDiviser))
     
     if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = widthDiviser, repeats = 3)
+    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
     
     #so if 3, has to exist in > 1.5 subsamples
     #hard coded
@@ -202,7 +204,7 @@ for (medianDirection in c("greaterEqual"))
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
     #flister=1
-    for(flister in 3:3)
+    for(flister in 1:2)
     {
       #y is handled in holdout
       #data manipulation (x's) is handled in resample loop

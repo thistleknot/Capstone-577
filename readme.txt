@@ -974,6 +974,16 @@ Category Flags
 		widthSize 3 output
 		removed gang, smoking, gpa, psyd from each list unless it was response
 		
+	Milestone 14
+		Readded gangs, GPA, and psyd so I could extract those columns from NewDF within saveCSVs.R
+		
+		saveCSVs.R does further class balancing and montecarlo cv factor reduction and gives me a new set of cv's that are gauranteed to be population significant.
+		I then compare formula's
+		
+		Finally.  I then run these through 4thpass.R
+		
+		
+		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER

@@ -1,4 +1,5 @@
 #this assumes NewDF exists in memory, which is built from NewDF.R which is called from with cleanDataCode.R
+#this means NewDF is preconverted to a greater or greaterEqual
 #which means run a minimal case of cleanDataCode.R (widthLoop to c(3) vs (10,5,7,3))
 library(stringr)
 library(dplyr)
@@ -46,6 +47,7 @@ for (postProcess in 1:length(files))
   yname <- ynames[postProcess]
   print_tabled <- c()
   print_tabled <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
+  print(c("y:",yname))
   print(c("final: ",print_tabled))
   
   keepersPre <- c()
@@ -131,6 +133,7 @@ for (postProcess in 1:length(files))
   names2 <- row.names(data.frame(terms))
   
   #CV Model
+  print("CV Model")
   print(summary(B$BestModel))
   
   filtered2 <- c()
@@ -143,7 +146,7 @@ for (postProcess in 1:length(files))
   trainModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
   #testModel <- suppressMessages(train(filtered[-1], as.factor(filtered[,1]), method = "glm",trControl = train.control))
   
-  print("population")
+  print("CV Model applied to population")
   
   #CV terms applied to population
   print(summary(trainModel$finalModel))
