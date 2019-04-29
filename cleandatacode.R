@@ -296,7 +296,7 @@ for (medianDirection in c("greaterEqual"))
         if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
         #holdoutReset=2
-        for (holdoutReset in 1:100)
+        for (holdoutReset in 1:25)
         {
           print(paste0("holdoutReset: ",holdoutReset))
           #setup holdout
@@ -306,16 +306,16 @@ for (medianDirection in c("greaterEqual"))
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
-          holdoutSize=1
-          #holdoutSize = 1/widthDiviser #(of set) #(never fully iterates over subsample)
+          #holdoutSize=1
+          holdoutSize = 1/3 #(of set) #(never fully iterates over subsample)
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #% of training resamples from static nonholdout
-          preTrainSize = 1
-          #preTrainSize = 1/widthDiviser # <1 = (never fully iterates over subsample)
+          #preTrainSize = 1
+          preTrainSize = 1/3 # <1 = (never fully iterates over subsample)
           
           #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
           #monte carlo resamples from a static holdout
@@ -351,7 +351,7 @@ for (medianDirection in c("greaterEqual"))
           #run through training
           #run through testing
           #tabulate common terms
-          for (resample in 1:1)
+          for (resample in 1:3)
           {
             #rather than move to end of file
             if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
