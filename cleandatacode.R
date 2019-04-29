@@ -204,7 +204,7 @@ for (medianDirection in c("greaterEqual"))
     #should be more than 1/widthDviser
     #CVRuns_pct_threshold = (1/widthDiviser)2
     
-    #flister=1
+    #flister=3
     for(flister in 1:3)
     {
       #y is handled in holdout
@@ -589,10 +589,9 @@ for (medianDirection in c("greaterEqual"))
             #print(c("namesTV:", namesTV))
             #holdout
             namesH <- c()
-            #print("holdout pass")
             
             #generates dynamics sets of records, working with initiated arrays and combined dataset from above loop.
-            #runs2=1
+            #runs3=1
             for(runs3 in 1:nrow(pairedname_List))
             {
               #checking in here because I need access to pairedNames...
@@ -600,9 +599,14 @@ for (medianDirection in c("greaterEqual"))
               pairedname <- pairedname_List[runs3]
               ypair <- c()
               ypair <- pairsForLater[runs3,][1]
+              #ypair <- newList[1]
+              #xpair <- c(oldList[as.integer(pairs[runs,][1])],oldList[as.integer(pairs[runs,][2])])
               xpair <- c()
               xpair <- pairsForLater[runs3,][-1]
-              #assumes nothing about 0/1 split
+              #newList <- c()
+              #newList <- c(ypair,xpair)
+              #this quickly checks NewDF for the combination pair,
+              #this assumes all other transformations have been done to NewDF to leave it in the same state that reseedBoth.R recieves it in.
               combinedOutside <- c()
               combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
               combinedOutside[combinedOutside == 0] <- NA
@@ -610,19 +614,37 @@ for (medianDirection in c("greaterEqual"))
               temp <- combinedOutside[] %>% filter_all(all_vars(!is.na(.)))
               if(nrow(temp)!=0)
               {
-                #source(paste0(sourceDir,"redrawTrain.R"))
                 source(paste0(sourceDir,"redrawTest.R"))
+                #source(paste0(sourceDir,"redrawTest.R"))
+                
+                #could use d_combined and do conversion of -9 and -8 to na
+                #would still have to do median after loading files, less payoff by doing that at this juncture
+                # noticed V7562 and V8531 result in no records together when dropping na's... go figure
                 
                 pairedname <- c()
                 #https://stackoverflow.com/questions/7201341/how-can-two-strings-be-concatenated
                 pairedname <- capture.output(cat(c(ypair,xpair), sep = ""))
                 
-                holderOfData <- c()
-                holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
+                #pairedname <- stringr::str_trim(prename)
+                #print(pairedname)
+                
+                #going to be before I even do reseed's?  No, because column pair randomizations are dependent upon reseed... ughhh.
+                #otherwise this would go above seed.  Which means it's going to be expensive, but I'm not testing every combination.
+                #I'm using simulation to do the combinations, but I am ensuring I test every value twice (hopefully)
+                #this means I need to put the rest of the MC loops inside here...
+                
+                #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
+                #print(c("Hfiltered:", Hfiltered))
+                #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
+                
+                #1st pass
+                
+                #runs=1
+                #for(runs in 1:nrow(pairs))
                 
                 result <- c()
                 nametemp <- c()
-                nametemp <- eval(as.character(paste0("test",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
+                nametemp <- eval(as.character(paste0("Test",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
                 
                 #https://rsangole.netlify.com/post/try-catch/
                 tryCatch(
@@ -630,7 +652,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.test)
                   },
                   error = function(e) {
-                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                    write.csv(c("Test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
                   }
                   ,
                   warning = function(w){
@@ -642,30 +664,11 @@ for (medianDirection in c("greaterEqual"))
                     # Do this at the end before quitting the tryCatch structure...
                   }
                 )
-                
                 if(length(result)==0) result <- NA
-                #tryCatch(result <- sub_returnCVNames(data.test),
-                #error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
-                #print(c("error"),"Test",pairedname)
-                #result <-NA
-                #},
-                #warning = function(c) "warning",
-                #message = function(c) "message"
-                #)                
-                #redundant check now!
-                #if(nrow(data.train)!=0)
-                
-                #data.train[,xpair]
-                #result <- sub_returnCVNames((data.test))
                 
                 for (i in 1:length(result))
                 {
-                  namesH <- rbind(namesH,result)
-                }                
-                
-                if(is.na(result))
-                {
-                  namesH <- rbind(namesH,NA)  
+                  namesH <- rbind(namesH,result[i])
                 }
                 
                 #end if nrow != 0
@@ -679,7 +682,6 @@ for (medianDirection in c("greaterEqual"))
               #end reseed-pairs (used for memory structures)
             }
             namesH
-            
             #compare two lists/tests
             crossValidated <- c()
             if(nrow(namesTV)==nrow(namesH))
