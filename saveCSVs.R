@@ -16,7 +16,7 @@ threshold=.25
 #threshold=.33
 #postProcess=1
 
-train.control <- trainControl(method = "repeatedcv", number = 10, repeats = 1)
+train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 #sourceDir="/home/rstudio/577/Capstone-577/"
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 
@@ -44,6 +44,7 @@ threshold=.25
 #postProcess=1
 for (postProcess in 1:length(files))
 { 
+  print(files[postProcess])
   yname <- ynames[postProcess]
   print_tabled <- c()
   print_tabled <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
