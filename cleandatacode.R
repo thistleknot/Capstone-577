@@ -106,8 +106,8 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
@@ -546,6 +546,7 @@ for (medianDirection in c("greaterEqual"))
                 #runs=1
                 #for(runs in 1:nrow(pairs))
                 
+                result <- c()
                 nametemp <- c()
                 nametemp <- eval(as.character(paste0("train",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
                 
@@ -555,7 +556,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.train)
                   },
                   error = function(e) {
-                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","train",nametemp,".csv"))
                     result <- NA
                   }
                   ,
@@ -568,7 +569,6 @@ for (medianDirection in c("greaterEqual"))
                     # Do this at the end before quitting the tryCatch structure...
                   }
                 )
-                #errorpairs
                 
                 for (i in 1:length(result))
                 {
@@ -621,6 +621,7 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- c()
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
+                result <- c()
                 nametemp <- c()
                 nametemp <- eval(as.character(paste0("test",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
                 
@@ -630,7 +631,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.test)
                   },
                   error = function(e) {
-                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","test",nametemp,".csv"))
                     result <- NA
                   }
                   ,
@@ -643,87 +644,109 @@ for (medianDirection in c("greaterEqual"))
                     # Do this at the end before quitting the tryCatch structure...
                   }
                 )
-                namesH <- rbind(namesH,NA)  
+                #tryCatch(result <- sub_returnCVNames(data.test),
+                #error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
+                #print(c("error"),"Test",pairedname)
+                #result <-NA
+                #},
+                #warning = function(c) "warning",
+                #message = function(c) "message"
+                #)                
+                #redundant check now!
+                #if(nrow(data.train)!=0)
+                
+                #data.train[,xpair]
+                #result <- sub_returnCVNames((data.test))
+                
+                for (i in 1:length(result))
+                {
+                  namesH <- rbind(namesH,result)
+                }                
+                
+                if(is.na(result))
+                {
+                  namesH <- rbind(namesH,NA)  
+                }
+                
+                #end if nrow != 0
               }
               
-              #end if nrow != 0
-            }
-            
-            if(nrow(temp)==0)
-            {
-              print(c("exclude",c(ypair,xpair)))
-            }
-            
-            #end reseed-pairs (used for memory structures)
-          }
-          namesH
-          
-          #compare two lists/tests
-          crossValidated <- c()
-          if(nrow(namesTV)==nrow(namesH))
-          {
-            for(counter in 1:nrow(namesTV))
-            {
-              #if either na divert
-              if(is.na(namesTV[counter])||is.na(namesH[counter]))
+              if(nrow(temp)==0)
               {
-                crossValidated <- rbind (crossValidated,NA)
+                print(c("exclude",c(ypair,xpair)))
               }
-              #IF NOT NA, DON'T DIVER
-              if(!(is.na(namesTV[counter])||is.na(namesH[counter])))
+              
+              #end reseed-pairs (used for memory structures)
+            }
+            namesH
+            
+            #compare two lists/tests
+            crossValidated <- c()
+            if(nrow(namesTV)==nrow(namesH))
+            {
+              for(counter in 1:nrow(namesTV))
               {
-                if(namesTV[counter]==namesH[counter])
-                {
-                  crossValidated <- rbind (crossValidated,namesTV[counter])
-                }
-                if(namesTV[counter]!=namesH[counter])
+                #if either na divert
+                if(is.na(namesTV[counter])||is.na(namesH[counter]))
                 {
                   crossValidated <- rbind (crossValidated,NA)
                 }
+                #IF NOT NA, DON'T DIVER
+                if(!(is.na(namesTV[counter])||is.na(namesH[counter])))
+                {
+                  if(namesTV[counter]==namesH[counter])
+                  {
+                    crossValidated <- rbind (crossValidated,namesTV[counter])
+                  }
+                  if(namesTV[counter]!=namesH[counter])
+                  {
+                    crossValidated <- rbind (crossValidated,NA)
+                  }
+                }
               }
+              #end namesTV nameH for loop
             }
-            #end namesTV nameH for loop
+            #crossValidated
+            #print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
+            
+            #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
+            #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
+            #end outermost loop
+            
+            #would be a good place if one desired to see it iterate only every so often
+            tabulatedCrossValidated <- rbind(tabulatedCrossValidated,crossValidated)
+            
+            print_tabled <-c()
+            #due to the chance of no results on both sides two passes from na's, /8
+            #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
+            print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
+            #print(print_tabled)
+            #end if nrow !=0            
+            
+            #end of MC
           }
-          #crossValidated
-          #print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
-          
-          #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
-          #write.csv(filteredv2,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv2.csv"))
-          #end outermost loop
-          
-          #would be a good place if one desired to see it iterate only every so often
-          tabulatedCrossValidated <- rbind(tabulatedCrossValidated,crossValidated)
-          
-          print_tabled <-c()
-          #due to the chance of no results on both sides two passes from na's, /8
-          #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
-          print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
-          #print(print_tabled)
-          #end if nrow !=0            
-          
-          #end of MC
+          print(c("tabCV: ",print_tabled))
+          #end holdoutReset
         }
-        print(c("tabCV: ",print_tabled))
-        #end holdoutReset
+        
+        
+        #end of seeder
+        
       }
       
+      print(c("final: ",print_tabled))
       
-      #end of seeder
+      write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
+      write.csv(unique(errorpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","errorpairs.csv")))
+      write.csv(data.frame(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
       
+      #end of lister
     }
-    
-    print(c("final: ",print_tabled))
-    
-    write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
-    write.csv(data.frame(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
-    
-    #end of lister
+    #end width
+    #readline(prompt="Press [enter] to continue")
   }
-  #end width
-  #readline(prompt="Press [enter] to continue")
-}
-
-#end medianDirection  
+  
+  #end medianDirection  
 }
 #unfortunately this relies on NewDF at the moment.  Either I need to reduce NewDF to it's own file/function or write it out to a .csv
 #source(paste0(sourceDir,"saveCSVs.R"))
