@@ -297,7 +297,7 @@ for (medianDirection in c("greaterEqual"))
         if (widthDiviser == 1) holdoutResetEnd = 2
         if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
-        #holdoutReset=2
+        #holdoutReset=1
         for (holdoutReset in 1:widthDiviser)
         {
           print(paste0("holdoutReset: ",holdoutReset))
@@ -348,11 +348,11 @@ for (medianDirection in c("greaterEqual"))
           #static for monte carlo training 
           #monte carlo resample from static sets
           #if widthDiviser = 1, keep as 1
-          #resample=2   
           #generates dynamic lists
           #run through training
           #run through testing
           #tabulate common terms
+          #resample=1
           for (resample in 1:3)
           {
             #rather than move to end of file
@@ -587,7 +587,6 @@ for (medianDirection in c("greaterEqual"))
             }
             namesTV
             #print(c("namesTV:", namesTV))
-            
             #holdout
             namesH <- c()
             #print("holdout pass")
@@ -707,7 +706,7 @@ for (medianDirection in c("greaterEqual"))
               }
               #end namesTV nameH for loop
             }
-            #crossValidated
+            crossValidated
             #print(c(length(na.omit(crossValidated)),"/",nrow(pairedname_List),":",crossValidated))
             
             #write.csv(filtered,paste0(sourceDir,yname,"hR-",holdoutReset,"rS-",resample,"filteredv1.csv"))
@@ -721,7 +720,7 @@ for (medianDirection in c("greaterEqual"))
             #due to the chance of no results on both sides two passes from na's, /8
             #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
             print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
-            #print(print_tabled)
+            print(print_tabled)
             #end if nrow !=0            
             
             #end of MC
