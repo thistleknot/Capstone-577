@@ -106,8 +106,8 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="/home/rstudio/577/Capstone-577/"
+sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
@@ -556,7 +556,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.train)
                   },
                   error = function(e) {
-                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","train",nametemp,".csv"))
+                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
                     result <- NA
                   }
                   ,
@@ -631,7 +631,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.test)
                   },
                   error = function(e) {
-                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","test",nametemp,".csv"))
+                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
                     result <- NA
                   }
                   ,
