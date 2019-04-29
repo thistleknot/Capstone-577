@@ -30,8 +30,9 @@ library(stringr)
 
 #the way I have this setup, it only returns one var
 sub_returnCV <- function(data_sent){
-  #data_sent=data.train
-  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  data_sent=data.train
+  
+  holderOfData <- cbind(Filter(var,data.frame(data_sent[,-1 , drop = FALSE])),data.frame(data_sent[,1 , drop = FALSE]))
   #table(NewDF[,"V7202"])
   
   #info <- which(colSums(holderOfData)==nrow(holderOfData))
@@ -59,7 +60,7 @@ sub_returnCV <- function(data_sent){
 
 sub_returnCVNames <- function(data_sent){
   #data_sent=data.train
-  holderOfData <- cbind(data.frame(data_sent[,-1 , drop = FALSE]),data.frame(data_sent[,1 , drop = FALSE]))
+  holderOfData <- cbind(Filter(var,data.frame(data_sent[,-1 , drop = FALSE])),data.frame(data_sent[,1 , drop = FALSE]))
   #table(NewDF[,"V7202"])
   
   info <- which(colSums(holderOfData)==nrow(holderOfData))
@@ -544,7 +545,7 @@ for (medianDirection in c("greaterEqual"))
                 #runs=1
                 #for(runs in 1:nrow(pairs))
    
-                result <- sub_returnCVNames(data.train)
+                result <- sub_returnCVNames(sample(data.train))
                 
                 for (i in 1:length(result))
                 {
@@ -597,7 +598,7 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- c()
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
-                result <- sub_returnCVNames(data.test)
+                result <- sample(sub_returnCVNames(data.test))
                 
                 #redundant check now!
                 #if(nrow(data.train)!=0)
