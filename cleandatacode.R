@@ -557,7 +557,6 @@ for (medianDirection in c("greaterEqual"))
                   },
                   error = function(e) {
                     write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
-                    result <- NA
                   }
                   ,
                   warning = function(w){
@@ -565,14 +564,11 @@ for (medianDirection in c("greaterEqual"))
                     # Do this if an warning is caught...
                   },
                   finally = {
-                    if(!is.null(result))
-                    {
-                      if(is.na(result)) write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
-                    }
                     # (Optional)
                     # Do this at the end before quitting the tryCatch structure...
                   }
                 )
+                if(length(result)==0) result <- NA
                 
                 for (i in 1:length(result))
                 {
@@ -634,22 +630,21 @@ for (medianDirection in c("greaterEqual"))
                   expr = {
                     result <- sub_returnCVNames(data.test)
                   },
-                  error = function(e) {result <- NA
-                  },
+                  error = function(e) {
+                    write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                  }
+                  ,
                   warning = function(w){
                     # (Optional)
                     # Do this if an warning is caught...
                   },
                   finally = {
-                    if(!is.null(result))
-                    {
-                      if(is.na(result)) write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
-                    }
-                    
                     # (Optional)
                     # Do this at the end before quitting the tryCatch structure...
                   }
                 )
+                
+                if(length(result)==0) result <- NA
                 #tryCatch(result <- sub_returnCVNames(data.test),
                 #error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
                 #print(c("error"),"Test",pairedname)
