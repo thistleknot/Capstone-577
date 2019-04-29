@@ -52,7 +52,7 @@ sub_returnCV <- function(data_sent){
   
   #if(nrow(result)==2)
   #{
-    #result <- 
+  #result <- 
   #}
   #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
   return(result)
@@ -106,8 +106,8 @@ sub_returnCVNames <- function(data_sent){
   return(as.character(rownames(data.frame(which(result >= median(result))))))
 }
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
@@ -186,7 +186,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(3))
+  for(widthDiviser in c(10))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
@@ -253,7 +253,7 @@ for (medianDirection in c("greaterEqual"))
       source(paste0(sourceDir,"NewDF.R"))
       #this resets each file
       Hfiltered <- c()
-     
+      
       ##before reseed
       #https://adv-r.hadley.nz/subsetting.html
       
@@ -276,10 +276,10 @@ for (medianDirection in c("greaterEqual"))
       
       colListNames <- c()
       colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
-  
+      
       #resets each new file
       finalList <- c()
- 
+      
       start = 5
       if ( widthDiviser == 1) end = (start+1)
       if ( (widthDiviser > 1) && (widthDiviser < 3) ) end = (start+(widthDiviser-1))
@@ -417,17 +417,17 @@ for (medianDirection in c("greaterEqual"))
               }
               
               if(nrow(temp)==0) 
-                {
-                  tempholder <- c()
-                  tempholder <- c(ypair,xpair)
-                  nullpairs <- rbind(nullpairs,tempholder)
-                  #print(c("null:",c(ypair,xpair)))
-                }
+              {
+                tempholder <- c()
+                tempholder <- c(ypair,xpair)
+                nullpairs <- rbind(nullpairs,tempholder)
+                #print(c("null:",c(ypair,xpair)))
               }
+            }
             #pairedname_List
             #base = resample
             #print is inside inner loop
-
+            
             #runs1=1
             #iterate through list of names and set seeds
             
@@ -450,7 +450,7 @@ for (medianDirection in c("greaterEqual"))
               #newList <- c()
               #use c(ypair,xpair) for inside loops 
               #newList <- c(ypair,xpair)               
-            
+              
               #check if list is empty  
               combinedOutside <- c()
               combinedOutside <- NewDF[,as.character(c(ypair,xpair)),drop=FALSE] 
@@ -471,9 +471,9 @@ for (medianDirection in c("greaterEqual"))
                 source(paste0(sourceDir,"MCResampleTest.R"))
                 source(paste0(sourceDir,"MCResampleTrain.R"))
               }
-             
+              
             }
-
+            
             #iterates over lists and generates namesTV
             #question is when do I want it reset?  Each file?  I want the holdoutnames to be reset each holdout
             #but namesTV is a lower level holdout cached/filtered set of names
@@ -489,7 +489,7 @@ for (medianDirection in c("greaterEqual"))
             #at sample time which are based on the holdout... so to get a new true holdout... I figured I'd rely on monte carlo to gen a new partition.
             #without virtual index's, I can't story original index's because the index's are based on these dynamic columns from these pairedlists based on the names
             #passed to pairedLists (well, based on the indexs from pairedList thrown at oldList)
-
+            
             #print("single pair passes")
             #aggregated after categories loop
             namesTV <- c()
@@ -520,7 +520,7 @@ for (medianDirection in c("greaterEqual"))
               {
                 source(paste0(sourceDir,"redrawTrain.R"))
                 #source(paste0(sourceDir,"redrawTest.R"))
-
+                
                 #could use d_combined and do conversion of -9 and -8 to na
                 #would still have to do median after loading files, less payoff by doing that at this juncture
                 # noticed V7562 and V8531 result in no records together when dropping na's... go figure
@@ -540,27 +540,29 @@ for (medianDirection in c("greaterEqual"))
                 #finalSet <- finalSetPre[!(finalSetPre %in% NA)]
                 #print(c("Hfiltered:", Hfiltered))
                 #print(c(numRuns,"2a: ", round(table(unique(Hfiltered))/numRuns,2)))
- 
+                
                 #1st pass
                 
                 #runs=1
                 #for(runs in 1:nrow(pairs))
-   
-                tryCatch(result <- sub_returnCVNames(data.train),
-                         error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairedname))
-                         print(c("error"),"Train",pairedname)
-                         result <-NA
-                           },
-                         warning = function(c) "warning",
-                         message = function(c) "message"
-                )
-
+                
+                result <- c()
+                result <- sub_returnCVNames(data.train)
+                #tryCatch(result <- sub_returnCVNames(data.train),
+                #error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairedname))
+                #print(c("error"),"Train",pairedname)
+                #result <-NA
+                #   },
+                # warning = function(c) "warning",
+                # message = function(c) "message"
+                #)
+                
                 for (i in 1:length(result))
                 {
                   namesTV <- rbind(namesTV,result[i])
                 }
-                 
-              #end if nrow != 0
+                
+                #end if nrow != 0
               }
               
               if(nrow(temp)==0)
@@ -606,17 +608,19 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- c()
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
-                tryCatch(result <- sub_returnCVNames(data.test),
-                         error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
-                         print(c("error"),"Test",pairedname)
-                         result <-NA
-                         },
-                         warning = function(c) "warning",
-                         message = function(c) "message"
-                )                
+                result <- c()
+                result <- sub_returnCVNames(data.test)
+                #tryCatch(result <- sub_returnCVNames(data.test),
+                #error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
+                #print(c("error"),"Test",pairedname)
+                #result <-NA
+                #},
+                #warning = function(c) "warning",
+                #message = function(c) "message"
+                #)                
                 #redundant check now!
                 #if(nrow(data.train)!=0)
-              
+                
                 #data.train[,xpair]
                 #result <- sub_returnCVNames((data.test))
                 
@@ -624,12 +628,12 @@ for (medianDirection in c("greaterEqual"))
                 {
                   namesH <- rbind(namesH,result)
                 }                
-              
+                
                 if(is.na(result))
                 {
                   namesH <- rbind(namesH,NA)  
                 }
-
+                
                 #end if nrow != 0
               }
               
@@ -641,7 +645,7 @@ for (medianDirection in c("greaterEqual"))
               #end reseed-pairs (used for memory structures)
             }
             namesH
-
+            
             #compare two lists/tests
             crossValidated <- c()
             if(nrow(namesTV)==nrow(namesH))
@@ -697,7 +701,7 @@ for (medianDirection in c("greaterEqual"))
       }
       
       print(c("final: ",print_tabled))
-
+      
       write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
       write.csv(unique(errorpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","errorpairs.csv")))
       write.csv(data.frame(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
