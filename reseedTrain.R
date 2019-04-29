@@ -29,7 +29,7 @@ rangeZeros <- 1:nrow(set.zeros)
 availableset.prenonholdout.ones <- c()
 availableset.prenonholdout.zeros <- c()
 availableset.prenonholdout.ones <- rangeOnes[-c(set.holdoutSet.ones)]
-availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.zeros)]
+availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.ones)]
 
 preNonHoldoutSet.ones <- c()
 preNonHoldoutSet.zeros <- c()
