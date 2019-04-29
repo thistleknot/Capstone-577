@@ -739,8 +739,6 @@ for (medianDirection in c("greaterEqual"))
       print(c("final: ",print_tabled))
       
       write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
-      write.csv(unique(errorpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","errorpairs.csv")))
-      #sorted
       write.csv(data.frame(print_tabled)[order(-data.frame(print_tabled)$Freq),],(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
       
       #end of lister
