@@ -34,7 +34,7 @@ availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.ones)]
 preNonHoldoutSet.ones <- c()
 preNonHoldoutSet.zeros <- c()
 preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
-preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.zeros)))
+preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
 
 #NewDF.preNonHoldoutSet <- c()
 #NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
