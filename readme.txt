@@ -986,6 +986,7 @@ Category Flags
 		I only saw it in cvwidthSize 10
 		
 		added logging of error pairs so I can compare with final tabulated results if it was one of the ones I found significant or not to be concerned.
+		error logging did not work and took me over 4 hours of troubleshooting to fallback on a hack of writing a csv to the output folder to log the event... rbind will output to console (but not to a dataframe in an errorloop?)
 		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
