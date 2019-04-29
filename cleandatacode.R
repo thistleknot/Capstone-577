@@ -185,7 +185,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(3))
+  for(widthDiviser in c(10))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
@@ -296,7 +296,7 @@ for (medianDirection in c("greaterEqual"))
         if ( !(widthDiviser == 1) ) holdoutResetEnd = widthDiviser
         
         #holdoutReset=2
-        for (holdoutReset in 1:holdoutResetEnd)
+        for (holdoutReset in 1:100)
         {
           print(paste0("holdoutReset: ",holdoutReset))
           #setup holdout
