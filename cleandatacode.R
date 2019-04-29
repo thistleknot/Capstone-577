@@ -547,11 +547,10 @@ for (medianDirection in c("greaterEqual"))
    
                 tryCatch(result <- sub_returnCVNames(data.train),
                          error = function(c) result <- sample(sub_returnCVNames(data.train)),
-                         #warning = function(c) "warning",
-                         #message = function(c) "message"
+                         warning = function(c) "warning",
+                         message = function(c) "message"
                 )
-                
-                
+
                 for (i in 1:length(result))
                 {
                   namesTV <- rbind(namesTV,result[i])
@@ -605,10 +604,10 @@ for (medianDirection in c("greaterEqual"))
                 
                 tryCatch(result <- sub_returnCVNames(data.test),
                          error = function(c) result <- sample(sub_returnCVNames(data.test)),
-                         #warning = function(c) "warning",
-                         #message = function(c) "message"
+                         warning = function(c) "warning",
+                         message = function(c) "message"
                 )
-
+                
                 #redundant check now!
                 #if(nrow(data.train)!=0)
               
