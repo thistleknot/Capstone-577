@@ -548,6 +548,7 @@ for (medianDirection in c("greaterEqual"))
    
                 tryCatch(result <- sub_returnCVNames(data.train),
                          error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairedname))
+                         print(c("error"),"Train",pairedname)
                          result <-NA
                            },
                          warning = function(c) "warning",
@@ -607,6 +608,7 @@ for (medianDirection in c("greaterEqual"))
                 
                 tryCatch(result <- sub_returnCVNames(data.test),
                          error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
+                         print(c("error"),"Test",pairedname)
                          result <-NA
                          },
                          warning = function(c) "warning",
