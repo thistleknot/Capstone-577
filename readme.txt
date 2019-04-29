@@ -982,6 +982,11 @@ Category Flags
 		
 		Finally.  I then run these through 4thpass.R
 		
+		Introuced error handling from bestglm throwing an error for some internal reason I can't figureout.   So I'm simply aggregating to NA.  I have no idea what else to do.  The error hardly occurs.  I should track the # of times an error is thrown.
+		I only saw it in cvwidthSize 10
+		
+		added logging of error pairs so I can compare with final tabulated results if it was one of the ones I found significant or not to be concerned.
+		
 		
 		
 V7221 R HS GRADE/D=1

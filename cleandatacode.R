@@ -227,6 +227,7 @@ for (medianDirection in c("greaterEqual"))
       #reset each file
       tabulatedCrossValidated <- c()
       nullpairs <- c()
+      errorpairs <- c()
       
       #length(colnames(NewDF))
       #works with data DF
@@ -546,7 +547,9 @@ for (medianDirection in c("greaterEqual"))
                 #for(runs in 1:nrow(pairs))
    
                 tryCatch(result <- sub_returnCVNames(data.train),
-                         error = function(c) result <- NA,
+                         error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairname))
+                         result <-NA
+                           },
                          warning = function(c) "warning",
                          message = function(c) "message"
                 )
@@ -603,11 +606,12 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
                 tryCatch(result <- sub_returnCVNames(data.test),
-                         error = function(c) result <- NA,
+                         error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairname))
+                         result <-NA
+                         },
                          warning = function(c) "warning",
                          message = function(c) "message"
-                )
-                
+                )                
                 #redundant check now!
                 #if(nrow(data.train)!=0)
               
@@ -693,6 +697,7 @@ for (medianDirection in c("greaterEqual"))
       print(c("final: ",print_tabled))
 
       write.csv(unique(nullpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","nullpairs.csv")))
+      write.csv(unique(errorpairs),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","errorpairs.csv")))
       write.csv(data.frame(print_tabled),(paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-","final.csv")))  
       
       #end of lister
