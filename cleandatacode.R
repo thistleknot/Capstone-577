@@ -545,7 +545,12 @@ for (medianDirection in c("greaterEqual"))
                 #runs=1
                 #for(runs in 1:nrow(pairs))
    
-                result <- sub_returnCVNames(sample(data.train))
+                tryCatch(result <- sub_returnCVNames(data.train),
+                         error = function(c) result <- sample(sub_returnCVNames(data.train)),
+                         #warning = function(c) "warning",
+                         #message = function(c) "message"
+                )
+                
                 
                 for (i in 1:length(result))
                 {
@@ -598,8 +603,12 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- c()
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
-                result <- sample(sub_returnCVNames(data.test))
-                
+                tryCatch(result <- sub_returnCVNames(data.test),
+                         error = function(c) result <- sample(sub_returnCVNames(data.test)),
+                         #warning = function(c) "warning",
+                         #message = function(c) "message"
+                )
+
                 #redundant check now!
                 #if(nrow(data.train)!=0)
               
