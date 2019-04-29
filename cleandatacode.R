@@ -567,7 +567,7 @@ for (medianDirection in c("greaterEqual"))
                   finally = {
                     if(!is.null(result))
                     {
-                      if(is.na(result)) write.csv(c("test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                      if(is.na(result)) write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
                     }
                     # (Optional)
                     # Do this at the end before quitting the tryCatch structure...
