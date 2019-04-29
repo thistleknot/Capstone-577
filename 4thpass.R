@@ -69,6 +69,7 @@ for (postProcess in 1:length(files))
   colnames(df) <- colnames(PostDF[,-1,drop=FALSE])
   
   y <- data.frame(PostDF[,1, drop=FALSE])[,1]
+  x <- data.frame(PostDF[,1, drop=FALSE])[,-1]
   
   #https://stackoverflow.com/questions/5233308/is-there-a-r-function-that-applies-a-function-to-each-pair-of-columns
   #pairwise correlations
@@ -90,8 +91,12 @@ for (postProcess in 1:length(files))
     #keep response
     
     print(paste(colnames(df[featureList]),featureList,abs(response)))
-    print(data.frame(correlationPairs[,featureList][(abs(correlationPairs[,featureList]) >= abs(response))]))
-    
+    result <- c()
+    result <- data.frame(correlationPairs[,featureList][(abs(correlationPairs[,featureList]) >= abs(response))])
+    if(!nrow(result)==0)
+    {
+      print(data.frame(correlationPairs[,featureList][(abs(correlationPairs[,featureList]) >= abs(response))]))
+    }
     
   }
   
@@ -104,7 +109,7 @@ for (postProcess in 1:length(files))
 
     drop<-c()
         drop <- c(as.character(vifResults[vifResults >= 5]))
-      print(drop)
+      #print(drop)
       if (length(drop)==0) x <- df
       if (!(length(drop)==0)) {
         print(paste("dropping!",c(drop)))
@@ -117,13 +122,11 @@ for (postProcess in 1:length(files))
   #df[ , -which(names(df) %in% c("z","u"))]
   #df[ , -which(names(df) %in% c("z","u"))]
   
-  
   trainModel <- glm(y~.,data=cbind(tempy,x),family=binomial(link="logit"))
   
   #any column
   #https://stackoverflow.com/questions/46285484/if-any-column-in-a-row-meets-condition-than-mutate-column
   #df$c[apply(df == 7, 1, any)] <- 100
-
   
   #includes proportion of variance
   summary(prcomp(x, center=TRUE, scale=TRUE))
@@ -136,8 +139,19 @@ for (postProcess in 1:length(files))
   
   #http://rfaqs.com/mctest-r-package-detection-collinearity-among-regressors
   
-  if(length(colnames(x))!=1) omcdiag(x, y, Inter=FALSE)
-  
+  #if(length(colnames(x))!=1) omcdiag(x, y, Inter=FALSE)
+  result <- c()
+  #result <- mctest::omcdiag(x,y, detr=0.001, conf=0.99)
+  #https://rdrr.io/cran/mctest/man/mctest.html
+  result <- mctest(x, y, type="i", method="VIF")
+  print(result)
+  #if(result$Inter)
+  #{
+    
+    
+  #}
+  #correlation
+  #print(imcdiag(x = x, y, corr = TRUE),)
   
   #include data in new model for inclusion in a linear model
   #https://stats.stackexchange.com/questions/72839/how-to-use-r-prcomp-results-for-prediction
@@ -198,10 +212,12 @@ for (postProcess in 1:length(files))
   
   #http://r-statistics.co/Logistic-Regression-With-R.html
   
+  #converts to logit
   predicted <- plogis(predict(trainModel, PostDF[,-1,drop=FALSE]))  # predicted scores
   #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("population")
-  print(summary(trainModel$finalModel))
+  print(summary(trainModel))
+  print(summary(PostDF))
   
   finalList <- colnames(PostDF)
   #reseed
@@ -291,7 +307,7 @@ for (postProcess in 1:length(files))
   
   #this is manually converting them
   #test classification using best linear model
-  print(table(yhat))
+  #print(table(yhat))
   #View(yhat)
   #this is where an arbitary threshold is set.
   yhat.transformed_sens = rep(0, nrow(PostDF))
@@ -315,10 +331,9 @@ for (postProcess in 1:length(files))
   hist(yhat.transformed_spec)
   hist(ytest[,1])
   
-  
-  print(optCutOff_sens)
-  print(optCutOff_center)
-  print(optCutOff_spec)
+  print(c("optCutOff_sens:",optCutOff_sens))
+  print(c("optCutOff_center",optCutOff_center))
+  print(c("optCutOff_spec",optCutOff_spec))
   #sum(yhat.transformed)
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_center)[,,drop=FALSE]
