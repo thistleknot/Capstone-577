@@ -987,8 +987,6 @@ Category Flags
 		
 		added logging of error pairs so I can compare with final tabulated results if it was one of the ones I found significant or not to be concerned.
 		
-		
-		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER

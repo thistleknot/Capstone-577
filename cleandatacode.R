@@ -606,7 +606,7 @@ for (medianDirection in c("greaterEqual"))
                 holderOfData <- cbind(data.test[,-1,drop=FALSE],data.test[,1,drop=FALSE])
                 
                 tryCatch(result <- sub_returnCVNames(data.test),
-                         error = function(c) {errorpairs <- rbind(errorpairs,c("Train",pairedname))
+                         error = function(c) {errorpairs <- rbind(errorpairs,c("Test",pairedname))
                          result <-NA
                          },
                          warning = function(c) "warning",
