@@ -1,9 +1,20 @@
 ## read in data ##
 #select
+
+#Written by Joshua Laferriere
+#for Capstone 577
+#CSUF
+#2019 month of April
+#over 400 commits
+#https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
+list.of.packages <- c("dplyr", "plyr","RPostgreSQL","ggplot2","anchors","caret","corrplot","MASS","car","leaps","bestglm","compare","R.utils","tidyr","stringr")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
 library(dplyr)
 library(plyr)
 
-require("RPostgreSQL")
+#require("RPostgreSQL")
 library(RPostgreSQL)
 require(ggplot2)
 library(anchors)
@@ -15,7 +26,6 @@ library(car)
 library(leaps)
 library(bestglm)
 library(compare)
-library(dplyr)
 library("R.utils")
 library(tidyr)
 library(stringr)
