@@ -30,6 +30,7 @@ Input
 			
 	Prerequisites
 		rstudioserver
+		
 		no longer needed
 		#PostgreSQL-10.4-1-win64-bigsql
 			#set pw to Read1234
@@ -987,7 +988,12 @@ Category Flags
 		removed gang, smoking, gpa, psyd from each list unless it was response
 		
 	Milestone 14
-		commit: af2ffd1
+	
+		14.1
+			Auto-installer of library packages
+			b4d7ab4
+			
+		14.0: commit: af2ffd1
 		Readded gangs, GPA, and psyd so I could extract those columns from NewDF within saveCSVs.R
 		
 		saveCSVs.R does further class balancing and montecarlo cv factor reduction and gives me a new set of cv's that are gauranteed to be population significant.
