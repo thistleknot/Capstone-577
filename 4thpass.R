@@ -370,16 +370,16 @@ for (postProcess in 1:length(files))
   #class 1
   results <- c()
   results <- confusionMatrix(yhat.transformed_sens, ytest[,1])
-  print(results)
+  print(c("yhat.transformed_sens",results))
   
   results <- c()
   results <- confusionMatrix(yhat.transformed_center, ytest[,1])
-  print(results)
+  print(c("yhat.transformed_center",results))
   
   results <- c()
   #class 0
   results <- confusionMatrix(yhat.transformed_spec, ytest[,1])
-  print(results)
+  print(c("yhat.transformed_spec",results))
   
   
 }
