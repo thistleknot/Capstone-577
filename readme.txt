@@ -19,8 +19,7 @@ Input
 
 	To run 
 		Modify in cleandatacode.R
-			sourceDir to point to where you downloaded and extracted the sourcefolder to.  This should be the same folder that output sits in.
-			Install all listed libraries 
+			sourceDir to point to where you downloaded and extracted the sourcefolder to.  This should be the same folder that output sits in.			
 		Run cleandatacode.R which starts the simulation up until the point where it starts to output tabulation results.
 			Then stop the simulation
 				You can let it run all the way through, but the files necessary to run the rest of the simulation (*final.csv) are already in the output folder.
