@@ -17,6 +17,16 @@ Input
 			gpalist.txt
 			psyDFilterList.txt
 
+	To run 
+		Modify in cleandatacode.R
+			sourceDir to point to where you downloaded and extracted the sourcefolder to.  This should be the same folder that output sits in.
+		Move the csv files from inside the output folder to temp
+		Run cleandatacode.R which starts the simulation up until the point where it starts to output tabulation results
+			Then stop the simulation
+		Copy files from temp to output
+		Run saveCSVs.R, allow it to finish
+		Run 4thpass.R				
+			
 	Prerequisites
 		no longer needed
 		#PostgreSQL-10.4-1-win64-bigsql
