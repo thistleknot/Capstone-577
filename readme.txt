@@ -20,12 +20,12 @@ Input
 	To run 
 		Modify in cleandatacode.R
 			sourceDir to point to where you downloaded and extracted the sourcefolder to.  This should be the same folder that output sits in.
-		Move the csv files from inside the output folder to temp
-		Run cleandatacode.R which starts the simulation up until the point where it starts to output tabulation results
+		Run cleandatacode.R which starts the simulation up until the point where it starts to output tabulation results.
 			Then stop the simulation
-		Copy files from temp to output
-		Run saveCSVs.R, allow it to finish
-		Run 4thpass.R				
+				You can let it run all the way through, but the files necessary to run the rest of the simulation (*final.csv) are already in the output folder.
+		Run saveCSVs.R and allow it to finish
+		Run 4thpass.R
+			
 			
 	Prerequisites
 		no longer needed
