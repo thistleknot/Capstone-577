@@ -1,11 +1,10 @@
 Input	
 
-	3%
-		x2 for holdout/training
-		=6%
-		x3=
-		18%
-		columns
+	10 holdout's of 10% x 2 = 200%
+		3 resamples at 33% each
+		30 runs
+		
+	columns
 		factor id, conversion profile, description, category flag
 		
 		threshold
@@ -26,42 +25,62 @@ Input
 		Run saveCSVs.R and allow it to finish
 		Run 4thpass.R
 			
-			
-	Prerequisites
-		rstudioserver
-		
-		no longer needed
-		#PostgreSQL-10.4-1-win64-bigsql
-			#set pw to Read1234
-
-		#pgadmin4-4.3-x86
-
 	Update 
 		in cleandatacode.r
 			sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 			
-		put following files in folder
-		
-		share drive
-		https://drive.google.com/drive/u/1/folders/1K-_ZnaQxEPVFo9iXG5w1GO6Zd_Z21Dv9
-		
-			34574-0001-Data.csv
-			34574-0001-Data.csv
-			36149-0001-Data.csv
-			36407-0001-Data.csv
-			36799-0001-Data.csv
-			37183-0001-Data.csv
-			
-			or
-			
-			combined.csv (577 share drive)	
-			
 	Outputs
-	final.csv
-		thresholds does lower for higher cvWidth... .33 is good across the board, but .5 will miss some and most at widthSize 10
-		V7215 is .495 in some final's and is not significant... I worry that this might either mean too small in the population, or VIF issue?  
+		cleandatacode.R
+			*final.csv
+		saveCSVs.R
+			*filtered.csv
 	
-	creates tabulated results for threshold filtering sequenced by common outputted terms vs ranked by propensity.
+	The system consists of 3 different main files.  Below is the order in which they are called.  Cleandatacode.R can be thought of as the main class file in C++.
+	
+	Cleandatacode.R
+		creates tabulated results for threshold filtering sequenced by common outputted terms vs ranked by propensity.
+		Derives final.csv which stores cross validated thresholds, 
+		Does factor reduction/pooling
+		
+	saveCSVs.R
+		does further factor reduction.
+		Ensures factor reduced terms work well with each other using Cross Validation and derives final terms
+		
+	4thpass.R
+		Derive optimal class confusion matrix
+		ROC plots
+		Check VIF for collinearity
+	
+	Other files related to cleaning, transforming, indexing, class balancing, and aggregating the data into dataframes are (and in their proper order of being called).  All these files are assumed to be sourced from cleandatacode.R
+		newDF.R
+		reseedboth.R
+		reseedTest.R
+		reseedTrain.R
+		MCResampleTest.R
+		MCResampleTrain.R
+		redrawTrain.R
+		redrawTest.R
+	
+	The project creates a training and holdout partition. Both partitions use cross validation using a modified bestglm algorithm which expands on the best subsets algorithm by including more relevant terms.
+	
+	Libraries
+		dplyr
+		plyr
+		RPostgreSQL
+		ggplot2
+		anchors
+		caret
+		corrplot
+		MASS
+		car
+		leaps
+		bestglm
+		compare
+		R.utils
+		tidyr
+		stringr
+		
+	
 	
 Steps
 	createdb.bat
