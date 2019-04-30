@@ -214,6 +214,7 @@ for (postProcess in 1:length(files))
   
   #converts to logit
   predicted <- plogis(predict(trainModel, PostDF[,-1,drop=FALSE]))  # predicted scores
+  hist(predicted)
   #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("population")
   print(summary(trainModel))
