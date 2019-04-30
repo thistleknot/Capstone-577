@@ -974,8 +974,8 @@ Category Flags
 		widthSize 3 output
 		removed gang, smoking, gpa, psyd from each list unless it was response
 		
-	Milestone 14 2b99343
-		commit: 
+	Milestone 14
+		commit: af2ffd1
 		Readded gangs, GPA, and psyd so I could extract those columns from NewDF within saveCSVs.R
 		
 		saveCSVs.R does further class balancing and montecarlo cv factor reduction and gives me a new set of cv's that are gauranteed to be population significant.
