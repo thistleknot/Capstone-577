@@ -766,5 +766,5 @@ for (medianDirection in c("greaterEqual"))
   #end medianDirection  
 }
 #unfortunately this relies on NewDF at the moment.  Either I need to reduce NewDF to it's own file/function or write it out to a .csv
-#source(paste0(sourceDir,"saveCSVs.R"))
-#source(paste0(sourceDir,"4thpass.R"))
+source(paste0(sourceDir,"saveCSVs.R"))
+source(paste0(sourceDir,"4thpass.R"))

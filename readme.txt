@@ -1024,20 +1024,23 @@ Category Flags
 		
 		added logging of error pairs so I can compare with final tabulated results if it was one of the ones I found significant or not to be concerned.
 		error logging did not work and took me over 4 hours of troubleshooting to fallback on a hack of writing a csv to the output folder to log the event... rbind will output to console (but not to a dataframe in an errorloop?)
+
+	Milestone 15 8cab9d0
+		I output to jpg's and apply mc model to population as well as derive rmse of cv mc model against population as well as population model against itself using round(logit)
 		
+		V7118
+
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
 			[1] "y:"    "V7118"
 			[[1]]
 			[1] "final: "
 
 			$tabulatedCrossValidated
-			 [1] <NA>  V8502 V8512 V8509 V8514 V8530 V8505 V7215 V8536 V8526 V7206 V7202 V8528 V7562 V7552 V8529 V8531 V8527 V8565 V7553 V7563
-			[22] V7551
-			21 Levels: V7202 V7206 V7215 V7551 V7552 V7553 V7562 V7563 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8531 ... V8565
+			 [1] <NA>  V8502 V8512 V8509 V8514 V8530 V8505 V7215 V8536 V8526 V7206 V7202 V8528 V7562 V7552 V8529 V8531 V8527 V8565 V7553 V7563 V7551
+			Levels: V7202 V7206 V7215 V7551 V7552 V7553 V7562 V7563 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8531 V8536 V8565
 
 			$Freq
-			 [1] 3.517 0.433 0.383 0.350 0.350 0.333 0.317 0.267 0.267 0.233 0.217 0.200 0.150 0.133 0.117 0.117 0.117 0.100 0.100 0.083 0.083
-			[22] 0.067
+			 [1] 3.517 0.433 0.383 0.350 0.350 0.333 0.317 0.267 0.267 0.233 0.217 0.200 0.150 0.133 0.117 0.117 0.117 0.100 0.100 0.083 0.083 0.067
 
 			   tabulatedCrossValidated  Freq
 			2                    V8502 0.433
@@ -1062,174 +1065,125 @@ Category Flags
 			21                   V7563 0.083
 			22                   V7551 0.067
 			 [1] "keep: > " "0.25"     "8"        "V8502"    "V8512"    "V8509"    "V8514"    "V8530"    "V8505"    "V7215"    "V8536"   
-				 V7118         V8502           V8512            V8509          V8514            V8530           V8505            V7215       
-			 Min.   :0.0   Min.   :0.000   Min.   :0.0000   Min.   :0.00   Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.00   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
-			 Median :0.5   Median :0.000   Median :1.0000   Median :0.00   Median :1.0000   Median :1.000   Median :1.0000   Median :0.0000  
-			 Mean   :0.5   Mean   :0.296   Mean   :0.6183   Mean   :0.25   Mean   :0.7333   Mean   :0.554   Mean   :0.6706   Mean   :0.4952  
-			 3rd Qu.:1.0   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:0.25   3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.000   Max.   :1.0000   Max.   :1.00   Max.   :1.0000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000  
-				 V8536        
-			 Min.   :0.00000  
-			 1st Qu.:0.00000  
-			 Median :0.00000  
-			 Mean   :0.07937  
-			 3rd Qu.:0.00000  
-			 Max.   :1.00000  
-				 V8509      V8530 
-			 0.8041360 -0.5018273 
-			[1] "CV Model"
+				 V8502      V8512      V8509      V8530      V7215 
+			 0.5423997  0.5023144  0.8560780 -0.5246812  0.2495730 
+				 V7118         V8502            V8512            V8509             V8514          V8530            V8505            V7215            V8536        
+			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.00   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.00   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000  
+			 Median :0.5   Median :0.0000   Median :0.0000   Median :0.00000   Median :0.00   Median :0.0000   Median :0.0000   Median :0.0000   Median :0.00000  
+			 Mean   :0.5   Mean   :0.1299   Mean   :0.2203   Mean   :0.09739   Mean   :0.25   Mean   :0.1432   Mean   :0.2289   Mean   :0.4157   Mean   :0.02048  
+			 3rd Qu.:1.0   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.00000   3rd Qu.:0.25   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.00000  
+			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
+
+			Call:
+			imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+				tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+			 VIF Multicollinearity Diagnostics
+
+					 VIF detection
+			V8502 1.6330         0
+			V8512 3.4039         0
+			V8509 1.6528         0
+			V8514 3.8443         0
+			V8530 1.2904         0
+			V8505 3.4856         0
+			V7215 1.0190         0
+			V8536 1.0749         0
+
+			NOTE:  VIF Method Failed to detect multicollinearity
+
+
+			0 --> COLLINEARITY is not detected by the test
+
+			===================================
+			[1] "MC summary"
 
 			Call:
 			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
-
-			Deviance Residuals: 
-				 Min        1Q    Median        3Q       Max  
-			-1.56980  -1.00555  -0.08754   1.14231   1.35958  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept)  0.08316    0.09738   0.854    0.393    
-			V8509        0.80414    0.13927   5.774 7.74e-09 ***
-			V8530       -0.50183    0.11824  -4.244 2.19e-05 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 1746.7  on 1259  degrees of freedom
-			Residual deviance: 1681.3  on 1257  degrees of freedom
-			AIC: 1687.3
-
-			Number of Fisher Scoring iterations: 4
-
-			[1] "CV Model applied to population"
-
-			Call:
-			NULL
+				c(bestset[-1], FALSE), drop = FALSE], y = y))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-0.3687  -0.2536  -0.1851  -0.1851   2.8551  
+			-2.0068  -1.0610  -0.1622   1.1904   1.5326  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -3.42107    0.04614  -74.15   <2e-16 ***
-			V8509        0.76671    0.06188   12.39   <2e-16 ***
-			V8530       -0.63761    0.05737  -11.12   <2e-16 ***
+			(Intercept) -0.28009    0.04102  -6.828 8.58e-12 ***
+			V8502        0.54240    0.11385   4.764 1.90e-06 ***
+			V8512        0.50231    0.08016   6.266 3.69e-10 ***
+			V8509        0.85608    0.13398   6.390 1.66e-10 ***
+			V8530       -0.52468    0.09441  -5.558 2.73e-08 ***
+			V7215        0.24957    0.05926   4.212 2.53e-05 ***
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 12110  on 49534  degrees of freedom
-			Residual deviance: 11789  on 49532  degrees of freedom
-			AIC: 11795
-
-			Number of Fisher Scoring iterations: 6
-
-			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-3-final.csv"
-			[1] "y:"    "V7118"
-			[[1]]
-			[1] "final: "
-
-			$tabulatedCrossValidated
-			 [1] <NA>  V8509 V7215 V8526 V8528 V7202 V8502 V8505 V8530 V8529 V7551 V8514 V8527 V7206 V7553 V8531 V8512
-			Levels: V7202 V7206 V7215 V7551 V7553 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8531
-
-			$Freq
-			 [1] 4.389 0.444 0.389 0.333 0.333 0.278 0.278 0.278 0.278 0.222 0.167 0.167 0.167 0.111 0.111 0.111 0.056
-
-			   tabulatedCrossValidated  Freq
-			2                    V8509 0.444
-			3                    V7215 0.389
-			4                    V8526 0.333
-			5                    V8528 0.333
-			6                    V7202 0.278
-			7                    V8502 0.278
-			8                    V8505 0.278
-			9                    V8530 0.278
-			10                   V8529 0.222
-			11                   V7551 0.167
-			12                   V8514 0.167
-			13                   V8527 0.167
-			14                   V7206 0.111
-			15                   V7553 0.111
-			16                   V8531 0.111
-			17                   V8512 0.056
-			 [1] "keep: > " "0.25"     "8"        "V8509"    "V7215"    "V8526"    "V8528"    "V7202"    "V8502"    "V8505"    "V8530"   
-				 V7118         V8509            V7215            V8526            V8528            V7202            V8502            V8505       
-			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
-			 Median :0.5   Median :0.0000   Median :0.0000   Median :0.0000   Median :1.0000   Median :0.0000   Median :0.0000   Median :1.0000  
-			 Mean   :0.5   Mean   :0.2605   Mean   :0.4855   Mean   :0.4637   Mean   :0.7524   Mean   :0.4895   Mean   :0.3226   Mean   :0.6339  
-			 3rd Qu.:1.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-				 V8530       
-			 Min.   :0.0000  
-			 1st Qu.:0.0000  
-			 Median :1.0000  
-			 Mean   :0.5452  
-			 3rd Qu.:1.0000  
-			 Max.   :1.0000  
-				 V7215      V7202      V8502      V8530 
-			-0.4907136 -0.4244163  1.0015417 -0.5653951 
-			[1] "CV Model"
-
-			Call:
-			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
-
-			Deviance Residuals: 
-				 Min        1Q    Median        3Q       Max  
-			-1.81847  -1.12441  -0.06291   1.17104   1.63919  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept)   0.4394     0.1350   3.255 0.001133 ** 
-			V7215        -0.4907     0.1200  -4.090 4.31e-05 ***
-			V7202        -0.4244     0.1229  -3.453 0.000555 ***
-			V8502         1.0015     0.1345   7.447 9.56e-14 ***
-			V8530        -0.5654     0.1232  -4.590 4.43e-06 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 1719.0  on 1239  degrees of freedom
-			Residual deviance: 1593.2  on 1235  degrees of freedom
-			AIC: 1603.2
+				Null deviance: 6903.7  on 4979  degrees of freedom
+			Residual deviance: 6664.0  on 4974  degrees of freedom
+			AIC: 6676
 
 			Number of Fisher Scoring iterations: 4
 
+			[1] "optCutOff_sens:" "0"              
+			[1] "error rate sens: 0.5"
+			[1] "yhat.transformed_center sens matrix"
+			[1] "n:"   "4980"
+				1
+			0 0.5
+			1 0.5
+			[1] "optCutOff_center" "1"               
+			[1] "error rate c: 0.4159"
+			[1] "yhat.transformed_center conf matrix"
+			[1] "n:"   "4980"
+				   0      1
+			0 0.4257 0.0743
+			1 0.3416 0.1584
+			[1] "optCutOff_spec" "0.01"          
+			[1] "error rate spec: 0.4159"
+			[1] "yhat.transformed_spec conf matrix"
+			[1] "n:"   "4980"
+				   0      1
+			0 0.4257 0.0743
+			1 0.3416 0.1584
+			[1] "MC model applied to Pop :" "0.634457431104765"        
+			[1] "Pop model applied to pop :" "0.646058282469799"         
 			[1] "CV Model applied to population"
 
 			Call:
-			NULL
+			glm(formula = holderOfData, family = binomial(link = "logit"))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-0.4554  -0.2503  -0.1960  -0.1704   3.0380  
+			-2.0546  -0.3351  -0.3020  -0.3020   2.4941  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -3.06747    0.06199 -49.487  < 2e-16 ***
-			V7215       -0.37989    0.05762  -6.593 4.32e-11 ***
-			V7202       -0.49571    0.05841  -8.487  < 2e-16 ***
-			V8502        0.85330    0.06011  14.195  < 2e-16 ***
-			V8530       -0.66159    0.05891 -11.230  < 2e-16 ***
+			(Intercept) -3.06467    0.08879 -34.517  < 2e-16 ***
+			V8512        0.77495    0.12557   6.172 6.76e-10 ***
+			V8509        3.80169    0.12489  30.441  < 2e-16 ***
+			V8530        0.25677    0.14231   1.804   0.0712 .  
+			V7215        0.21286    0.10867   1.959   0.0502 .  
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 11783  on 48281  degrees of freedom
-			Residual deviance: 11311  on 48277  degrees of freedom
-			AIC: 11321
+				Null deviance: 3846.6  on 4978  degrees of freedom
+			Residual deviance: 2570.2  on 4974  degrees of freedom
+			AIC: 2580.2
 
-			Number of Fisher Scoring iterations: 7
+			Number of Fisher Scoring iterations: 5
 
+				 V7118            V8502            V8512            V8509             V8530            V7215       
+			 Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
+			 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000  
+			 Median :0.0000   Median :0.0000   Median :0.0000   Median :0.00000   Median :0.0000   Median :0.0000  
+			 Mean   :0.4508   Mean   :0.1234   Mean   :0.2038   Mean   :0.09284   Mean   :0.1352   Mean   :0.4111  
+			 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:1.0000  
+			 Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7221-greaterEqual-10-final.csv"
 			[1] "y:"    "V7221"
 			[[1]]
@@ -1263,196 +1217,128 @@ Category Flags
 			19                   V7552 0.050
 			20                   V8536 0.050
 			21                   V7563 0.017
-			 [1] "keep: > " "0.25"     "10"       "V8526"    "V7215"    "V8527"    "V8512"    "V8509"    "V8528"    "V7202"    "V8530"   
-			[12] "V7206"    "V8502"   
-				 V7221         V8526            V7215            V8527            V8512            V8509            V8528            V7202       
-			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000  
-			 Median :0.5   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :0.0000   Median :1.0000   Median :1.0000  
-			 Mean   :0.5   Mean   :0.5775   Mean   :0.5291   Mean   :0.6475   Mean   :0.6872   Mean   :0.1689   Mean   :0.7923   Mean   :0.5099  
-			 3rd Qu.:1.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-				 V8530            V7206            V8502       
-			 Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000  
-			 Median :1.0000   Median :1.0000   Median :0.0000  
-			 Mean   :0.6422   Mean   :0.7782   Mean   :0.2231  
-			 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
-			 Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-				 V8526      V7215      V8527      V8512      V8509      V7202      V7206      V8502 
-			 0.4166208  0.4646551  0.4329781  0.3546878 -0.3214771  0.6383859  0.5145112 -0.3074671 
-			[1] "CV Model"
+			 [1] "keep: > " "0.25"     "10"       "V8526"    "V7215"    "V8527"    "V8512"    "V8509"    "V8528"    "V7202"    "V8530"    "V7206"    "V8502"   
+				 V8526      V7215      V8509      V7202      V7206 
+			 0.4628940  0.4800828 -0.4572628  1.1307374  0.5737264 
+				 V7221         V8526            V7215            V8527            V8512            V8509             V8528            V7202            V8530            V7206            V8502       
+			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+			 Median :0.5   Median :0.0000   Median :1.0000   Median :0.0000   Median :0.0000   Median :0.00000   Median :0.0000   Median :1.0000   Median :0.0000   Median :1.0000   Median :0.0000  
+			 Mean   :0.5   Mean   :0.1468   Mean   :0.5186   Mean   :0.1816   Mean   :0.2809   Mean   :0.08137   Mean   :0.2247   Mean   :0.9141   Mean   :0.1683   Mean   :0.7074   Mean   :0.1146  
+			 3rd Qu.:1.0   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+
+			Call:
+			imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+				tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+			 VIF Multicollinearity Diagnostics
+
+					 VIF detection
+			V8526 1.9812         0
+			V7215 1.0284         0
+			V8527 2.8743         0
+			V8512 1.3416         0
+			V8509 1.4923         0
+			V8528 3.3344         0
+			V7202 1.1240         0
+			V8530 2.0541         0
+			V7206 1.1066         0
+			V8502 1.5148         0
+
+			NOTE:  VIF Method Failed to detect multicollinearity
+
+
+			0 --> COLLINEARITY is not detected by the test
+
+			===================================
+			[1] "MC summary"
 
 			Call:
 			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
+				c(bestset[-1], FALSE), drop = FALSE], y = y))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-1.7121  -1.0882   0.1382   1.0857   2.1671  
+			-1.5805  -1.1639   0.1812   1.0379   2.1445  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -1.61867    0.04694 -34.484  < 2e-16 ***
-			V8526        0.41662    0.02788  14.944  < 2e-16 ***
-			V7215        0.46466    0.02592  17.923  < 2e-16 ***
-			V8527        0.43298    0.02819  15.361  < 2e-16 ***
-			V8512        0.35469    0.03017  11.758  < 2e-16 ***
-			V8509       -0.32148    0.04133  -7.779 7.33e-15 ***
-			V7202        0.63839    0.02658  24.017  < 2e-16 ***
-			V7206        0.51451    0.03159  16.289  < 2e-16 ***
-			V8502       -0.30747    0.03747  -8.205 2.30e-16 ***
+			(Intercept) -1.73639    0.03818  -45.48   <2e-16 ***
+			V8526        0.46289    0.02544   18.20   <2e-16 ***
+			V7215        0.48008    0.01775   27.04   <2e-16 ***
+			V8509       -0.45726    0.03263  -14.02   <2e-16 ***
+			V7202        1.13074    0.03901   28.99   <2e-16 ***
+			V7206        0.57373    0.02030   28.26   <2e-16 ***
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 36820  on 26559  degrees of freedom
-			Residual deviance: 34204  on 26551  degrees of freedom
-			AIC: 34222
+				Null deviance: 76634  on 55279  degrees of freedom
+			Residual deviance: 72472  on 55274  degrees of freedom
+			AIC: 72484
 
 			Number of Fisher Scoring iterations: 4
 
+			[1] "optCutOff_sens:" "0"              
+			[1] "error rate sens: 0.5"
+			[1] "yhat.transformed_center sens matrix"
+			[1] "n:"    "55280"
+				1
+			0 0.5
+			1 0.5
+			[1] "optCutOff_center" "1"               
+			[1] "error rate c: 0.399"
+			[1] "yhat.transformed_center conf matrix"
+			[1] "n:"    "55280"
+				   0      1
+			0 0.3482 0.1518
+			1 0.2472 0.2528
+			[1] "optCutOff_spec" "0.01"          
+			[1] "error rate spec: 0.399"
+			[1] "yhat.transformed_spec conf matrix"
+			[1] "n:"    "55280"
+				   0      1
+			0 0.3482 0.1518
+			1 0.2472 0.2528
+			[1] "MC model applied to Pop :" "0.64510140728372"         
+			[1] "Pop model applied to pop :" "0.760487828258346"         
 			[1] "CV Model applied to population"
 
 			Call:
-			NULL
+			glm(formula = holderOfData, family = binomial(link = "logit"))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-1.8151  -1.1532   0.6541   1.0317   2.0358  
+			-0.8397  -0.6062  -0.5256  -0.4543   2.2228  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -1.34059    0.03481 -38.517   <2e-16 ***
-			V8526        0.44948    0.02086  21.548   <2e-16 ***
-			V7215        0.47536    0.01940  24.506   <2e-16 ***
-			V8527        0.38408    0.02107  18.232   <2e-16 ***
-			V8512        0.35773    0.02269  15.764   <2e-16 ***
-			V8509       -0.33783    0.03066 -11.020   <2e-16 ***
-			V7202        0.63114    0.01989  31.730   <2e-16 ***
-			V7206        0.47623    0.02345  20.312   <2e-16 ***
-			V8502       -0.25934    0.02794  -9.282   <2e-16 ***
+			(Intercept) -2.38210    0.04933 -48.292  < 2e-16 ***
+			V7215        0.30891    0.02471  12.503  < 2e-16 ***
+			V8509        0.73996    0.03699  20.004  < 2e-16 ***
+			V7202        0.16294    0.05126   3.179  0.00148 ** 
+			V7206        0.30926    0.02928  10.561  < 2e-16 ***
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 65771  on 47986  degrees of freedom
-			Residual deviance: 61202  on 47978  degrees of freedom
-			AIC: 61220
+				Null deviance: 46112  on 55278  degrees of freedom
+			Residual deviance: 45406  on 55274  degrees of freedom
+			AIC: 45416
 
 			Number of Fisher Scoring iterations: 4
 
-			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7221-greaterEqual-3-final.csv"
-			[1] "y:"    "V7221"
-			[[1]]
-			[1] "final: "
-
-			$tabulatedCrossValidated
-			 [1] <NA>  V7215 V8527 V7202 V8512 V8526 V8528 V7206 V8509 V8530 V8505 V8514 V8529 V8565 V7562 V8502
-			Levels: V7202 V7206 V7215 V7562 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8565
-
-			$Freq
-			 [1] 2.889 0.611 0.556 0.444 0.389 0.389 0.389 0.333 0.333 0.333 0.278 0.222 0.222 0.222 0.167 0.111
-
-			   tabulatedCrossValidated  Freq
-			2                    V7215 0.611
-			3                    V8527 0.556
-			4                    V7202 0.444
-			5                    V8512 0.389
-			6                    V8526 0.389
-			7                    V8528 0.389
-			8                    V7206 0.333
-			9                    V8509 0.333
-			10                   V8530 0.333
-			11                   V8505 0.278
-			12                   V8514 0.222
-			13                   V8529 0.222
-			14                   V8565 0.222
-			15                   V7562 0.167
-			16                   V8502 0.111
-			 [1] "keep: > " "0.25"     "10"       "V7215"    "V8527"    "V7202"    "V8512"    "V8526"    "V8528"    "V7206"    "V8509"   
-			[12] "V8530"    "V8505"   
-				 V7221         V7215            V8527            V7202            V8512            V8526            V8528            V7206       
-			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.0000  
-			 Median :0.5   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000  
-			 Mean   :0.5   Mean   :0.5245   Mean   :0.6464   Mean   :0.5065   Mean   :0.6959   Mean   :0.5832   Mean   :0.7938   Mean   :0.7808  
-			 3rd Qu.:1.0   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-				 V8509            V8530          V8505       
-			 Min.   :0.0000   Min.   :0.00   Min.   :0.0000  
-			 1st Qu.:0.0000   1st Qu.:0.00   1st Qu.:0.0000  
-			 Median :0.0000   Median :1.00   Median :1.0000  
-			 Mean   :0.1727   Mean   :0.65   Mean   :0.7245  
-			 3rd Qu.:0.0000   3rd Qu.:1.00   3rd Qu.:1.0000  
-			 Max.   :1.0000   Max.   :1.00   Max.   :1.0000  
-				 V7215      V8527      V7202      V8512      V8526      V7206      V8509      V8530 
-			 0.4667726  0.3701998  0.6650969  0.3066611  0.4324632  0.4954475 -0.4881649  0.2567981 
-			[1] "CV Model"
-
-			Call:
-			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
-
-			Deviance Residuals: 
-			   Min      1Q  Median      3Q     Max  
-			-1.725  -1.091   0.134   1.093   2.168  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -1.76176    0.04769 -36.939   <2e-16 ***
-			V7215        0.46677    0.02594  17.994   <2e-16 ***
-			V8527        0.37020    0.02827  13.097   <2e-16 ***
-			V7202        0.66510    0.02669  24.920   <2e-16 ***
-			V8512        0.30666    0.03039  10.091   <2e-16 ***
-			V8526        0.43246    0.02855  15.145   <2e-16 ***
-			V7206        0.49545    0.03171  15.625   <2e-16 ***
-			V8509       -0.48816    0.03679 -13.268   <2e-16 ***
-			V8530        0.25680    0.02907   8.835   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 36737  on 26499  degrees of freedom
-			Residual deviance: 34117  on 26491  degrees of freedom
-			AIC: 34135
-
-			Number of Fisher Scoring iterations: 4
-
-			[1] "CV Model applied to population"
-
-			Call:
-			NULL
-
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-1.8275  -1.1657   0.7089   1.0122   2.0387  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -1.50085    0.03522  -42.61   <2e-16 ***
-			V7215        0.47772    0.01944   24.57   <2e-16 ***
-			V8527        0.37326    0.02116   17.64   <2e-16 ***
-			V7202        0.63783    0.01996   31.95   <2e-16 ***
-			V8512        0.37011    0.02251   16.45   <2e-16 ***
-			V8526        0.41718    0.02136   19.54   <2e-16 ***
-			V7206        0.47765    0.02349   20.33   <2e-16 ***
-			V8509       -0.44356    0.02748  -16.14   <2e-16 ***
-			V8530        0.20835    0.02170    9.60   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 65532  on 47825  degrees of freedom
-			Residual deviance: 60970  on 47817  degrees of freedom
-			AIC: 60988
-
-			Number of Fisher Scoring iterations: 4
-
+				 V7221            V8526            V7215           V8509             V7202            V7206       
+			 Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
+			 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.00000   1st Qu.:1.0000   1st Qu.:0.0000  
+			 Median :1.0000   Median :0.0000   Median :1.000   Median :0.00000   Median :1.0000   Median :1.0000  
+			 Mean   :0.5783   Mean   :0.1506   Mean   :0.533   Mean   :0.07944   Mean   :0.9209   Mean   :0.7226  
+			 3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.000   3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+			 Max.   :1.0000   Max.   :1.0000   Max.   :1.000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V8517-greaterEqual-10-final.csv"
 			[1] "y:"    "V8517"
 			[[1]]
@@ -1483,175 +1369,132 @@ Category Flags
 			16                   V8529 0.067
 			17                   V8531 0.067
 			18                   V7202 0.017
-			 [1] "keep: > " "0.25"     "9"        "V8502"    "V8509"    "V8527"    "V8536"    "V8512"    "V7206"    "V7552"    "V8514"   
-			[12] "V8526"   
-				 V8517         V8502            V8509            V8527            V8536             V8512            V7206          V7552       
-			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.0000   Min.   :0.00   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:1.00   1st Qu.:1.0000  
-			 Median :0.5   Median :0.0000   Median :0.0000   Median :1.0000   Median :0.00000   Median :1.0000   Median :1.00   Median :1.0000  
-			 Mean   :0.5   Mean   :0.2693   Mean   :0.2015   Mean   :0.6238   Mean   :0.06685   Mean   :0.6641   Mean   :0.76   Mean   :0.7793  
-			 3rd Qu.:1.0   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.00   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.0000   Max.   :1.00   Max.   :1.0000  
-				 V8514            V8526       
-			 Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:1.0000   1st Qu.:0.0000  
-			 Median :1.0000   Median :1.0000  
-			 Mean   :0.7771   Mean   :0.5604  
-			 3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0000   Max.   :1.0000  
-				 V8502      V8527      V8536      V7206      V7552 
-			 0.6289108 -0.3332370  0.5272943 -0.3521777  0.4789375 
-			[1] "CV Model"
+			 [1] "keep: > " "0.25"     "9"        "V8502"    "V8509"    "V8527"    "V8536"    "V8512"    "V7206"    "V7552"    "V8514"    "V8526"   
+				 V8502      V8527      V8536      V7206      V7552      V8514      V8526 
+			 2.0156523  5.3566775  4.9321064 -0.7355915  1.1383145  1.8866605  4.9423597 
+				 V8517         V8502            V8509            V8527            V8536             V8512            V7206            V7552            V8514            V8526       
+			 Min.   :0.0   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+			 1st Qu.:0.0   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+			 Median :0.5   Median :0.0000   Median :0.0000   Median :0.0000   Median :0.00000   Median :0.0000   Median :1.0000   Median :1.0000   Median :0.0000   Median :0.0000  
+			 Mean   :0.5   Mean   :0.1825   Mean   :0.1406   Mean   :0.2702   Mean   :0.04404   Mean   :0.3733   Mean   :0.7207   Mean   :0.6955   Mean   :0.4462   Mean   :0.2443  
+			 3rd Qu.:1.0   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+			 Max.   :1.0   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+
+			Call:
+			imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+				tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+			 VIF Multicollinearity Diagnostics
+
+					 VIF detection
+			V8502 1.4815         0
+			V8509 1.4874         0
+			V8527 1.5427         0
+			V8536 1.1356         0
+			V8512 2.4656         0
+			V7206 1.0040         0
+			V7552 1.1440         0
+			V8514 2.6250         0
+			V8526 1.5116         0
+
+			NOTE:  VIF Method Failed to detect multicollinearity
+
+
+			0 --> COLLINEARITY is not detected by the test
+
+			===================================
+			[1] "MC summary"
 
 			Call:
 			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
+				c(bestset[-1], FALSE), drop = FALSE], y = y))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-1.8612  -1.0512  -0.1217   1.1652   1.5229  
+			-5.0246  -0.4343  -0.1248   0.1200   2.6394  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.09794    0.07595  -1.290    0.197    
-			V8502        0.62891    0.05679  11.074  < 2e-16 ***
-			V8527       -0.33324    0.05023  -6.635 3.25e-11 ***
-			V8536        0.52729    0.10513   5.016 5.28e-07 ***
-			V7206       -0.35218    0.05685  -6.195 5.84e-10 ***
-			V7552        0.47894    0.05876   8.151 3.60e-16 ***
+			(Intercept) -2.71647    0.11031 -24.626   <2e-16 ***
+			V8502        2.01565    0.10795  18.671   <2e-16 ***
+			V8527        5.35668    0.34380  15.581   <2e-16 ***
+			V8536        4.93211    0.59758   8.254   <2e-16 ***
+			V7206       -0.73559    0.08648  -8.506   <2e-16 ***
+			V7552        1.13831    0.10437  10.906   <2e-16 ***
+			V8514        1.88666    0.08269  22.817   <2e-16 ***
+			V8526        4.94236    0.32896  15.024   <2e-16 ***
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 10119.9  on 7299  degrees of freedom
-			Residual deviance:  9720.7  on 7294  degrees of freedom
-			AIC: 9732.7
+				Null deviance: 11173.5  on 8059  degrees of freedom
+			Residual deviance:  4032.3  on 8052  degrees of freedom
+			AIC: 4048.3
 
-			Number of Fisher Scoring iterations: 4
+			Number of Fisher Scoring iterations: 8
 
+			[1] "optCutOff_sens:" "0"              
+			[1] "error rate sens: 0.5"
+			[1] "yhat.transformed_center sens matrix"
+			[1] "n:"   "8060"
+				1
+			0 0.5
+			1 0.5
+			[1] "optCutOff_center" "1"               
+			[1] "error rate c: 0.1119"
+			[1] "yhat.transformed_center conf matrix"
+			[1] "n:"   "8060"
+				   0      1
+			0 0.4697 0.0303
+			1 0.0816 0.4184
+			[1] "optCutOff_spec" "0.01"          
+			[1] "error rate spec: 0.1119"
+			[1] "yhat.transformed_spec conf matrix"
+			[1] "n:"   "8060"
+				   0      1
+			0 0.4697 0.0303
+			1 0.0816 0.4184
+			[1] "MC model applied to Pop :" "0.252417878296369"        
+			[1] "Pop model applied to pop :" "0.232831548837981"         
 			[1] "CV Model applied to population"
 
 			Call:
-			NULL
+			glm(formula = holderOfData, family = binomial(link = "logit"))
 
 			Deviance Residuals: 
 				Min       1Q   Median       3Q      Max  
-			-1.0564  -0.5896  -0.4977  -0.4056   2.2533  
+			-1.8324  -0.5996  -0.5696  -0.3735   2.3226  
 
 			Coefficients:
 						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -1.76655    0.03970  -44.50   <2e-16 ***
-			V8502        0.54348    0.02891   18.80   <2e-16 ***
-			V8527       -0.36447    0.02601  -14.01   <2e-16 ***
-			V8536        0.50141    0.04984   10.06   <2e-16 ***
-			V7206       -0.32529    0.02862  -11.37   <2e-16 ***
-			V7552        0.43020    0.03195   13.46   <2e-16 ***
+			(Intercept) -2.51605    0.08985 -28.002  < 2e-16 ***
+			V8527        0.62375    0.07715   8.085 6.24e-16 ***
+			V8536        2.35310    0.12190  19.304  < 2e-16 ***
+			V7206       -0.11147    0.06745  -1.653   0.0984 .  
+			V7552        0.89111    0.08310  10.724  < 2e-16 ***
+			V8514        0.09686    0.06843   1.416   0.1569    
+			V8526        0.02348    0.07972   0.294   0.7684    
 			---
 			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 			(Dispersion parameter for binomial family taken to be 1)
 
-				Null deviance: 42223  on 49884  degrees of freedom
-			Residual deviance: 40966  on 49879  degrees of freedom
-			AIC: 40978
+				Null deviance: 7656.4  on 8058  degrees of freedom
+			Residual deviance: 6892.6  on 8052  degrees of freedom
+			AIC: 6906.6
 
-			Number of Fisher Scoring iterations: 4
+			Number of Fisher Scoring iterations: 5
 
-			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V8517-greaterEqual-3-final.csv"
-			[1] "y:"    "V8517"
-			[[1]]
-			[1] "final: "
+				 V8517             V8502             V8527             V8536              V7206          V7552            V8514            V8526        
+			 Min.   :0.00000   Min.   :0.00000   Min.   :0.00000   Min.   :0.000000   Min.   :0.00   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
+			 1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.000000   1st Qu.:0.00   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00000  
+			 Median :0.00000   Median :0.00000   Median :0.00000   Median :0.000000   Median :1.00   Median :1.0000   Median :0.0000   Median :0.00000  
+			 Mean   :0.05849   Mean   :0.06342   Mean   :0.03464   Mean   :0.005246   Mean   :0.74   Mean   :0.5613   Mean   :0.2039   Mean   :0.03149  
+			 3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
+			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
-			$tabulatedCrossValidated
-			 [1] <NA>  V8502 V8505 V8509 V7552 V8527 V8530 V8526 V8528 V7206 V8512 V8514 V8529 V8531 V8565 V8536 V7215
-			Levels: V7206 V7215 V7552 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8531 V8536 V8565
-
-			$Freq
-			 [1] 3.167 0.556 0.389 0.389 0.333 0.278 0.278 0.222 0.222 0.167 0.167 0.167 0.167 0.167 0.167 0.111 0.056
-
-			   tabulatedCrossValidated  Freq
-			2                    V8502 0.556
-			3                    V8505 0.389
-			4                    V8509 0.389
-			5                    V7552 0.333
-			6                    V8527 0.278
-			7                    V8530 0.278
-			8                    V8526 0.222
-			9                    V8528 0.222
-			10                   V7206 0.167
-			11                   V8512 0.167
-			12                   V8514 0.167
-			13                   V8529 0.167
-			14                   V8531 0.167
-			15                   V8565 0.167
-			16                   V8536 0.111
-			17                   V7215 0.056
-			[1] "keep: > " "0.25"     "6"        "V8502"    "V8505"    "V8509"    "V7552"    "V8527"    "V8530"   
-				 V8517         V8502           V8505            V8509            V7552            V8527            V8530       
-			 Min.   :0.0   Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
-			 1st Qu.:0.0   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.0000  
-			 Median :0.5   Median :0.000   Median :1.0000   Median :0.0000   Median :1.0000   Median :1.0000   Median :1.0000  
-			 Mean   :0.5   Mean   :0.267   Mean   :0.6881   Mean   :0.2074   Mean   :0.7722   Mean   :0.6145   Mean   :0.6161  
-			 3rd Qu.:1.0   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-			 Max.   :1.0   Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
-				 V8502      V8509      V7552      V8527 
-			 0.3738045  0.4298778  0.5122791 -0.4188892 
-			[1] "CV Model"
-
-			Call:
-			glm(formula = y ~ ., family = family, data = data.frame(Xy[, 
-				c(bestset[-1, drop = FALSE], FALSE), drop = FALSE], y = y))
-
-			Deviance Residuals: 
-				 Min        1Q    Median        3Q       Max  
-			-1.61673  -1.08091  -0.04375   1.11751   1.50499  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -0.32466    0.06211  -5.228 1.72e-07 ***
-			V8502        0.37380    0.06329   5.906 3.50e-09 ***
-			V8509        0.42988    0.06948   6.187 6.15e-10 ***
-			V7552        0.51228    0.05739   8.927  < 2e-16 ***
-			V8527       -0.41889    0.04927  -8.502  < 2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 10258.6  on 7399  degrees of freedom
-			Residual deviance:  9910.1  on 7395  degrees of freedom
-			AIC: 9920.1
-
-			Number of Fisher Scoring iterations: 4
-
-			[1] "CV Model applied to population"
-
-			Call:
-			NULL
-
-			Deviance Residuals: 
-				Min       1Q   Median       3Q      Max  
-			-0.8665  -0.6103  -0.5115  -0.4172   2.2292  
-
-			Coefficients:
-						Estimate Std. Error z value Pr(>|z|)    
-			(Intercept) -2.01608    0.03397 -59.353   <2e-16 ***
-			V8502        0.45438    0.03310  13.729   <2e-16 ***
-			V8509        0.34564    0.03591   9.626   <2e-16 ***
-			V7552        0.42976    0.03183  13.502   <2e-16 ***
-			V8527       -0.38156    0.02586 -14.756   <2e-16 ***
-			---
-			Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-			(Dispersion parameter for binomial family taken to be 1)
-
-				Null deviance: 42400  on 50171  degrees of freedom
-			Residual deviance: 41286  on 50167  degrees of freedom
-		AIC: 41296
-
-	Milestone 15 8cab9d0
-		I output to jpg's and apply mc model to population as well as derive rmse of cv mc model against population as well as population model against itself using round(logit)
 
 Number of Fisher Scoring iterations: 4
 
