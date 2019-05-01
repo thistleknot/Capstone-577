@@ -122,9 +122,9 @@ source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
 
-unzip(paste0(sourceDir,"Capstone-577.zip"), files = NULL, list = FALSE, overwrite = TRUE,
-      junkpaths = FALSE, exdir = ".", unzip = "internal",
-      setTimes = FALSE)
+zipF<- "C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577\\Capstone-577.zip"
+outDir<-"C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577"
+unzip(zipF,exdir=outDir)
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
 d_2013 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
@@ -202,7 +202,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(10))
+  for(widthDiviser in c(3))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
