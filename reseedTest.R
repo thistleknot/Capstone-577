@@ -28,8 +28,33 @@ holdoutSet.zeros <- c()
 #I guess we're forcing our data into an equal 50/50 split to find out characteristics that determine that binary equation
 #so the concern of undersampling 0's is kind of irrelevant.  Although the elements of the 0 population would be undersampled.
 #leading to a bias in itself.
-holdoutSet.ones <- sample(1:nrow(set.ones), round(holdoutSetSize*nrow(set.ones)))  # 1's for training
-holdoutSet.zeros <- sample(1:nrow(set.zeros), round(holdoutSetSize*nrow(set.ones)))  # 0's for training. Pick as many 0's as 1's
+
+#stratified resampling
+#this ends up bootstrapping the amounts found in the population vs focusingg on a clean set of 1's then grabbing 0's
+avgCount <- c()
+avgCount <- mean(nrow(set.ones),nrow(set.zeros))
+
+reloopFactor <- c()
+minFactor <- c()
+minFactor <- min(round(holdoutSetSize*nrow(set.ones)),round(holdoutSetSize*nrow(set.zeros)))
+reloopFactor <- min(round(holdoutSetSize*nrow(set.ones)),round(holdoutSetSize*nrow(set.zeros)))/round(holdoutSetSize*avgCount)
+remainder <- c()
+remainder = reloopFactor-floor(reloopFactor)
+
+if(floor(reloopFactor)>0)
+{
+  for (loops in 1:floor(reloopFactor))
+  {
+    holdoutSet.ones <- cbind(holdoutSet.ones,sample(1:nrow(set.ones), minFactor))  # 1's for training
+    holdoutSet.zeros <- cbind(holdoutSet.zeros,sample(1:nrow(set.zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
+  }
+}
+holdoutSet.ones <- cbind(holdoutSet.ones,sample(1:nrow(set.ones), round(minFactor*remainder)))  # 1's for training
+holdoutSet.zeros <- cbind(holdoutSet.zeros,sample(1:nrow(set.zeros), round(minFactor*remainder)))  # 0's for training. Pick as many 0's as 1's
+
+#focus on a clean set of ones, then zeros
+#holdoutSet.ones <- sample(1:nrow(set.ones), round(holdoutSetSize*nrow(set.ones)))  # 1's for training
+#holdoutSet.zeros <- sample(1:nrow(set.zeros), round(holdoutSetSize*nrow(set.ones)))  # 0's for training. Pick as many 0's as 1's
 
 #holdoutSet <- sample(precisionSize, round(holdoutSetSize*precisionSize))
 
