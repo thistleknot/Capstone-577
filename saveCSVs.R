@@ -157,9 +157,10 @@ for (postProcess in 1:length(files))
   #print(summary(training_zeros))
   
   trainModel <- c()
+  trainModel <- B$BestModel
   holderOfData <- c()
   holderOfData <- cbind(trainingData[-1,],trainingData[1,])
-  trainModel <- glm(holderOfData,family=binomial(link="logit"))
+  #trainModel <- glm(holderOfData,family=binomial(link="logit"))
   
   #any column
   #https://stackoverflow.com/questions/46285484/if-any-column-in-a-row-meets-condition-than-mutate-column
@@ -221,7 +222,7 @@ for (postProcess in 1:length(files))
   yhat <- c()
   predicted <- c()
   predicted <- plogis(predict(trainModel, trainingData[-1]))  # predicted scores
-  summary(predicted)
+  #summary(predicted)
   
   yhat <- round(predicted)
   ytest <- trainingData[1]
@@ -377,7 +378,7 @@ for (postProcess in 1:length(files))
   dev.off()
   
   plot(cm_info_ce$plot)
-  print(paste("error rate c:",round(error_rate,4)))
+  print(paste("error rate c:",round(error_rate_ce,4)))
   print("yhat.transformed_center conf matrix")
   print(c("n:",sum(results_ce)))
   print(round(results_ce/sum(results_ce),4))
@@ -402,17 +403,12 @@ for (postProcess in 1:length(files))
   holderOfData <- cbind(tempNew[-1,],tempNew[1,])
   
   #MCpopModel <- glm(holderOfData,family=binomial(link="logit"))
-  
-  
-  
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histMC2PopPredicted.jpg"), width = 400, height = 400)
-  
   #dev.off()
   
-  
   #CV Model
-  print("CV Model")
-  print(summary(B$BestModel))
+  #print("CV Model")
+  #print(summary(B$BestModel))
   
   filtered2 <- c()
   filtered2 <- NewDF[,as.character(c(yname,names2)), drop=FALSE]

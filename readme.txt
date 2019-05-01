@@ -1767,6 +1767,7 @@ Citations
 	Resampling / simulation methods: monte carlo, bootstrapping, jackknifing, cross-validation, randomization tests, and permutation tests
 	
 		https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross
+		https://www.analyticsvidhya.com/blog/2016/03/practical-guide-deal-imbalanced-classification-problems/
 	
 	Median confidence interval
 	
@@ -1813,6 +1814,7 @@ Citations
 			BIAS
 			sampling at a greater proportion than it exists in the population
 			http://r-statistics.co/Logistic-Regression-With-R.html
+
 			
 			to deal with na's, we could have oversampled cases...
 	
