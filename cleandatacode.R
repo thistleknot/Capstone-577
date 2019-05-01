@@ -202,7 +202,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(3))
+  for(widthDiviser in c(10))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
