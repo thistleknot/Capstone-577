@@ -1648,7 +1648,10 @@ Category Flags
 
 				Null deviance: 42400  on 50171  degrees of freedom
 			Residual deviance: 41286  on 50167  degrees of freedom
-AIC: 41296
+		AIC: 41296
+
+	Milestone 15 8cab9d0
+		I output to jpg's and apply mc model to population as well as derive rmse of cv mc model against population as well as population model against itself using round(logit)
 
 Number of Fisher Scoring iterations: 4
 

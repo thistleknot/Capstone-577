@@ -445,6 +445,7 @@ for (postProcess in 1:length(files))
   
   #CV terms applied to population
   print(summary(popModel))
+  print(summary(filtered2))
   
   #removed medianDirection
   write.csv(filtered2,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"filtered.csv")))
