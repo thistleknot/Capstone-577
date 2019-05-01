@@ -287,10 +287,10 @@ for (postProcess in 1:length(files))
   #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
   
   #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
-  #optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
-  optCutOff_sens <- .99
-  #optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", yhat)
-  optCutOff_center <- .5
+  optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
+  optCutOff_top <- .99
+  optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", yhat)
+  optCutOff_cen <- .5
   optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", yhat)
   
   #both classes
@@ -318,7 +318,17 @@ for (postProcess in 1:length(files))
   yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
   yhat.transformed_sens[yhat < optCutOff_sens] = 0
   misClassError(yhat.transformed_sens, ytest, threshold = optCutOff_sens)
-  
+
+  yhat.transformed_top = rep(0, nrow(trainingData))
+  yhat.transformed_top[round(yhat,4) >= round(optCutOff_top,4)] = 1
+  yhat.transformed_top[yhat < optCutOff_top] = 0
+  misClassError(yhat.transformed_top, ytest, threshold = optCutOff_top)
+
+  yhat.transformed_cen = rep(0, nrow(trainingData))
+  yhat.transformed_cen[round(yhat,4) >= round(optCutOff_cen,4)] = 1
+  yhat.transformed_cen[yhat < optCutOff_cen] = 0
+  misClassError(yhat.transformed_cen, ytest, threshold = optCutOff_cen)
+    
   yhat.transformed_center = rep(0, nrow(trainingData))
   yhat.transformed_center[round(yhat,4) >= round(optCutOff_center,4)] = 1
   yhat.transformed_center[round(yhat,4) < optCutOff_center] = 0
@@ -345,6 +355,16 @@ for (postProcess in 1:length(files))
   cm_info_se <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_sens )
   
   ytemp<-c()
+  ytemp = data.frame(yhat.transformed_top)[,,drop=FALSE]
+  colnames(ytemp)<-"yhat"
+  cm_info_top <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_top )
+  
+  ytemp<-c()
+  ytemp = data.frame(yhat.transformed_cen)[,,drop=FALSE]
+  colnames(ytemp)<-"yhat"
+  cm_info_cen <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_cen )
+  
+  ytemp<-c()
   ytemp = data.frame(yhat.transformed_spec)[,,drop=FALSE]
   colnames(ytemp)<-"yhat"
   cm_info_sp <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_spec )
@@ -355,6 +375,16 @@ for (postProcess in 1:length(files))
   classification_accuracy = correct_predictions / total_predictions
   error_rate_se = (1 - (correct_predictions / total_predictions))
 
+  total_predictions = nrow(data.frame(yhat.transformed_top))
+  correct_predictions = sum(yhat.transformed_top == ytest)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate_top = (1 - (correct_predictions / total_predictions))
+  
+  total_predictions = nrow(data.frame(yhat.transformed_cen))
+  correct_predictions = sum(yhat.transformed_cen == ytest)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate_cen = (1 - (correct_predictions / total_predictions))
+  
   total_predictions = nrow(data.frame(yhat.transformed_center))
   correct_predictions = sum(yhat.transformed_center == ytest)
   classification_accuracy = correct_predictions / total_predictions
@@ -371,15 +401,21 @@ for (postProcess in 1:length(files))
   #https://rdrr.io/cran/caret/man/confusionMatrix.html
   
   #class 1
-  results <- c()
+  results_se <- c()
   results_se <- confusionMatrix(yhat.transformed_sens, ytest[,1])
   
-  results <- c()
+  results_ce <- c()
   results_ce <- confusionMatrix(yhat.transformed_center, ytest[,1])
  
   #class 0
-  results <- c()
+  results_sp <- c()
   results_sp <- confusionMatrix(yhat.transformed_spec, ytest[,1])
+  
+  results_top <- c()
+  results_top <- confusionMatrix(yhat.transformed_top, ytest[,1])
+  
+  results_cen <- c()
+  results_cen <- confusionMatrix(yhat.transformed_cen, ytest[,1])
   
   print(c("optCutOff_sens:",round(optCutOff_sens,4)))
   hist(yhat.transformed_sens)
@@ -387,32 +423,49 @@ for (postProcess in 1:length(files))
   plot(cm_info_se$plot)
   dev.off()
   print(paste("error rate sens:",round(error_rate_se,4)))
-  print("yhat.transformed_center sens matrix")
+  print("yhat.transformed_sens matrix")
   print(c("n:",sum(results_se)))
   print(round(results_se/sum(results_se),4))
   
   print(c("optCutOff_center",round(optCutOff_center,4)))
+  print(paste("error rate c1:",round(error_rate_ce,4)))
+  print("yhat.transformed_center matrix")
+  print(round(results_ce/sum(results_ce),4))
   hist(yhat.transformed_center)
   #http://www.sthda.com/english/wiki/creating-and-saving-graphs-r-base-graphs
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_ce.jpg"), width = 400, height = 800)
   plot(cm_info_ce$plot)
   dev.off()
   
-  plot(cm_info_ce$plot)
-  print(paste("error rate c:",round(error_rate_ce,4)))
-  print("yhat.transformed_center conf matrix")
-  print(c("n:",sum(results_ce)))
-  print(round(results_ce/sum(results_ce),4))
+  print(c("optCutOff_cen",round(optCutOff_cen,4)))
+  print(paste("error rate c2:",round(error_rate_cen,4)))
+  print("yhat.transformed_cen matrix")
+  print(round(results_cen/sum(results_cen),4))
+  hist(yhat.transformed_cen)
+  #http://www.sthda.com/english/wiki/creating-and-saving-graphs-r-base-graphs
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_cen.jpg"), width = 400, height = 800)
+  plot(cm_info_cen$plot)
+  dev.off()
+  
+  print(c("optCutOff_top",round(optCutOff_top,4)))
+  print(paste("error rate top:",round(error_rate_top,4)))
+  print("yhat.transformed_top matrix")
+  print(round(results_top/sum(results_top),4))
+  hist(yhat.transformed_top)
+  #http://www.sthda.com/english/wiki/creating-and-saving-graphs-r-base-graphs
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_top.jpg"), width = 400, height = 800)
+  plot(cm_info_cen$plot)
+  dev.off()
   
   print(c("optCutOff_spec",round(optCutOff_spec,4)))
+  print(paste("error rate spec:",round(error_rate_sp,4)))
+  print("yhat.transformed_spec matrix")
+  print(round(results_sp/sum(results_sp),4))
   hist(yhat.transformed_spec)
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_sp.jpg"), width = 400, height = 800)
+  #http://www.sthda.com/english/wiki/creating-and-saving-graphs-r-base-graphs
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_spec.jpg"), width = 400, height = 800)
   plot(cm_info_sp$plot)
   dev.off()
-  print(paste("error rate spec:",round(error_rate_ce,4)))
-  print("yhat.transformed_spec conf matrix")
-  print(c("n:",sum(results_sp)))
-  print(round(results_sp/sum(results_sp),4))
   
   #converts to logit
   #apply new terms to class balanaced mc data
