@@ -55,8 +55,8 @@ if(floor(reloopFactor)>0)
     #holdoutSet.zeros <- cbind(holdoutSet.zeros,sample(1:nrow(set.zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
   }
 }
-preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(1:length(availableset.prenonholdout.ones), round(availableset.prenonholdout.ones*remainder)))  # 1's for training
-preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(1:length(availableset.prenonholdout.zeros), round(availableset.prenonholdout.zeros*remainder)))  # 0's for training. Pick as many 0's as 1's
+preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(1:length(availableset.prenonholdout.ones), round(length(availableset.prenonholdout.ones)*remainder)))  # 1's for training
+preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(1:length(availableset.prenonholdout.zeros), round(length(availableset.prenonholdout.zeros)*remainder)))  # 0's for training. Pick as many 0's as 1's
 
 
 #preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
