@@ -332,10 +332,18 @@ for (postProcess in 1:length(files))
   #sum(yhat.transformed)
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_center)[,,drop=FALSE]
-  colnames(ytemp)<-"yhat"
+  #colnames(ytemp)<-"yhat"
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
   cm_info_ce <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
+  
+  ytemp<-c()
+  ytemp = data.frame(yhat.transformed_sens)[,,drop=FALSE]
+  
   cm_info_se <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_sens )
+  
+  ytemp<-c()
+  ytemp = data.frame(yhat.transformed_spec)[,,drop=FALSE]
+  
   cm_info_sp <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_spec )
   #print(cm_info$data[order(cm_info$data$predict),])
 
