@@ -108,35 +108,45 @@ for (postProcess in 1:length(files))
   #training_zeros <- c()
   #bootstraping with montecarlo
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
+
+  avgCount <- c()
+  avgCount <- mean(nrow(input_ones),nrow(input_zeros))
+
   trainingData <- c()
+  ones.index <- c()
+  zeros.index <- c()
   #i=1
   #this might break depending on the size of 1's or 0's, but I hope 
-  for(i in 1:10)
+  for(i in 1:20)
   {
-    zerosA.index <- c()
-    zerosB.index <- c()
         
-    onesA.index <- c()
-    onesB.index <- c()
+    reloopFactor <- c()
+    minFactor <- c()
     
-    ones.index <- sample(1:nrow(input_ones), round(0.05*nrow(input_ones)))
-
-    ones <- c()
-    ones <- input_ones[ones.index,]
+    minFactor <- min(round(.05*nrow(input_ones)),round(.05*nrow(input_zeros)))
+    reloopFactor <- min(round(.05*nrow(input_ones)),round(.05*nrow(input_zeros)))/round(.1*avgCount)
+    remainder <- c()
+    remainder = reloopFactor-floor(reloopFactor)
     
-    zeros.index <- sample(1:nrow(input_zeros), round(0.05*nrow(input_ones)))
-
-    zeros <- c()
-    zeros <- input_zeros[zeros.index,]
+    if(floor(reloopFactor)>0)
+    {
+      for (loops in 1:floor(reloopFactor))
+      {
+        
+        ones.index <- cbind(ones.index,sample(1:nrow(input_ones), minFactor))  # 1's for training
+        zeros.index <- cbind(zeros.index,sample(1:nrow(input_zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
+      }
+    }
+    ones.index <- cbind(ones.index,sample(1:nrow(input_ones), minFactor*remainder))  # 1's for training
+    zeros.index <- cbind(zeros.index,sample(1:nrow(input_zeros), minFactor*remainder))  # 0's for training. Pick as many 0's as 1's
     
-    #training_ones <- rbind(training_ones,ones[input_ones_training_rows, ])
-    #training_zeros <- rbind(training_zeros,input_zeros[input_zeros_training_rows, ])
-  
     both <- c()
-    both <- rbind(ones, zeros)   
+    both <- rbind(input_ones[ones.index,], input_zeros[zeros.index,])
     
     trainingData <- rbind(trainingData,both)
-  }
+  
+  }  
+  summary(trainingData)
   
   x <- c()
   y <- c()
