@@ -1025,7 +1025,7 @@ Category Flags
 		added logging of error pairs so I can compare with final tabulated results if it was one of the ones I found significant or not to be concerned.
 		error logging did not work and took me over 4 hours of troubleshooting to fallback on a hack of writing a csv to the output folder to log the event... rbind will output to console (but not to a dataframe in an errorloop?)
 
-	Milestone 15 8cab9d0
+	Milestone 15 ca9100c
 		I output to jpg's and apply mc model to population as well as derive rmse of cv mc model against population as well as population model against itself using round(logit)
 		
 		V7118
@@ -1495,6 +1495,8 @@ Category Flags
 			 3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
+		Milestone 16
+			Proportional symmetrical class balancing
 
 Number of Fisher Scoring iterations: 4
 

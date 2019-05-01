@@ -33,8 +33,34 @@ availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.ones)]
 
 preNonHoldoutSet.ones <- c()
 preNonHoldoutSet.zeros <- c()
-preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
-preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
+
+avgCount <- c()
+avgCount <- mean(length(availableset.prenonholdout.ones),length(availableset.prenonholdout.zeros))
+
+reloopFactor <- c()
+minFactor <- c()
+minFactor <- min(round(preNonHoldOutSize*nrow(availableset.prenonholdout.ones)),round(preNonHoldOutSize*nrow(set.zeros)))
+reloopFactor <- min(round(preNonHoldOutSize*nrow(availableset.prenonholdout.ones)),round(preNonHoldOutSize*nrow(availableset.prenonholdout.zeros)))/round(preNonHoldOutSize*avgCount)
+remainder <- c()
+remainder = reloopFactor-floor(reloopFactor)
+
+if(floor(reloopFactor)>0)
+{
+  for (loops in 1:floor(reloopFactor))
+  {
+    preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(availableset.prenonholdout.ones, minFactor))
+    preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(availableset.prenonholdout.zeros, minFactor))
+    
+    #holdoutSet.ones <- cbind(holdoutSet.ones,sample(1:nrow(set.ones), minFactor))  # 1's for training
+    #holdoutSet.zeros <- cbind(holdoutSet.zeros,sample(1:nrow(set.zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
+  }
+}
+preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(1:nrow(availableset.prenonholdout.ones), round(availableset.prenonholdout.ones*remainder)))  # 1's for training
+preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(1:nrow(availableset.prenonholdout.zeros), round(availableset.prenonholdout.zeros*remainder)))  # 0's for training. Pick as many 0's as 1's
+
+
+#preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
+#preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
 
 #NewDF.preNonHoldoutSet <- c()
 #NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]
