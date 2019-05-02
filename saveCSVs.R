@@ -28,32 +28,57 @@ set.seed(5)
 library(caret)
 
 #works
-#threshold=.25
+threshold=.25
 #threshold=.275
-threshold=.35
+#threshold=.35
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
-sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+
 source(paste0(sourceDir,"unbalanced_functions.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
 
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
-ys <- c() 
-ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
-ynames <- c()
-for (i in 1:length(files))
+
+linux=0
+if(linux)
 {
-  temp <- c()
-  yname <- c()
-  print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
-  temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
-  yname <- substr(temp, 0, 5)
-  ynames <- rbind(ynames,yname)
+  sourceDir="/home/rstudio/577/Capstone-577/"
+  
+  ys <- c() 
+  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+  ynames <- c()
+  for (i in 1:length(files))
+  {
+    temp <- c()
+    yname <- c()
+    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
+    yname <- substr(temp, 0, 5)
+    ynames <- rbind(ynames,yname)
+  }
+  ynames
 }
-ynames
+if(!linux)
+{
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  
+  ys <- c() 
+  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+  ynames <- c()
+  for (i in 1:length(files))
+  {
+    temp <- c()
+    yname <- c()
+    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output/"))
+    yname <- substr(temp, 0, 5)
+    ynames <- rbind(ynames,yname)
+  }
+  ynames
+}
+
 #set.seed(100)  # for repeatability of samples
 
 #postProcess=1

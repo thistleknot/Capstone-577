@@ -47,7 +47,7 @@ source(paste0(sourceDir,"sub_returnCVNames.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
 
-linux=1
+linux=0
 if(linux)
 {
   zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
