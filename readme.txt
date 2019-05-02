@@ -1497,8 +1497,8 @@ Category Flags
 			 3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
-		Milestone 16
-			Proportional symmetrical class balancing achieved via stratified resampling 235e221
+		Milestone 16 
+			Proportional symmetrical class balancing achieved via stratified resampling 235e221 - 7cebb6c
 			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
 			
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
