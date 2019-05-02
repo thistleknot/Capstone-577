@@ -37,6 +37,7 @@ train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 #sourceDir="/home/rstudio/577/Capstone-577/"
 sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"unbalanced_functions.R"))
+source(paste0(sourceDir,"sub_returnCVNames.R"))
 
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
@@ -109,68 +110,87 @@ for (postProcess in 1:length(files))
   #bootstraping with montecarlo
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
 
-  avgCount <- c()
-  avgCount <- mean(nrow(input_ones),nrow(input_zeros))
+  avgCountHalved <- c()
+  avgCountHalved <- mean(nrow(input_ones),nrow(input_zeros))/2
 
   trainingData <- c()
   ones.index <- c()
   zeros.index <- c()
+  
+  reloopFactor <- c()
+  minFactor <- c()
+  
+  minFactor <- min(round(.1*nrow(input_ones)),round(.1*nrow(input_zeros)))
+  reloopFactor <- min(round(.1*nrow(input_ones)),round(.1*nrow(input_zeros)))/round(.1*avgCountHalved)
+  remainder <- c()
+  remainder = reloopFactor-floor(reloopFactor)  
   #i=1
   #this might break depending on the size of 1's or 0's, but I hope 
-  for(i in 1:20)
+  for(i in 1:10)
   {
-        
-    reloopFactor <- c()
-    minFactor <- c()
-    
-    minFactor <- min(round(.05*nrow(input_ones)),round(.05*nrow(input_zeros)))
-    reloopFactor <- min(round(.05*nrow(input_ones)),round(.05*nrow(input_zeros)))/round(.1*avgCount)
-    remainder <- c()
-    remainder = reloopFactor-floor(reloopFactor)
-    
+   
     if(floor(reloopFactor)>0)
     {
       for (loops in 1:floor(reloopFactor))
       {
-        
-        ones.index <- cbind(ones.index,sample(1:nrow(input_ones), minFactor))  # 1's for training
-        zeros.index <- cbind(zeros.index,sample(1:nrow(input_zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
+        #generates index and samples in place.  I have to do this, else repeat index's get stored as .1's and .2' respectively
+        ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor),])  # 1's for training
+        zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor),])  # 0's for training. Pick as many 0's as 1's
       }
     }
-    ones.index <- cbind(ones.index,sample(1:nrow(input_ones), minFactor*remainder))  # 1's for training
-    zeros.index <- cbind(zeros.index,sample(1:nrow(input_zeros), minFactor*remainder))  # 0's for training. Pick as many 0's as 1's
+    ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor*remainder),])  # 1's for training
+    zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
     
     both <- c()
-    both <- rbind(input_ones[ones.index,], input_zeros[zeros.index,])
+    both <- rbind(ones.index, zeros.index)
     
-    trainingData <- rbind(trainingData,both)
+    #https://stackoverflow.com/questions/2370515/how-to-get-row-index-number-in-r
+    mix <- c()
+    mix <- sample(c(rownames(both)),round(nrow(both)/2))
+    
+    #mix <- sample(both,length(both)/2)
+    #colnames(mix) <- colnames(trainingData)
+    trainingData <- rbind(trainingData, both[mix,])
   
   }  
-  summary(trainingData)
+  finalTraining <- c()
+  finalTrainingI <- c()
+  size <- c()
+  size <- round(nrow(trainingData)/10)
+  finalTrainingI <- sample(c(rownames(trainingData)),size)
+  finalTraining <- trainingData[finalTrainingI,]
+  nrow(finalTraining)
+  summary(finalTraining)
   
   x <- c()
   y <- c()
-  y <- trainingData[,1,drop=FALSE]
-  x <- trainingData[,-1,drop=FALSE]
+  y <- finalTraining[,1,drop=FALSE]
+  x <- finalTraining[,-1,drop=FALSE]
 
   holderOfData <- c()
   holderOfData <- cbind(x,y)
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
+  holderOfDataI <- c()
+  holderOfDataI <- sample(1:nrow(finalTraining),round(nrow(finalTraining)*.5))
+  nrow(finalTraining[holderOfDataI,])
   
-  terms <- B$BestModel$coefficients[-1]
-  print(terms)
-  names2 <- c()
-  names2 <- row.names(data.frame(terms))
+  terms <- c()
+  terms <- sub_returnCVNames(finalTraining[holderOfDataI,])
+  #B <- suppressMessages(bestglm(Xy = finalTraining[holderOfDataI,], IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=10, BestModels = 10), family=binomial))
+  #B <- lm()
   
-  
-  print(summary(trainingData))
+  print(summary(finalTraining[holderOfDataI,]))
   #print(summary(training_zeros))
   
   trainModel <- c()
-  trainModel <- B$BestModel
-  holderOfData <- c()
-  holderOfData <- cbind(trainingData[-1,],trainingData[1,])
-  #trainModel <- glm(holderOfData,family=binomial(link="logit"))
+  #trainModel <- B$BestModel
+ 
+  #trainModel <- glm(finalTraining[holderOfDataI,][c(terms,yname)],family=binomial(link="logit"))
+  #finalTraining[holderOfDataI,][c(terms,yname)]
+  
+  filtered2 <- c()
+  filtered2 <- finalTraining[holderOfDataI,][c(yname,terms)]
+  #train(x,y)
+  trainModel <- train(x=filtered2[-1], y=as.factor(filtered2[,1]),method = "glm",trControl = train.control)
   
   #any column
   #https://stackoverflow.com/questions/46285484/if-any-column-in-a-row-meets-condition-than-mutate-column
@@ -179,6 +199,9 @@ for (postProcess in 1:length(files))
   #includes proportion of variance
   summary(prcomp(x, center=TRUE, scale=TRUE))
   pca <- summary(prcomp(x, center=TRUE, scale=TRUE))$importance
+  
+  trainingData <- c()
+  trainingData <- finalTraining[holderOfDataI,][c(yname,terms)]
   #pc plot
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"pcaPct.jpg"), width = 400, height = 400)
   #plot(pca[3,1:ncol(pca)])
@@ -202,7 +225,7 @@ for (postProcess in 1:length(files))
  
   #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("MC summary")
-  print(summary(trainModel))
+  print(summary(trainModel$finalModel))
   
   #res <- cor(data.train)
   res <- cor(trainingData)
@@ -210,8 +233,8 @@ for (postProcess in 1:length(files))
   corrplot(res)
   dev.off()
   
-  x= c()
-  y= c()
+  #x= c()
+  #y= c()
   #yname <- c()
   
   #x=data.train[,-1]
@@ -231,7 +254,7 @@ for (postProcess in 1:length(files))
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
   predicted <- c()
-  predicted <- plogis(predict(trainModel, trainingData[-1]))  # predicted scores
+  predicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   #summary(predicted)
   
   yhat <- round(predicted)
@@ -242,7 +265,7 @@ for (postProcess in 1:length(files))
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCytestdiffyhat.jpg"), width = 400, height = 400)
   #diff <- c()
   #diff <- ytest-yhat
-  hist(trainModel$residuals)
+  hist(trainModel$finalModel$residuals)
   dev.off()
   
   pred <- prediction(yhat,ytest)
@@ -470,7 +493,7 @@ for (postProcess in 1:length(files))
   #converts to logit
   #apply new terms to class balanaced mc data
   tempNew <- c()
-  tempNew <- trainingData[names2]
+  tempNew <- trainingData[terms]
   
   trainModel <- c()
   holderOfData <- c()
@@ -485,7 +508,7 @@ for (postProcess in 1:length(files))
   #print(summary(B$BestModel))
   
   filtered2 <- c()
-  filtered2 <- NewDF[,as.character(c(yname,names2)), drop=FALSE]
+  filtered2 <- NewDF[,as.character(c(yname,terms)), drop=FALSE]
   filtered2[filtered2 == 0] <- NA
   temp <- filtered2[] %>% filter_all(all_vars(!is.na(.)))
   filtered2 <- temp
@@ -493,14 +516,15 @@ for (postProcess in 1:length(files))
   
   colnames(trainingData)
   
-  predMCPop <- plogis(predict(B$BestModel, filtered2[names2]))  # predicted scores
+  predMCPop <- plogis(predict(B$BestModel, filtered2[terms]))  # predicted scores
   
   print(c("MC model applied to Pop :",(rmse((filtered2[,1]),(round(predMCPop))))))
   
   #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
-  popModel <- glm(holderOfData,family=binomial(link="logit"))
+  popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  #popModel <- glm(holderOfData,family=binomial(link="logit"))
   
-  predPop <- plogis(predict(popModel, filtered2[names2]))  # predicted scores
+  predPop <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
   
   print(c("Pop model applied to pop :",(rmse((filtered2[,1]),(round(predPop))))))
 
@@ -518,7 +542,7 @@ for (postProcess in 1:length(files))
   print("CV Model applied to population")
   
   #CV terms applied to population
-  print(summary(popModel))
+  print(summary(popModel$finalModel))
   print(summary(filtered2))
   
   #removed medianDirection

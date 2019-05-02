@@ -1,3 +1,5 @@
+Error in qk[, 4] : incorrect number of dimensions
+
 Input	
 
 	10 holdout's of 10% x 2 = 200%

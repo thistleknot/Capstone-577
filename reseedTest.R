@@ -31,13 +31,13 @@ holdoutSet.zeros <- c()
 
 #stratified resampling
 #this ends up bootstrapping the amounts found in the population vs focusingg on a clean set of 1's then grabbing 0's
-avgCount <- c()
-avgCount <- mean(nrow(set.ones),nrow(set.zeros))
+avgCountHalved <- c()
+avgCountHalved <- mean(nrow(set.ones),nrow(set.zeros))/2
 
 reloopFactor <- c()
 minFactor <- c()
 minFactor <- min(round(holdoutSetSize*nrow(set.ones)),round(holdoutSetSize*nrow(set.zeros)))
-reloopFactor <- min(round(holdoutSetSize*nrow(set.ones)),round(holdoutSetSize*nrow(set.zeros)))/round(holdoutSetSize*avgCount)
+reloopFactor <- min(round(holdoutSetSize*nrow(set.ones)),round(holdoutSetSize*nrow(set.zeros)))/round(holdoutSetSize*avgCountHalved)
 remainder <- c()
 remainder = reloopFactor-floor(reloopFactor)
 

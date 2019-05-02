@@ -34,13 +34,13 @@ availableset.prenonholdout.zeros <- rangeZeros[-c(set.holdoutSet.ones)]
 preNonHoldoutSet.ones <- c()
 preNonHoldoutSet.zeros <- c()
 
-avgCount <- c()
-avgCount <- mean(length(availableset.prenonholdout.ones),length(availableset.prenonholdout.zeros))
+avgCountHalved <- c()
+avgCountHalved <- mean(length(availableset.prenonholdout.ones),length(availableset.prenonholdout.zeros))/2
 
 reloopFactor <- c()
 minFactor <- c()
 minFactor <- min(round(preNonHoldOutSize*length(availableset.prenonholdout.ones)),round(preNonHoldOutSize*length(availableset.prenonholdout.zeros)))
-reloopFactor <- min(round(preNonHoldOutSize*length(availableset.prenonholdout.ones)),round(preNonHoldOutSize*length(availableset.prenonholdout.zeros)))/round(preNonHoldOutSize*avgCount)
+reloopFactor <- min(round(preNonHoldOutSize*length(availableset.prenonholdout.ones)),round(preNonHoldOutSize*length(availableset.prenonholdout.zeros)))/round(preNonHoldOutSize*avgCountHalved)
 remainder <- c()
 remainder = reloopFactor-floor(reloopFactor)
 
