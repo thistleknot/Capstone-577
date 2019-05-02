@@ -33,7 +33,7 @@ library(stringr)
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
-pre_percent=.05
+pre_percent=.1
 #used for resample r scripts to round/up down to sample sizes
 #max precision is # of records
 #precisionSize=182338*4
@@ -47,8 +47,20 @@ source(paste0(sourceDir,"sub_returnCVNames.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 # Read CSV into R
 
-zipF<- "C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577\\Capstone-577.zip"
-outDir<-"C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577"
+linux=1
+if(linux)
+{
+  zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
+  outDir <- "/home/rstudio/577/Capstone-577/"
+  sourceDir="/home/rstudio/577/Capstone-577/"
+  
+}
+if(!linux)
+{
+  zipF<- "C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577\\Capstone-577.zip"
+  outDir<-"C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577"
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+}
 unzip(zipF,exdir=outDir)
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
