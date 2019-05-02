@@ -235,7 +235,7 @@ NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.doubl
   print(c("min one:",round(minone,3)))
   print(c("min zero:",round(minzero,3)))
   
-  write.csv(percentTableList,paste0(sourceDir,flister,"percentTableList.csv"))
+  #write.csv(percentTableList,paste0(sourceDir,flister,"percentTableList.csv"))
   
   #print(c(filterList))
   

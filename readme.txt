@@ -1498,7 +1498,7 @@ Category Flags
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
 		Milestone 16
-			Proportional symmetrical class balancing
+			Proportional symmetrical class balancing 235e221
 
 Number of Fisher Scoring iterations: 4
 
