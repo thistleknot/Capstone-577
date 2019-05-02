@@ -6,9 +6,6 @@
 #CSUF
 #2019 month of April
 #over 400 commits
-
-preset_percent=.10
-
 #https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
 list.of.packages <- c("dplyr", "plyr","RPostgreSQL","ggplot2","anchors","caret","corrplot","MASS","car","leaps","bestglm","compare","R.utils","tidyr","stringr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -205,7 +202,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(100))
+  for(widthDiviser in c(10))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
@@ -323,22 +320,20 @@ for (medianDirection in c("greaterEqual"))
           #setup holdout
           
           #static holdout
-          #holdoutSetSize = widthDiviser/100
-          holdoutSetSize = preset_percent/100
+          holdoutSetSize = widthDiviser/100
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
-          holdoutSize=1
+          holdoutSize=1/3
           #holdoutSize = 1/3 #(of set) #(never fully iterates over subsample)
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          #preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          preNonHoldOutSize = (holdoutSetSize)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #was using an underOverCoefficient which meant <1 = (never fully iterates over subsample)
           #% of training resamples from static nonholdout
-          preTrainSize = 1
+          preTrainSize = 1/3
           #preTrainSize = 1/3 #
           
           #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
@@ -375,7 +370,8 @@ for (medianDirection in c("greaterEqual"))
           #run through testing
           #tabulate common terms
           #resample=1
-          for (resample in 1:1)
+          #have to have more than 1 resample due to resampling from both 1's and 0's from one of the lower files (either MCResample or Redraw)
+          for (resample in 1:3)
           {
             #rather than move to end of file
             if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
@@ -744,7 +740,7 @@ for (medianDirection in c("greaterEqual"))
             #due to the chance of no results on both sides two passes from na's, /8
             #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
             print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
-            #print(print_tabled)
+            print(print_tabled)
             #end if nrow !=0            
             
             #end of MC
