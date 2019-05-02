@@ -28,9 +28,10 @@ set.seed(5)
 library(caret)
 
 #works
-threshold=.25
+#threshold=.25
 #threshold=.275
-#threshold=.35
+#threshold=.33
+threshold=.35
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
@@ -81,7 +82,7 @@ if(!linux)
 
 #set.seed(100)  # for repeatability of samples
 
-#postProcess=1
+#postProcess=2
 for (postProcess in 1:length(files))
 { 
   print(files[postProcess])
@@ -211,6 +212,7 @@ for (postProcess in 1:length(files))
   filtered2 <- c()
   filtered2 <- finalTraining[holderOfDataI,][c(yname,terms)]
   #train(x,y)
+  #trainModel$finalModel
   trainModel <- train(x=filtered2[-1], y=as.factor(filtered2[,1]),method = "glm",trControl = train.control)
   
   #any column
@@ -537,7 +539,10 @@ for (postProcess in 1:length(files))
   
   colnames(trainingData)
   
-  predMCPop <- plogis(predict(B$BestModel, filtered2[terms]))  # predicted scores
+  predMCPopModel <- c()
+  predMCPopModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  
+  predMCPop <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
   
   print(c("MC model applied to Pop :",(rmse((filtered2[,1]),(round(predMCPop))))))
   
