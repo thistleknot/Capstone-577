@@ -1500,6 +1500,8 @@ Category Flags
 		Milestone 16 
 			Proportional symmetrical class balancing achieved via stratified resampling 235e221 - 7cebb6c
 			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
+			threshold set to .35
+			rebalanced classes means cutoff thresholds of .5 for confusion matrix
 			
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
 			[1] "y:"    "V7118"
