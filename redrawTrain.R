@@ -16,8 +16,10 @@ set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
 setIndex.ones <- eval(parse(text=paste("combined.preTrain.ones.",pairedname, sep = "")))
 setIndex.zeros <- eval(parse(text=paste("combined.preTrain.zeros.",pairedname, sep = "")))
 
-ones <- set.ones[setIndex.ones,]
-zeros <- set.zeros[setIndex.zeros,]
+#ones <- set.ones[setIndex.ones,]
+ones <- setIndex.ones
+#zeros <- set.zeros[setIndex.zeros,]
+zeros <- setIndex.zeros
 
 data.train <- c()
 data.train <- rbind(ones,zeros)

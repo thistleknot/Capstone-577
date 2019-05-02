@@ -48,19 +48,13 @@ if(floor(reloopFactor)>0)
 {
   for (loops in 1:floor(reloopFactor))
   {
-    preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(availableset.prenonholdout.ones, minFactor))
-    preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(availableset.prenonholdout.zeros, minFactor))
-    
-    #holdoutSet.ones <- cbind(holdoutSet.ones,sample(1:nrow(set.ones), minFactor))  # 1's for training
-    #holdoutSet.zeros <- cbind(holdoutSet.zeros,sample(1:nrow(set.zeros), minFactor))  # 0's for training. Pick as many 0's as 1's
+    #generates index and samples in place.  I have to do this, else repeat index's get stored as .1's and .2' respectively
+    preNonHoldoutSet.ones <- rbind(preNonHoldoutSet.ones,availableset.prenonholdout.ones[sample(availableset.prenonholdout.ones, minFactor),])
+    preNonHoldoutSet.zeros <- rbind(preNonHoldoutSet.zeros,availableset.prenonholdout.zeros[sample(availableset.prenonholdout.zeros, minFactor),])
   }
 }
-preNonHoldoutSet.ones <- cbind(preNonHoldoutSet.ones,sample(1:length(availableset.prenonholdout.ones), round(length(availableset.prenonholdout.ones)*remainder)))  # 1's for training
-preNonHoldoutSet.zeros <- cbind(preNonHoldoutSet.zeros,sample(1:length(availableset.prenonholdout.zeros), round(length(availableset.prenonholdout.zeros)*remainder)))  # 0's for training. Pick as many 0's as 1's
-
-
-#preNonHoldoutSet.ones <- sample(availableset.prenonholdout.ones, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
-#preNonHoldoutSet.zeros <- sample(availableset.prenonholdout.zeros, round(preNonHoldOutSize*length(availableset.prenonholdout.ones)))
+preNonHoldoutSet.ones <- rbind(preNonHoldoutSet.ones,availableset.prenonholdout.ones[sample(1:length(availableset.prenonholdout.ones), round(length(availableset.prenonholdout.ones)*remainder)),])  # 1's for training
+preNonHoldoutSet.zeros <- rbind(preNonHoldoutSet.zeros,availableset.prenonholdout.zeros[sample(1:length(availableset.prenonholdout.zeros), round(length(availableset.prenonholdout.zeros)*remainder)),])  # 0's for training. Pick as many 0's as 1's
 
 #NewDF.preNonHoldoutSet <- c()
 #NewDF.preNonHoldoutSet <- NewDF[-holdoutSet,][preNonHoldoutSet,]

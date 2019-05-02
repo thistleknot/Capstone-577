@@ -9,15 +9,17 @@ setIndex.zeros <- c()
 data.test <- c()
 
 #set <- eval(parse(text=paste("combined.",pairedname, sep = "")))
-set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
-set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
+#set.ones <- eval(parse(text=paste("combined.ones.",pairedname, sep = "")))
+#set.zeros <- eval(parse(text=paste("combined.zeros.",pairedname, sep = "")))
 
 #setIndex <- eval(parse(text=paste("combined.holdout.",pairedname, sep = "")))
 setIndex.ones <- eval(parse(text=paste("combined.holdout.ones.",pairedname, sep = "")))
 setIndex.zeros <- eval(parse(text=paste("combined.holdout.zeros.",pairedname, sep = "")))
 
-ones <- set.ones[setIndex.ones,]
-zeros <- set.zeros[setIndex.zeros,]
+#ones <- set.ones[setIndex.ones,]
+ones <- setIndex.ones
+#zeros <- set.zeros[setIndex.zeros,]
+zeros <- setIndex.zeros
 
 #data.test <- set[setIndex,]
 data.test <- rbind(ones,zeros)

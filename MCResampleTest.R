@@ -24,7 +24,7 @@ holdout.onesA <- c()
 holdout.onesB <- c()
 
 #MC resample
-holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
+holdout.ones <- sample(c(rownames(setIndex.ones)), round(holdoutSize*length(setIndex.ones)))
 #nrow(set.ones)
 #View(set.ones)
 #set.ones[32124,]
@@ -32,7 +32,7 @@ holdout.ones <- sample(setIndex.ones, round(holdoutSize*length(setIndex.ones)))
 #see http://r-statistics.co/Logistic-Regression-With-R.html
 ## 0's for training. Pick as many 0's as 1's
 #specific undersampling/oversampling
-holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.ones)))
+holdout.zeros <- sample(c(rownames(setIndex.zeros)), round(holdoutSize*length(setIndex.ones)))
 #length(holdout.zeros)
 #length(holdout.ones)
 
@@ -41,6 +41,6 @@ holdout.zeros <- sample(setIndex.zeros, round(holdoutSize*length(setIndex.ones))
 #not holdoutset, holdout are derived FROM holdoutset, confusing because
 #I make references to dataframes as set's aside from the naming convention of holdout and holdoutSet
 #assign(paste("combined.holdout.",pairedname, sep = ""), holdout) 
-assign(paste("combined.holdout.ones.",pairedname, sep = ""), holdout.ones) 
-assign(paste("combined.holdout.zeros.",pairedname, sep = ""), holdout.zeros) 
+assign(paste("combined.holdout.ones.",pairedname, sep = ""), setIndex.ones[holdout.ones,]) 
+assign(paste("combined.holdout.zeros.",pairedname, sep = ""), setIndex.zeros[holdout.zeros,]) 
 #length(holdout)

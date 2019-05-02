@@ -13,13 +13,13 @@ setIndex.ones <- eval(parse(text=paste("combined.preNonHoldoutSet.ones.",pairedn
 setIndex.zeros <- eval(parse(text=paste("combined.preNonHoldoutSet.zeros.",pairedname, sep = "")))
 #nrow(set.ones)
 #preTrain <- c()
-preTrain.ones <- sample(setIndex.ones, round(preTrainSize*length(setIndex.ones)))
+preTrain.ones <- sample(c(rownames(setIndex.ones)), round(preTrainSize*length(setIndex.ones)))
 ## 0's for training. Pick as many 0's as 1's
-preTrain.zeros <- sample(setIndex.zeros, round(preTrainSize*length(setIndex.ones)))
+preTrain.zeros <- sample(c(rownames(setIndex.zeros)), round(preTrainSize*length(setIndex.ones)))
 #NewDF.preTrain <- c()
 #NewDF.preTrain <- NewDF.preNonHoldoutSet[preTrain,,drop=FALSE]
 
-assign(paste("combined.preTrain.ones.",pairedname, sep = ""), preTrain.ones)
-assign(paste("combined.preTrain.zeros.",pairedname, sep = ""), preTrain.zeros) 
+assign(paste("combined.preTrain.ones.",pairedname, sep = ""), setIndex.ones[preTrain.ones,])
+assign(paste("combined.preTrain.zeros.",pairedname, sep = ""), setIndex.zeros[preTrain.zeros,]) 
 
 #don't call resampleMC.R from within this, you don't have the nameList yet, this is only index
