@@ -189,7 +189,7 @@ colnames(cleandata)
 #Since there are no missing values we export the data
 #write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
 
-#suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
+suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 #medianDirection = "greaterEqual"
 #for (medianDirection in c("greaterEqual"))
@@ -324,8 +324,8 @@ for (medianDirection in c("greaterEqual"))
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
-          #holdoutSize=1
-          holdoutSize = 1/3 #(of set) #(never fully iterates over subsample)
+          holdoutSize=1
+          #holdoutSize = 1/3 #(of set) #(never fully iterates over subsample)
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
@@ -333,8 +333,8 @@ for (medianDirection in c("greaterEqual"))
           
           #was using an underOverCoefficient which meant <1 = (never fully iterates over subsample)
           #% of training resamples from static nonholdout
-          #preTrainSize = 1
-          preTrainSize = 1/3 #
+          preTrainSize = 1
+          #preTrainSize = 1/3 #
           
           #taken from a "static" nonHoldoutSet (i.e. excluded from monte carlo)
           #monte carlo resamples from a static holdout
@@ -370,7 +370,7 @@ for (medianDirection in c("greaterEqual"))
           #run through testing
           #tabulate common terms
           #resample=1
-          for (resample in 1:3)
+          for (resample in 1:1)
           {
             #rather than move to end of file
             if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
@@ -768,4 +768,4 @@ for (medianDirection in c("greaterEqual"))
 }
 #unfortunately this relies on NewDF at the moment.  Either I need to reduce NewDF to it's own file/function or write it out to a .csv
 source(paste0(sourceDir,"saveCSVs.R"))
-source(paste0(sourceDir,"4thpass.R"))
+#source(paste0(sourceDir,"4thpass.R"))
