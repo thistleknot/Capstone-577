@@ -21,6 +21,7 @@ ones <- setIndex.ones
 #zeros <- set.zeros[setIndex.zeros,]
 zeros <- setIndex.zeros
 
+#the reason data.test is a different size than data.train is because when I filter the # of monte carlo resampled ones and zeros away from the nonholdout.  They are uniques.  Anyways, the 50/50 split undersamples/oversamples and uniques removes that affect and this added to the fact that I remove the ones and zeros I'm using gives me new pool totals to pull from when I do reseedTrain for prenonholdout excluding the unique holdoutset ids
 #data.test <- set[setIndex,]
 data.test <- rbind(ones,zeros)
 #summary(data.test)

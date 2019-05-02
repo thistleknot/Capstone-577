@@ -24,7 +24,7 @@ holdout.onesA <- c()
 holdout.onesB <- c()
 
 #MC resample
-holdout.ones <- sample(c(rownames(setIndex.ones)), round(holdoutSize*length(setIndex.ones)))
+holdout.ones <- sample(c(rownames(setIndex.ones)), round(holdoutSize*nrow(setIndex.ones)))
 #nrow(set.ones)
 #View(set.ones)
 #set.ones[32124,]
@@ -32,7 +32,7 @@ holdout.ones <- sample(c(rownames(setIndex.ones)), round(holdoutSize*length(setI
 #see http://r-statistics.co/Logistic-Regression-With-R.html
 ## 0's for training. Pick as many 0's as 1's
 #specific undersampling/oversampling
-holdout.zeros <- sample(c(rownames(setIndex.zeros)), round(holdoutSize*length(setIndex.ones)))
+holdout.zeros <- sample(c(rownames(setIndex.zeros)), round(holdoutSize*nrow(setIndex.ones)))
 #length(holdout.zeros)
 #length(holdout.ones)
 

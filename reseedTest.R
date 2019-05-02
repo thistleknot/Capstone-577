@@ -46,8 +46,8 @@ if(floor(reloopFactor)>0)
   for (loops in 1:floor(reloopFactor))
   {
     #generates index and samples in place.  I have to do this, else repeat index's get stored as .1's and .2' respectively
-    holdoutSet.ones <- rbind(holdoutSet.ones,set.ones[sample(1:nrow(set.ones), minFactor),])  # 1's for training
-    holdoutSet.zeros <- rbind(holdoutSet.zeros,set.zeros[sample(1:nrow(set.zeros), minFactor),])  # 0's for training. Pick as many 0's as 1's
+    holdoutSet.ones <- rbind(holdoutSet.ones,set[sample(c(as.numeric(rownames((set.ones)))), minFactor),])  # 1's for training
+    holdoutSet.zeros <- rbind(holdoutSet.zeros,set[sample(c(as.numeric(rownames((set.zeros)))), minFactor),])  # 0's for training. Pick as many 0's as 1's
     #ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor),])  # 1's for training
     #zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor),])  # 0's for training. Pick as many 0's as 1's
   }
@@ -55,9 +55,11 @@ if(floor(reloopFactor)>0)
 #ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor*remainder),])  # 1's for training
 #zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
 
-holdoutSet.ones <- rbind(holdoutSet.ones,set.ones[sample(1:nrow(set.ones), round(minFactor*remainder)),])  # 1's for training
-holdoutSet.zeros <- rbind(holdoutSet.zeros,set.zeros[sample(1:nrow(set.zeros), round(minFactor*remainder)),])  # 0's for training. Pick as many 0's as 1's
-
+holdoutSet.ones <- rbind(holdoutSet.ones,set[sample(c(as.numeric(rownames((set.ones)))), minFactor*remainder),])  # 1's for training
+holdoutSet.zeros <- rbind(holdoutSet.zeros,set[sample(c(as.numeric(rownames((set.zeros)))), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
+#nrow(set.ones)
+#max(as.numeric(rownames(set.ones)))
+#max(as.numeric(rownames(holdoutSet.ones)))
 #focus on a clean set of ones, then zeros
 #holdoutSet.ones <- sample(1:nrow(set.ones), round(holdoutSetSize*nrow(set.ones)))  # 1's for training
 #holdoutSet.zeros <- sample(1:nrow(set.zeros), round(holdoutSetSize*nrow(set.ones)))  # 0's for training. Pick as many 0's as 1's
