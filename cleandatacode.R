@@ -744,7 +744,7 @@ for (medianDirection in c("greaterEqual"))
             #due to the chance of no results on both sides two passes from na's, /8
             #*2 for 2 pairs per x2 columns x 2 passes (ond holdout and training)
             print_tabled <- round(table(tabulatedCrossValidated, useNA = "ifany")/numRuns/2,3)
-            print(print_tabled)
+            #print(print_tabled)
             #end if nrow !=0            
             
             #end of MC
