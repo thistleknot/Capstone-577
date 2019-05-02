@@ -510,7 +510,7 @@ for (medianDirection in c("greaterEqual"))
                     result <- sub_returnCVNames(data.train)
                   },
                   error = function(e) {
-                    result <- sub_returnCVNames(data.train[sample(1:nrow(data.train),round(nrow(data.train)*.5)),]) #write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-n",nrow(data.train),medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
+                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
                   }
                   ,
                   warning = function(w){
