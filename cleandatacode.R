@@ -33,7 +33,7 @@ library(stringr)
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
-
+pre_percent=.05
 #used for resample r scripts to round/up down to sample sizes
 #max precision is # of records
 #precisionSize=182338*4
@@ -245,7 +245,7 @@ for (medianDirection in c("greaterEqual"))
           #setup holdout
           
           #static holdout
-          holdoutSetSize = widthDiviser/100
+          holdoutSetSize = pre_percent
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
@@ -254,7 +254,8 @@ for (medianDirection in c("greaterEqual"))
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          #same size as holdout
+          preNonHoldOutSize = (pre_percent)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #was using an underOverCoefficient which meant <1 = (never fully iterates over subsample)
           #% of training resamples from static nonholdout
