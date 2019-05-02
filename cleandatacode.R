@@ -6,6 +6,9 @@
 #CSUF
 #2019 month of April
 #over 400 commits
+
+preset_percent=.10
+
 #https://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
 list.of.packages <- c("dplyr", "plyr","RPostgreSQL","ggplot2","anchors","caret","corrplot","MASS","car","leaps","bestglm","compare","R.utils","tidyr","stringr")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
@@ -50,7 +53,7 @@ sub_returnCV <- function(data_sent){
   #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   result <- c()
   #return all coefficients
@@ -78,7 +81,7 @@ sub_returnCVNames <- function(data_sent){
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
   if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -202,12 +205,12 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(10))
+  for(widthDiviser in c(100))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
     if (widthDiviser == 1) train.control <- trainControl(method = "repeatedcv", number = 2, repeats = widthDiviser)
-    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
+    if (!(widthDiviser == 1)) train.control <- trainControl(method = "repeatedcv", number = 3, repeats = 1)
     
     #so if 3, has to exist in > 1.5 subsamples
     #hard coded
@@ -320,7 +323,8 @@ for (medianDirection in c("greaterEqual"))
           #setup holdout
           
           #static holdout
-          holdoutSetSize = widthDiviser/100
+          #holdoutSetSize = widthDiviser/100
+          holdoutSetSize = preset_percent/100
           #holdoutSetSize = 1.25/100
           
           #% to resample from resampled static hold out set
@@ -329,7 +333,8 @@ for (medianDirection in c("greaterEqual"))
           
           #proportion of nonHoldout (i.e. nonholdout: 1-holdoutSize) to use for model building, i.e. sample size.  Holdout can be tuned independently kind of.
           #preNonHoldOutSize = (1.25/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
-          preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          #preNonHoldOutSize = (widthDiviser/100)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
+          preNonHoldOutSize = (holdoutSetSize)/(1-holdoutSetSize) #forces it to be 5%, opposite is used for nonholdout
           
           #was using an underOverCoefficient which meant <1 = (never fully iterates over subsample)
           #% of training resamples from static nonholdout
