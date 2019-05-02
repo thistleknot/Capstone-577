@@ -1498,7 +1498,8 @@ Category Flags
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
 		Milestone 16
-			Proportional symmetrical class balancing 235e221
+			Proportional symmetrical class balancing achieved via stratified resampling 235e221
+			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
 
 Number of Fisher Scoring iterations: 4
 

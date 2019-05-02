@@ -28,14 +28,14 @@ set.seed(5)
 library(caret)
 
 #works
-threshold=.25
+#threshold=.25
 #threshold=.275
-#threshold=.33
+threshold=.35
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
-#sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"unbalanced_functions.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
 
@@ -49,17 +49,13 @@ for (i in 1:length(files))
   temp <- c()
   yname <- c()
   print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
-  temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output/"))
+  temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
   yname <- substr(temp, 0, 5)
   ynames <- rbind(ynames,yname)
 }
 ynames
 #set.seed(100)  # for repeatability of samples
 
-#works
-threshold=.25
-#threshold=.275
-#threshold=.33
 #postProcess=1
 for (postProcess in 1:length(files))
 { 
