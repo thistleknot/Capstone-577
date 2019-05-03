@@ -558,13 +558,16 @@ for (postProcess in 1:length(files))
   predMCPopModel <- c()
   predMCPopModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
   
-  predMCPop <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
+  predicted <- c()
   
-  print(c("MC model applied to Pop:",( round(rmse((filtered2[,1]),(round(predMCPop))),4) )))
+  predicted <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
+  
   popModel2 <- c()
   #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
   popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
   popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
+  
+  predicted <- c()
   
   predicted <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
   
@@ -585,7 +588,6 @@ for (postProcess in 1:length(files))
   #print(nagelkerke(popModel2, filtered2))
   
   print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
-
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
