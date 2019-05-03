@@ -614,6 +614,9 @@ for (postProcess in 1:length(files))
   yhat <- predicted
   
   ytest <- filtered2[1]
+  
+  print(c("MC model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
+  
   #summary(trainModel)
   #table(yhat)
   #ytest = trainingData[,1]
