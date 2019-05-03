@@ -566,12 +566,25 @@ for (postProcess in 1:length(files))
   popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
   popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
   
-  predPop <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
+  predicted <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
+  
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
+  
+  yhat <- predicted  
   
   #summary(popModel)
   #print(nagelkerke(popModel2, filtered2))
   
-  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),(round(predPop))),4))))
+  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
 
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
