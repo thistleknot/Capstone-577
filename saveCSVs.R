@@ -32,7 +32,7 @@ library(caret)
 #works
 threshold=.25
 #threshold=.275
-#threshold=.33
+#threshold=.35
 #threshold=.25
 #postProcess=1
 
@@ -302,15 +302,6 @@ for (postProcess in 1:length(files))
   
   yhat <- round(predicted)
 
-  #summary(trainModel)
-  #table(yhat)
-  #ytest = trainingData[,1]
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCytestdiffyhat.jpg"), width = 400, height = 400)
-  #diff <- c()
-  #diff <- ytest-yhat
-  hist(trainModel$finalModel$residuals)
-  dev.off()
-  
   pred <- c()
   pred <- prediction(yhat,trainingData[1])
   #nrow(yhat)
@@ -631,7 +622,7 @@ for (postProcess in 1:length(files))
   popModel <- train(popData[-1], as.factor(popData[,1]),method = "glm",trControl = train.control)
   
   print("Pop Model Summary")
-  print(summary(popModel$finalModel))
+  print((popModel$finalModel))
   
   #terms applied to pop
   predPopModel <- c()
@@ -671,25 +662,25 @@ for (postProcess in 1:length(files))
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   
   #nrow(popData[-1,])
-  prePopModPopData <- c()
-  prePopModPopData <- plogis(predict(popModel$finalModel, popData[,-1]))  # predicted scores
-  print(length(prePopModPopData))
+  predPopModPopData <- c()
+  predPopModPopData <- plogis(predict(popModel$finalModel, popData[,-1]))  # predicted scores
+  print(length(predPopModPopData))
   print(nrow(popData[-1]))
   #summary(predicted)
   
   #summary(popData)
   #summary(predicted)
   indexLess <- c()
-  indexLess <- rownames(data.frame(prePopModPopData[as.numeric(prePopModPopData) < .5]))
+  indexLess <- rownames(data.frame(predPopModPopData[as.numeric(predPopModPopData) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(prePopModPopData)
+  sizePredicted <- 1:length(predPopModPopData)
   
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  prePopModPopData[indexMore] <- 1
-  prePopModPopData[indexLess] <- 0
+  predPopModPopData[indexMore] <- 1
+  predPopModPopData[indexLess] <- 0
   
   yhat <- c()
   
@@ -705,7 +696,7 @@ for (postProcess in 1:length(files))
   dev.off()
   
   pred<- c()
-  pred <- prediction(round(prePopModPopData),popData[1])
+  pred <- prediction(round(predPopModPopData),popData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -723,12 +714,12 @@ for (postProcess in 1:length(files))
   
   print("Conf Matrix: Pop CV (overfitted) model applied to pop data")
   CFPopCVPD <- c()
-  typeof(round(prePopModPopData))
+  typeof(round(predPopModPopData))
   typeof(popData[,1])
   length(popData[,1])
   nrow(popData)
-  length(round(prePopModPopData))
-  CFPopCVPD <- confusionMatrix(round(prePopModPopData), popData[,1])
+  length(round(predPopModPopData))
+  CFPopCVPD <- confusionMatrix(round(predPopModPopData), popData[,1])
   print(nrow(popData[1]))
   print(round(CFPopCVPD/sum(CFPopCVPD),4))
   
@@ -739,37 +730,37 @@ for (postProcess in 1:length(files))
   #MC Model applied to pop data
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
-  predicted <- c()
+  predMCPop <- c()
   
-  predicted <- plogis(predict(trainModel$finalModel, popData[-1]))  # predicted scores
-  print(length(predicted))
+  predMCPop <- plogis(predict(trainModel$finalModel, popData[-1]))  # predicted scores
+  print(length(predMCPop))
   print(nrow(popData[-1]))
   #summary(predicted)
   
   #summary(popData)
   #summary(predicted)
   indexLess <- c()
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  indexLess <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
+  sizePredicted <- 1:length(predMCPop)
   
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
+  predMCPop[indexMore] <- 1
+  predMCPop[indexLess] <- 0
   
   yhat <- c()
-  yhat <- round(predicted)
+  yhat <- round(predMCPop)
   #ytest <- popData[1]
   
-  print(c("MC model applied to pop:",(round(rmse((popData[,1]),predicted),4))))
+  print(c("MC model applied to pop:",(round(rmse((popData[,1]),predMCPop),4))))
   #print(c("MAPE: ", MAPE(predicted,popData[,1])))
-  print(c("RMSE: ", round(sqrt(sum((predicted-popData[,1])^2)/nrow(popData)),4)))
+  print(c("RMSE: ", round(sqrt(sum((predMCPop-popData[,1])^2)/nrow(popData)),4)))
   
   total_predictions = nrow(popData)
-  correct_predictions = sum( popData[1] == predicted)
+  correct_predictions = sum( popData[1] == predMCPop)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error: ",round(error_rate,4)))
@@ -780,6 +771,24 @@ for (postProcess in 1:length(files))
   print(nrow(popData[1]))
   print(round(MCModPop/sum(MCModPop),4))
   
+  #summary(trainModel)
+  #table(yhat)
+  #ytest = trainingData[,1]
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCdiffPopBoxPlot.jpg"), width = 400, height = 400)
+  #diff <- c()
+  #diff <- ytest-yhat
+  boxplot((predMCPop-popData[1]))
+  dev.off()
+
+  #summary(trainModel)
+  #table(yhat)
+  #ytest = trainingData[,1]
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"PopdiffPopBoxPlot.jpg"), width = 400, height = 400)
+  #diff <- c()
+  #diff <- ytest-yhat
+  boxplot((predPopModPopData-popData[1]))
+  dev.off()
+    
   #predictedMC2Pop <- plogis(predict(trainModel, popData[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
   #hist(predictedMC2Pop)
