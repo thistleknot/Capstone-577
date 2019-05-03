@@ -1495,7 +1495,19 @@ Category Flags
 			 3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
-		Milestone 16 852e295
+		Milestone 16 9317f40
+		
+			Proportional symmetrical class balancing achieved via stratified resampling 235e221 - abb5754
+			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
+			threshold set to .25 to achieve all significant terms
+			rebalanced classes means cutoff thresholds of .5 for confusion matrix
+			switch to modified bestglm for saveCSVs due to not converging on significant terms or any terms with monte carlo resample
+			
+			is the error that is captured by bestglm when outputing a timestampped csv.  This is returned most likely due to a magnified monte carlo sample that is too large.  I suggest a recursive loop that resamples at half the size until it returns no error.
+				It's how I resolved saveCSVs.R monte carlo subsample. (separate file had same issue with bestglm)
+				note: Error in qk[, 4] : incorrect number of dimensions
+				
+				
 	
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
 			[1] "y:"    "V7118"
