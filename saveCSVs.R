@@ -20,6 +20,7 @@ library(mctest)
 #library(ggthemr)
 #library(lsplsGlm)
 library(car)
+library(rcompanion)
 
 #based on seeder from cleandatacode.R
 set.seed(5)
@@ -203,9 +204,10 @@ for (postProcess in 1:length(files))
   #print(summary(training_zeros))
   
   trainModel <- c()
+  #trainModelglm <- c()
   #trainModel <- B$BestModel
  
-  #trainModel <- glm(finalTraining[holderOfDataI,][c(terms,yname)],family=binomial(link="logit"))
+  #trainModelglm <- glm(cbind(filtered2[-1],as.factor(filtered2[,1])),family=binomial(link="logit"))
   #finalTraining[holderOfDataI,][c(terms,yname)]
   
   filtered2 <- c()
@@ -249,7 +251,7 @@ for (postProcess in 1:length(files))
   print("MC summary")
   print(summary(trainModel$finalModel))
   
-  print(nagelkerke(trainModel$finalModel, null = NULL, restrictNobs = FALSE))
+  #print(nagelkerke(trainModelglm))
   
   #res <- cor(data.train)
   res <- cor(trainingData)
@@ -519,7 +521,8 @@ for (postProcess in 1:length(files))
   tempNew <- c()
   tempNew <- trainingData[terms]
   
-  trainModel <- c()
+  #I'm using model from earlier (mc rebalance)
+  #trainModel <- c()
   holderOfData <- c()
   holderOfData <- cbind(tempNew[-1,],tempNew[1,])
   
@@ -546,14 +549,14 @@ for (postProcess in 1:length(files))
   predMCPop <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
   
   print(c("MC model applied to Pop :",(rmse((filtered2[,1]),(round(predMCPop))))))
-  
+  popModel2 <- c()
   #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
   popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
-  #popModel <- glm(holderOfData,family=binomial(link="logit"))
+  popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
   
   predPop <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
-  
-  print(nagelkerke(popModel, null = NULL, restrictNobs = FALSE))
+  #summary(popModel)
+  #print(nagelkerke(popModel2, filtered2))
   
   print(c("Pop model applied to pop :",(rmse((filtered2[,1]),(round(predPop))))))
 
