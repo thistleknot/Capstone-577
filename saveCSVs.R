@@ -565,10 +565,29 @@ for (postProcess in 1:length(files))
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
   predicted <- c()
+  
   predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
   #summary(predicted)
   
-  yhat <- round(predicted)
+  summary(filtered2)
+  summary(predicted)
+  
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore,] <- 1
+  predicted[indexLess,] <- 0
+  
+  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+  filtered <- temp
+  filtered[filtered == -1] <- 0    
+  
+  yhat <- predicted
   ytest <- filtered2[1]
   #summary(trainModel)
   #table(yhat)
@@ -607,7 +626,26 @@ for (postProcess in 1:length(files))
   predicted <- plogis(predict(popModel$finalModel, filtered2[-1]))  # predicted scores
   #summary(predicted)
   
-  yhat <- round(predicted)
+  yhat <- c()
+  predicted <- c()
+  
+  predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
+  #summary(predicted)
+  
+  summary(filtered2)
+  summary(predicted)
+  
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore,] <- 1
+  predicted[indexLess,] <- 0
+  
   ytest <- filtered2[1]
   #summary(trainModel)
   #table(yhat)
