@@ -1,5 +1,3 @@
-Error in qk[, 4] : incorrect number of dimensions
-
 Input	
 
 	10 holdout's of 10% x 2 = 200%
@@ -1502,6 +1500,11 @@ Category Flags
 			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
 			threshold set to .35
 			rebalanced classes means cutoff thresholds of .5 for confusion matrix
+			switch to modified bestglm for saveCSVs due to not converging on significant terms or any terms with monte carlo resample
+			
+			is the error that is captured by bestglm when outputing a timestampped csv.  This is returned most likely due to a magnified monte carlo sample that is too large.  I suggest a recursive loop that resamples at half the size until it returns no error.
+				It's how I resolved saveCSVs.R monte carlo subsample. (separate file had same issue with bestglm)
+				note: Error in qk[, 4] : incorrect number of dimensions
 			
 			[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
 			[1] "y:"    "V7118"
