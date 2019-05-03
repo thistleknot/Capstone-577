@@ -32,7 +32,7 @@ library(caret)
 #threshold=.25
 #threshold=.275
 #threshold=.33
-threshold=.35
+threshold=.25
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
@@ -133,7 +133,7 @@ for (postProcess in 1:length(files))
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
 
   avgCountHalved <- c()
-  avgCountHalved <- mean(nrow(input_ones),nrow(input_zeros))/2
+  avgCountHalved <- mean(nrow(input_ones),nrow(input_zeros))
 
   trainingData <- c()
   ones.index <- c()
@@ -178,10 +178,10 @@ for (postProcess in 1:length(files))
   finalTraining <- c()
   finalTrainingI <- c()
   size <- c()
-  size <- round(nrow(trainingData)/4)
-  finalTrainingI <- sample(c(rownames(trainingData)),size)
+  size <- round(nrow(trainingData))
+  finalTrainingI <- sample(c(rownames(trainingData)),size/4)
   finalTraining <- trainingData[finalTrainingI,]
-  nrow(finalTraining)
+  print(c("n:",nrow(finalTraining)))
   summary(finalTraining)
   
   x <- c()
@@ -485,7 +485,6 @@ for (postProcess in 1:length(files))
   dev.off()
   print(paste("error rate sens:",round(error_rate_se,4)))
   print("yhat.transformed_sens matrix")
-  print(c("n:",sum(results_se)))
   print(round(results_se/sum(results_se),4))
   
   print(c("optCutOff_center",round(optCutOff_center,4)))
