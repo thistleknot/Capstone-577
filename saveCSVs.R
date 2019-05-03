@@ -31,8 +31,8 @@ library(caret)
 #works
 #threshold=.25
 #threshold=.275
-#threshold=.33
-threshold=.25
+threshold=.33
+#threshold=.25
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
@@ -168,7 +168,7 @@ for (postProcess in 1:length(files))
     #summary(both)
     #https://stackoverflow.com/questions/2370515/how-to-get-row-index-number-in-r
     mix <- c()
-    mix <- sample(c(rownames(both)),round(nrow(both)/2))
+    mix <- sample(c(rownames(both)),round(nrow(both)/2) )
     
     #mix <- sample(both,length(both)/2)
     #colnames(mix) <- colnames(trainingData)
