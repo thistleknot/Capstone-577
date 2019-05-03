@@ -40,13 +40,6 @@ pre_percent=.1
 
 #the way I have this setup, it only returns one var
 
-#sourceDir="/home/rstudio/577/Capstone-577/"
-#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-source(paste0(sourceDir,"bestglm.R"))
-source(paste0(sourceDir,"sub_returnCVNames.R"))
-source(paste0(sourceDir,"pairedLists.R"))
-# Read CSV into R
-
 linux=0
 if(linux)
 {
@@ -61,6 +54,14 @@ if(!linux)
   outDir<-"C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577"
   sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 }
+
+#sourceDir="/home/rstudio/577/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+source(paste0(sourceDir,"bestglm.R"))
+source(paste0(sourceDir,"sub_returnCVNames.R"))
+source(paste0(sourceDir,"pairedLists.R"))
+# Read CSV into R
+
 unzip(zipF,exdir=outDir)
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
