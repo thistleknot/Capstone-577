@@ -578,28 +578,12 @@ for (postProcess in 1:length(files))
   yhat <- c()
   predicted <- c()
   
+  #MC Model applied to pop data
   predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
   #summary(predicted)
   
   summary(filtered2)
   summary(predicted)
-  
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
-  
-  sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
-  
-  indexMore <- c()
-  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
-  
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
-  
-  yhat <- predicted
-  
-  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-  filtered <- temp
-  filtered[filtered == -1] <- 0    
   
   indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
   
@@ -642,7 +626,7 @@ for (postProcess in 1:length(files))
   print("Conf matrix: MC CV (robust) model applied to pop data")
   CFMCCVPopData <- c()
   CFMCCVPopData <- confusionMatrix(yhat, ytest[,1])
-  print(round(CFMCCVPopData/sum(CFMCCVPopData)),4)
+  print(round(CFMCCVPopData/sum(CFMCCVPopData),4))
   
   #pop model applied to pop
   
