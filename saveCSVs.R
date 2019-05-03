@@ -555,6 +555,7 @@ for (postProcess in 1:length(files))
   popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
   
   predPop <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
+  
   #summary(popModel)
   #print(nagelkerke(popModel2, filtered2))
   
@@ -593,6 +594,9 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
   
+  print("monte carlo cv applied to pop conf matrix")
+  print(confusionMatrix(yhat, ytest[,1]))
+  
   #pop model applied to pop
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
@@ -626,6 +630,10 @@ for (postProcess in 1:length(files))
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
+  
+  print("pop cv applied to pop conf matrix")
+  print(confusionMatrix(yhat, ytest[,1]))
+  
   
   #predictedMC2Pop <- plogis(predict(trainModel, filtered2[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
