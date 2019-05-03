@@ -41,7 +41,7 @@ pre_percent=.1
 #the way I have this setup, it only returns one var
 
 #sourceDir="/home/rstudio/577/Capstone-577/"
-sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+#sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
 source(paste0(sourceDir,"pairedLists.R"))
