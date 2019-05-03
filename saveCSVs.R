@@ -30,9 +30,9 @@ set.seed(5)
 library(caret)
 
 #works
-threshold=.25
-#threshold=.275
-#threshold=.35
+#threshold=.40
+threshold=.35
+#threshold=.4
 #threshold=.25
 #postProcess=1
 
@@ -123,10 +123,10 @@ for (postProcess in 1:length(files))
   #class balance
   #colnames(filtered)
   #summary(filtered[,"V7221"])
-  input_ones <- filtered[which(filtered[,1] == 1), ]  # all 1's
-  input_zeros <- filtered[which(filtered[,1] == 0), ]  # all 0's
-  nrow(input_ones)
-  nrow(input_zeros)
+  input_ones <- filtered[which(filtered[1] == 1), ]  # all 1's
+  input_zeros <- filtered[which(filtered[1] == 0), ]  # all 0's
+  length(input_ones[,1])
+  length(input_zeros[,1])
 
   #MC resample  
   #training_ones <- c()
@@ -135,7 +135,7 @@ for (postProcess in 1:length(files))
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
 
   avgCountHalved <- c()
-  avgCountHalved <- mean(nrow(input_ones),nrow(input_zeros))
+  avgCountHalved <- round(mean(length(input_ones[,1]),length(input_zeros[,1]))/2)
 
   trainingData <- c()
   ones.index <- c()
@@ -144,8 +144,8 @@ for (postProcess in 1:length(files))
   reloopFactor <- c()
   minFactor <- c()
   
-  minFactor <- min(round(.25*nrow(input_ones)),round(.25*nrow(input_zeros)))
-  reloopFactor <- min(round(.25*nrow(input_ones)),round(.25*nrow(input_zeros)))/round(.25*avgCountHalved)
+  minFactor <- min(round(.25*length(input_ones[,1])),round(.25*length(input_zeros[,1])))
+  reloopFactor <- min(round(.25*length(input_ones[,1])),round(.25*length(input_zeros[,1])))/round(.25*avgCountHalved)
   remainder <- c()
   remainder = reloopFactor-floor(reloopFactor)  
   #i=1
@@ -622,7 +622,7 @@ for (postProcess in 1:length(files))
   popModel <- train(popData[-1], as.factor(popData[,1]),method = "glm",trControl = train.control)
   
   print("Pop Model Summary")
-  print((popModel$finalModel))
+  print(summary(popModel$finalModel))
   
   #terms applied to pop
   predPopModel <- c()
@@ -663,7 +663,7 @@ for (postProcess in 1:length(files))
   
   #nrow(popData[-1,])
   predPopModPopData <- c()
-  predPopModPopData <- plogis(predict(popModel$finalModel, popData[,-1]))  # predicted scores
+  predPopModPopData <- plogis(predict(popModel$finalModel, popData[,-1,drop=FALSE]))  # predicted scores
   print(length(predPopModPopData))
   print(nrow(popData[-1]))
   #summary(predicted)
