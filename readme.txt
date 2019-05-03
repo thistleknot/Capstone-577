@@ -1599,7 +1599,7 @@ Category Flags
 				   1
 			0 0.4713
 			1 0.5287
-			[1] "optCutOff_center" "1"               
+			[1] "optCutOff_center" "0.6"             
 			[1] "error rate c1: 0.351"
 			[1] "yhat.transformed_center matrix"
 				   0      1
@@ -1612,20 +1612,28 @@ Category Flags
 			0 0.3021 0.1692
 			1 0.1818 0.3469
 			[1] "optCutOff_top" "0.99"         
-			[1] "error rate top: 0.351"
+			[1] "error rate top: 0.3524"
 			[1] "yhat.transformed_top matrix"
 				   0      1
 			0 0.3021 0.1692
-			1 0.1818 0.3469
+			1 0.1832 0.3455
 			[1] "optCutOff_spec" "0.01"          
 			[1] "error rate spec: 0.351"
 			[1] "yhat.transformed_spec matrix"
 				   0      1
 			0 0.3021 0.1692
 			1 0.1818 0.3469
-			[1] "MC model applied to Pop :" "0.16276097802909"         
-			[1] "Pop model applied to pop :" "0.16276097802909"          
-			[1] "CV Model applied to population"
+			[1] "MC model applied to pop:" "0.653"                   
+			[1] "Conf matrix: MC CV (robust) model applied to pop data"
+				   0      1
+			0 0.5568 0.4168
+			1 0.0097 0.0168
+			[1] "Pop model applied to pop:" "0.1628"                   
+			[1] "Conf Matrix: Pop CV (overfitted) model applied to pop data"
+				   0
+			0 0.9735
+			1 0.0265
+			[1] "Summary: CV Model applied to population"
 
 			Call:
 			NULL
@@ -1757,7 +1765,7 @@ Category Flags
 				   1
 			0 0.5073
 			1 0.4927
-			[1] "optCutOff_center" "1"               
+			[1] "optCutOff_center" "0.54"            
 			[1] "error rate c1: 0.3772"
 			[1] "yhat.transformed_center matrix"
 				   0      1
@@ -1770,20 +1778,28 @@ Category Flags
 			0 0.3212 0.1861
 			1 0.1911 0.3016
 			[1] "optCutOff_top" "0.99"         
-			[1] "error rate top: 0.3772"
+			[1] "error rate top: 0.3786"
 			[1] "yhat.transformed_top matrix"
 				   0      1
-			0 0.3212 0.1861
-			1 0.1911 0.3016
-			[1] "optCutOff_spec" "0.01"          
-			[1] "error rate spec: 0.3772"
+			0 0.3255 0.1818
+			1 0.1968 0.2959
+			[1] "optCutOff_spec" "0.72"          
+			[1] "error rate spec: 0.3786"
 			[1] "yhat.transformed_spec matrix"
 				   0      1
-			0 0.3212 0.1861
-			1 0.1911 0.3016
-			[1] "MC model applied to Pop :" "0.622172614013974"        
-			[1] "Pop model applied to pop :" "0.622172614013974"         
-			[1] "CV Model applied to population"
+			0 0.3255 0.1818
+			1 0.1968 0.2959
+			[1] "MC model applied to pop:" "0.6215"                  
+			[1] "Conf matrix: MC CV (robust) model applied to pop data"
+				   0      1
+			0 0.2736 0.1659
+			1 0.2204 0.3402
+			[1] "Pop model applied to pop:" "0.6222"                   
+			[1] "Conf Matrix: Pop CV (overfitted) model applied to pop data"
+				   0      1
+			0 0.1559 0.2835
+			1 0.1036 0.4570
+			[1] "Summary: CV Model applied to population"
 
 			Call:
 			NULL
@@ -1911,12 +1927,12 @@ Category Flags
 				   1
 			0 0.5155
 			1 0.4845
-			[1] "optCutOff_center" "1"               
-			[1] "error rate c1: 0.4034"
+			[1] "optCutOff_center" "0.52"            
+			[1] "error rate c1: 0.4027"
 			[1] "yhat.transformed_center matrix"
 				   0      1
-			0 0.3226 0.1929
-			1 0.2106 0.2740
+			0 0.3248 0.1907
+			1 0.2120 0.2725
 			[1] "optCutOff_cen" "0.5"          
 			[1] "error rate c2: 0.4034"
 			[1] "yhat.transformed_cen matrix"
@@ -1924,20 +1940,28 @@ Category Flags
 			0 0.3226 0.1929
 			1 0.2106 0.2740
 			[1] "optCutOff_top" "0.99"         
-			[1] "error rate top: 0.4034"
+			[1] "error rate top: 0.4047"
 			[1] "yhat.transformed_top matrix"
 				   0      1
-			0 0.3226 0.1929
-			1 0.2106 0.2740
-			[1] "optCutOff_spec" "0.01"          
-			[1] "error rate spec: 0.4034"
+			0 0.3253 0.1902
+			1 0.2145 0.2700
+			[1] "optCutOff_spec" "0.73"          
+			[1] "error rate spec: 0.4047"
 			[1] "yhat.transformed_spec matrix"
 				   0      1
-			0 0.3226 0.1929
-			1 0.2106 0.2740
-			[1] "MC model applied to Pop :" "0.387174804329865"        
-			[1] "Pop model applied to pop :" "0.387174804329865"         
-			[1] "CV Model applied to population"
+			0 0.3253 0.1902
+			1 0.2145 0.2700
+			[1] "MC model applied to pop:" "0.6275"                  
+			[1] "Conf matrix: MC CV (robust) model applied to pop data"
+				   0      1
+			0 0.5207 0.3294
+			1 0.0644 0.0855
+			[1] "Pop model applied to pop:" "0.3872"                   
+			[1] "Conf Matrix: Pop CV (overfitted) model applied to pop data"
+				   0
+			0 0.8501
+			1 0.1499
+			[1] "Summary: CV Model applied to population"
 
 			Call:
 			NULL
@@ -1970,10 +1994,7 @@ Category Flags
 			 Median :0.0000   Median :0.0000   Median :0.0000   Median :1.0000   Median :1.000  
 			 Mean   :0.1499   Mean   :0.2151   Mean   :0.1639   Mean   :0.6571   Mean   :0.744  
 			 3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.000  
-			 Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000  
-			There were 15 warnings (use warnings() to see them)
-			> #validate against population    
-
+			 Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000
 Number of Fisher Scoring iterations: 4
 
 V7221 R HS GRADE/D=1
