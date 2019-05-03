@@ -548,7 +548,7 @@ for (postProcess in 1:length(files))
   
   predMCPop <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
   
-  print(c("MC model applied to Pop :",(rmse((filtered2[,1]),(round(predMCPop))))))
+  print(c("MC model applied to Pop:",( round(rmse((filtered2[,1]),(round(predMCPop))),4) )))
   popModel2 <- c()
   #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
   popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
@@ -559,7 +559,7 @@ for (postProcess in 1:length(files))
   #summary(popModel)
   #print(nagelkerke(popModel2, filtered2))
   
-  print(c("Pop model applied to pop :",(rmse((filtered2[,1]),(round(predPop))))))
+  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),(round(predPop))),4))))
 
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
@@ -594,8 +594,10 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
   
-  print("monte carlo cv applied to pop conf matrix")
-  print(confusionMatrix(yhat, ytest[,1]))
+  print("Conf matrix: MC CV (robust) model applied to pop data")
+  CFMCCVPopData <- c()
+  CFMCCVPopData <- confusionMatrix(yhat, ytest[,1])
+  print(round(CFMCCVPopData/sum(CFMCCVPopData)),4)
   
   #pop model applied to pop
   
@@ -631,8 +633,10 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
   
-  print("pop cv applied to pop conf matrix")
-  print(confusionMatrix(yhat, ytest[,1]))
+  print("Conf Matrix: Pop CV (overfitted) model applied to pop data")
+  CFPopCVPD <- c()
+  CFPopCVPD <- confusionMatrix(yhat, ytest[,1])
+  print(round(CFPopCVPD/sum(CFPopCVPD),4))
   
   
   #predictedMC2Pop <- plogis(predict(trainModel, filtered2[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
@@ -646,7 +650,7 @@ for (postProcess in 1:length(files))
   #hist(predictedPop)
   #dev.off()
   
-  print("CV Model applied to population")
+  print("Summary: CV Model applied to population")
   
   #CV terms applied to population
   print(summary(popModel$finalModel))
