@@ -21,6 +21,7 @@ library(mctest)
 #library(lsplsGlm)
 library(car)
 library(rcompanion)
+library(MLmetrics)
 
 #based on seeder from cleandatacode.R
 set.seed(5)
@@ -29,9 +30,9 @@ set.seed(5)
 library(caret)
 
 #works
-#threshold=.25
+threshold=.25
 #threshold=.275
-threshold=.33
+#threshold=.33
 #threshold=.25
 #postProcess=1
 
@@ -100,7 +101,7 @@ for (postProcess in 1:length(files))
   print(keepersPreSorted)
   plot(keepersPreSorted$Freq)
   hist(keepersPreSorted$Freq)
-#  dev.off()
+  #dev.off()
   keepers <- c()
   
   #what a pain
@@ -112,6 +113,7 @@ for (postProcess in 1:length(files))
   filtered <- c()
   filtered <- NewDF[,c(yname,keepers), drop=FALSE]
   filtered[filtered == 0] <- NA
+  temp <- c()
   temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
   filtered <- temp
   filtered[filtered == -1] <- 0    
@@ -175,13 +177,14 @@ for (postProcess in 1:length(files))
     trainingData <- rbind(trainingData, both[mix,])
   
   }  
+  #not reduced column data
   finalTraining <- c()
   finalTrainingI <- c()
   size <- c()
   size <- round(nrow(trainingData))
   finalTrainingI <- sample(c(rownames(trainingData)),size/4)
   finalTraining <- trainingData[finalTrainingI,]
-  print(c("n:",nrow(finalTraining)))
+  print(c("MC n:",nrow(finalTraining)))
   summary(finalTraining)
   
   x <- c()
@@ -210,11 +213,12 @@ for (postProcess in 1:length(files))
   #trainModelglm <- glm(cbind(filtered2[-1],as.factor(filtered2[,1])),family=binomial(link="logit"))
   #finalTraining[holderOfDataI,][c(terms,yname)]
   
-  filtered2 <- c()
-  filtered2 <- finalTraining[holderOfDataI,][c(yname,terms)]
+  #reduced column data
+  trainingData <- c()
+  trainingData <- finalTraining[holderOfDataI,][c(yname,terms)]
   #train(x,y)
   #trainModel$finalModel
-  trainModel <- train(x=filtered2[-1], y=as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  trainModel <- train(x=trainingData[-1], y=as.factor(trainingData[,1]),method = "glm",trControl = train.control)
   
   #any column
   #https://stackoverflow.com/questions/46285484/if-any-column-in-a-row-meets-condition-than-mutate-column
@@ -222,10 +226,10 @@ for (postProcess in 1:length(files))
   
   #includes proportion of variance
   summary(prcomp(x, center=TRUE, scale=TRUE))
+  pca <- c()
   pca <- summary(prcomp(x, center=TRUE, scale=TRUE))$importance
   
-  trainingData <- c()
-  trainingData <- finalTraining[holderOfDataI,][c(yname,terms)]
+  
   #pc plot
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"pcaPct.jpg"), width = 400, height = 400)
   #plot(pca[3,1:ncol(pca)])
@@ -254,6 +258,7 @@ for (postProcess in 1:length(files))
   #print(nagelkerke(trainModelglm))
   
   #res <- cor(data.train)
+  res <- c()
   res <- cor(trainingData)
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"corrplot.jpg"), width = 400, height = 400)
   corrplot(res)
@@ -266,7 +271,6 @@ for (postProcess in 1:length(files))
   #x=data.train[,-1]
   #x.test=data.test[,-1]
   #y=data.train[,1]
-  
  
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
@@ -281,8 +285,10 @@ for (postProcess in 1:length(files))
   yhat <- c()
   predicted <- c()
   predicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
+  print(length(predicted))
+  print(nrow(trainingData[-1]))
   #summary(predicted)
-  
+  indexLess <- c()
   indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
   
   sizePredicted <- c()
@@ -294,9 +300,8 @@ for (postProcess in 1:length(files))
   predicted[indexMore] <- 1
   predicted[indexLess] <- 0
   
-  yhat <- predicted
-  
-  ytest <- trainingData[1]
+  yhat <- round(predicted)
+
   #summary(trainModel)
   #table(yhat)
   #ytest = trainingData[,1]
@@ -306,7 +311,8 @@ for (postProcess in 1:length(files))
   hist(trainModel$finalModel$residuals)
   dev.off()
   
-  pred <- prediction(yhat,ytest)
+  pred <- c()
+  pred <- prediction(yhat,trainingData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -315,6 +321,7 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
 
+  gain <- c()
   gain <- performance(pred, "tpr", "rpp")
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gain.jpg"), width = 400, height = 400)
   plot(gain, main = "Gain Chart")
@@ -326,11 +333,10 @@ for (postProcess in 1:length(files))
   yhat <- data.frame(yhat)
   colnames(yhat) <- "yhat"
   
-  ytest <- data.frame(ytest)
+  ytest <- data.frame(trainingData[1])
   colnames(ytest) <- "ytest"
   
   #https://www.r-bloggers.com/r-sorting-a-data-frame-by-the-contents-of-a-column/
-  
   
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
   #assymetric costs?  My hope is to maximize tp and tn in two separate matrix
@@ -348,10 +354,15 @@ for (postProcess in 1:length(files))
   #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
   
   #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
+  optCutOff_sens <= c()
   optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
+  optCutOff_top <- c()
   optCutOff_top <- .99
+  optCutOff_center <- c()
   optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", yhat)
+  optCutOff_cen <- c()
   optCutOff_cen <- .5
+  optCutOff_spec <- c()
   optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", yhat)
   
   #both classes
@@ -408,26 +419,31 @@ for (postProcess in 1:length(files))
   colnames(ytemp)<-"yhat"
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
   #cm_info_ce <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
+  cm_info_ce <- c()
   cm_info_ce <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
   
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_sens)[,,drop=FALSE]
   colnames(ytemp)<-"yhat"
+  cm_info_se <- c()
   cm_info_se <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_sens )
   
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_top)[,,drop=FALSE]
   colnames(ytemp)<-"yhat"
+  cm_info_top <- c()
   cm_info_top <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_top )
   
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_cen)[,,drop=FALSE]
   colnames(ytemp)<-"yhat"
+  cm_info_cen <- c()
   cm_info_cen <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_cen )
   
   ytemp<-c()
   ytemp = data.frame(yhat.transformed_spec)[,,drop=FALSE]
   colnames(ytemp)<-"yhat"
+  cm_info_sp <- c()
   cm_info_sp <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_spec )
   #print(cm_info$data[order(cm_info$data$predict),])
 
@@ -526,61 +542,42 @@ for (postProcess in 1:length(files))
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_spec.jpg"), width = 400, height = 800)
   plot(cm_info_sp$plot)
   dev.off()
-  
-  #converts to logit
-  #apply new terms to class balanaced mc data
-  tempNew <- c()
-  tempNew <- trainingData[terms]
-  
-  #I'm using model from earlier (mc rebalance)
-  #trainModel <- c()
-  holderOfData <- c()
-  holderOfData <- cbind(tempNew[-1,],tempNew[1,])
-  
+
   #MCpopModel <- glm(holderOfData,family=binomial(link="logit"))
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histMC2PopPredicted.jpg"), width = 400, height = 400)
   #dev.off()
-  
-  #CV Model
-  #print("CV Model")
-  #print(summary(B$BestModel))
-  
-  filtered2 <- c()
-  filtered2 <- NewDF[,as.character(c(yname,terms)), drop=FALSE]
-  filtered2[filtered2 == 0] <- NA
-  temp <- filtered2[] %>% filter_all(all_vars(!is.na(.)))
-  filtered2 <- temp
-  filtered2[filtered2 == -1] <- 0    
-  
-  colnames(trainingData)
-
-  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
-  yhat <- c()
-  predicted <- c()
-  
-  #MC Model applied to pop data
-  predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
+  predMCModMCData <- c()
+  predMCModMCData <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
+  print(length(predMCModMCData))
+  print(nrow(trainingData[-1]))
   #summary(predicted)
   
-  summary(filtered2)
-  summary(predicted)
-  
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  #summary(predicted)
+  indexLess <- c()
+  indexLess <- rownames(data.frame(predicted[as.numeric(predMCModMCData) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
+  sizePredicted <- 1:length(predMCModMCData)
   
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
+  predMCModMCData[indexMore] <- 1
+  predMCModMCData[indexLess] <- 0
   
-  yhat <- predicted
+  #ytest <- trainingData[1]
   
-  ytest <- filtered2[1]
+  print(c("MC model applied to MC:",(round(rmse((trainingData[,1]),round(predMCModMCData)),4))))
+  print(c("RMSE: ", round(sqrt(sum((round(predMCModMCData)-trainingData[,1])^2)/nrow(trainingData)),4)))
+  #can't use MAPE with 0
+  #print(c("MAPE: ", (sum(abs(popData[,1]-predicted)/popData[,1])/nrow(popData))))
+  #MAPE(data.frame(predicted)[,,drop=FALSE],popData[,1,drop=FALSE])))
   
-  print(c("MC model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
+  total_predictions = nrow(trainingData)
+  correct_predictions = sum(trainingData[1] == round(predMCModMCData))
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
   
   #summary(trainModel)
   #table(yhat)
@@ -591,7 +588,8 @@ for (postProcess in 1:length(files))
   hist(trainModel$finalModel$residuals)
   dev.off()
   
-  pred <- prediction(yhat,ytest)
+  pred <- c()
+  pred <- prediction(yhat,trainingData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -600,76 +598,103 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
   
+  gain <- c()
   gain <- performance(pred, "tpr", "rpp")
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainMCappPop.jpg"), width = 400, height = 400)
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
+ 
+  print("Conf matrix: MC CV (robust) model applied to MC data")
+  CFMCCVMCData <- c()
+  CFMCCVMCData <- confusionMatrix(round(predMCModMCData), trainingData[1])
+  print(nrow(trainingData[1]))
+  print(round(CFMCCVMCData/sum(CFMCCVMCData),4))
   
-  print("Conf matrix: MC CV (robust) model applied to pop data")
-  CFMCCVPopData <- c()
-  CFMCCVPopData <- confusionMatrix(yhat, ytest[,1])
-  print(round(CFMCCVPopData/sum(CFMCCVPopData),4))
+  popData <- c()
+  popData <- NewDF[,as.character(c(yname,terms)), drop=FALSE]
+  popData[popData == 0] <- NA
+  temp <- c()
+  temp <- popData[] %>% filter_all(all_vars(!is.na(.)))
+  popData <- temp
+  popData[popData == -1] <- 0    
   
+  print(c("pop Data n:",nrow(popData)))
+  
+  print(summary(popData))
+  
+  colnames(trainingData)
   #pop model applied to pop
   
-  predMCPopModel <- c()
-  predMCPopModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  #popModel <- suppressMessages(train(popData[-1], as.factor(popData[,1]),method = "glm",trControl = train.control))
+  popModel <- c()
+  popModel <- train(popData[-1], as.factor(popData[,1]),method = "glm",trControl = train.control)
   
-  predicted <- c()
+  print("Pop Model Summary")
+  print(summary(popModel$finalModel))
   
-  predicted <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
+  #terms applied to pop
+  predPopModel <- c()
+  predPopModel <- plogis(predict(popModel$finalModel, popData[-1]))  # predicted scores
+  print(length(predPopModel))
+  print(nrow(popData[-1]))
   
-  popModel2 <- c()
-  #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
-  popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
-  popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
-  
-  predicted <- c()
-  
-  predicted <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
-  
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  #popModel2 <- glm(cbind(popData[-1], as.factor(popData[,1])),family=binomial(link="logit"))
+  indexLess <- c()
+  indexLess <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
+  sizePredicted <- 1:length(predPopModel)
   
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
+  predPopModel[indexMore] <- 1
+  predPopModel[indexLess] <- 0
   
-  yhat <- predicted  
+  yhat <- c()
+  yhat <- round(predPopModel)
   
   #summary(popModel)
-  #print(nagelkerke(popModel2, filtered2))
+  #print(nagelkerke(popModel2, popData))
   
-  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
+  print(c("Pop model applied to pop:",(round(rmse((popData[,1]),predPopModel),4))))
+  #print(c("MAPE: ", MAPE(predPopModel,popData[,1])))
+  print(c("RMSE: ", round(sqrt(sum((predPopModel-popData[,1])^2)/nrow(popData)),4)))
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum(popData[1] == predPopModel)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
-  yhat <- c()
-  predicted <- c()
-  predicted <- plogis(predict(popModel$finalModel, filtered2[-1]))  # predicted scores
+  
+  #nrow(popData[-1,])
+  prePopModPopData <- c()
+  prePopModPopData <- plogis(predict(popModel$finalModel, popData[,-1]))  # predicted scores
+  print(length(prePopModPopData))
+  print(nrow(popData[-1]))
   #summary(predicted)
   
-  summary(filtered2)
-  summary(predicted)
-  
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  #summary(popData)
+  #summary(predicted)
+  indexLess <- c()
+  indexLess <- rownames(data.frame(prePopModPopData[as.numeric(prePopModPopData) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
+  sizePredicted <- 1:length(prePopModPopData)
   
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
+  prePopModPopData[indexMore] <- 1
+  prePopModPopData[indexLess] <- 0
   
-  yhat <- predicted
+  yhat <- c()
   
-  ytest <- filtered2[1]
+  #ytest <- c()
+  #ytest <- popData[1]
   #summary(trainModel)
   #table(yhat)
   #ytest = trainingData[,1]
@@ -679,7 +704,8 @@ for (postProcess in 1:length(files))
   hist(popModel$finalModel$residuals)
   dev.off()
   
-  pred <- prediction(yhat,ytest)
+  pred<- c()
+  pred <- prediction(round(prePopModPopData),popData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -688,6 +714,7 @@ for (postProcess in 1:length(files))
   abline(a=0, b= 1)
   dev.off()
   
+  gain <- c()
   gain <- performance(pred, "tpr", "rpp")
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainPopappPop.jpg"), width = 400, height = 400)
   plot(gain, main = "Gain Chart")
@@ -696,28 +723,81 @@ for (postProcess in 1:length(files))
   
   print("Conf Matrix: Pop CV (overfitted) model applied to pop data")
   CFPopCVPD <- c()
-  CFPopCVPD <- confusionMatrix(yhat, ytest[,1])
+  typeof(round(prePopModPopData))
+  typeof(popData[,1])
+  length(popData[,1])
+  nrow(popData)
+  length(round(prePopModPopData))
+  CFPopCVPD <- confusionMatrix(round(prePopModPopData), popData[,1])
+  print(nrow(popData[1]))
   print(round(CFPopCVPD/sum(CFPopCVPD),4))
   
-  #predictedMC2Pop <- plogis(predict(trainModel, filtered2[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
+  #CV Model
+  #print("CV Model")
+  #print(summary(B$BestModel))
+  
+  #MC Model applied to pop data
+  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
+  yhat <- c()
+  predicted <- c()
+  
+  predicted <- plogis(predict(trainModel$finalModel, popData[-1]))  # predicted scores
+  print(length(predicted))
+  print(nrow(popData[-1]))
+  #summary(predicted)
+  
+  #summary(popData)
+  #summary(predicted)
+  indexLess <- c()
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
+  
+  yhat <- c()
+  yhat <- round(predicted)
+  #ytest <- popData[1]
+  
+  print(c("MC model applied to pop:",(round(rmse((popData[,1]),predicted),4))))
+  #print(c("MAPE: ", MAPE(predicted,popData[,1])))
+  print(c("RMSE: ", round(sqrt(sum((predicted-popData[,1])^2)/nrow(popData)),4)))
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum( popData[1] == predicted)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
+  
+  print("Conf Matrix: MC model applied to Pop data")
+  MCModPop <- c()
+  MCModPop <- confusionMatrix(yhat, popData[,1])
+  print(nrow(popData[1]))
+  print(round(MCModPop/sum(MCModPop),4))
+  
+  #predictedMC2Pop <- plogis(predict(trainModel, popData[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
   #hist(predictedMC2Pop)
   #dev.off()
-  #predictedPop <- plogis(predict(popModel$finalModel, filtered2[,-1,drop=FALSE]))  # predicted scores
-  #predictedPop <- plogis(predict(popModel, filtered2[,-1,drop=FALSE]))  # predicted scores
+  #predictedPop <- plogis(predict(popModel$finalModel, popData[,-1,drop=FALSE]))  # predicted scores
+  #predictedPop <- plogis(predict(popModel, popData[,-1,drop=FALSE]))  # predicted scores
   
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedPop.jpg"), width = 400, height = 400)
   #hist(predictedPop)
   #dev.off()
   
-  print("Summary: CV Model applied to population")
+  #print("Summary: CV Model applied to population")
   
   #CV terms applied to population
-  print(summary(popModel$finalModel))
-  print(summary(filtered2))
+  #print(summary(trainModel$finalModel))
   
   #removed medianDirection
-  write.csv(filtered2,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"filtered.csv")))
+  write.csv(popData,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"filtered.csv")))
 }
 #validate against population    
 #population
