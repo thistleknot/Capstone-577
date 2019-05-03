@@ -283,7 +283,19 @@ for (postProcess in 1:length(files))
   predicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   #summary(predicted)
   
-  yhat <- round(predicted)
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
+  
+  yhat <- predicted
+  
   ytest <- trainingData[1]
   #summary(trainModel)
   #table(yhat)
@@ -583,11 +595,25 @@ for (postProcess in 1:length(files))
   predicted[indexMore] <- 1
   predicted[indexLess] <- 0
   
+  yhat <- predicted
+  
   temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
   filtered <- temp
   filtered[filtered == -1] <- 0    
   
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
+  
   yhat <- predicted
+  
   ytest <- filtered2[1]
   #summary(trainModel)
   #table(yhat)
@@ -626,12 +652,6 @@ for (postProcess in 1:length(files))
   predicted <- plogis(predict(popModel$finalModel, filtered2[-1]))  # predicted scores
   #summary(predicted)
   
-  yhat <- c()
-  predicted <- c()
-  
-  predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
-  #summary(predicted)
-  
   summary(filtered2)
   summary(predicted)
   
@@ -645,6 +665,8 @@ for (postProcess in 1:length(files))
   
   predicted[indexMore] <- 1
   predicted[indexLess] <- 0
+  
+  yhat <- predicted
   
   ytest <- filtered2[1]
   #summary(trainModel)
@@ -675,7 +697,6 @@ for (postProcess in 1:length(files))
   CFPopCVPD <- c()
   CFPopCVPD <- confusionMatrix(yhat, ytest[,1])
   print(round(CFPopCVPD/sum(CFPopCVPD),4))
-  
   
   #predictedMC2Pop <- plogis(predict(trainModel, filtered2[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
