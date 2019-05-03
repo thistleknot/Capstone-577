@@ -36,12 +36,6 @@ threshold=.35
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 
-source(paste0(sourceDir,"unbalanced_functions.R"))
-source(paste0(sourceDir,"sub_returnCVNames.R"))
-
-files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
-
-
 linux=0
 if(linux)
 {
@@ -79,6 +73,11 @@ if(!linux)
   }
   ynames
 }
+
+source(paste0(sourceDir,"unbalanced_functions.R"))
+source(paste0(sourceDir,"sub_returnCVNames.R"))
+
+files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
 #set.seed(100)  # for repeatability of samples
 
@@ -249,6 +248,8 @@ for (postProcess in 1:length(files))
   #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("MC summary")
   print(summary(trainModel$finalModel))
+  
+  print(nagelkerke(trainModel$finalModel, null = NULL, restrictNobs = FALSE))
   
   #res <- cor(data.train)
   res <- cor(trainingData)
@@ -552,8 +553,77 @@ for (postProcess in 1:length(files))
   
   predPop <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
   
+  print(nagelkerke(popModel, null = NULL, restrictNobs = FALSE))
+  
   print(c("Pop model applied to pop :",(rmse((filtered2[,1]),(round(predPop))))))
 
+  
+  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
+  yhat <- c()
+  predicted <- c()
+  predicted <- plogis(predict(trainModel$finalModel, filtered2[-1]))  # predicted scores
+  #summary(predicted)
+  
+  yhat <- round(predicted)
+  ytest <- filtered2[1]
+  #summary(trainModel)
+  #table(yhat)
+  #ytest = trainingData[,1]
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCytestdiffyhatMCappPop.jpg"), width = 400, height = 400)
+  #diff <- c()
+  #diff <- ytest-yhat
+  hist(trainModel$finalModel$residuals)
+  dev.off()
+  
+  pred <- prediction(yhat,ytest)
+  #nrow(yhat)
+  #nrow(ytest)
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocMCappPop.jpg"), width = 400, height = 400)
+  plot(roc.perf)
+  abline(a=0, b= 1)
+  dev.off()
+  
+  gain <- performance(pred, "tpr", "rpp")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainMCappPop.jpg"), width = 400, height = 400)
+  plot(gain, main = "Gain Chart")
+  abline(a=0, b= 1)
+  dev.off()
+  
+  #pop model applied to pop
+  
+  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
+  yhat <- c()
+  predicted <- c()
+  predicted <- plogis(predict(popModel$finalModel, filtered2[-1]))  # predicted scores
+  #summary(predicted)
+  
+  yhat <- round(predicted)
+  ytest <- filtered2[1]
+  #summary(trainModel)
+  #table(yhat)
+  #ytest = trainingData[,1]
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCytestdiffyhatPopappPop.jpg"), width = 400, height = 400)
+  #diff <- c()
+  #diff <- ytest-yhat
+  hist(popModel$finalModel$residuals)
+  dev.off()
+  
+  pred <- prediction(yhat,ytest)
+  #nrow(yhat)
+  #nrow(ytest)
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocPopappPop.jpg"), width = 400, height = 400)
+  plot(roc.perf)
+  abline(a=0, b= 1)
+  dev.off()
+  
+  gain <- performance(pred, "tpr", "rpp")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainPopappPop.jpg"), width = 400, height = 400)
+  plot(gain, main = "Gain Chart")
+  abline(a=0, b= 1)
+  dev.off()
+  
   #predictedMC2Pop <- plogis(predict(trainModel, filtered2[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
   #hist(predictedMC2Pop)
