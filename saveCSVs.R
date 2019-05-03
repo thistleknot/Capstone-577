@@ -580,8 +580,8 @@ for (postProcess in 1:length(files))
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore,] <- 1
-  predicted[indexLess,] <- 0
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
   
   temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
   filtered <- temp
@@ -643,8 +643,8 @@ for (postProcess in 1:length(files))
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
-  predicted[indexMore,] <- 1
-  predicted[indexLess,] <- 0
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
   
   ytest <- filtered2[1]
   #summary(trainModel)
