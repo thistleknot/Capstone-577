@@ -554,41 +554,7 @@ for (postProcess in 1:length(files))
   filtered2[filtered2 == -1] <- 0    
   
   colnames(trainingData)
-  
-  predMCPopModel <- c()
-  predMCPopModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
-  
-  predicted <- c()
-  
-  predicted <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
-  
-  popModel2 <- c()
-  #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
-  popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
-  popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
-  
-  predicted <- c()
-  
-  predicted <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
-  
-  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
-  
-  sizePredicted <- c()
-  sizePredicted <- 1:length(predicted)
-  
-  indexMore <- c()
-  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
-  
-  predicted[indexMore] <- 1
-  predicted[indexLess] <- 0
-  
-  yhat <- predicted  
-  
-  #summary(popModel)
-  #print(nagelkerke(popModel2, filtered2))
-  
-  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
-  
+
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
   predicted <- c()
@@ -647,6 +613,40 @@ for (postProcess in 1:length(files))
   print(round(CFMCCVPopData/sum(CFMCCVPopData),4))
   
   #pop model applied to pop
+  
+  predMCPopModel <- c()
+  predMCPopModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  
+  predicted <- c()
+  
+  predicted <- plogis(predict(predMCPopModel$finalModel, filtered2[terms]))  # predicted scores
+  
+  popModel2 <- c()
+  #popModel <- suppressMessages(train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control))
+  popModel <- train(filtered2[-1], as.factor(filtered2[,1]),method = "glm",trControl = train.control)
+  popModel2 <- glm(cbind(filtered2[-1], as.factor(filtered2[,1])),family=binomial(link="logit"))
+  
+  predicted <- c()
+  
+  predicted <- plogis(predict(popModel$finalModel, filtered2[terms]))  # predicted scores
+  
+  indexLess <- rownames(data.frame(predicted[as.numeric(predicted) < .5]))
+  
+  sizePredicted <- c()
+  sizePredicted <- 1:length(predicted)
+  
+  indexMore <- c()
+  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  
+  predicted[indexMore] <- 1
+  predicted[indexLess] <- 0
+  
+  yhat <- predicted  
+  
+  #summary(popModel)
+  #print(nagelkerke(popModel2, filtered2))
+  
+  print(c("Pop model applied to pop:",(round(rmse((filtered2[,1]),predicted),4))))
   
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   yhat <- c()
