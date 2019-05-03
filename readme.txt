@@ -1495,8 +1495,8 @@ Category Flags
 			 3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.000000   3rd Qu.:1.00   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
 			 Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.000000   Max.   :1.00   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000
 
-		Milestone 16 
-			Proportional symmetrical class balancing achieved via stratified resampling 235e221 - abb5754
+		Milestone 16 4e6fbfc
+			Proportional symmetrical class balancing achieved via stratified resampling 
 			reloop factor: min(%[nrow(ones),nrow(zeros)] / avg(%[nrow(ones),nrow(zeros)] 
 			threshold set to .35
 			rebalanced classes means cutoff thresholds of .5 for confusion matrix
