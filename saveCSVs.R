@@ -142,13 +142,13 @@ for (postProcess in 1:length(files))
   reloopFactor <- c()
   minFactor <- c()
   
-  minFactor <- min(round(.1*nrow(input_ones)),round(.1*nrow(input_zeros)))
-  reloopFactor <- min(round(.1*nrow(input_ones)),round(.1*nrow(input_zeros)))/round(.1*avgCountHalved)
+  minFactor <- min(round(.25*nrow(input_ones)),round(.25*nrow(input_zeros)))
+  reloopFactor <- min(round(.25*nrow(input_ones)),round(.25*nrow(input_zeros)))/round(.25*avgCountHalved)
   remainder <- c()
   remainder = reloopFactor-floor(reloopFactor)  
   #i=1
   #this might break depending on the size of 1's or 0's, but I hope 
-  for(i in 1:10)
+  for(i in 1:4)
   {
    
     if(floor(reloopFactor)>0)
@@ -165,7 +165,7 @@ for (postProcess in 1:length(files))
     
     both <- c()
     both <- rbind(ones.index, zeros.index)
-    
+    #summary(both)
     #https://stackoverflow.com/questions/2370515/how-to-get-row-index-number-in-r
     mix <- c()
     mix <- sample(c(rownames(both)),round(nrow(both)/2))
@@ -178,7 +178,7 @@ for (postProcess in 1:length(files))
   finalTraining <- c()
   finalTrainingI <- c()
   size <- c()
-  size <- round(nrow(trainingData)/10)
+  size <- round(nrow(trainingData)/4)
   finalTrainingI <- sample(c(rownames(trainingData)),size)
   finalTraining <- trainingData[finalTrainingI,]
   nrow(finalTraining)
