@@ -1040,9 +1040,7 @@ Category Flags
 			It's how I resolved saveCSVs.R monte carlo subsample. (separate file had same issue with bestglm)
 			note: Error in qk[, 4] : incorrect number of dimensions
 
-	Milestone 17
-	
-		.35 cutoff
+	Milestone 17 5fbe222
 		[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
 		[1] "y:"    "V7118"
 		[[1]]
@@ -1607,6 +1605,7 @@ Category Flags
 			   0      1
 		0 0.5532 0.2965
 		1 0.0714 0.0788
+
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER

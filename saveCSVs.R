@@ -345,7 +345,7 @@ for (postProcess in 1:length(files))
   #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
   
   #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
-  optCutOff_sens <= c()
+  optCutOff_sens <- c()
   optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
   optCutOff_top <- c()
   optCutOff_top <- .99
