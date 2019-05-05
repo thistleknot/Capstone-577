@@ -280,8 +280,6 @@ for (postProcess in 1:length(files))
   #pred <- prediction(ROCR.simple$predictions,ROCR.simple$labels)
   #labels = classification (i.e. true value)
   
-  #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
-  yhat <- c()
   MCPredicted <- c()
   MCPredicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   sizePredicted <- c()
@@ -294,6 +292,8 @@ for (postProcess in 1:length(files))
   #Maximize sensitivity given a minimal value of specificity
   #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
   
+  yhat <- c()
+  yhat <- MCPredicted
   ytest <- data.frame(trainingData[1])
   colnames(ytest) <- "ytest"
   
@@ -309,11 +309,6 @@ for (postProcess in 1:length(files))
   optCutOff_spec <- c()
   optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", MCPredicted)
 
-  yhat <- c()
-  yhat <- MCPredicted
-  yhat <- data.frame(yhat)
-  colnames(yhat) <- "yhat"
-  
   yhat.transformed_sens = rep(0, nrow(trainingData))
   yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
   yhat.transformed_sens[yhat < optCutOff_sens] = 0
@@ -338,6 +333,7 @@ for (postProcess in 1:length(files))
   yhat.transformed_spec[round(yhat,4) >= round(optCutOff_spec,4)] = 1
   yhat.transformed_spec[round(yhat,4) < optCutOff_spec] = 0
   misClassError(yhat.transformed_spec, ytest, threshold = optCutOff_spec)
+  yhat <- c()
   
   pred <- c()
   pred <- prediction(yhat.transformed_cen,trainingData[1])
@@ -396,23 +392,18 @@ for (postProcess in 1:length(files))
   #different thresholds, same ytest which is MC y
   
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
-  #cm_info_ce <- ConfusionMatrixInfo( data = cbind(ytemp,ytest), predict = "yhat", actual = "ytest", cutoff = optCutOff_center )
   cm_info_ce <- c()
   cm_info_ce <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_center)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_center", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_center )
 
-  colnames(ytemp)<-"yhat"
   cm_info_se <- c()
   cm_info_se <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_sens)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_sens", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_sens )
 
-  colnames(ytemp)<-"yhat"
   cm_info_top <- c()
   cm_info_se <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_top)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_top", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_top )
 
-  colnames(ytemp)<-"yhat"
   cm_info_cen <- c()
   cm_info_cen <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_cen)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_cen", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_cen )
 
-  colnames(ytemp)<-"yhat"
   cm_info_sp <- c()
   cm_info_sp <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_spec)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_spec", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_spec )
   #print(cm_info$data[order(cm_info$data$predict),])
@@ -513,28 +504,18 @@ for (postProcess in 1:length(files))
   plot(cm_info_sp$plot)
   dev.off()
 
-  #MCpopModel <- glm(holderOfData,family=binomial(link="logit"))
-  #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histMC2PopPredicted.jpg"), width = 400, height = 400)
-  #dev.off()
-  
-  predMCModMCData <- c()
-  predMCModMCData <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
-  print(length(predMCModMCData))
-  print(nrow(trainingData[-1]))
-  #summary(predicted)
-  
   #summary(predicted)
   indexLessMC_Center <- c()
-  indexLessMC_Center <- rownames(data.frame(predMCModMCData[as.numeric(predMCModMCData) < .5]))
+  indexLessMC_Center <- rownames(data.frame(MCPredicted[as.numeric(MCPredicted) < .5]))
   
   sizePredicted <- c()
-  sizePredicted <- 1:length(predMCModMCData)
+  sizePredicted <- 1:length(MCPredicted)
   
   indexMoreMC_Center <- c()
   indexMoreMC_Center <- sizePredicted[!sizePredicted %in% indexLessMC_Center]
   
   predMCMod <- c() 
-  predMCMod <- predMCModMCData
+  predMCMod <- MCPredicted
   predMCMod[indexLessMC_Center] <- 1
   predMCMod[indexMoreMC_Center] <- 0
   
@@ -558,18 +539,18 @@ for (postProcess in 1:length(files))
   dev.off()
   
   pred <- c()
-  pred <- prediction(yhat,trainingData[1])
+  pred <- prediction(MCPredicted,trainingData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocMCappPop.jpg"), width = 400, height = 400)
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocMCappMC.jpg"), width = 400, height = 400)
   plot(roc.perf)
   abline(a=0, b= 1)
   dev.off()
   
   gain <- c()
   gain <- performance(pred, "tpr", "rpp")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainMCappPop.jpg"), width = 400, height = 400)
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainMCappMC.jpg"), width = 400, height = 400)
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
@@ -577,7 +558,7 @@ for (postProcess in 1:length(files))
   print("Conf matrix: MC CV (robust) model applied to MC data")
   CFMCCVMCData <- c()
   
-  CFMCCVMCData <- confusionMatrix(round(predMCModMCData), trainingData[,1,drop=TRUE])
+  CFMCCVMCData <- confusionMatrix(round(predMCMod), trainingData[,1,drop=TRUE])
   print(nrow(trainingData[1]))
   print(round(CFMCCVMCData/sum(CFMCCVMCData),4))
   
@@ -664,9 +645,6 @@ for (postProcess in 1:length(files))
   indexMore_opt_ctr <- c()
   indexMore_opt_ctr <- sizePredicted[!sizePredicted %in% indexLess_opt_ctr]
   
-  yhat <- c()
-  yhat <- round(predPopModel)
-  
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
@@ -689,9 +667,6 @@ for (postProcess in 1:length(files))
   predPopModel_center2[indexMore_center2] <- 1
   predPopModel_center2[indexLess_center2] <- 0
   
-  yhat <- c()
-  yhat <- round(predPopModel_center2)
-  
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
@@ -708,9 +683,6 @@ for (postProcess in 1:length(files))
   predPopModel_sens[indexMore_sens] <- 1
   predPopModel_sens[indexLess_sens] <- 0
   
-  yhat <- c()
-  yhat <- round(predPopModel_sens)
-  
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
@@ -726,9 +698,6 @@ for (postProcess in 1:length(files))
   predPopModel_spec <- predPopModel
   predPopModel_spec[indexMore_spec] <- 1
   predPopModel_spec[indexLess_spec] <- 0
-  
-  yhat <- c()
-  yhat <- round(predPopModel)
   
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
@@ -751,8 +720,6 @@ for (postProcess in 1:length(files))
   predPopModel_opt_ctr[indexMore_opt_ctr] <- 1
   predPopModel_opt_ctr[indexLess_opt_ctr] <- 0
   
-  yhat <- c()
-  
   #ytest <- c()
   #ytest <- popData[1]
   #summary(trainModel)
@@ -762,13 +729,13 @@ for (postProcess in 1:length(files))
   #diff <- c()
   #diff <- ytest-yhat
   logisdeltas <- c()
-  logisdeltas <- predPopModel-predMCPop
+  logisdeltas <- predPopModel-MCPredicted
   hist(logisdeltas)
   hist(popModel$finalModel$residuals)
   dev.off()
   
   pred<- c()
-  pred <- prediction(round(predPopModel),popData[1])
+  pred <- prediction(predPopModel,popData[1])
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
@@ -809,7 +776,7 @@ for (postProcess in 1:length(files))
   sizePredicted <- 1:length(predMCPop)
   
   indexMoreMCModPopData_center2 <- c()
-  indexMoreMCModPopData_center2 <- sizePredicted[!sizePredicted %in% indexLess]
+  indexMoreMCModPopData_center2 <- sizePredicted[!sizePredicted %in% indexLessMCModPopData_center2]
   
   predMCPop_center2 <- c()
   predMCPop_center2 <- predMCPop
