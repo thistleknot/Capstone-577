@@ -1,7 +1,4 @@
-[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
-[1] "y:"    "V7118"
-[[1]]
-[1] "final: "
+I don't know why, but you have to run saveCSVs.R twice to get these specific seeded results. Simply stop and start saveCSVs.R while it's in the middle of running the 1st time and rerun it.
 
 $tabulatedCrossValidated
  [1] <NA>  V8514 V8502 V8530 V8512 V7562 V8536 V8526 V8505 V8509 V8531 V7215 V7206 V7552 V8528 V7202 V8527 V8565 V7551 V7563 V8529
