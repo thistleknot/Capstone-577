@@ -1738,7 +1738,7 @@ Citations
 	
 	Data Mining for Busines Analytics
 
-		Classification Matrix
+		Confusion Matrix
 			p 118
 				Find propensity, derive new classification matrix at propensity that gives best class of interest rate (i.e. 1).
 		
@@ -1842,9 +1842,7 @@ Citations
 		
 	Predictor Plots
 		141, 258, 266
-			could map one class with different effects of other vars
-		Would have to map logit propensity changes for changes of each variable assuming other variables were held constant.
-		Normally assumes the mean for other variables...  I suppose in this case, the median? Should really have all propensities mapped.
+			Using oversampled means
 			graphics: 224-228
 		
 	Odds calculation wikipedia
@@ -1852,8 +1850,6 @@ Citations
 		
 		One additional hour of study is estimated to increase log-odds of passing by 1.5046, so multiplying odds of passing by {\displaystyle \exp(1.5046)\approx 4.5.} {\displaystyle \exp(1.5046)\approx 4.5.} The form with the x-intercept (2.71) shows that this estimates even odds (log-odds 0, odds 1, probability 1/2) for a student who studies 2.71 hours.
 	
-	Oversampling
-		Due to bias in class, we did not oversample.  However, we did not build models based on oversampling.  We derived terms from CV models that worked best in randomized datasets.  The system would improve with equalized models, but arguably not by much because we did not use a model based approach.
 	
 Appendix
 	

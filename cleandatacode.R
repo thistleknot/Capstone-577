@@ -15,13 +15,13 @@ library(dplyr)
 library(plyr)
 
 #require("RPostgreSQL")
-library(RPostgreSQL)
-require(ggplot2)
+#library(RPostgreSQL)
+#require(ggplot2)
 library(anchors)
 require(caret)
 library(caret)
 library(corrplot)
-library(MASS)
+#library(MASS)
 library(car)
 library(leaps)
 library(bestglm)
@@ -653,6 +653,7 @@ for (medianDirection in c("greaterEqual"))
                 #IF NOT NA, DON'T DIVER
                 if(!(is.na(namesTV[counter])||is.na(namesH[counter])))
                 {
+                  #if sub_returnCVNames returns two... will only save two if those same two pass namesH, else it will drop both even if NamesH kept one.
                   if(namesTV[counter]==namesH[counter])
                   {
                     crossValidated <- rbind (crossValidated,namesTV[counter])

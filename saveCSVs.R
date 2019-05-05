@@ -229,7 +229,6 @@ for (postProcess in 1:length(files))
   pca <- c()
   pca <- summary(prcomp(x, center=TRUE, scale=TRUE))$importance
   
-  
   #pc plot
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"pcaPct.jpg"), width = 400, height = 400)
   #plot(pca[3,1:ncol(pca)])
@@ -297,6 +296,30 @@ for (postProcess in 1:length(files))
   indexMore <- c()
   indexMore <- sizePredicted[!sizePredicted %in% indexLess]
   
+  #class 1
+  #Maximize sensitivity given a minimal value of specificity
+  #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
+  
+  ytest <- data.frame(trainingData[1])
+  colnames(ytest) <- "ytest"
+  
+  #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
+  optCutOff_sens <- c()
+  optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", predicted)
+  optCutOff_top <- c()
+  optCutOff_top <- .99
+  optCutOff_center <- c()
+  optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", predicted)
+  optCutOff_cen <- c()
+  optCutOff_cen <- .5
+  optCutOff_spec <- c()
+  optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", predicted)
+
+  yhat <- c()
+  yhat <- predicted
+  yhat <- data.frame(yhat)
+  colnames(yhat) <- "yhat"
+  
   predicted[indexMore] <- 1
   predicted[indexLess] <- 0
   
@@ -321,12 +344,6 @@ for (postProcess in 1:length(files))
     
   #plot(yhat,ytest)
   
-  yhat <- data.frame(yhat)
-  colnames(yhat) <- "yhat"
-  
-  ytest <- data.frame(trainingData[1])
-  colnames(ytest) <- "ytest"
-  
   #https://www.r-bloggers.com/r-sorting-a-data-frame-by-the-contents-of-a-column/
   
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
@@ -339,22 +356,6 @@ for (postProcess in 1:length(files))
   #table(yhat)
   
   #print(paste("equal cutpoint:",round(roc_info$cutoff,3)))
-  
-  #class 1
-  #Maximize sensitivity given a minimal value of specificity
-  #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
-  
-  #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
-  optCutOff_sens <- c()
-  optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", yhat)
-  optCutOff_top <- c()
-  optCutOff_top <- .99
-  optCutOff_center <- c()
-  optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", yhat)
-  optCutOff_cen <- c()
-  optCutOff_cen <- .5
-  optCutOff_spec <- c()
-  optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", yhat)
   
   #both classes
   #cp_center <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sum_sens_spec)
@@ -631,17 +632,51 @@ for (postProcess in 1:length(files))
   print(nrow(popData[-1]))
   
   #popModel2 <- glm(cbind(popData[-1], as.factor(popData[,1])),family=binomial(link="logit"))
-  indexLess <- c()
-  indexLess <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < .5]))
+  ytest <- c()
+  ytest <- data.frame(popData[1])
+  colnames(ytest) <- "ytest"
+  
+  #https://www.rdocumentation.org/packages/InformationValue/versions/1.2.3/topics/optimalCutoff
+  optCutOff_sens <- c()
+  optCutOff_sens <- optimalCutoff(ytest, optimiseFor="Ones", predPopModel)
+  optCutOff_top <- c()
+  optCutOff_top <- .99
+  optCutOff_center <- c()
+  optCutOff_center <- optimalCutoff(ytest, optimiseFor="Both", predPopModel)
+  optCutOff_cen <- c()
+  optCutOff_cen <- .5
+  optCutOff_spec <- c()
+  optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", predPopModel)
   
   sizePredicted <- c()
   sizePredicted <- 1:length(predPopModel)
   
-  indexMore <- c()
-  indexMore <- sizePredicted[!sizePredicted %in% indexLess]
+  indexLess_sens <- c()
+  indexLess_sens <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < optCutOff_sens]))
   
-  predPopModel[indexMore] <- 1
-  predPopModel[indexLess] <- 0
+  indexMore_sens <- c()
+  indexMore_sens <- sizePredicted[!sizePredicted %in% indexLess_sens]
+  
+  indexLess_center <- c()
+  indexLess_center <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < optCutOff_center]))
+  
+  indexMore_center <- c()
+  indexMore_center <- sizePredicted[!sizePredicted %in% indexLess_center]
+  
+  indexLess_center2 <- c()
+  indexLess_center2 <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < .5]))
+  
+  indexMore_center2 <- c()
+  indexMore_center2 <- sizePredicted[!sizePredicted %in% indexLess_center2]
+  
+  indexLess_spec <- c()
+  indexLess_spec <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < optCutOff_spec]))
+  
+  indexMore_spec <- c()
+  indexMore_spec <- sizePredicted[!sizePredicted %in% indexLess_spec]
+  
+  predPopModel[indexMore_center] <- 1
+  predPopModel[indexLess_center] <- 0
   
   yhat <- c()
   yhat <- round(predPopModel)
@@ -649,9 +684,9 @@ for (postProcess in 1:length(files))
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
-  print(c("Pop model applied to pop:",(round(rmse((popData[,1]),predPopModel),4))))
-  #print(c("MAPE: ", MAPE(predPopModel,popData[,1])))
-  print(c("RMSE: ", round(sqrt(sum((predPopModel-popData[,1])^2)/nrow(popData)),4)))
+  print(c("Pop model optimal cutoff for center & RMSE:",round(optCutOff_center,4),(round(rmse((popData[,1]),predPopModel),4))))
+  #print(c("MAPE center: ", MAPE(predPopModel,popData[,1])))
+  print(c("RMSE center: ", round(sqrt(sum((predPopModel-popData[1])^2)/nrow(popData)),4)))
   
   total_predictions = nrow(popData)
   correct_predictions = sum(popData[1] == predPopModel)
@@ -659,6 +694,62 @@ for (postProcess in 1:length(files))
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error: ",round(error_rate,4)))
   
+  predPopModel[indexMore_center2] <- 1
+  predPopModel[indexLess_center2] <- 0
+  
+  yhat <- c()
+  yhat <- round(predPopModel)
+  
+  #summary(popModel)
+  #print(nagelkerke(popModel2, popData))
+  
+  print(c("Pop model optimal cutoff for center2 & RMSE:",.5,(round(rmse((popData[,1]),predPopModel),4))))
+  #print(c("MAPE center2: ", MAPE(predPopModel,popData[,1])))
+  print(c("RMSE center2: ", round(sqrt(sum((predPopModel-popData[1])^2)/nrow(popData)),4)))
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum(popData[1] == predPopModel)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
+  
+  predPopModel[indexMore_sens] <- 1
+  predPopModel[indexLess_sens] <- 0
+  
+  yhat <- c()
+  yhat <- round(predPopModel)
+  
+  #summary(popModel)
+  #print(nagelkerke(popModel2, popData))
+  
+  print(c("Pop model optimal cutoff for sens & RMSE:",round(optCutOff_sens,4),(round(rmse((popData[,1]),predPopModel),4))))
+  #print(c("MAPE sens: ", MAPE(predPopModel,popData[,1])))
+  print(c("RMSE sens: ", round(sqrt(sum((predPopModel-popData[,1])^2)/nrow(popData)),4)))
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum(popData[1] == predPopModel)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
+  
+  predPopModel[indexMore_spec] <- 1
+  predPopModel[indexLess_spec] <- 0
+  
+  yhat <- c()
+  yhat <- round(predPopModel)
+  
+  #summary(popModel)
+  #print(nagelkerke(popModel2, popData))
+  
+  print(c("Pop model optimal cutoff for spec & RMSE:",round(optCutOff_spec,4),(round(rmse((popData[,1]),predPopModel),4))))
+  #print(c("MAPE spec: ", MAPE(predPopModel,popData[,1])))
+  print(c("RMSE spec: ", round(sqrt(sum((predPopModel-popData[,1])^2)/nrow(popData)),4)))
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum(popData[1] == predPopModel)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
   
   #nrow(popData[-1,])
@@ -671,7 +762,7 @@ for (postProcess in 1:length(files))
   #summary(popData)
   #summary(predicted)
   indexLess <- c()
-  indexLess <- rownames(data.frame(predPopModPopData[as.numeric(predPopModPopData) < .5]))
+  indexLess <- rownames(data.frame(predPopModPopData[as.numeric(predPopModPopData) < optCutOff_center]))
   
   sizePredicted <- c()
   sizePredicted <- 1:length(predPopModPopData)
@@ -700,26 +791,26 @@ for (postProcess in 1:length(files))
   #nrow(yhat)
   #nrow(ytest)
   roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocPopappPop.jpg"), width = 400, height = 400)
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocPopappPopOptCenter.jpg"), width = 400, height = 400)
   plot(roc.perf)
   abline(a=0, b= 1)
   dev.off()
   
   gain <- c()
   gain <- performance(pred, "tpr", "rpp")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainPopappPop.jpg"), width = 400, height = 400)
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainPopappPopOptCenter.jpg"), width = 400, height = 400)
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
   
-  print("Conf Matrix: Pop CV (overfitted) model applied to pop data")
+  print("Conf Matrix: Pop CV (overfitted) model applied to pop data opt center")
   CFPopCVPD <- c()
   typeof(round(predPopModPopData))
-  typeof(popData[,1])
-  length(popData[,1])
+  typeof(popData[1])
+  length(popData[1])
   nrow(popData)
   length(round(predPopModPopData))
-  CFPopCVPD <- confusionMatrix(round(predPopModPopData), popData[,1])
+  CFPopCVPD <- confusionMatrix(round(predPopModPopData), popData[1])
   print(nrow(popData[1]))
   print(round(CFPopCVPD/sum(CFPopCVPD),4))
   
@@ -767,7 +858,7 @@ for (postProcess in 1:length(files))
   
   print("Conf Matrix: MC model applied to Pop data")
   MCModPop <- c()
-  MCModPop <- confusionMatrix(yhat, popData[,1])
+  MCModPop <- confusionMatrix(yhat, popData[1])
   print(nrow(popData[1]))
   print(round(MCModPop/sum(MCModPop),4))
   
