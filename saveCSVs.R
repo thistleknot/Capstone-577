@@ -487,27 +487,10 @@ for (postProcess in 1:length(files))
   plot(cm_info_sp$plot)
   dev.off()
 
-  #summary(predicted)
-  indexLessMC_Center <- c()
-  indexLessMC_Center <- rownames(data.frame(MCPredicted[as.numeric(MCPredicted) < .5]))
-  
-  sizePredicted <- c()
-  sizePredicted <- 1:length(MCPredicted)
-  
-  indexMoreMC_Center <- c()
-  indexMoreMC_Center <- sizePredicted[!sizePredicted %in% indexLessMC_Center]
-  
-  predMCMod <- c() 
-  predMCMod <- MCPredicted
-  predMCMod[indexLessMC_Center] <- 1
-  predMCMod[indexMoreMC_Center] <- 0
-  
-  #ytest <- trainingData[1]
-  
-  print(c("MC model applied to MC:",(round(rmse((trainingData[,1]),round(predMCMod)),4))))
+  print(c("MC model applied to MC:",(round(rmse((trainingData[,1]),round(yhat.transformed_cen)),4))))
 
   total_predictions = nrow(trainingData)
-  correct_predictions = sum(trainingData[1] == round(predMCMod))
+  correct_predictions = sum(trainingData[1] == round(yhat.transformed_cen))
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error: ",round(error_rate,4)))
@@ -541,7 +524,7 @@ for (postProcess in 1:length(files))
   print("Conf matrix: MC CV (robust) model applied to MC data")
   CFMCCVMCData <- c()
   
-  CFMCCVMCData <- confusionMatrix(round(predMCMod), trainingData[,1,drop=TRUE])
+  CFMCCVMCData <- confusionMatrix(round(yhat.transformed_cen), trainingData[,1,drop=TRUE])
   print(nrow(trainingData[1]))
   print(round(CFMCCVMCData/sum(CFMCCVMCData),4))
   
