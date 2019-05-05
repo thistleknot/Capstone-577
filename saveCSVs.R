@@ -335,23 +335,6 @@ for (postProcess in 1:length(files))
   misClassError(yhat.transformed_spec, ytest, threshold = optCutOff_spec)
   yhat <- c()
   
-  pred <- c()
-  pred <- prediction(yhat.transformed_cen,trainingData[1])
-  #nrow(yhat)
-  #nrow(ytest)
-  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"MCCtr-roc.jpg"), width = 400, height = 400)
-  plot(roc.perf)
-  abline(a=0, b= 1)
-  dev.off()
-  
-  gain <- c()
-  gain <- performance(pred, "tpr", "rpp")
-  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gain.jpg"), width = 400, height = 400)
-  plot(gain, main = "Gain Chart")
-  abline(a=0, b= 1)
-  dev.off()
-  
   #plot(yhat,ytest)
   
   #https://www.r-bloggers.com/r-sorting-a-data-frame-by-the-contents-of-a-column/
@@ -816,6 +799,23 @@ for (postProcess in 1:length(files))
   #diff <- c()
   #diff <- ytest-yhat
   boxplot((predPopModel-popData[1]))
+  dev.off()
+  
+  pred <- c()
+  pred <- prediction(predMCPop,popData[1])
+  #nrow(yhat)
+  #nrow(ytest)
+  roc.perf = performance(pred, measure = "tpr", x.measure = "fpr")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"rocMCappPop.jpg"), width = 400, height = 400)
+  plot(roc.perf)
+  abline(a=0, b= 1)
+  dev.off()
+  
+  gain <- c()
+  gain <- performance(pred, "tpr", "rpp")
+  jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"gainMCappPop.jpg"), width = 400, height = 400)
+  plot(gain, main = "Gain Chart")
+  abline(a=0, b= 1)
   dev.off()
     
   #predictedMC2Pop <- plogis(predict(trainModel, popData[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
