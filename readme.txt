@@ -1046,6 +1046,10 @@ Category Flags
 		
 		see milestone 17 saveCSVs console output.txt
 		
+	Milestone 18 ab86f23
+	
+		improved error and confusion matrix
+		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER
