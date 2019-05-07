@@ -316,6 +316,7 @@ Number of Fisher Scoring iterations: 4
 		   0      1
 	0 0.4646 0.0320
 	1 0.4101 0.0933
+	
 	[1] "MC model applied to MC:" "0.6109"                 
 	[1] "error: " "0.3732" 
 	[1] "Conf matrix: MC CV (robust) model applied to MC data"
