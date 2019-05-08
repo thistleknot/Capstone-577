@@ -33,7 +33,8 @@ library(stringr)
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
-pre_percent=.1
+prenumber=3
+pre_percent=prenumber/100
 #used for resample r scripts to round/up down to sample sizes
 #max precision is # of records
 #precisionSize=182338*4
@@ -140,7 +141,7 @@ for (medianDirection in c("greaterEqual"))
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(10))
+  for(widthDiviser in c(prenumber))
   {
     print(paste0("widthDiviser: ",widthDiviser))
     

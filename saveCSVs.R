@@ -31,9 +31,9 @@ library(caret)
 
 #works
 #threshold=.40
-threshold=.35
-#threshold=.4
 #threshold=.25
+threshold=.35
+#threshold=.275
 #postProcess=1
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
@@ -199,7 +199,7 @@ for (postProcess in 1:length(files))
   nrow(finalTraining[holderOfDataI,])
   
   terms <- c()
-  terms <- sub_returnCVNamesOG(finalTraining[holderOfDataI,])
+  terms <- sub_returnCVNames(finalTraining[holderOfDataI,])
   #B <- suppressMessages(bestglm(Xy = finalTraining[holderOfDataI,], IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=10, BestModels = 10), family=binomial))
   #B <- lm()
   

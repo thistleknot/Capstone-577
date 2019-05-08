@@ -1,5 +1,6 @@
 sub_returnCV <- function(data_sent){
-  data_sent=data.train
+  #data_sent=finalTraining[holderOfDataI,]
+  #data.train
   
   holderOfData <- cbind(Filter(var,data.frame(data_sent[,-1 , drop = FALSE])),data.frame(data_sent[,1 , drop = FALSE]))
   #table(NewDF[,"V7202"])
@@ -26,6 +27,7 @@ sub_returnCV <- function(data_sent){
   #aboveMedianCV <- as.character(rownames(data.frame(which(result >= median(result)))))
   return(result)
 }
+
 
 sub_returnCVNamesOG <- function(data_sent){
   #data_sent=data.train
