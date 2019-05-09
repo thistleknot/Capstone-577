@@ -780,7 +780,6 @@ for (postProcess in 1:length(files))
   predMCPop_sens[indexLessMCModPopData_sens] <- 0
   
   print(c("MC .5 ctr model applied to pop:",(round(rmse((popData[,1]),predMCPop_center2),4))))
-  print(c("MC sens model applied to pop:",round(optCutOff_sens,4),(round(rmse((popData[,1]),predMCPop_sens),4))))
 
   total_predictions = nrow(popData)
   correct_predictions = sum( popData[1] == predMCPop_center2)
@@ -804,6 +803,7 @@ for (postProcess in 1:length(files))
   print(round(MCModPop/sum(MCModPop),4))
   
   print("Conf Matrix: MC model applied to Pop data Sens")
+  print(c("MC sens model applied to pop:",round(optCutOff_sens,4),(round(rmse((popData[,1]),predMCPop_sens),4))))
   MCModPop <- c()
   
   #length(round(predMCPop_center2))
