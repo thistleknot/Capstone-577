@@ -357,7 +357,6 @@ for (postProcess in 1:length(files))
   #Maximize specificity given a minimal value of sensitivity
   #cp_spec <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = spec_constrain)
   
-  
   #ggthemr("flat")
   #cm_info$plot
   
@@ -628,16 +627,30 @@ for (postProcess in 1:length(files))
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error: ",round(error_rate,4)))
   
-  predPopModel_center2 <- c()
-  predPopModel_center2 <- predPopModel
-  predPopModel_center2[indexMore_center2] <- 1
-  predPopModel_center2[indexLess_center2] <- 0
+  print(c("Pop model optimal cutoff for sens (as-is, over-fitted):",.5,(round(rmse((popData[,1]),round(predPopModel)),4))))
+  
+  print("Conf Matrix: Pop model applied to Pop data Opt Sens")
+  CM_PopOptCtr <- c()
+  CM_PopOptCtr <- confusionMatrix(round(predPopModel), popData[1])
+  print(nrow(popData[1]))
+  print(round(CM_PopOptCtr/sum(CM_PopOptCtr),4))  
+  
+  total_predictions = nrow(popData)
+  correct_predictions = sum(popData[1] == round(predPopModel))
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error: ",round(error_rate,4)))
   
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
   print(c("Pop model optimal cutoff for center2 & RMSE:",.5,(round(rmse((popData[,1]),predPopModel_center2),4))))
  
+  predPopModel_center2 <- c()
+  predPopModel_center2 <- predPopModel
+  predPopModel_center2[indexMore_center2] <- 1
+  predPopModel_center2[indexLess_center2] <- 0
+  
   total_predictions = nrow(popData)
   correct_predictions = sum(popData[1] == predPopModel_center2)
   classification_accuracy = correct_predictions / total_predictions
@@ -737,32 +750,65 @@ for (postProcess in 1:length(files))
   #summary(predicted)
   indexLessMCModPopData_center2 <- c()
   indexLessMCModPopData_center2 <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < .5]))
+
+  indexLessMCModPopData_sens <- c()
+  indexLessMCModPopData_sens <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < optCutOff_sens]))
+  
+    
+  #summary(popData)
+  #summary(predicted)
+  #indexLessMCModPopData_sens <- c()
+  #indexLessMCModPopData_sens <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < .5]))
   
   sizePredicted <- c()
   sizePredicted <- 1:length(predMCPop)
   
   indexMoreMCModPopData_center2 <- c()
   indexMoreMCModPopData_center2 <- sizePredicted[!sizePredicted %in% indexLessMCModPopData_center2]
-  
+
+  indexMoreMCModPopData_sens <- c()
+  indexMoreMCModPopData_sens <- sizePredicted[!sizePredicted %in% indexLessMCModPopData_sens]
+    
   predMCPop_center2 <- c()
   predMCPop_center2 <- predMCPop
   predMCPop_center2[indexMoreMCModPopData_center2] <- 1
   predMCPop_center2[indexLessMCModPopData_center2] <- 0
 
-  print(c("MC model applied to pop:",(round(rmse((popData[,1]),predMCPop_center2),4))))
+  predMCPop_sens <- c()
+  predMCPop_sens <- predMCPop
+  predMCPop_sens[indexMoreMCModPopData_sens] <- 1
+  predMCPop_sens[indexLessMCModPopData_sens] <- 0
+  
+  print(c("MC .5 ctr model applied to pop:",(round(rmse((popData[,1]),predMCPop_center2),4))))
+  print(c("MC sens model applied to pop:",round(optCutOff_sens,4),(round(rmse((popData[,1]),predMCPop_sens),4))))
 
   total_predictions = nrow(popData)
   correct_predictions = sum( popData[1] == predMCPop_center2)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
-  print(c("error: ",round(error_rate,4)))
-  
-  print("Conf Matrix: MC model applied to Pop data")
+  print(c("error center2: ",round(error_rate,4)))
+
+  total_predictions = nrow(popData)
+  correct_predictions = sum( popData[1] == predMCPop_sens)
+  classification_accuracy = correct_predictions / total_predictions
+  error_rate = (1 - (correct_predictions / total_predictions))
+  print(c("error sens: ",round(error_rate,4)))
+    
+  print("Conf Matrix: MC model applied to Pop data Center2")
   MCModPop <- c()
   
   #length(round(predMCPop_center2))
   #nrow(popData[1])
   MCModPop <- confusionMatrix(round(predMCPop_center2), popData[1])
+  print(nrow(popData[1]))
+  print(round(MCModPop/sum(MCModPop),4))
+  
+  print("Conf Matrix: MC model applied to Pop data Sens")
+  MCModPop <- c()
+  
+  #length(round(predMCPop_center2))
+  #nrow(popData[1])
+  MCModPop <- confusionMatrix(round(predMCPop_sens), popData[1])
   print(nrow(popData[1]))
   print(round(MCModPop/sum(MCModPop),4))
   
