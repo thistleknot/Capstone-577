@@ -9,7 +9,7 @@ sub_returnCVOG <- function(data_sent){
   #name <- rownames(data.frame(info))
   #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   result <- c()
   #return all coefficients
@@ -37,7 +37,7 @@ sub_returnCVNames <- function(data_sent){
   name <- rownames(data.frame(info))
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -84,7 +84,7 @@ sub_returnCVNames <- function(data_sent){
   name <- rownames(data.frame(info))
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   

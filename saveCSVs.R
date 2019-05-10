@@ -38,6 +38,7 @@ threshold=.35
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 
+#i think this works because files isn't called until AFTER sourceDir is.
 files <- c()
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
@@ -83,8 +84,9 @@ if(!linux)
 ynames
 source(paste0(sourceDir,"unbalanced_functions.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
-if(!exist("NewDF"))
+if(!exists("NewDF"))
 {
+  source(paste0(sourceDir,"vars.R"))  
   source(paste0(sourceDir,"NewDF.R"))  
 }
 

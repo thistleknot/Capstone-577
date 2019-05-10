@@ -61,6 +61,7 @@ source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
 source(paste0(sourceDir,"pairedLists.R"))
 colListNames <- c()
+source(paste0(sourceDir,"vars.R"))
 source(paste0(sourceDir,"NewDF.R"))
 # Read CSV into R
 
@@ -98,6 +99,12 @@ for (medianDirection in medianDirectionSet)
       #y is handled in holdout
       #data manipulation (x's) is handled in resample loop
       numRuns = 1
+      
+      #reset each file
+      tabulatedCrossValidated <- c()
+      nullpairs <- c()
+      errorpairs <- c()
+      
       #7221 gpa
       if (flister==1) ilist<-read.csv(paste0(sourceDir,"gpalist.txt"), header=FALSE, sep=,)
       

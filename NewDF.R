@@ -18,8 +18,6 @@ if(!linux)
   sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
 }
 
-source(paste0(sourceDir,"vars.R"))
-
 unzip(zipF,exdir=outDir)
 
 d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
@@ -108,11 +106,6 @@ colnames(data)
 col.num <- which(colnames(data) %in% as.character(readList[,1]))
 #need to include GPA and psyD and gangfight in all 3!
 #done, created 8th category and excluded it specifically from analysis, meaning I don't have to rerun my #'s :)
-
-#reset each file
-tabulatedCrossValidated <- c()
-nullpairs <- c()
-errorpairs <- c()
 
 #length(colnames(NewDF))
 #works with data DF
