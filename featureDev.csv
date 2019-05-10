@@ -1,10 +1,10 @@
-﻿Start,End,% Complete,Done,Priority,Level of Effort,,Description
-,,,,2,,Heaps,Permutation
-,,,,1,,Predictor Effect Plots,Use MC Balanced Means
-,,,,1,,Derive factorial combinations,Map each to a plogis % and derive proportions
+﻿Start,End,% Complete,Done,Priority (1 is highest),Level of Effort (3 is highest),,Description
+,,,,2,3,Heaps,Permutation
+,,,,1,2,Predictor Effect Plots,Use MC Balanced Means
+,,,,1,1,Derive factorial combinations,Map each to a plogis % and derive proportions
 ,,,,1,,Best subset between bestglm and median based,
 ,,,Done,,,Optimize Sensitivity,
 ,,,,2,,Test mean diff from .5,
 ,,,,,,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
 ,,,,,,Proportion test if mean is different from .5?,
-,,,,,,saveCSVs.R newDF without cleandatacode,
+,,,Done,,2,saveCSVs.R newDF without cleandatacode,
