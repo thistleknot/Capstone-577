@@ -1,10 +1,11 @@
-﻿Start,End,% Complete,Done,Priority (1 is highest),Level of Effort (3 is highest),,Description
-,,,,2,3,Heaps,Permutation
-,,,,1,2,Predictor Effect Plots,Use MC Balanced Means
-,,,,1,1,Derive factorial combinations,Map each to a plogis % and derive proportions
-,,,,1,,Best subset between bestglm and median based,
-,,,Done,,,Optimize Sensitivity,
-,,,,2,,Test mean diff from .5,
+﻿Start,End,% Complete,Priority (1 is highest),Level of Effort (3 is highest),Done,Title,Description
+,,,2,3,,Heaps,Permutation
+,,,1,2,,Predictor Effect Plots,Use MC Balanced Means
+,,,1,1,,Derive factorial combinations,Map each to a plogis % and derive proportions
+,,,1,,,Best subset between bestglm and median based,
+,,,,,Done,Optimize Sensitivity,
+,,,2,,,Test mean diff from .5,
 ,,,,,,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
-,,,,,,Proportion test if mean is different from .5?,
-,,,Done,,2,saveCSVs.R newDF without cleandatacode,
+,,,,2,Done,saveCSVs.R newDF without cleandatacode,
+,,,,,,Median saturation,Find a method that finds a sample size that converges on the median and don't sample beyond this
+,,,,,,Model comparisons,compare an overfitted model with a class balanced model using sampling that adjusts vs not (Shmueli suggestion)
