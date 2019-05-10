@@ -7,3 +7,4 @@
 ,,,,2,,Test mean diff from .5,
 ,,,,,,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
 ,,,,,,Proportion test if mean is different from .5?,
+,,,,,,saveCSVs.R newDF without cleandatacode,

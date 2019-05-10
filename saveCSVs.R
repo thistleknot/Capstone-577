@@ -38,6 +38,11 @@ threshold=.35
 
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 
+files <- c()
+files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
+
+ynames <- c()
+
 linux=0
 if(linux)
 {
@@ -45,7 +50,7 @@ if(linux)
   
   ys <- c() 
   ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
-  ynames <- c()
+  
   for (i in 1:length(files))
   {
     temp <- c()
@@ -55,15 +60,15 @@ if(linux)
     yname <- substr(temp, 0, 5)
     ynames <- rbind(ynames,yname)
   }
-  ynames
+  #ynames
 }
+
 if(!linux)
 {
   sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
   
   ys <- c() 
   ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
-  ynames <- c()
   for (i in 1:length(files))
   {
     temp <- c()
@@ -73,16 +78,23 @@ if(!linux)
     yname <- substr(temp, 0, 5)
     ynames <- rbind(ynames,yname)
   }
-  ynames
+  #ynames
 }
-
+ynames
 source(paste0(sourceDir,"unbalanced_functions.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
+if(!exist("NewDF"))
+{
+  source(paste0(sourceDir,"NewDF.R"))  
+}
 
+ynames
+#for some reason I have to reinit here after NewDF.R
+files <- c()
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
 #set.seed(100)  # for repeatability of samples
-
+yname <- c()
 #postProcess=2
 for (postProcess in 1:length(files))
 { 
@@ -644,12 +656,12 @@ for (postProcess in 1:length(files))
   #summary(popModel)
   #print(nagelkerke(popModel2, popData))
   
-  print(c("Pop model optimal cutoff for center2 & RMSE:",.5,(round(rmse((popData[,1]),predPopModel_center2),4))))
- 
   predPopModel_center2 <- c()
   predPopModel_center2 <- predPopModel
   predPopModel_center2[indexMore_center2] <- 1
   predPopModel_center2[indexLess_center2] <- 0
+  
+  print(c("Pop model optimal cutoff for center2 & RMSE:",.5,(round(rmse((popData[,1]),predPopModel_center2),4))))
   
   total_predictions = nrow(popData)
   correct_predictions = sum(popData[1] == predPopModel_center2)

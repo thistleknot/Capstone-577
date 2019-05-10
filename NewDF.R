@@ -1,16 +1,153 @@
+#rbind.fill
+library(plyr)
+#replace.value
+library(anchors)
+
+linux=0
+if(linux)
+{
+  zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
+  outDir <- "/home/rstudio/577/Capstone-577/"
+  sourceDir="/home/rstudio/577/Capstone-577/"
+  
+}
+if(!linux)
+{
+  zipF<- "C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577\\Capstone-577.zip"
+  outDir<-"C:\\Users\\User\\Documents\\School\\CSUF\\ISDS577\\projects\\Capstone-577"
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+}
+
+source(paste0(sourceDir,"vars.R"))
+
+unzip(zipF,exdir=outDir)
+
+d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
+d_2013 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
+d_2014 <- read.csv(paste0(sourceDir,"36149-0001-Data.csv"), header=TRUE, sep=",")
+d_2015 <- read.csv(paste0(sourceDir,"36407-0001-Data.csv"), header=TRUE, sep=",")
+d_2016 <- read.csv(paste0(sourceDir,"36799-0001-Data.csv"), header=TRUE, sep=",")
+d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=",")
+
+suppressWarnings(system(paste0('rm -f ',sourceDir,'/*-0001-Data.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
+
+d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
+
+for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
+{
+  #median information
+  print(paste("interest:",interests))
+  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017","d_combined"))
+  {
+    #https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
+    df <- (get(year)[,interests])
+    print(paste("year:",year))
+    #https://stackoverflow.com/questions/45986155/r-error-in-usemethodgroups-no-applicable-method-for-groups-applied-to
+    print(paste("count:",sum (plyr::count(df[df>0]))))
+    
+    centerpoint = (length(df[df>0]))/2
+    
+    #print(centerpoint)
+    width = round(1.96*sqrt((length(df[df>0])))/2)
+    
+    lower = (length(df[df>0]))/2 - width
+    upper = (length(df[df>0]))/2 + width
+    print(paste("lower:", sort(((df[df>0])))[lower]))
+    print(paste("median:",median(df[df>0])))
+    print(paste("upper:",sort(((df[df>0])))[upper]))
+    
+    print(round(table ( df[(df>0)] ) / sum (plyr::count(df[df>0])) ,4))
+    
+    #https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
+    writeLines("\n")
+  } 
+  writeLines("\n")
+}
+
+na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
+
+#data <- read.csv(paste0(sourceDir,"d_combined.csv"), header=TRUE, sep=",")
+
+data <- d_combined
+ncol(data)
+#drops columns with na values
+
+#not actually used, was used initially
+cleandata<-data[,colSums(is.na(data)) >= round(nrow(data)*.25,0)] # dat[A, B] takes the A rows and B columns; A and B are indices; 
+ncol(cleandata)
+
+colnames(cleandata)
+# if A or B is not specified, all rows or columns will be retained
+
+#expensive, descriptive function only
+#table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
+#Since there are no missing values we export the data
+#write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
+
+#https://stackoverflow.com/questions/9368900/how-to-check-if-object-variable-is-defined-in-r
+if(!exists("medianDirection"))
+{
+  medianDirection <- medianDirectionSet[1]
+}
+
+#defaults, this works because they all convert the same.  I merely use y as a placeholder inside cleandatacode.R
+if(!exists("flister"))
+{
+  flister <- c()
+  flister <- 1
+}
+
+
+if(!exists("readList"))
+{
+  readList <- c()
+  readList <- read.csv(paste0(sourceDir,"gpalist.txt"), header=FALSE, sep=,)
+}
+
+colnames(data)
+col.num <- which(colnames(data) %in% as.character(readList[,1]))
+#need to include GPA and psyD and gangfight in all 3!
+#done, created 8th category and excluded it specifically from analysis, meaning I don't have to rerun my #'s :)
+
+#reset each file
+tabulatedCrossValidated <- c()
+nullpairs <- c()
+errorpairs <- c()
+
+#length(colnames(NewDF))
+#works with data DF
+
+#transformations
+#https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
+#index <- df$b == 0
+#df$est[index] <- (df$a[index] - 5)/2.533 
+#conversion profile
+#anything 2+ = positive
+convert1Index <- readList[,2] == 1
+#median (no profile applied)
+convert2Index <- readList[,2] == 2
+#4 = mostly
+convert3Index <- readList[,2] == 3
+#list[,1][convert1Index]
+
+#male to female
+#View(list[,1][convert2Index])
+
+#here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
+
 NewDF <- data[,(c(col.num))]
 
 print(paste("medianDirection:",medianDirection))
 
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-9), to=as.double(0), verbose = FALSE)
 NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.double(0), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(2), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(3), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert1Index]), from=as.integer(7), to=as.double(1), verbose = FALSE)
 
 #gender
 NewDF <- replace.value( NewDF, "V7202", from=as.integer(1), to=as.double(-1), verbose = FALSE)
@@ -181,12 +318,12 @@ tempIndex <- c()
 tempIndex <- NewDF["V7563"]==21
 NewDF[tempIndex,"V7563"] <- 1
 
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(2), to=as.double(-1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(3), to=as.double(-1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
-NewDF <- replace.value( NewDF, as.character(list[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(1), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(2), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(3), to=as.double(-1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(4), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(5), to=as.double(1), verbose = FALSE)
+NewDF <- replace.value( NewDF, as.character(readList[,1][convert3Index]), from=as.integer(6), to=as.double(1), verbose = FALSE)
 
 NewDF[NewDF == 0] <- -8
 
@@ -251,6 +388,24 @@ NewDF <- replace.value( NewDF, colnames(NewDF), from=as.integer(-8), to=as.doubl
   #https://www.listendata.com/2015/06/r-keep-drop-columns-from-data-frame.html
   
   #NewDF = subset(oldDF, select = -c(noquote(c(as.character(filterList)))) )
+  
+  lGeographyIndex <- readList[,4] == 1
+  
+  lGenderGPAViolenceFatherIndex <- readList[,4] == 2
+  #lGenderIndex <- list[,4] == 2
+  #lGPAIndex <- list[,4] == 3
+  #lViolenceIndex <- list[,4] == 4
+  #lFather1Index <- list[,4] == 5
+  #lFather2Index <- list[,4] == 6
+  
+  lHabitsIndex1 <- readList[,4] == 3
+  lHealthIndex <- readList[,4] == 4
+  lPsycheIndex1 <- readList[,4] == 5
+  lPsycheIndex2 <- readList[,4] == 6
+  lHabitsIndex2 <- readList[,4] == 7
+  lExcludedIndex <- readList[,4] == 8
+  
+  colListNames <- rbind(readList[lGenderGPAViolenceFatherIndex,],readList[lHabitsIndex1,],readList[lHealthIndex,],readList[lPsycheIndex1,],readList[lPsycheIndex2,],readList[lHabitsIndex2,])
   
   #end na's 
 }

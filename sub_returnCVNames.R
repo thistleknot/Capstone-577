@@ -1,4 +1,4 @@
-sub_returnCV <- function(data_sent){
+sub_returnCVOG <- function(data_sent){
   #data_sent=finalTraining[holderOfDataI,]
   #data.train
   
@@ -9,8 +9,7 @@ sub_returnCV <- function(data_sent){
   #name <- rownames(data.frame(info))
   #if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
   
   result <- c()
   #return all coefficients
@@ -28,8 +27,8 @@ sub_returnCV <- function(data_sent){
   return(result)
 }
 
-
-sub_returnCVNamesOG <- function(data_sent){
+#this return everything
+sub_returnCVNames <- function(data_sent){
   #data_sent=data.train
   holderOfData <- cbind(Filter(var,data.frame(data_sent[,-1 , drop = FALSE])),data.frame(data_sent[,1 , drop = FALSE]))
   #table(NewDF[,"V7202"])
@@ -38,8 +37,7 @@ sub_returnCVNamesOG <- function(data_sent){
   name <- rownames(data.frame(info))
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   
@@ -86,8 +84,7 @@ sub_returnCVNames <- function(data_sent){
   name <- rownames(data.frame(info))
   if(!length(info)==0) holderOfData <- holderOfData[, -which(names(holderOfData) == name)]
   
-  if ( widthDiviser == 1 )  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=2, REP=widthDiviser, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
-  if (!(widthDiviser == 1 )) B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=widthDiviser, BestModels = widthDiviser), family=binomial,method = "exhaustive"))
+  B <- suppressMessages(bestglm(Xy = holderOfData, IC="CV", CVArgs=list(Method="HTF", K=3, REP=1, TopModels=10, BestModels = 10), family=binomial,method = "exhaustive"))
   
   set<-round(colSums(B$Subsets))[-1]
   

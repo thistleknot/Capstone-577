@@ -33,8 +33,7 @@ library(stringr)
 #good values are integer's, of 2, 3, 5 (5% training sample size, anda 5% holdout sample size per analysis)
 #1% passes result in too low of a pass and give overfitted coefficient terms which result in too large of a sample for the 2nd holdout iteration.
 #therefore a minimum of 1.25% is recommended, but to hard code that here... would be wonky.  So sticking to simply integer 
-prenumber=3
-pre_percent=prenumber/100
+
 #used for resample r scripts to round/up down to sample sizes
 #max precision is # of records
 #precisionSize=182338*4
@@ -61,87 +60,21 @@ if(!linux)
 source(paste0(sourceDir,"bestglm.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
 source(paste0(sourceDir,"pairedLists.R"))
+colListNames <- c()
+source(paste0(sourceDir,"NewDF.R"))
 # Read CSV into R
-
-unzip(zipF,exdir=outDir)
-
-d_2012 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
-d_2013 <- read.csv(paste0(sourceDir,"34574-0001-Data.csv"), header=TRUE, sep=",")
-d_2014 <- read.csv(paste0(sourceDir,"36149-0001-Data.csv"), header=TRUE, sep=",")
-d_2015 <- read.csv(paste0(sourceDir,"36407-0001-Data.csv"), header=TRUE, sep=",")
-d_2016 <- read.csv(paste0(sourceDir,"36799-0001-Data.csv"), header=TRUE, sep=",")
-d_2017 <- read.csv(paste0(sourceDir,"37183-0001-Data.csv"), header=TRUE, sep=",")
-
-suppressWarnings(system(paste0('rm -f ',sourceDir,'/*-0001-Data.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
-
-d_combined <- rbind.fill(d_2012,d_2013,d_2014,d_2015,d_2016,d_2017)
-
-#write.csv(d_combined,(paste0(sourceDir,"d_combined.csv")))
-
-for (interests in c("V7221","V7215","V7551","V7552","V7553","V7562","V7563"))
-{
-  #median information
-  print(paste("interest:",interests))
-  for(year in c("d_2012","d_2013","d_2014","d_2015","d_2016","d_2017","d_combined"))
-  {
-    #https://stackoverflow.com/questions/28802652/access-variable-dataframe-in-r-loop
-    df <- (get(year)[,interests])
-    print(paste("year:",year))
-    print(paste("count:",sum (count(df[df>0]))))
-    
-    centerpoint = (length(df[df>0]))/2
-    
-    #print(centerpoint)
-    width = round(1.96*sqrt((length(df[df>0])))/2)
-    
-    lower = (length(df[df>0]))/2 - width
-    upper = (length(df[df>0]))/2 + width
-    print(paste("lower:", sort(((df[df>0])))[lower]))
-    print(paste("median:",median(df[df>0])))
-    print(paste("upper:",sort(((df[df>0])))[upper]))
-    
-    print(round(table ( df[(df>0)] ) / sum (count(df[df>0])) ,4))
-    
-    #https://stackoverflow.com/questions/9317830/r-do-i-need-to-add-explicit-new-line-character-with-print
-    writeLines("\n")
-  } 
-  writeLines("\n")
-}
-
-na_count <-function (x) sapply(x, function(y) sum(is.na(y)))
-
-#data <- read.csv(paste0(sourceDir,"d_combined.csv"), header=TRUE, sep=",")
-
-data <- d_combined
-ncol(data)
-#drops columns with na values
-
-#not actually used, was used initially
-cleandata<-data[,colSums(is.na(data)) >= round(nrow(data)*.25,0)] # dat[A, B] takes the A rows and B columns; A and B are indices; 
-ncol(cleandata)
-
-colnames(cleandata)
-# if A or B is not specified, all rows or columns will be retained
-
-#expensive, descriptive function only
-#table(is.na(cleandata))# table(is.na(cleandata)) gives the number of missing values of data
-#Since there are no missing values we export the data
-#write.csv(cleandata, "C:\\Users\\CampusUser\\Desktop\\MyData.csv")
 
 suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
-#medianDirection = "greaterEqual"
-#for (medianDirection in c("greaterEqual"))
-#for (medianDirection in c("greaterEqual","greater"))
-#
-#for (medianDirection in c("greaterEqual","greater"))
-for (medianDirection in c("greaterEqual"))
+for (medianDirection in medianDirectionSet)
 {
+  #call newDF, check if medianDirection is set, if not assume the 1st in medianDirectionSet
+  
   #will error on 3 for V7118
   #widthDiviser=3
   #for(widthDiviser in c(3))
   #due to mcresampletest's class balancing.  I don't have error checking for when there is gross class imbalance.  So widthSize of 10 does
-  for(widthDiviser in c(prenumber))
+  for(widthDiviser in widthDiviserSet)
   {
     print(paste0("widthDiviser: ",widthDiviser))
     
@@ -166,72 +99,22 @@ for (medianDirection in c("greaterEqual"))
       #data manipulation (x's) is handled in resample loop
       numRuns = 1
       #7221 gpa
-      if (flister==1) list<-read.csv(paste0(sourceDir,"gpalist.txt"), header=FALSE, sep=,)
+      if (flister==1) ilist<-read.csv(paste0(sourceDir,"gpalist.txt"), header=FALSE, sep=,)
       
       #8517 gang
-      if (flister==2) list<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
+      if (flister==2) ilist<-read.csv(paste0(sourceDir,"gangfight.txt"), header=FALSE, sep=,)
       
       #7118 (psychadelics)
-      if (flister==3) list<-read.csv(paste0(sourceDir,"psyDFilterList.txt"), header=FALSE, sep=,)
-      
-      colnames(data)
-      col.num <- which(colnames(data) %in% as.character(list[,1]))
-      #need to include GPA and psyD and gangfight in all 3!
-      #done, created 8th category and excluded it specifically from analysis, meaning I don't have to rerun my #'s :)
-      
-      #reset each file
-      tabulatedCrossValidated <- c()
-      nullpairs <- c()
-      errorpairs <- c()
-      
-      #length(colnames(NewDF))
-      #works with data DF
-      
-      #transformations
-      #https://stackoverflow.com/questions/8214303/conditional-replacement-of-values-in-a-data-frame
-      #index <- df$b == 0
-      #df$est[index] <- (df$a[index] - 5)/2.533 
-      #conversion profile
-      #anything 2+ = positive
-      convert1Index <- list[,2] == 1
-      #median (no profile applied)
-      convert2Index <- list[,2] == 2
-      #4 = mostly
-      convert3Index <- list[,2] == 3
-      #list[,1][convert1Index]
-      
-      #male to female
-      #View(list[,1][convert2Index])
-      
-      #here I should drop from NewDF non important terms (i.e. GPA, gangfight and PsyD from equations where not being tested.)
-      
-      source(paste0(sourceDir,"NewDF.R"))
+      if (flister==3) ilist<-read.csv(paste0(sourceDir,"psyDFilterList.txt"), header=FALSE, sep=,)
+  
       #this resets each file
       Hfiltered <- c()
       
       ##before reseed
       #https://adv-r.hadley.nz/subsetting.html
       
-      yIndex <- list[,4] == 0
-      lGeographyIndex <- list[,4] == 1
-      
-      lGenderGPAViolenceFatherIndex <- list[,4] == 2
-      #lGenderIndex <- list[,4] == 2
-      #lGPAIndex <- list[,4] == 3
-      #lViolenceIndex <- list[,4] == 4
-      #lFather1Index <- list[,4] == 5
-      #lFather2Index <- list[,4] == 6
-      
-      lHabitsIndex1 <- list[,4] == 3
-      lHealthIndex <- list[,4] == 4
-      lPsycheIndex1 <- list[,4] == 5
-      lPsycheIndex2 <- list[,4] == 6
-      lHabitsIndex2 <- list[,4] == 7
-      lExcludedIndex <- list[,4] == 8
-      
-      colListNames <- c()
-      colListNames <- rbind(list[lGenderGPAViolenceFatherIndex,],list[lHabitsIndex1,],list[lHealthIndex,],list[lPsycheIndex1,],list[lPsycheIndex2,],list[lHabitsIndex2,])
-      
+      yIndex <- ilist[,4] == 0
+
       #resets each new file
       finalList <- c()
       
@@ -285,13 +168,13 @@ for (medianDirection in c("greaterEqual"))
           
           #I know I have lister, but at one time I had multiple y's before I was utilizing lister...  so that's why there is a y iterator here
           yname <- c()
-          yname <- as.character(list[yIndex,][iterator,][,1])
+          yname <- as.character(ilist[yIndex,][iterator,][,1])
           
           y <- c()
-          y <- list[yIndex,][iterator,]
+          y <- ilist[yIndex,][iterator,]
           
           alty <- c()
-          alty <- list[yIndex,][-iterator,]
+          alty <- ilist[yIndex,][-iterator,]
           #y
           #yname <- as.character(list[yIndex,][iterator,][,1])          
           
@@ -316,7 +199,7 @@ for (medianDirection in c("greaterEqual"))
             #rather than move to end of file
             if (iterator==1 && resample==1 && holdoutReset==1 && seeder==start) 
             {
-              print(paste("Y:",as.character(list[yIndex,][iterator,][,1])))
+              print(paste("Y:",as.character(ilist[yIndex,][iterator,][,1])))
               
             }
             
@@ -689,7 +572,6 @@ for (medianDirection in c("greaterEqual"))
           print(c("tabCV: ",print_tabled))
           #end holdoutReset
         }
-        
         
         #end of seeder
         
