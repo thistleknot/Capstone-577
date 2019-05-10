@@ -1050,7 +1050,7 @@ Category Flags
 	
 		improved error and confusion matrix
 		
-	Milestone 19 915d08e
+	Milestone 19 5b37065
 	
 		decoupled saveCSVs.R from cleandatacode.R by profiling the 1st file (gpalist.txt) assuming they all use the same format (only cleandatacode.R uses 0 category for Y so there is no need to check for it in NewDF, so as long as the non 0 category's remain the same (I believe it's readList[,4]) then we're good and I don't have to worry about expensive combining of files (i.e. start with y then append x's)
 		
