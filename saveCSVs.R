@@ -25,6 +25,9 @@ library(MLmetrics)
 #library(sqldf)
 library(SparkR)
 
+#https://stackoverflow.com/questions/5564564/r-2-functions-with-the-same-name-in-2-different-packages
+sample <- base::sample
+
 #based on seeder from cleandatacode.R
 set.seed(5)
 
@@ -175,19 +178,19 @@ for (postProcess in 1:length(files))
       {
         #https://community.hortonworks.com/questions/172024/zeppelin-sparkr-1.html
         #generates index and samples in place.  I have to do this, else repeat index's get stored as .1's and .2' respectively
-        ones.index <- rbind(ones.index,input_ones[base::sample(c((rownames(input_ones))), minFactor),])  # 1's for training
-        zeros.index <- rbind(zeros.index,input_zeros[base::sample(c((rownames(input_zeros))), minFactor),])  # 0's for training. Pick as many 0's as 1's
+        ones.index <- rbind(ones.index,input_ones[sample(c((rownames(input_ones))), minFactor),])  # 1's for training
+        zeros.index <- rbind(zeros.index,input_zeros[sample(c((rownames(input_zeros))), minFactor),])  # 0's for training. Pick as many 0's as 1's
       }
     }
-    ones.index <- rbind(ones.index,input_ones[base::sample(c((rownames(input_ones))), minFactor*remainder),])  # 1's for training
-    zeros.index <- rbind(zeros.index,input_zeros[base::sample(c((rownames(input_zeros))), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
+    ones.index <- rbind(ones.index,input_ones[sample(c((rownames(input_ones))), minFactor*remainder),])  # 1's for training
+    zeros.index <- rbind(zeros.index,input_zeros[sample(c((rownames(input_zeros))), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
     
     both <- c()
     both <- rbind(ones.index, zeros.index)
     #summary(both)
     #https://stackoverflow.com/questions/2370515/how-to-get-row-index-number-in-r
     mix <- c()
-    mix <- base::sample(c((rownames(both))),round(nrow(both)/2) )
+    mix <- sample(c((rownames(both))),round(nrow(both)/2) )
     
     #mix <- sample(both,length(both)/2)
     #colnames(mix) <- colnames(trainingData)
@@ -199,7 +202,7 @@ for (postProcess in 1:length(files))
   finalTrainingI <- c()
   size <- c()
   size <- round(nrow(trainingData))
-  finalTrainingI <- base::sample(c((rownames(trainingData))),size/4)
+  finalTrainingI <- sample(c((rownames(trainingData))),size/4)
   finalTraining <- trainingData[finalTrainingI,]
   print(c("MC n:",nrow(finalTraining)))
   summary(finalTraining)
