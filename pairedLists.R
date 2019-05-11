@@ -1,4 +1,4 @@
-
+sample <- base::sample
 
 pairedLists = function(n) {
   
