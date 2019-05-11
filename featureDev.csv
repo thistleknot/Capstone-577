@@ -1,7 +1,7 @@
 ﻿Start,End,% Complete,Priority (1 is highest),Level of Effort (3 is highest),Done,Title,Description
 ,,,2,3,,Heaps,Permutation
 ,,,1,2,,Predictor Effect Plots,Use MC Balanced Means
-,,,1,1,,Derive factorial combinations,Map each to a plogis % and derive proportions
+,,,1,1,Done,class profiles,Map each to a plogis % and derive proportions
 ,,,1,,,Best subset between bestglm and median based,
 ,,,,,Done,Optimize Sensitivity,
 ,,,2,,,Test mean diff from .5,

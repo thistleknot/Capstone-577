@@ -32,9 +32,9 @@ set.seed(5)
 library(caret)
 
 #works
-#threshold=.40
+threshold=.35
 #threshold=.25
-threshold=.25
+#threshold=.25
 #threshold=.275
 #postProcess=1
 
@@ -299,6 +299,7 @@ for (postProcess in 1:length(files))
   MCPredicted <- c()
   MCPredicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   
+  #https://stats.stackexchange.com/questions/121087/count-the-number-of-each-unique-row-in-a-data-frame
   uniqueTrainingXs <- c()
   uniqueTrainingXs <- plyr::count(trainingData[-1], vars = colnames(trainingData[-1]))
   
