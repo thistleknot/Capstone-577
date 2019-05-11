@@ -1056,6 +1056,9 @@ Category Flags
 		
 		also created vars.R to master setup vars from a top down structure.
 		
+	Milestone 20 c61d705
+		Class Profiles
+		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
 	V7206 R'S HSHLD FATHER
