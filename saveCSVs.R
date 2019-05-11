@@ -22,6 +22,8 @@ library(mctest)
 library(car)
 library(rcompanion)
 library(MLmetrics)
+#library(sqldf)
+library(SparkR)
 
 #based on seeder from cleandatacode.R
 set.seed(5)
@@ -32,7 +34,7 @@ library(caret)
 #works
 #threshold=.40
 #threshold=.25
-threshold=.35
+threshold=.25
 #threshold=.275
 #postProcess=1
 
@@ -141,16 +143,16 @@ for (postProcess in 1:length(files))
   input_zeros <- filtered[which(filtered[1] == 0), ]  # all 0's
   length(input_ones[,1])
   length(input_zeros[,1])
-
+  
   #MC resample  
   #training_ones <- c()
   #training_zeros <- c()
   #bootstraping with montecarlo
   #resamples 5% from both classes which are already pre-cleaned to aggregate up to 20 samples of 5% each between 2 classes is 100% for those 2 classes.
-
+  
   avgCountHalved <- c()
   avgCountHalved <- round(mean(length(input_ones[,1]),length(input_zeros[,1]))/2)
-
+  
   trainingData <- c()
   ones.index <- c()
   zeros.index <- c()
@@ -166,7 +168,7 @@ for (postProcess in 1:length(files))
   #this might break depending on the size of 1's or 0's, but I hope 
   for(i in 1:4)
   {
-   
+    
     if(floor(reloopFactor)>0)
     {
       for (loops in 1:floor(reloopFactor))
@@ -189,7 +191,7 @@ for (postProcess in 1:length(files))
     #mix <- sample(both,length(both)/2)
     #colnames(mix) <- colnames(trainingData)
     trainingData <- rbind(trainingData, both[mix,])
-  
+    
   }  
   #not reduced column data
   finalTraining <- c()
@@ -205,7 +207,7 @@ for (postProcess in 1:length(files))
   y <- c()
   y <- finalTraining[,1,drop=FALSE]
   x <- finalTraining[,-1,drop=FALSE]
-
+  
   holderOfData <- c()
   holderOfData <- cbind(x,y)
   holderOfDataI <- c()
@@ -223,7 +225,7 @@ for (postProcess in 1:length(files))
   trainModel <- c()
   #trainModelglm <- c()
   #trainModel <- B$BestModel
- 
+  
   #trainModelglm <- glm(cbind(filtered2[-1],as.factor(filtered2[,1])),family=binomial(link="logit"))
   #finalTraining[holderOfDataI,][c(terms,yname)]
   
@@ -252,7 +254,7 @@ for (postProcess in 1:length(files))
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"corrplot.jpg"), width = 400, height = 400)
   #corrplot(cor(cbind(x,prcomp(x, center=TRUE, scale=TRUE)$x)))
   #dev.off()
-
+  
   #http://rfaqs.com/mctest-r-package-detection-collinearity-among-regressors
   
   #if(length(colnames(x))!=1) omcdiag(x, y, Inter=FALSE)
@@ -261,9 +263,9 @@ for (postProcess in 1:length(files))
   #https://rdrr.io/cran/mctest/man/mctest.html
   result <- mctest(x, y, type="i", method="VIF")
   print(result)
-
+  
   #http://r-statistics.co/Logistic-Regression-With-R.html
- 
+  
   #logitMod <- glm(ABOVE50K ~ RELATIONSHIP + AGE + CAPITALGAIN + OCCUPATION + EDUCATIONNUM, data=trainingData, family=binomial(link="logit"))
   print("MC summary")
   print(summary(trainModel$finalModel))
@@ -284,7 +286,7 @@ for (postProcess in 1:length(files))
   #x=data.train[,-1]
   #x.test=data.test[,-1]
   #y=data.train[,1]
- 
+  
   #yhat.test = predict(trainModel$finalModel, x.test)
   #ytest = data.test[,1]
   
@@ -296,12 +298,38 @@ for (postProcess in 1:length(files))
   
   MCPredicted <- c()
   MCPredicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
+  
+  uniqueTrainingXs <- c()
+  uniqueTrainingXs <- plyr::count(trainingData[-1], vars = colnames(trainingData[-1]))
+  
+  uniqueTrainingXs$freq <- round(uniqueTrainingXs$freq / nrow(trainingData[-1]),4)
+  
+  uniqueTrainingXs$pred <- round(plogis(predict(trainModel$finalModel, uniqueTrainingXs[1:(ncol(uniqueTrainingXs)-1)])),4)  # predicted scores
+  
+  write.csv(uniqueTrainingXs,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"uniqueTrainingXs.csv")))
+  
+  #https://discuss.analyticsvidhya.com/t/how-to-count-number-of-distinct-values-in-a-column-of-a-data-table-in-r/1124/2
+  #sqldf("select count(distinct(x)) from df1")
+  
+  #distinct(trainingData[-1])
+  
+  #https://www.dummies.com/programming/r/how-to-count-unique-data-values-in-r/
+  #sapply(mtcars, function(x) length(unique(x)))
+  
+  #n_distinct(trainingData[-1])
+  
+  #uniqueTrainingXs <- c()
+  #uniqueTrainingXs <- distinct(trainingData[-1])
+  
+  #https://stats.stackexchange.com/questions/121087/count-the-number-of-each-unique-row-in-a-data-frame
+  
+  
   sizePredicted <- c()
   sizePredicted <- 1:length(MCPredicted)
   print(length(MCPredicted))
   print(nrow(trainingData[-1]))
   #summary(predicted)
-
+  
   #class 1
   #Maximize sensitivity given a minimal value of specificity
   #cp_sens <- cutpointr(cbind(yhat,ytest), yhat, ytest, method = maximize_metric, metric = sens_constrain)
@@ -322,22 +350,22 @@ for (postProcess in 1:length(files))
   optCutOff_cen <- .5
   optCutOff_spec <- c()
   optCutOff_spec <- optimalCutoff(ytest, optimiseFor="Zeros", MCPredicted)
-
+  
   yhat.transformed_sens = rep(0, nrow(trainingData))
   yhat.transformed_sens[round(yhat,4) >= round(optCutOff_sens,4)] = 1
   yhat.transformed_sens[yhat < optCutOff_sens] = 0
   misClassError(yhat.transformed_sens, ytest, threshold = optCutOff_sens)
-
+  
   yhat.transformed_top = rep(0, nrow(trainingData))
   yhat.transformed_top[round(yhat,4) >= round(optCutOff_top,4)] = 1
   yhat.transformed_top[yhat < optCutOff_top] = 0
   misClassError(yhat.transformed_top, ytest, threshold = optCutOff_top)
-
+  
   yhat.transformed_cen = rep(0, nrow(trainingData))
   yhat.transformed_cen[round(yhat,4) >= round(optCutOff_cen,4)] = 1
   yhat.transformed_cen[yhat < optCutOff_cen] = 0
   misClassError(yhat.transformed_cen, ytest, threshold = optCutOff_cen)
- 
+  
   yhat.transformed_center = rep(0, nrow(trainingData))
   yhat.transformed_center[round(yhat,4) >= round(optCutOff_center,4)] = 1
   yhat.transformed_center[round(yhat,4) < optCutOff_center] = 0
@@ -384,31 +412,31 @@ for (postProcess in 1:length(files))
   #print(table(yhat))
   #View(yhat)
   #this is where an arbitary threshold is set.
- 
+  
   #different thresholds, same ytest which is MC y
   
   #http://ethen8181.github.io/machine-learning/unbalanced/unbalanced.html
   cm_info_ce <- c()
   cm_info_ce <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_center)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_center", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_center )
-
+  
   cm_info_se <- c()
   cm_info_se <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_sens)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_sens", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_sens )
-
+  
   cm_info_top <- c()
   cm_info_se <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_top)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_top", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_top )
-
+  
   cm_info_cen <- c()
   cm_info_cen <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_cen)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_cen", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_cen )
-
+  
   cm_info_sp <- c()
   cm_info_sp <- ConfusionMatrixInfo( data = cbind(data.frame(yhat.transformed_spec)[,,drop=FALSE],data.frame(trainingData[1][,,drop=FALSE])), predict = "yhat.transformed_spec", actual = colnames(data.frame(trainingData[1][,,drop=FALSE])), cutoff = optCutOff_spec )
   #print(cm_info$data[order(cm_info$data$predict),])
-
+  
   total_predictions = nrow(data.frame(yhat.transformed_sens))
   correct_predictions = sum(yhat.transformed_sens == data.frame(trainingData[1][,,drop=FALSE]))
   classification_accuracy = correct_predictions / total_predictions
   error_rate_se = (1 - (correct_predictions / total_predictions))
-
+  
   total_predictions = nrow(data.frame(yhat.transformed_top))
   correct_predictions = sum(yhat.transformed_top == data.frame(trainingData[1][,,drop=FALSE]))
   classification_accuracy = correct_predictions / total_predictions
@@ -423,12 +451,12 @@ for (postProcess in 1:length(files))
   correct_predictions = sum(yhat.transformed_center == data.frame(trainingData[1][,,drop=FALSE]))
   classification_accuracy = correct_predictions / total_predictions
   error_rate_ce = (1 - (correct_predictions / total_predictions))
-
+  
   total_predictions = nrow(data.frame(yhat.transformed_spec))
   correct_predictions = sum(yhat.transformed_spec == data.frame(trainingData[1][,,drop=FALSE]))
   classification_accuracy = correct_predictions / total_predictions
   error_rate_sp = (1 - (correct_predictions / total_predictions))
-
+  
   #https://machinelearningmastery.com/confusion-matrix-machine-learning/
   #https://www.rdocumentation.org/packages/caret/versions/3.45/topics/confusionMatrix
   #https://www.datacamp.com/community/tutorials/confusion-matrix-calculation-r
@@ -440,7 +468,7 @@ for (postProcess in 1:length(files))
   
   results_ce <- c()
   results_ce <- confusionMatrix(yhat.transformed_center, data.frame(trainingData[1][,,drop=FALSE]))
- 
+  
   #class 0
   results_sp <- c()
   results_sp <- confusionMatrix(yhat.transformed_spec, data.frame(trainingData[1][,,drop=FALSE]))
@@ -499,9 +527,9 @@ for (postProcess in 1:length(files))
   jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"cm_info_spec.jpg"), width = 400, height = 800)
   plot(cm_info_sp$plot)
   dev.off()
-
+  
   print(c("MC model applied to MC:",(round(rmse((trainingData[,1]),round(yhat.transformed_cen)),4))))
-
+  
   total_predictions = nrow(trainingData)
   correct_predictions = sum(trainingData[1] == round(yhat.transformed_cen))
   classification_accuracy = correct_predictions / total_predictions
@@ -533,7 +561,7 @@ for (postProcess in 1:length(files))
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
- 
+  
   print("Conf matrix: MC CV (robust) model applied to MC data")
   CFMCCVMCData <- c()
   
@@ -569,6 +597,15 @@ for (postProcess in 1:length(files))
   print(length(predPopModel))
   print(nrow(popData[-1]))
   
+  uniquePopXs <- c()
+  uniquePopXs <- plyr::count(popData[-1], vars = colnames(popData[-1]))
+  
+  uniquePopXs$freq <- round(uniquePopXs$freq / nrow(popData[-1]),4)
+  
+  uniquePopXs$pred <- round(plogis(predict(popModel$finalModel, uniquePopXs[1:(ncol(uniquePopXs)-1)])),4)  # predicted scores
+  
+  write.csv(uniquePopXs,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"uniquePopXs.csv")))
+  
   #popModel2 <- glm(cbind(popData[-1], as.factor(popData[,1])),family=binomial(link="logit"))
   ytest <- c()
   ytest <- data.frame(popData[1])
@@ -597,15 +634,15 @@ for (postProcess in 1:length(files))
   
   indexLess_center <- c()
   indexLess_center <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < optCutOff_center]))
-
+  
   indexMore_center <- c()
   indexMore_center <- sizePredicted[!sizePredicted %in% indexLess_center]
-
+  
   predPopModel_center1 <- c()
   predPopModel_center1 <- predPopModel
   predPopModel_center1[noquote(indexMore_center)] <- 1
   predPopModel_center1[noquote(indexLess_center)] <- 0
-
+  
   indexLess_center2 <- c()
   indexLess_center2 <- rownames(data.frame(predPopModel[as.numeric(predPopModel) < .5]))
   
@@ -628,7 +665,7 @@ for (postProcess in 1:length(files))
   #print(nagelkerke(popModel2, popData))
   
   print(c("Pop model optimal cutoff for center & RMSE:",round(optCutOff_center,4),(round(rmse((popData[,1]),predPopModel_center1),4))))
-
+  
   print("Conf Matrix: Pop model applied to Pop data Opt Ctr")
   CM_PopOptCtr <- c()
   CM_PopOptCtr <- confusionMatrix(predPopModel_center1, popData[1])
@@ -680,7 +717,7 @@ for (postProcess in 1:length(files))
   #print(nagelkerke(popModel2, popData))
   
   print(c("Pop model optimal cutoff for sens & RMSE:",round(optCutOff_sens,4),(round(rmse((popData[,1]),predPopModel_sens),4))))
-
+  
   total_predictions = nrow(popData)
   correct_predictions = sum(popData[1] == predPopModel_sens)
   classification_accuracy = correct_predictions / total_predictions
@@ -705,7 +742,7 @@ for (postProcess in 1:length(files))
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error: ",round(error_rate,4)))
   #yhat = predict(trainModel, PostDF[,-1,drop=FALSE])
- 
+  
   print(c("Pop model optimal cutoff for opt ctr"))
   
   predPopModel_opt_ctr <- c()
@@ -764,11 +801,11 @@ for (postProcess in 1:length(files))
   #summary(predicted)
   indexLessMCModPopData_center2 <- c()
   indexLessMCModPopData_center2 <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < .5]))
-
+  
   indexLessMCModPopData_sens <- c()
   indexLessMCModPopData_sens <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < optCutOff_sens]))
   
-    
+  
   #summary(popData)
   #summary(predicted)
   #indexLessMCModPopData_sens <- c()
@@ -779,34 +816,34 @@ for (postProcess in 1:length(files))
   
   indexMoreMCModPopData_center2 <- c()
   indexMoreMCModPopData_center2 <- sizePredicted[!sizePredicted %in% indexLessMCModPopData_center2]
-
+  
   indexMoreMCModPopData_sens <- c()
   indexMoreMCModPopData_sens <- sizePredicted[!sizePredicted %in% indexLessMCModPopData_sens]
-    
+  
   predMCPop_center2 <- c()
   predMCPop_center2 <- predMCPop
   predMCPop_center2[indexMoreMCModPopData_center2] <- 1
   predMCPop_center2[indexLessMCModPopData_center2] <- 0
-
+  
   predMCPop_sens <- c()
   predMCPop_sens <- predMCPop
   predMCPop_sens[indexMoreMCModPopData_sens] <- 1
   predMCPop_sens[indexLessMCModPopData_sens] <- 0
   
   print(c("MC .5 ctr model applied to pop:",(round(rmse((popData[,1]),predMCPop_center2),4))))
-
+  
   total_predictions = nrow(popData)
   correct_predictions = sum( popData[1] == predMCPop_center2)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error center2: ",round(error_rate,4)))
-
+  
   total_predictions = nrow(popData)
   correct_predictions = sum( popData[1] == predMCPop_sens)
   classification_accuracy = correct_predictions / total_predictions
   error_rate = (1 - (correct_predictions / total_predictions))
   print(c("error sens: ",round(error_rate,4)))
-    
+  
   print("Conf Matrix: MC model applied to Pop data Center2")
   MCModPop <- c()
   
@@ -834,7 +871,7 @@ for (postProcess in 1:length(files))
   #diff <- ytest-yhat
   boxplot((predMCPop_center2-popData[1]))
   dev.off()
-
+  
   #summary(trainModel)
   #table(yhat)
   #ytest = trainingData[,1]
@@ -860,7 +897,7 @@ for (postProcess in 1:length(files))
   plot(gain, main = "Gain Chart")
   abline(a=0, b= 1)
   dev.off()
-    
+  
   #predictedMC2Pop <- plogis(predict(trainModel, popData[,-which(names(trainingData) %in% c("z","u")),drop=FALSE]))  # predicted scores
   #jpeg(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"histpredictedMC2Pop.jpg"), width = 400, height = 400)
   #hist(predictedMC2Pop)
