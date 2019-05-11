@@ -32,9 +32,9 @@ set.seed(5)
 library(caret)
 
 #works
+#threshold=.40
+#threshold=.25
 threshold=.35
-#threshold=.25
-#threshold=.25
 #threshold=.275
 #postProcess=1
 
@@ -173,20 +173,21 @@ for (postProcess in 1:length(files))
     {
       for (loops in 1:floor(reloopFactor))
       {
+        #https://community.hortonworks.com/questions/172024/zeppelin-sparkr-1.html
         #generates index and samples in place.  I have to do this, else repeat index's get stored as .1's and .2' respectively
-        ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor),])  # 1's for training
-        zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor),])  # 0's for training. Pick as many 0's as 1's
+        ones.index <- rbind(ones.index,input_ones[base::sample(c((rownames(input_ones))), minFactor),])  # 1's for training
+        zeros.index <- rbind(zeros.index,input_zeros[base::sample(c((rownames(input_zeros))), minFactor),])  # 0's for training. Pick as many 0's as 1's
       }
     }
-    ones.index <- rbind(ones.index,input_ones[sample(c(rownames(input_ones)), minFactor*remainder),])  # 1's for training
-    zeros.index <- rbind(zeros.index,input_zeros[sample(c(rownames(input_zeros)), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
+    ones.index <- rbind(ones.index,input_ones[base::sample(c((rownames(input_ones))), minFactor*remainder),])  # 1's for training
+    zeros.index <- rbind(zeros.index,input_zeros[base::sample(c((rownames(input_zeros))), minFactor*remainder),])  # 0's for training. Pick as many 0's as 1's
     
     both <- c()
     both <- rbind(ones.index, zeros.index)
     #summary(both)
     #https://stackoverflow.com/questions/2370515/how-to-get-row-index-number-in-r
     mix <- c()
-    mix <- sample(c(rownames(both)),round(nrow(both)/2) )
+    mix <- base::sample(c((rownames(both))),round(nrow(both)/2) )
     
     #mix <- sample(both,length(both)/2)
     #colnames(mix) <- colnames(trainingData)
@@ -198,7 +199,7 @@ for (postProcess in 1:length(files))
   finalTrainingI <- c()
   size <- c()
   size <- round(nrow(trainingData))
-  finalTrainingI <- sample(c(rownames(trainingData)),size/4)
+  finalTrainingI <- base::sample(c((rownames(trainingData))),size/4)
   finalTraining <- trainingData[finalTrainingI,]
   print(c("MC n:",nrow(finalTraining)))
   summary(finalTraining)
@@ -299,7 +300,6 @@ for (postProcess in 1:length(files))
   MCPredicted <- c()
   MCPredicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   
-  #https://stats.stackexchange.com/questions/121087/count-the-number-of-each-unique-row-in-a-data-frame
   uniqueTrainingXs <- c()
   uniqueTrainingXs <- plyr::count(trainingData[-1], vars = colnames(trainingData[-1]))
   
