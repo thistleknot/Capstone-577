@@ -43,42 +43,7 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", ful
 ynames <- c()
 
 linux=0
-if(linux)
-{
-  sourceDir="/home/rstudio/577/Capstone-577/"
-  
-  ys <- c() 
-  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
-  
-  for (i in 1:length(files))
-  {
-    temp <- c()
-    yname <- c()
-    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
-    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
-    yname <- substr(temp, 0, 5)
-    ynames <- rbind(ynames,yname)
-  }
-  #ynames
-}
 
-if(!linux)
-{
-  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
-  
-  ys <- c() 
-  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
-  for (i in 1:length(files))
-  {
-    temp <- c()
-    yname <- c()
-    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
-    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output/"))
-    yname <- substr(temp, 0, 5)
-    ynames <- rbind(ynames,yname)
-  }
-  #ynames
-}
 ynames
 source(paste0(sourceDir,"unbalanced_functions.R"))
 source(paste0(sourceDir,"sub_returnCVNames.R"))
@@ -98,13 +63,49 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", ful
 #postProcess=2
 for (postProcess in 1:length(files))
 { 
+  if(linux)
+  {
+    sourceDir="/home/rstudio/577/Capstone-577/"
+    
+    ys <- c() 
+    ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+    
+    for (i in 1:length(files))
+    {
+      temp <- c()
+      yname <- c()
+      print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+      temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
+      yname <- substr(temp, 0, 5)
+      ynames <- rbind(ynames,yname)
+    }
+    #ynames
+  }
+  
+  if(!linux)
+  {
+    sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+    
+    ys <- c() 
+    ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+    for (i in 1:length(files))
+    {
+      temp <- c()
+      yname <- c()
+      print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+      temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output/"))
+      yname <- substr(temp, 0, 5)
+      ynames <- rbind(ynames,yname)
+    }
+    #ynames
+  }
   print(files[postProcess])
   
-  yname <- c()
-  yname <- ynames[postProcess]
+  #yname <- c()
+  #yname <- ynames[postProcess]
   print_tabled <- c()
   print_tabled <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
-  print(c("y:",yname))
+  print(c("y:",ynames[postProcess]))
   print(c("final: ",print_tabled))
   
   keepersPre <- c()
@@ -123,9 +124,6 @@ for (postProcess in 1:length(files))
   
   threshold=.25
   
-  keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (threshold)])
-  print(c("keep: > ",threshold,length(keepers),keepers))
-  
   boolFalse<-F
   while(boolFalse==F)
   {
@@ -136,7 +134,7 @@ for (postProcess in 1:length(files))
       
       #colnames(NewDF)
       filtered <- c()
-      filtered <- NewDF[,c(yname,keepers), drop=FALSE]
+      filtered <- NewDF[,c(ynames[postProcess],keepers), drop=FALSE]
       filtered[filtered == 0] <- NA
       temp <- c()
       temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
@@ -248,7 +246,7 @@ for (postProcess in 1:length(files))
   
   #reduced column data
   trainingData <- c()
-  trainingData <- finalTraining[holderOfDataI,][c(yname,terms)]
+  trainingData <- finalTraining[holderOfDataI,][c(ynames[postProcess],terms)]
   #train(x,y)
   #trainModel$finalModel
   trainModel <- train(x=trainingData[-1], y=as.factor(trainingData[,1]),method = "glm",trControl = train.control)
@@ -587,7 +585,7 @@ for (postProcess in 1:length(files))
   print(round(CFMCCVMCData/sum(CFMCCVMCData),4))
   
   popData <- c()
-  popData <- NewDF[,as.character(c(yname,terms)), drop=FALSE]
+  popData <- NewDF[,as.character(c(ynames[postProcess],terms)), drop=FALSE]
   popData[popData == 0] <- NA
   temp <- c()
   temp <- popData[] %>% filter_all(all_vars(!is.na(.)))
