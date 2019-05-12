@@ -1058,6 +1058,10 @@ Category Flags
 		
 	Milestone 20 c61d705
 		Class Profiles
+	
+		Milestone 20a
+		
+			classAccuracy score
 		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
