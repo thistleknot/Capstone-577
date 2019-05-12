@@ -34,13 +34,6 @@ set.seed(5)
 #https://www.rdocumentation.org/packages/caret/versions/6.0-82/topics/trainControl
 library(caret)
 
-#works
-#threshold=.40
-#threshold=.25
-threshold=.35
-#threshold=.275
-#postProcess=1
-
 train.control <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
 
 #i think this works because files isn't called until AFTER sourceDir is.
@@ -101,11 +94,13 @@ files <- c()
 files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", full.names=TRUE, recursive=FALSE)
 
 #set.seed(100)  # for repeatability of samples
-yname <- c()
+
 #postProcess=2
 for (postProcess in 1:length(files))
 { 
   print(files[postProcess])
+  
+  yname <- c()
   yname <- ynames[postProcess]
   print_tabled <- c()
   print_tabled <- read.csv(files[postProcess], header=TRUE, sep=",")[,-1,drop=FALSE]
@@ -125,17 +120,35 @@ for (postProcess in 1:length(files))
   
   #what a pain
   #hist(tabulatedCrossValidated)
+  
+  threshold=.25
+  
   keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (threshold)])
   print(c("keep: > ",threshold,length(keepers),keepers))
   
-  #colnames(NewDF)
-  filtered <- c()
-  filtered <- NewDF[,c(yname,keepers), drop=FALSE]
-  filtered[filtered == 0] <- NA
-  temp <- c()
-  temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
-  filtered <- temp
-  filtered[filtered == -1] <- 0    
+  boolFalse<-F
+  while(boolFalse==F)
+  {
+    #https://stackoverflow.com/questions/31479025/while-loop-until-there-is-no-error
+    tryCatch({
+      keepers <- as.character(keepersPre$tabulatedCrossValidated[keepersPre$Freq > (threshold)])
+      print(c("keep: > ",threshold,length(keepers),keepers))
+      
+      #colnames(NewDF)
+      filtered <- c()
+      filtered <- NewDF[,c(yname,keepers), drop=FALSE]
+      filtered[filtered == 0] <- NA
+      temp <- c()
+      temp <- filtered[] %>% filter_all(all_vars(!is.na(.)))
+      filtered <- temp
+      filtered[filtered == -1] <- 0
+      boolFalse<-T
+    },error=function(e){
+    },finally={
+      threshold=threshold+.025
+    })
+  }
+  
   
   input_ones <- c()
   input_zeros <- c()
