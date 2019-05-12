@@ -24,6 +24,7 @@ library(rcompanion)
 library(MLmetrics)
 #library(sqldf)
 library(SparkR)
+library(plyr)
 
 #https://stackoverflow.com/questions/5564564/r-2-functions-with-the-same-name-in-2-different-packages
 sample <- base::sample
@@ -43,6 +44,42 @@ files <- list.files(path=paste0(sourceDir,'/output/'), pattern="*final.csv", ful
 ynames <- c()
 
 linux=0
+if(linux)
+{
+  sourceDir="/home/rstudio/577/Capstone-577/"
+  
+  ys <- c() 
+  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+  
+  for (i in 1:length(files))
+  {
+    temp <- c()
+    yname <- c()
+    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output//"))
+    yname <- substr(temp, 0, 5)
+    ynames <- rbind(ynames,yname)
+  }
+  #ynames
+}
+
+if(!linux)
+{
+  sourceDir="C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577/"
+  
+  ys <- c() 
+  ys <- list.files(path=paste0(sourceDir,'/output/'), pattern="V*final.csv", full.names=TRUE, recursive=FALSE)
+  for (i in 1:length(files))
+  {
+    temp <- c()
+    yname <- c()
+    print(stringr::str_remove(ys[i],paste0(sourceDir,"/output/")))
+    temp <- stringr::str_remove(ys[i],paste0(sourceDir,"/output/"))
+    yname <- substr(temp, 0, 5)
+    ynames <- rbind(ynames,yname)
+  }
+  #ynames
+}
 
 ynames
 source(paste0(sourceDir,"unbalanced_functions.R"))
@@ -99,6 +136,7 @@ for (postProcess in 1:length(files))
     }
     #ynames
   }
+
   print(files[postProcess])
   
   #yname <- c()
@@ -315,11 +353,31 @@ for (postProcess in 1:length(files))
   MCPredicted <- plogis(predict(trainModel$finalModel, trainingData[-1]))  # predicted scores
   
   uniqueTrainingXs <- c()
+  #https://stats.stackexchange.com/questions/121087/count-the-number-of-each-unique-row-in-a-data-frame
   uniqueTrainingXs <- plyr::count(trainingData[-1], vars = colnames(trainingData[-1]))
   
   uniqueTrainingXs$freq <- round(uniqueTrainingXs$freq / nrow(trainingData[-1]),4)
   
   uniqueTrainingXs$pred <- round(plogis(predict(trainModel$finalModel, uniqueTrainingXs[1:(ncol(uniqueTrainingXs)-1)])),4)  # predicted scores
+  
+  uniqueTrainingXs$classPurity <- c()
+  
+  for(i in 1:nrow(uniqueTrainingXs))
+  {
+    #matches in trainingData
+    leftSet <- c()
+    
+    #https://rdrr.io/cran/plyr/man/match_df.html
+    leftSet <- suppressMessages(match_df(trainingData, uniqueTrainingXs[i,1:(length(uniqueTrainingXs)-3)], on = NULL))
+    
+    #I'm not working with actual scores yet.  Sure, I have y scores, but I'm working with plogis values before being converted using any threshold
+    #so instead, I'm measuring how pure the class is.  A pure class will either be 0 or 1.  Anything inbetween will be an admixture closest to that value nearest it's max specificity/sensitivity when it's by the edge of the array
+    #this score can be transformed to represent the true probability of being a 1.
+    classPurityScore <- c()
+    classPurityScore <- round(sum(leftSet[1])/nrow(leftSet),4)
+    
+    uniqueTrainingXs$classPurity[i] <- classPurityScore
+  }
   
   write.csv(uniqueTrainingXs,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"uniqueTrainingXs.csv")))
   
@@ -619,6 +677,26 @@ for (postProcess in 1:length(files))
   
   uniquePopXs$pred <- round(plogis(predict(popModel$finalModel, uniquePopXs[1:(ncol(uniquePopXs)-1)])),4)  # predicted scores
   
+  uniquePopXs$classPurity <- c()
+  
+  for(i in 1:nrow(uniquePopXs))
+  {
+    #matches in trainingData
+    leftSet <- c()
+    
+    #https://rdrr.io/cran/plyr/man/match_df.html
+    leftSet <- suppressMessages(match_df(popData, uniquePopXs[i,1:(length(uniquePopXs)-3)], on = NULL))
+    
+    #I'm not working with actual scores yet.  Sure, I have y scores, but I'm working with plogis values before being converted using any threshold
+    #so instead, I'm measuring how pure the class is.  A pure class will either be 0 or 1.  Anything inbetween will be an admixture closest to that value nearest it's max specificity/sensitivity when it's by the edge of the array
+    #this score can be transformed to represent the true probability of being a 1.
+    classPurityScore <- c()
+    classPurityScore <- round(sum(leftSet[1])/nrow(leftSet),4)
+    
+    uniquePopXs$classPurity[i] <- classPurityScore
+  }
+  
+  
   write.csv(uniquePopXs,(paste0(str_sub(files[postProcess], 1, str_length(files[postProcess])-9),"uniquePopXs.csv")))
   
   #popModel2 <- glm(cbind(popData[-1], as.factor(popData[,1])),family=binomial(link="logit"))
@@ -819,7 +897,6 @@ for (postProcess in 1:length(files))
   
   indexLessMCModPopData_sens <- c()
   indexLessMCModPopData_sens <- rownames(data.frame(predMCPop[as.numeric(predMCPop) < optCutOff_sens]))
-  
   
   #summary(popData)
   #summary(predicted)
