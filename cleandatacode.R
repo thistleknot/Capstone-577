@@ -65,7 +65,7 @@ source(paste0(sourceDir,"vars.R"))
 source(paste0(sourceDir,"NewDF.R"))
 # Read CSV into R
 
-suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
+#suppressWarnings(system(paste0('rm -f ',sourceDir,'/output/*.csv'), intern = FALSE, ignore.stdout = FALSE, ignore.stderr = FALSE, wait = TRUE, input = NULL, show.output.on.console = TRUE, minimized = FALSE, invisible = TRUE, timeout = 0))
 
 for (medianDirection in medianDirectionSet)
 {
@@ -399,23 +399,32 @@ for (medianDirection in medianDirectionSet)
                 nametemp <- eval(as.character(paste0("train",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
                 
                 #https://rsangole.netlify.com/post/try-catch/
-                tryCatch(
-                  expr = {
-                    result <- sub_returnCVNames(data.train)
-                  },
-                  error = function(e) {
-                    write.csv(c("train",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
-                  }
-                  ,
-                  warning = function(w){
-                    # (Optional)
-                    # Do this if an warning is caught...
-                  },
-                  finally = {
-                    # (Optional)
-                    # Do this at the end before quitting the tryCatch structure...
-                  }
-                )
+                
+                
+                sampleSize=nrow(data.train)
+                
+                boolFalse<-F
+                while(boolFalse==F)
+                {
+                  #https://stackoverflow.com/questions/31479025/while-loop-until-there-is-no-error
+                  tryCatch({
+                    tempHolder <- c()
+                    print(c("n:",sampleSize))
+                    resultI <- c()
+                    resultI <- sample(nrow(data.train),sampleSize)
+                    tempHolder = sampleSize
+                    sampleSize = sampleSize/
+                    result <- c()
+                    result <- sub_returnCVNames(data.train[resultI,])
+                    boolFalse<-T
+                  },error=function(e){
+                    print(tempHolder)
+                  },finally={
+                    
+                  })
+                }
+                
+              
                 if(length(result)==0) result <- NA
                 
                 for (i in 1:length(result))
@@ -495,23 +504,30 @@ for (medianDirection in medianDirectionSet)
                 nametemp <- eval(as.character(paste0("Test",pairedname,str_replace_all(str_replace_all(string=Sys.time(), pattern=" ", repl=""), pattern=":", repl=""))))
                 
                 #https://rsangole.netlify.com/post/try-catch/
-                tryCatch(
-                  expr = {
-                    result <- sub_returnCVNames(data.test)
-                  },
-                  error = function(e) {
-                    write.csv(c("Test",pairedname),paste0(sourceDir,"/output/",yname,"-",medianDirection,"-",widthDiviser,"-",nametemp,".csv"))
-                  }
-                  ,
-                  warning = function(w){
-                    # (Optional)
-                    # Do this if an warning is caught...
-                  },
-                  finally = {
-                    # (Optional)
-                    # Do this at the end before quitting the tryCatch structure...
-                  }
-                )
+                
+                sampleSize=nrow(data.test)
+                
+                boolFalse<-F
+                while(boolFalse==F)
+                {
+                  #https://stackoverflow.com/questions/31479025/while-loop-until-there-is-no-error
+                  tryCatch({
+                    tempHolder <- c()
+                    print(c("n:",sampleSize))
+                    resultI <- c()
+                    resultI <- sample(nrow(data.test),sampleSize)
+                    tempHolder = sampleSize
+                    sampleSize = sampleSize/
+                      result <- c()
+                    result <- sub_returnCVNames(data.test[resultI,])
+                    boolFalse<-T
+                  },error=function(e){
+                    print(tempHolder)
+                  },finally={
+                    
+                  })
+                }
+                
                 if(length(result)==0) result <- NA
                 
                 for (i in 1:length(result))
@@ -598,5 +614,5 @@ for (medianDirection in medianDirectionSet)
   #end medianDirection  
 }
 #unfortunately this relies on NewDF at the moment.  Either I need to reduce NewDF to it's own file/function or write it out to a .csv
-#source(paste0(sourceDir,"saveCSVs.R"))
+source(paste0(sourceDir,"saveCSVs.R"))
 #source(paste0(sourceDir,"4thpass.R"))
