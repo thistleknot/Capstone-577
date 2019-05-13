@@ -400,7 +400,6 @@ for (medianDirection in medianDirectionSet)
                 
                 #https://rsangole.netlify.com/post/try-catch/
                 
-                
                 sampleSize=nrow(data.train)
                 
                 boolFalse<-F
@@ -411,9 +410,9 @@ for (medianDirection in medianDirectionSet)
                     tempHolder <- c()
                     print(c("n:",sampleSize))
                     resultI <- c()
-                    resultI <- sample(nrow(data.train),sampleSize)
+                    resultI <- sample(sampleSize)
                     tempHolder = sampleSize
-                    sampleSize = sampleSize/
+                    sampleSize = sampleSize
                     result <- c()
                     result <- sub_returnCVNames(data.train[resultI,])
                     boolFalse<-T
@@ -515,10 +514,10 @@ for (medianDirection in medianDirectionSet)
                     tempHolder <- c()
                     print(c("n:",sampleSize))
                     resultI <- c()
-                    resultI <- sample(nrow(data.test),sampleSize)
+                    resultI <- sample(sampleSize)
                     tempHolder = sampleSize
-                    sampleSize = sampleSize/
-                      result <- c()
+                    sampleSize = sampleSize
+                    result <- c()
                     result <- sub_returnCVNames(data.test[resultI,])
                     boolFalse<-T
                   },error=function(e){
