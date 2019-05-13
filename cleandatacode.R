@@ -41,6 +41,7 @@ library(stringr)
 #the way I have this setup, it only returns one var
 
 linux=0
+if(linux)
 {
   zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
   outDir <- "/home/rstudio/577/Capstone-577/"
@@ -112,7 +113,7 @@ for (medianDirection in medianDirectionSet)
       
       #7118 (psychadelics)
       if (flister==3) ilist<-read.csv(paste0(sourceDir,"psyDFilterList.txt"), header=FALSE, sep=,)
-  
+      
       #this resets each file
       Hfiltered <- c()
       
@@ -120,7 +121,7 @@ for (medianDirection in medianDirectionSet)
       #https://adv-r.hadley.nz/subsetting.html
       
       yIndex <- ilist[,4] == 0
-
+      
       #resets each new file
       finalList <- c()
       
@@ -401,6 +402,11 @@ for (medianDirection in medianDirectionSet)
                 
                 sampleSize=nrow(data.train)
                 
+                if(sampleSize>7000)
+                {
+                  sampleSize = sampleSize/2
+                }
+                
                 boolFalse<-F
                 while(boolFalse==F)
                 {
@@ -421,7 +427,7 @@ for (medianDirection in medianDirectionSet)
                   })
                 }
                 
-              
+                
                 if(length(result)==0) result <- NA
                 
                 for (i in 1:length(result))
@@ -504,6 +510,11 @@ for (medianDirection in medianDirectionSet)
                 
                 sampleSize=nrow(data.test)
                 
+                if(sampleSize>7000)
+                {
+                  sampleSize = sampleSize/2
+                }
+                
                 boolFalse<-F
                 while(boolFalse==F)
                 {
@@ -557,11 +568,16 @@ for (medianDirection in medianDirectionSet)
                 if(!(is.na(namesTV[counter])||is.na(namesH[counter])))
                 {
                   #if sub_returnCVNames returns two... will only save two if those same two pass namesH, else it will drop both even if NamesH kept one.
-                  if(namesTV[counter]==namesH[counter])
+                  #https://stat.ethz.ch/R-manual/R-devel/library/base/html/any.html
+                  if((any((namesTV[counter])==(namesH[counter])))||(((namesTV[counter])==any(namesH[counter]))))
                   {
-                    crossValidated <- rbind (crossValidated,namesTV[counter])
+                    temp <- c()
+                    
+                    temp <- namesTV[counter][(namesTV[counter] %in% namesH[counter])]
+                    
+                    crossValidated <- rbind (crossValidated,temp)
                   }
-                  if(namesTV[counter]!=namesH[counter])
+                  if(any(namesTV[counter])!=any(namesH[counter]))
                   {
                     crossValidated <- rbind (crossValidated,NA)
                   }

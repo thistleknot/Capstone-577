@@ -1062,6 +1062,9 @@ Category Flags
 		Milestone 20a
 		
 			classAccuracy score
+			
+	Milestone 21
+		Fixed qk bug with bestGLM by dividing the sample size by 2 upon error.
 		
 V7221 R HS GRADE/D=1
 	V7202 R'S SEX
