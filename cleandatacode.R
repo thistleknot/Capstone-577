@@ -40,7 +40,7 @@ library(stringr)
 
 #the way I have this setup, it only returns one var
 
-linux=1
+linux=0
 if(linux)
 {
   zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
