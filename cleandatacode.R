@@ -577,7 +577,7 @@ for (medianDirection in medianDirectionSet)
                     
                     crossValidated <- rbind (crossValidated,temp)
                   }
-                  if(any(namesTV[counter])!=any(namesH[counter]))
+                  if(!((any((namesTV[counter])==(namesH[counter])))||(((namesTV[counter])==any(namesH[counter])))))
                   {
                     crossValidated <- rbind (crossValidated,NA)
                   }
