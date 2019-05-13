@@ -4,7 +4,7 @@ medianDirectionSet <- c()
 medianDirectionSet <- c("greaterEqual")
 
 prenumber <-c()
-prenumber=5
+prenumber=10
 
 pre_percent <- c()
 pre_percent=prenumber/100
