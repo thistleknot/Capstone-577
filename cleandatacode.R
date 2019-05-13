@@ -41,7 +41,6 @@ library(stringr)
 #the way I have this setup, it only returns one var
 
 linux=0
-if(linux)
 {
   zipF <- "/home/rstudio/577/Capstone-577/Capstone-577.zip"
   outDir <- "/home/rstudio/577/Capstone-577/"
@@ -408,7 +407,6 @@ for (medianDirection in medianDirectionSet)
                   #https://stackoverflow.com/questions/31479025/while-loop-until-there-is-no-error
                   tryCatch({
                     tempHolder <- c()
-                    #print(c("n:",sampleSize))
                     resultI <- c()
                     resultI <- sample(sampleSize)
                     tempHolder = sampleSize
@@ -417,7 +415,7 @@ for (medianDirection in medianDirectionSet)
                     result <- sub_returnCVNames(data.train[resultI,])
                     boolFalse<-T
                   },error=function(e){
-                    print(tempHolder)
+                    print(c("n:",tempHolder))
                   },finally={
                     
                   })
@@ -512,7 +510,6 @@ for (medianDirection in medianDirectionSet)
                   #https://stackoverflow.com/questions/31479025/while-loop-until-there-is-no-error
                   tryCatch({
                     tempHolder <- c()
-                    #print(c("n:",sampleSize))
                     resultI <- c()
                     resultI <- sample(sampleSize)
                     tempHolder = sampleSize
@@ -521,7 +518,7 @@ for (medianDirection in medianDirectionSet)
                     result <- sub_returnCVNames(data.test[resultI,])
                     boolFalse<-T
                   },error=function(e){
-                    print(tempHolder)
+                    print(c("n:",tempHolder))
                   },finally={
                     
                   })
