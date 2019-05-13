@@ -368,7 +368,7 @@ for (postProcess in 1:length(files))
     leftSet <- c()
     
     #https://rdrr.io/cran/plyr/man/match_df.html
-    leftSet <- suppressMessages(match_df(trainingData, uniqueTrainingXs[i,1:(length(uniqueTrainingXs)-3)], on = NULL))
+    leftSet <- suppressMessages(match_df(trainingData, uniqueTrainingXs[i,1:(length(uniqueTrainingXs)-2)], on = NULL))
     
     #I'm not working with actual scores yet.  Sure, I have y scores, but I'm working with plogis values before being converted using any threshold
     #so instead, I'm measuring how pure the class is.  A pure class will either be 0 or 1.  Anything inbetween will be an admixture closest to that value nearest it's max specificity/sensitivity when it's by the edge of the array
@@ -685,7 +685,7 @@ for (postProcess in 1:length(files))
     leftSet <- c()
     
     #https://rdrr.io/cran/plyr/man/match_df.html
-    leftSet <- suppressMessages(match_df(popData, uniquePopXs[i,1:(length(uniquePopXs)-3)], on = NULL))
+    leftSet <- suppressMessages(match_df(popData, uniquePopXs[i,1:(length(uniquePopXs)-2)], on = NULL))
     
     #I'm not working with actual scores yet.  Sure, I have y scores, but I'm working with plogis values before being converted using any threshold
     #so instead, I'm measuring how pure the class is.  A pure class will either be 0 or 1.  Anything inbetween will be an admixture closest to that value nearest it's max specificity/sensitivity when it's by the edge of the array
