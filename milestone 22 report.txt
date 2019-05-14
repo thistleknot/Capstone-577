@@ -1,0 +1,642 @@
+[1] "V7118-greaterEqual-10-final.csv"
+[1] "V7221-greaterEqual-10-final.csv"
+[1] "V8517-greaterEqual-10-final.csv"
+[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7118-greaterEqual-10-final.csv"
+[1] "y:"    "V7118"
+[[1]]
+[1] "final: "
+
+$tabulatedCrossValidated
+ [1] <NA>  V8530 V8502 V8512 V8514 V8505 V7206 V8509 V7202 V7215 V8526 V7552 V8536 V8528 V7562 V8529 V8531 V7563 V8527 V7553 V8565 V7551
+Levels: V7202 V7206 V7215 V7551 V7552 V7553 V7562 V7563 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8531 V8536 V8565
+
+$Freq
+ [1] 7.900 0.367 0.333 0.333 0.333 0.317 0.267 0.267 0.250 0.250 0.250 0.217 0.200 0.167 0.133 0.117 0.100 0.083 0.083 0.050 0.050 0.033
+
+   tabulatedCrossValidated  Freq
+2                    V8530 0.367
+3                    V8502 0.333
+4                    V8512 0.333
+5                    V8514 0.333
+6                    V8505 0.317
+7                    V7206 0.267
+8                    V8509 0.267
+9                    V7202 0.250
+10                   V7215 0.250
+11                   V8526 0.250
+12                   V7552 0.217
+13                   V8536 0.200
+14                   V8528 0.167
+15                   V7562 0.133
+16                   V8529 0.117
+17                   V8531 0.100
+18                   V7563 0.083
+19                   V8527 0.083
+20                   V7553 0.050
+21                   V8565 0.050
+22                   V7551 0.033
+ [1] "keep: > " "0.25"     "7"        "V8530"    "V8502"    "V8512"    "V8514"    "V8505"    "V7206"    "V8509"   
+[1] "MC n:" "1610" 
+     V7118            V8530            V8502            V8512            V8514            V8505           V7206            V8509       
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :0.0000   Median :1.0000   Median :0.0000   Median :1.0000   Median :1.0000   Median :1.000   Median :1.0000   Median :0.0000  
+ Mean   :0.4857   Mean   :0.5553   Mean   :0.3031   Mean   :0.6174   Mean   :0.7193   Mean   :0.646   Mean   :0.7491   Mean   :0.2323  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000  
+
+Call:
+imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+    tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+ VIF Multicollinearity Diagnostics
+
+         VIF detection
+V8530 1.1391         0
+V8502 1.6589         0
+V8512 1.8913         0
+V8514 2.1512         0
+V8505 2.1917         0
+V7206 1.0201         0
+V8509 1.5239         0
+
+NOTE:  VIF Method Failed to detect multicollinearity
+
+
+0 --> COLLINEARITY is not detected by the test
+
+===================================
+[1] "MC summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.7113  -0.9962  -0.8915   1.1166   1.4933  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   0.3391     0.1793   1.890 0.058692 .  
+V8530        -0.7815     0.1502  -5.203 1.96e-07 ***
+V8502         0.6442     0.1947   3.309 0.000936 ***
+V7206        -0.2752     0.1716  -1.604 0.108756    
+V8509         0.2181     0.2113   1.032 0.301986    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1115.3  on 804  degrees of freedom
+Residual deviance: 1047.3  on 800  degrees of freedom
+AIC: 1057.3
+
+Number of Fisher Scoring iterations: 4
+
+[1] 805
+[1] 805
+[1] "optCutOff_sens:" "0.3688"         
+[1] "error rate sens: 0.3938"
+[1] "yhat.transformed_sens matrix"
+       0      1
+0 0.2248 0.2894
+1 0.1043 0.3814
+[1] "optCutOff_center" "0.5288"          
+[1] "error rate c1: 0.3677"
+[1] "yhat.transformed_center matrix"
+       0     1
+0 0.3963 0.118
+1 0.2497 0.236
+[1] "optCutOff_cen" "0.5"          
+[1] "error rate c2: 0.3727"
+[1] "yhat.transformed_cen matrix"
+       0     1
+0 0.3093 0.205
+1 0.1677 0.318
+[1] "optCutOff_top" "0.99"         
+[1] "error rate top: 0.4857"
+[1] "yhat.transformed_top matrix"
+       0
+0 0.5143
+1 0.4857
+[1] "optCutOff_spec" "0.7288"        
+[1] "error rate spec: 0.4696"
+[1] "yhat.transformed_spec matrix"
+       0      1
+0 0.5031 0.0112
+1 0.4584 0.0273
+[1] "MC model applied to MC:" "0.6105"                 
+[1] "error: " "0.3727" 
+[1] "Conf matrix: MC CV (robust) model applied to MC data"
+[1] 805
+       0     1
+0 0.3093 0.205
+1 0.1677 0.318
+[1] "pop Data n:" "49349"      
+     V7118             V8530            V8502            V7206            V8509       
+ Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000  
+ Median :0.00000   Median :1.0000   Median :0.0000   Median :1.0000   Median :0.0000  
+ Mean   :0.02655   Mean   :0.6529   Mean   :0.2146   Mean   :0.7771   Mean   :0.1632  
+ 3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+ Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+[1] "Pop Model Summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.4308  -0.2346  -0.2002  -0.1728   2.9025  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -3.34506    0.06641 -50.368  < 2e-16 ***
+V8530       -0.55518    0.05806  -9.563  < 2e-16 ***
+V8502        0.61870    0.07047   8.779  < 2e-16 ***
+V7206       -0.29718    0.06192  -4.800 1.59e-06 ***
+V8509        0.39583    0.07419   5.335 9.53e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 12093  on 49348  degrees of freedom
+Residual deviance: 11674  on 49344  degrees of freedom
+AIC: 11684
+
+Number of Fisher Scoring iterations: 6
+
+[1] 49349
+[1] 49349
+[1] "Pop model optimal cutoff for center & RMSE:" "0.0286"                                      "0.508"                                      
+[1] "Conf Matrix: Pop model applied to Pop data Opt Ctr"
+[1] 49349
+       0      1
+0 0.7289 0.2445
+1 0.0135 0.0130
+[1] "error: " "0.258"  
+[1] "Pop model optimal cutoff for sens (as-is, over-fitted):" "0.5"                                                    
+[3] "0.1629"                                                 
+[1] "Conf Matrix: Pop model applied to Pop data Opt Sens"
+[1] 49349
+       0
+0 0.9735
+1 0.0265
+[1] "error: " "0.0265" 
+[1] "Pop model optimal cutoff for center2 & RMSE:" "0.5"                                          "0.1629"                                      
+[1] "error: " "0.0265" 
+[1] "Pop model optimal cutoff for sens & RMSE:" "0.0186"                                    "0.7479"                                   
+[1] "error: " "0.5593" 
+[1] "Pop model optimal cutoff for spec & RMSE:" "0.0686"                                    "0.2057"                                   
+[1] "error: " "0.0423" 
+[1] "Pop model optimal cutoff for opt ctr"
+[1] 49349
+[1] 49349
+[1] "MC .5 ctr model applied to pop:" "0.6352"                         
+[1] "error center2: " "0.4035"         
+[1] "error sens: " "0.9735"      
+[1] "Conf Matrix: MC model applied to Pop data Center2"
+[1] 49349
+     0      1
+0 0.58 0.3935
+1 0.01 0.0166
+[1] "Conf Matrix: MC model applied to Pop data Sens"
+[1] "MC sens model applied to pop:" "0.0186"                        "0.9866"                       
+[1] 49349
+       1
+0 0.9735
+1 0.0265
+[1] "V7118-greaterEqual-10-final.csv"
+[1] "V7221-greaterEqual-10-final.csv"
+[1] "V8517-greaterEqual-10-final.csv"
+[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V7221-greaterEqual-10-final.csv"
+[1] "y:"    "V7118"
+[[1]]
+[1] "final: "
+
+$tabulatedCrossValidated
+ [1] <NA>  V8526 V7215 V7206 V8527 V8512 V8509 V7202 V8502 V8514 V8505 V8530 V8528 V8529 V7553 V8536 V7562 V8565 V7551 V7552
+Levels: V7202 V7206 V7215 V7551 V7552 V7553 V7562 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8529 V8530 V8536 V8565
+
+$Freq
+ [1] 8.017 0.667 0.633 0.600 0.600 0.467 0.450 0.433 0.367 0.300 0.250 0.250 0.233 0.217 0.200 0.150 0.117 0.083 0.050 0.050
+
+   tabulatedCrossValidated  Freq
+2                    V8526 0.667
+3                    V7215 0.633
+4                    V7206 0.600
+5                    V8527 0.600
+6                    V8512 0.467
+7                    V8509 0.450
+8                    V7202 0.433
+9                    V8502 0.367
+10                   V8514 0.300
+11                   V8505 0.250
+12                   V8530 0.250
+13                   V8528 0.233
+14                   V8529 0.217
+15                   V7553 0.200
+16                   V8536 0.150
+17                   V7562 0.117
+18                   V8565 0.083
+19                   V7551 0.050
+20                   V7552 0.050
+ [1] "keep: > " "0.25"     "9"        "V8526"    "V7215"    "V7206"    "V8527"    "V8512"    "V8509"    "V7202"    "V8502"    "V8514"   
+[1] "MC n:" "1570" 
+     V7118            V8526           V7215            V7206            V8527            V8512           V8509            V7202            V8502            V8514       
+ Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :1.0000   Median :0.000   Median :0.0000   Median :1.0000   Median :1.0000   Median :1.000   Median :0.0000   Median :0.0000   Median :0.0000   Median :1.0000  
+ Mean   :0.5185   Mean   :0.479   Mean   :0.4713   Mean   :0.7325   Mean   :0.6038   Mean   :0.614   Mean   :0.2344   Mean   :0.4688   Mean   :0.3172   Mean   :0.7146  
+ 3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+
+Call:
+imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+    tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+ VIF Multicollinearity Diagnostics
+
+         VIF detection
+V8526 1.1980         0
+V7215 1.0520         0
+V7206 1.0147         0
+V8527 1.1016         0
+V8512 1.7490         0
+V8509 1.5990         0
+V7202 1.0382         0
+V8502 1.6600         0
+V8514 1.8451         0
+
+NOTE:  VIF Method Failed to detect multicollinearity
+
+
+0 --> COLLINEARITY is not detected by the test
+
+===================================
+[1] "MC summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.9747  -0.9719   0.4648   1.0441   1.6718  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)   1.3056     0.2541   5.138 2.77e-07 ***
+V8526        -0.4871     0.1611  -3.023 0.002500 ** 
+V7206        -0.3749     0.1759  -2.131 0.033097 *  
+V7202        -0.6088     0.1603  -3.798 0.000146 ***
+V8502         0.8655     0.1854   4.668 3.04e-06 ***
+V8514        -0.9483     0.1965  -4.826 1.40e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1087.17  on 784  degrees of freedom
+Residual deviance:  971.39  on 779  degrees of freedom
+AIC: 983.39
+
+Number of Fisher Scoring iterations: 4
+
+[1] 785
+[1] 785
+[1] "optCutOff_sens:" "0.3176"         
+[1] "error rate sens: 0.4306"
+[1] "yhat.transformed_sens matrix"
+       0      1
+0 0.0739 0.4076
+1 0.0229 0.4955
+[1] "optCutOff_center" "0.5476"          
+[1] "error rate c1: 0.3363"
+[1] "yhat.transformed_center matrix"
+       0      1
+0 0.3631 0.1185
+1 0.2178 0.3006
+[1] "optCutOff_cen" "0.5"          
+[1] "error rate c2: 0.3389"
+[1] "yhat.transformed_cen matrix"
+       0      1
+0 0.3580 0.1236
+1 0.2153 0.3032
+[1] "optCutOff_top" "0.99"         
+[1] "error rate top: 0.5185"
+[1] "yhat.transformed_top matrix"
+       0
+0 0.4815
+1 0.5185
+[1] "optCutOff_spec" "0.8676"        
+[1] "error rate spec: 0.4955"
+[1] "yhat.transformed_spec matrix"
+       0      1
+0 0.4815 0.0000
+1 0.4955 0.0229
+[1] "MC model applied to MC:" "0.5821"                 
+[1] "error: " "0.3389" 
+[1] "Conf matrix: MC CV (robust) model applied to MC data"
+[1] 785
+       0      1
+0 0.3580 0.1236
+1 0.2153 0.3032
+[1] "pop Data n:" "48446"      
+     V7118             V8526            V7206            V7202            V8502            V8514       
+ Min.   :0.00000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000  
+ Median :0.00000   Median :1.0000   Median :1.0000   Median :1.0000   Median :0.0000   Median :1.0000  
+ Mean   :0.02634   Mean   :0.5894   Mean   :0.7838   Mean   :0.5159   Mean   :0.2134   Mean   :0.8039  
+ 3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
+ Max.   :1.00000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+[1] "Pop Model Summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-0.5127  -0.2433  -0.1872  -0.1832   3.0396  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -2.70117    0.08447 -31.979  < 2e-16 ***
+V8526       -0.57361    0.05992  -9.572  < 2e-16 ***
+V7206       -0.27362    0.06352  -4.308 1.65e-05 ***
+V7202       -0.53039    0.05881  -9.019  < 2e-16 ***
+V8502        0.73847    0.06417  11.507  < 2e-16 ***
+V8514       -0.53075    0.06543  -8.112 4.98e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 11799  on 48445  degrees of freedom
+Residual deviance: 11272  on 48440  degrees of freedom
+AIC: 11284
+
+Number of Fisher Scoring iterations: 7
+
+[1] 48446
+[1] 48446
+[1] "Pop model optimal cutoff for center & RMSE:" "0.0232"                                      "0.6061"                                     
+[1] "Conf Matrix: Pop model applied to Pop data Opt Ctr"
+[1] 48446
+       0      1
+0 0.6160 0.3577
+1 0.0097 0.0167
+[1] "error: " "0.3674" 
+[1] "Pop model optimal cutoff for sens (as-is, over-fitted):" "0.5"                                                    
+[3] "0.1623"                                                 
+[1] "Conf Matrix: Pop model applied to Pop data Opt Sens"
+[1] 48446
+       0
+0 0.9737
+1 0.0263
+[1] "error: " "0.0263" 
+[1] "Pop model optimal cutoff for center2 & RMSE:" "0.5"                                          "0.1623"                                      
+[1] "error: " "0.0263" 
+[1] "Pop model optimal cutoff for sens & RMSE:" "0.0132"                                    "0.8798"                                   
+[1] "error: " "0.774"  
+[1] "Pop model optimal cutoff for spec & RMSE:" "0.1032"                                    "0.1735"                                   
+[1] "error: " "0.0301" 
+[1] "Pop model optimal cutoff for opt ctr"
+[1] 48446
+[1] 48446
+[1] "MC .5 ctr model applied to pop:" "0.545"                          
+[1] "error center2: " "0.2971"         
+[1] "error sens: " "0.9737"      
+[1] "Conf Matrix: MC model applied to Pop data Center2"
+[1] 48446
+       0      1
+0 0.6884 0.2853
+1 0.0118 0.0145
+[1] "Conf Matrix: MC model applied to Pop data Sens"
+[1] "MC sens model applied to pop:" "0.0132"                        "0.9867"                       
+[1] 48446
+       1
+0 0.9737
+1 0.0263
+[1] "V7118-greaterEqual-10-final.csv"
+[1] "V7221-greaterEqual-10-final.csv"
+[1] "V8517-greaterEqual-10-final.csv"
+[1] "C:/Users/user/Documents/School/CSUF/ISDS577/projects/Capstone-577//output/V8517-greaterEqual-10-final.csv"
+[1] "y:"    "V7221"
+[[1]]
+[1] "final: "
+
+$tabulatedCrossValidated
+ [1] <NA>  V8502 V8509 V8527 V7552 V8526 V8530 V7206 V8514 V8536 V8505 V8512 V7215 V8528 V8531 V8565 V7202
+Levels: V7202 V7206 V7215 V7552 V8502 V8505 V8509 V8512 V8514 V8526 V8527 V8528 V8530 V8531 V8536 V8565
+
+$Freq
+ [1] 6.833 0.683 0.583 0.550 0.467 0.450 0.333 0.317 0.300 0.300 0.283 0.283 0.233 0.150 0.100 0.033 0.017
+
+   tabulatedCrossValidated  Freq
+2                    V8502 0.683
+3                    V8509 0.583
+4                    V8527 0.550
+5                    V7552 0.467
+6                    V8526 0.450
+7                    V8530 0.333
+8                    V7206 0.317
+9                    V8514 0.300
+10                   V8536 0.300
+11                   V8505 0.283
+12                   V8512 0.283
+13                   V7215 0.233
+14                   V8528 0.150
+15                   V8531 0.100
+16                   V8565 0.033
+17                   V7202 0.017
+ [1] "keep: > " "0.25"     "11"       "V8502"    "V8509"    "V8527"    "V7552"    "V8526"    "V8530"    "V7206"    "V8514"    "V8536"    "V8505"    "V8512"   
+[1] "MC n:" "20240"
+     V7221           V8502            V8509            V8527            V7552            V8526            V8530            V7206            V8514            V8536       
+ Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:1.0000   1st Qu.:0.0000  
+ Median :0.000   Median :0.0000   Median :0.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :0.0000  
+ Mean   :0.494   Mean   :0.2257   Mean   :0.1707   Mean   :0.6541   Mean   :0.7449   Mean   :0.5847   Mean   :0.6445   Mean   :0.7682   Mean   :0.7989   Mean   :0.0502  
+ 3rd Qu.:1.000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+ Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+     V8505            V8512       
+ Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.0000  
+ Median :1.0000   Median :1.0000  
+ Mean   :0.7284   Mean   :0.6895  
+ 3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.0000  
+
+Call:
+imcdiag(x = x, y = y, method = method, corr = FALSE, vif = vif, 
+    tol = tol, conf = conf, cvif = cvif, leamer = leamer, all = all)
+
+
+ VIF Multicollinearity Diagnostics
+
+         VIF detection
+V8502 1.5289         0
+V8509 1.5021         0
+V8527 1.1140         0
+V7552 1.0081         0
+V8526 1.1908         0
+V8530 1.1900         0
+V7206 1.0174         0
+V8514 1.8623         0
+V8536 1.1418         0
+V8505 1.8791         0
+V8512 1.7935         0
+
+NOTE:  VIF Method Failed to detect multicollinearity
+
+
+0 --> COLLINEARITY is not detected by the test
+
+===================================
+[1] "MC summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.4234  -1.0983  -0.6985   1.1025   1.8261  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.01378    0.06475 -15.656  < 2e-16 ***
+V8502       -0.17178    0.05982  -2.871  0.00409 ** 
+V8509       -0.27265    0.06613  -4.123 3.74e-05 ***
+V8527        0.37706    0.04498   8.383  < 2e-16 ***
+V8526        0.38296    0.04377   8.750  < 2e-16 ***
+V7206        0.44774    0.04936   9.072  < 2e-16 ***
+V8512        0.36782    0.04808   7.650 2.01e-14 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 14028  on 10119  degrees of freedom
+Residual deviance: 13444  on 10113  degrees of freedom
+AIC: 13458
+
+Number of Fisher Scoring iterations: 4
+
+[1] 10120
+[1] 10120
+[1] "optCutOff_sens:" "0.2069"         
+[1] "error rate sens: 0.5027"
+[1] "yhat.transformed_sens matrix"
+       0      1
+0 0.0055 0.5005
+1 0.0022 0.4918
+[1] "optCutOff_center" "0.5369"          
+[1] "error rate c1: 0.3948"
+[1] "yhat.transformed_center matrix"
+       0      1
+0 0.3220 0.1840
+1 0.2108 0.2832
+[1] "optCutOff_cen" "0.5"          
+[1] "error rate c2: 0.3962"
+[1] "yhat.transformed_cen matrix"
+       0      1
+0 0.2767 0.2293
+1 0.1669 0.3271
+[1] "optCutOff_top" "0.99"         
+[1] "error rate top: 0.494"
+[1] "yhat.transformed_top matrix"
+      0
+0 0.506
+1 0.494
+[1] "optCutOff_spec" "0.5969"        
+[1] "error rate spec: 0.4089"
+[1] "yhat.transformed_spec matrix"
+       0      1
+0 0.4230 0.0830
+1 0.3259 0.1681
+[1] "MC model applied to MC:" "0.6295"                 
+[1] "error: " "0.3962" 
+[1] "Conf matrix: MC CV (robust) model applied to MC data"
+[1] 10120
+       0      1
+0 0.2767 0.2293
+1 0.1669 0.3271
+[1] "pop Data n:" "49229"      
+     V7221            V8502           V8509            V8527            V8526            V7206            V8512       
+ Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000  
+ Median :1.0000   Median :0.000   Median :0.0000   Median :1.0000   Median :1.0000   Median :1.0000   Median :1.0000  
+ Mean   :0.5599   Mean   :0.215   Mean   :0.1629   Mean   :0.6577   Mean   :0.5889   Mean   :0.7808   Mean   :0.6982  
+ 3rd Qu.:1.0000   3rd Qu.:0.000   3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1.0000   Max.   :1.000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+[1] "Pop Model Summary"
+
+Call:
+NULL
+
+Deviance Residuals: 
+   Min      1Q  Median      3Q     Max  
+-1.551  -1.196   0.845   1.002   1.744  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -0.72674    0.02950 -24.634  < 2e-16 ***
+V8502       -0.22020    0.02710  -8.125 4.48e-16 ***
+V8509       -0.32641    0.02978 -10.959  < 2e-16 ***
+V8527        0.41756    0.02044  20.432  < 2e-16 ***
+V8526        0.38510    0.01994  19.316  < 2e-16 ***
+V7206        0.45610    0.02259  20.194  < 2e-16 ***
+V8512        0.31405    0.02192  14.328  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 67539  on 49228  degrees of freedom
+Residual deviance: 64495  on 49222  degrees of freedom
+AIC: 64509
+
+Number of Fisher Scoring iterations: 4
+
+[1] 49229
+[1] 49229
+[1] "Pop model optimal cutoff for center & RMSE:" "0.5897"                                      "0.6221"                                     
+[1] "Conf Matrix: Pop model applied to Pop data Opt Ctr"
+[1] 49229
+       0      1
+0 0.2609 0.1792
+1 0.2078 0.3520
+[1] "error: " "0.387"  
+[1] "Pop model optimal cutoff for sens (as-is, over-fitted):" "0.5"                                                    
+[3] "0.6229"                                                 
+[1] "Conf Matrix: Pop model applied to Pop data Opt Sens"
+[1] 49229
+       0      1
+0 0.1664 0.2738
+1 0.1143 0.4456
+[1] "error: " "0.3881" 
+[1] "Pop model optimal cutoff for center2 & RMSE:" "0.5"                                          "0.6229"                                      
+[1] "error: " "0.3881" 
+[1] "Pop model optimal cutoff for sens & RMSE:" "0.2497"                                    "0.6609"                                   
+[1] "error: " "0.4368" 
+[1] "Pop model optimal cutoff for spec & RMSE:" "0.6597"                                    "0.6644"                                   
+[1] "error: " "0.4414" 
+[1] "Pop model optimal cutoff for opt ctr"
+[1] 49229
+[1] 49229
+[1] "MC .5 ctr model applied to pop:" "0.621"                          
+[1] "error center2: " "0.3856"         
+[1] "error sens: " "0.4342"      
+[1] "Conf Matrix: MC model applied to Pop data Center2"
+[1] 49229
+       0      1
+0 0.2445 0.1957
+1 0.1899 0.3699
+[1] "Conf Matrix: MC model applied to Pop data Sens"
+[1] "MC sens model applied to pop:" "0.2497"                        "0.6589"                       
+[1] 49229
+       0      1
+0 0.0102 0.4300
+1 0.0042 0.5556
