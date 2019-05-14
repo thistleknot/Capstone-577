@@ -569,7 +569,7 @@ for (medianDirection in medianDirectionSet)
                 {
                   #if sub_returnCVNames returns two... will only save two if those same two pass namesH, else it will drop both even if NamesH kept one.
                   #https://stat.ethz.ch/R-manual/R-devel/library/base/html/any.html
-                  if((any((namesTV[counter])==(namesH[counter])))||(((namesTV[counter])==any(namesH[counter]))))
+                  if(any(namesTV[counter]==namesH[counter])||any(namesH[counter]==namesTV[counter]))
                   {
                     temp <- c()
                     
@@ -577,7 +577,7 @@ for (medianDirection in medianDirectionSet)
                     
                     crossValidated <- rbind (crossValidated,temp)
                   }
-                  if(!((any((namesTV[counter])==(namesH[counter])))||(((namesTV[counter])==any(namesH[counter])))))
+                  if(!any(namesTV[counter]==namesH[counter])||any(namesH[counter]==namesTV[counter]))
                   {
                     crossValidated <- rbind (crossValidated,NA)
                   }

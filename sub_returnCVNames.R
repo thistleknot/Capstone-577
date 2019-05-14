@@ -28,7 +28,7 @@ sub_returnCVOG <- function(data_sent){
 }
 
 #this return everything
-sub_returnCVNames <- function(data_sent){
+sub_returnCVNamesAll <- function(data_sent){
   #data_sent=data.train
   holderOfData <- cbind(Filter(var,data.frame(data_sent[,-1 , drop = FALSE])),data.frame(data_sent[,1 , drop = FALSE]))
   #table(NewDF[,"V7202"])

@@ -267,8 +267,21 @@ for (postProcess in 1:length(files))
   holderOfDataI <- sample(1:nrow(finalTraining),round(nrow(finalTraining)*.5))
   nrow(finalTraining[holderOfDataI,])
   
-  terms <- c()
-  terms <- sub_returnCVNames(finalTraining[holderOfDataI,])
+  preTerms1 <- c()
+  preTerms2 <- c()
+  preTerms1 <- sub_returnCVNames(finalTraining[holderOfDataI,])
+  preTerms2 <- sub_returnCVOG(finalTraining[holderOfDataI,])
+  
+  if(length(preTerms1)>=length(preTerms2))
+  {
+    terms <- preTerms1
+  }
+  
+  if(!(length(preTerms1)>=length(preTerms2)))
+  {
+    terms <- preTerms2
+  }
+  
   #B <- suppressMessages(bestglm(Xy = finalTraining[holderOfDataI,], IC="CV", CVArgs=list(Method="HTF", K=5, REP=3, TopModels=10, BestModels = 10), family=binomial))
   #B <- lm()
   

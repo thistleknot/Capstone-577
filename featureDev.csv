@@ -5,7 +5,7 @@
 ,,,1,,,Best subset between bestglm and median based,
 ,,,,,5/10/2019,Optimize Sensitivity,
 ,,,2,,,Test mean diff from .5,
-,,,,,,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
+,,,,,5/13/2019,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
 ,,,,2,5/9/2019,saveCSVs.R newDF without cleandatacode,
 ,,,,,,Median saturation,Find a method that finds a sample size that converges on the median and don't sample beyond this
 ,,,,,,Model comparisons,compare an overfitted model with a class balanced model using sampling that adjusts vs not (Shmueli suggestion)
