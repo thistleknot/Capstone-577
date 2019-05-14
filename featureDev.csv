@@ -2,7 +2,7 @@
 ,,,2,3,,Heaps,Permutation
 ,,,1,2,,Predictor Effect Plots,Use MC Balanced Means
 ,,,1,1,5/12/2019,class profiles,Map each to a plogis % and derive proportions
-,,,1,,,Best subset between bestglm and median based,
+,,,1,,5/13/2019,Best subset between bestglm and median based (saveCSVs only due to complexity between types of checks in cleandatacode.R),
 ,,,,,5/10/2019,Optimize Sensitivity,
 ,,,2,,,Test mean diff from .5,
 ,,,,,5/13/2019,Choose between if just 1 or two elements when comparing in cleandatacode.R for crossvalidated,
